@@ -1,4 +1,4 @@
-package com.kuro.random.jpa.mapper;
+package com.kuro.random.jpa.provider;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;

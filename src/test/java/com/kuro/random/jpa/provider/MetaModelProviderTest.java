@@ -1,4 +1,4 @@
-package com.kuro.random.jpa.mapper;
+package com.kuro.random.jpa.provider;
 
 import com.kuro.random.jpa.testUtil.MockEntityManagerProvider;
 import com.kuro.random.jpa.testUtil.entity.Department;
@@ -8,8 +8,6 @@ import com.kuro.random.jpa.testUtil.entity.Person;
 import com.kuro.random.jpa.testUtil.entity.Shift;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
 import javax.persistence.EntityManager;
 import javax.persistence.metamodel.EntityType;

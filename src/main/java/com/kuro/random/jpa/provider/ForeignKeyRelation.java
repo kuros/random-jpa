@@ -1,4 +1,4 @@
-package com.kuro.random.jpa.mapper;
+package com.kuro.random.jpa.provider;
 
 /**
  * Created by Kumar Rohit on 4/23/15.

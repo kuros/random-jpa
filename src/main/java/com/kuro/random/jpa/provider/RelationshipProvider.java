@@ -1,4 +1,4 @@
-package com.kuro.random.jpa.mapper;
+package com.kuro.random.jpa.provider;
 
 import com.kuro.random.jpa.types.tree.EntityNode;
 
@@ -40,19 +40,6 @@ public class RelationshipProvider {
 
     public static RelationshipProvider newInstance(final EntityManager entityManager) {
         return new RelationshipProvider(entityManager);
-    }
-
-    public EntityNode constructTree() {
-        final List<ForeignKeyRelation> foreignKeyRelations = getForeignKeyRelations();
-        final MetaModelProvider metaModelProvider =MetaModelProvider.newInstance(entityManager);
-        final Map<String, EntityType<?>> metaModelRetalions = metaModelProvider.getMetaModelRelations();
-        EntityNode entityNode = null;
-
-        for (ForeignKeyRelation foreignKeyRelation : foreignKeyRelations) {
-            EntityNode node = EntityNode.newInstance(foreignKeyRelation.getParentTable(), metaModelRetalions.get(foreignKeyRelation.getParentTable()));
-        }
-
-        return entityNode;
     }
 
     public List<ForeignKeyRelation> getForeignKeyRelations() {
