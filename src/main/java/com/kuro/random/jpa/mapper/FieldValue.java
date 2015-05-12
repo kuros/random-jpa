@@ -5,16 +5,16 @@ import java.lang.reflect.Field;
 /**
  * Created by Kumar Rohit on 5/3/15.
  */
-public class FieldValue<V> {
+public final class FieldValue<V> {
 
     private final Field field;
     private final V value;
 
-    public static <V> FieldValue<V> newIntance(final Field field) {
+    public static <V> FieldValue<V> newInstance(final Field field) {
         return new FieldValue<V>(field, null);
     }
 
-    public static <V> FieldValue<V> newIntance(final Field field, final V value) {
+    public static <V> FieldValue<V> newInstance(final Field field, final V value) {
         return new FieldValue<V>(field, value);
     }
 
@@ -30,6 +30,5 @@ public class FieldValue<V> {
     public V getValue() {
         return value;
     }
-
 
 }

@@ -11,7 +11,7 @@ import java.util.Set;
 /**
  * Created by Kumar Rohit on 4/25/15.
  */
-public class MetaModelProvider {
+public final class MetaModelProvider {
     private EntityManager entityManager;
 
     private MetaModelProvider(final EntityManager entityManager) {
@@ -27,12 +27,14 @@ public class MetaModelProvider {
         final EntityManagerFactory entityManagerFactory = entityManager.getEntityManagerFactory();
         final Set<EntityType<?>> entities = entityManagerFactory.getMetamodel().getEntities();
 
-        Map<String, EntityType<?>> entityMap = new HashMap<String, EntityType<?>>(entities.size());
+        final Map<String, EntityType<?>> entityMap = new HashMap<String, EntityType<?>>(entities.size());
         for (EntityType<?> entity : entities) {
             final Class<?> javaType = entity.getJavaType();
-            final String tableName = getTableName(javaType);
 
-            entityMap.put(tableName, entity);
+            if (isEntityTable(javaType)) {
+                final String tableName = getTableName(javaType);
+                entityMap.put(tableName, entity);
+            }
         }
 
         return entityMap;
@@ -42,5 +44,9 @@ public class MetaModelProvider {
         final Table annotation = javaType.getAnnotation(Table.class);
         final String tableName = annotation.name();
         return tableName.isEmpty() ? javaType.getSimpleName() : tableName;
+    }
+
+    private boolean isEntityTable(final Class<?> javaType) {
+        return javaType.getAnnotation(Table.class) != null;
     }
 }

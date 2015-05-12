@@ -22,12 +22,12 @@ public class HierarchyGraphTest {
         final Class<TestClass> testClass1 = TestClass.class;
         final Field personId = testClass1.getDeclaredField("attr1");
 
-        FieldValue from = FieldValue.newIntance(personId);
+        final FieldValue from = FieldValue.newInstance(personId);
 
         final Class<TestClass2> testClass2 = TestClass2.class;
         final Field id = testClass2.getDeclaredField("attr1");
 
-        FieldValue to = FieldValue.newIntance(id);
+        final FieldValue to = FieldValue.newInstance(id);
 
         final HierarchyGraph hierarchyGraph = HierarchyGraph.newInstance();
         hierarchyGraph.addRelation(from, to);
@@ -39,7 +39,7 @@ public class HierarchyGraphTest {
         Assert.assertEquals(1, tableNode.getFieldValues().size());
 
         for (Object o : tableNode.getFieldValues()) {
-            FieldValue fieldValue = (FieldValue) o;
+            final FieldValue fieldValue = (FieldValue) o;
             Assert.assertEquals("attr1", fieldValue.getField().getName());
         }
     }
@@ -54,15 +54,15 @@ public class HierarchyGraphTest {
     public void createHierarchyGraphWithMultipleFieldRelation() throws NoSuchFieldException {
         final Class<TestClass> testClass1 = TestClass.class;
         final Field attr11 = testClass1.getDeclaredField("attr1");
-        FieldValue from1 = FieldValue.newIntance(attr11);
+        final FieldValue from1 = FieldValue.newInstance(attr11);
         final Field attr12 = testClass1.getDeclaredField("attr2");
-        FieldValue from2 = FieldValue.newIntance(attr12);
+        final FieldValue from2 = FieldValue.newInstance(attr12);
 
         final Class<TestClass2> testClass2 = TestClass2.class;
         final Field attr21 = testClass2.getDeclaredField("attr1");
-        FieldValue to1 = FieldValue.newIntance(attr21);
+        final FieldValue to1 = FieldValue.newInstance(attr21);
         final Field attr22 = testClass2.getDeclaredField("attr2");
-        FieldValue to2 = FieldValue.newIntance(attr22);
+        final FieldValue to2 = FieldValue.newInstance(attr22);
 
         final HierarchyGraph hierarchyGraph = HierarchyGraph.newInstance();
         hierarchyGraph.addRelation(from1, to1);
@@ -76,12 +76,12 @@ public class HierarchyGraphTest {
         Assert.assertEquals(TestClass2.class, tableNode.getTableClass());
         Assert.assertEquals(2, tableNode.getFieldValues().size());
 
-        List<String> fieldNames = new ArrayList<String>();
+        final List<String> fieldNames = new ArrayList<String>();
         fieldNames.add("attr1");
         fieldNames.add("attr2");
 
         for (Object o : tableNode.getFieldValues()) {
-            FieldValue fieldValue = (FieldValue) o;
+            final FieldValue fieldValue = (FieldValue) o;
             Assert.assertTrue(fieldNames.contains(fieldValue.getField().getName()));
         }
     }
@@ -96,17 +96,17 @@ public class HierarchyGraphTest {
     public void createHierarchyGraphWithMultipleChainedHierarchy() throws NoSuchFieldException {
         final Class<TestClass> testClass1 = TestClass.class;
         final Field attr11 = testClass1.getDeclaredField("attr1");
-        FieldValue from1 = FieldValue.newIntance(attr11);
+        final FieldValue from1 = FieldValue.newInstance(attr11);
 
         final Class<TestClass2> testClass2 = TestClass2.class;
         final Field attr21 = testClass2.getDeclaredField("attr1");
-        FieldValue to1 = FieldValue.newIntance(attr21);
+        final FieldValue to1 = FieldValue.newInstance(attr21);
         final Field attr22 = testClass2.getDeclaredField("attr2");
-        FieldValue from2 = FieldValue.newIntance(attr22);
+        final FieldValue from2 = FieldValue.newInstance(attr22);
 
         final Class<TestClass3> testClass3 = TestClass3.class;
         final Field attr3 = testClass3.getDeclaredField("attr3");
-        FieldValue to2 = FieldValue.newIntance(attr3);
+        final FieldValue to2 = FieldValue.newInstance(attr3);
 
         final HierarchyGraph hierarchyGraph = HierarchyGraph.newInstance();
         hierarchyGraph.addRelation(from1, to1);
@@ -121,7 +121,7 @@ public class HierarchyGraphTest {
         Assert.assertEquals(1, tableNode.getFieldValues().size());
 
         for (Object o : tableNode.getFieldValues()) {
-            FieldValue fieldValue = (FieldValue) o;
+            final FieldValue fieldValue = (FieldValue) o;
             Assert.assertEquals("attr1", fieldValue.getField().getName());
         }
 
@@ -133,7 +133,7 @@ public class HierarchyGraphTest {
         Assert.assertEquals(1, tableNode2.getFieldValues().size());
 
         for (Object o : tableNode2.getFieldValues()) {
-            FieldValue fieldValue = (FieldValue) o;
+            final FieldValue fieldValue = (FieldValue) o;
             Assert.assertEquals("attr1", fieldValue.getField().getName());
         }
     }

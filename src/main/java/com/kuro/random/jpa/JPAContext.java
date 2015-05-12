@@ -21,7 +21,7 @@ import java.util.Set;
 /**
  * Created by Kumar Rohit on 4/22/15.
  */
-public class JPAContext {
+public final class JPAContext {
 
     private final EntityManager entityManager;
     private final Map<String, EntityType<?>> metaModelRelations;
@@ -52,9 +52,10 @@ public class JPAContext {
 
         final List<Relation> relations = RelationCreator.from(metaModelRelations)
                 .with(foreignKeyRelations)
+                .with(dependencies)
                 .generate();
 
-        HierarchyGenerator hierarchyGenerator = getHierarchyGenerator();
+        final HierarchyGenerator hierarchyGenerator = getHierarchyGenerator();
         hierarchyGraph = hierarchyGenerator.generate(relations);
     }
 

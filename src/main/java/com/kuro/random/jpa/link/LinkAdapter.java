@@ -2,8 +2,7 @@ package com.kuro.random.jpa.link;
 
 import com.kuro.random.jpa.mapper.FieldValue;
 import com.kuro.random.jpa.mapper.Relation;
-import com.kuro.random.jpa.mapper.TableNode;
-import com.kuro.random.jpa.util.AttributeHepler;
+import com.kuro.random.jpa.util.AttributeHelper;
 
 import javax.persistence.Column;
 import javax.persistence.metamodel.Attribute;
@@ -21,13 +20,13 @@ public class LinkAdapter {
     }
 
     private static <T> FieldValue<T> getFieldValue(final Attribute attribute) {
-        final Class declaringClass = AttributeHepler.getDeclaringClass(attribute);
+        final Class declaringClass = AttributeHelper.getDeclaringClass(attribute);
 
-        final String name = AttributeHepler.getName(attribute);
+        final String name = AttributeHelper.getName(attribute);
 
         final Field field = getField(declaringClass, name);
 
-        return FieldValue.newIntance(field);
+        return FieldValue.newInstance(field);
     }
 
     private static Field getField(final Class tableClass, final String columnName) {
@@ -35,7 +34,7 @@ public class LinkAdapter {
         final Field[] declaredFields = tableClass.getDeclaredFields();
         for (Field declaredField : declaredFields) {
             final Column column = declaredField.getAnnotation(Column.class);
-            if(column != null && (column.name().equals(columnName) || declaredField.getName().equals(columnName))) {
+            if (column != null && (column.name().equals(columnName) || declaredField.getName().equals(columnName))) {
                 field = declaredField;
                 break;
             }
