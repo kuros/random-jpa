@@ -1,5 +1,6 @@
 package com.kuro.random.jpa.testUtil.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
@@ -12,8 +13,13 @@ import javax.persistence.Table;
 @Table
 public class Employee {
 
+    @Column(name = "employee_id")
     private Long employeeId;
+
+    @Column(name = "person_id")
     private Long personId;
+
+    @Column
     private Double salary;
 
     public Long getEmployeeId() {

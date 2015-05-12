@@ -1,5 +1,6 @@
 package com.kuro.random.jpa.testUtil.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.util.Date;
@@ -10,6 +11,7 @@ import java.util.Date;
 @Entity
 @Table(name = "shift")
 public class Shift {
+    @Column(name = "shift_id")
     private Integer shiftId;
     private String name;
     private Date startDate;

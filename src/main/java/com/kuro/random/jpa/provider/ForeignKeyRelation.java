@@ -5,8 +5,8 @@ package com.kuro.random.jpa.provider;
  */
 public class ForeignKeyRelation {
 
-    private String parentTable;
-    private String parentAttribute;
+    private String table;
+    private String attribute;
     private String referencedTable;
     private String referencedAttribute;
 
@@ -14,19 +14,19 @@ public class ForeignKeyRelation {
         return new ForeignKeyRelation(parentTable, parentAttribute, referencedTable, referencedAttribute);
     }
 
-    private ForeignKeyRelation(final String parentTable, final String parentAttribute, final String referencedTable, final String referencedAttribute) {
-        this.parentTable = parentTable;
-        this.parentAttribute = parentAttribute;
+    private ForeignKeyRelation(final String table, final String attribute, final String referencedTable, final String referencedAttribute) {
+        this.table = table;
+        this.attribute = attribute;
         this.referencedTable = referencedTable;
         this.referencedAttribute = referencedAttribute;
     }
 
-    public String getParentTable() {
-        return parentTable;
+    public String getTable() {
+        return table;
     }
 
-    public String getParentAttribute() {
-        return parentAttribute;
+    public String getAttribute() {
+        return attribute;
     }
 
     public String getReferencedTable() {

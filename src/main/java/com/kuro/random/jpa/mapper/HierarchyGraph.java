@@ -1,5 +1,7 @@
 package com.kuro.random.jpa.mapper;
 
+import com.kuro.random.jpa.util.FieldValueHelper;
+
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,13 +25,13 @@ public class HierarchyGraph {
     }
 
     public void addRelation(final FieldValue from, final FieldValue to) {
-        List<TableNode> fromNodes = parentRelations.get(getTableNode(from));
+        List<TableNode> fromNodes = parentRelations.get(FieldValueHelper.getTableNode(from));
         if (fromNodes == null) {
             fromNodes = new ArrayList<TableNode>();
-            parentRelations.put(getTableNode(from), fromNodes);
+            parentRelations.put(FieldValueHelper.getTableNode(from), fromNodes);
         }
 
-        final TableNode<?> toNode = getTableNode(to);
+        final TableNode<?> toNode = FieldValueHelper.getTableNode(to);
 
         if (fromNodes.contains(toNode)) {
             final TableNode<?> tableNode = fromNodes.get(fromNodes.indexOf(toNode));
@@ -52,10 +54,5 @@ public class HierarchyGraph {
         return parentRelations;
     }
 
-    private TableNode getTableNode(final FieldValue fieldValue) {
-        final Field field = fieldValue.getField();
-        final TableNode tableNode = TableNode.newInstance(field.getDeclaringClass());
-        tableNode.addAttributes(fieldValue);
-        return tableNode;
-    }
+
 }

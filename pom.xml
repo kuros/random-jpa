@@ -29,6 +29,11 @@
             <version>1.9.5</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.googlecode.openpojo</groupId>
+            <artifactId>openpojo</artifactId>
+            <version>0.6.3</version>
+        </dependency>
     </dependencies>
 
 
