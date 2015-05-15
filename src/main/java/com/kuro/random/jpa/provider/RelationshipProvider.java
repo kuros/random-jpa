@@ -12,7 +12,7 @@ import java.util.Map;
 /**
  * Created by Kumar Rohit on 4/22/15.
  */
-public class RelationshipProvider {
+public final class RelationshipProvider {
 
     private static final String QUERY = "SELECT\n" +
             "  tp.name 'parent_table',\n" +
@@ -34,7 +34,7 @@ public class RelationshipProvider {
 
     private EntityManager entityManager;
 
-    private RelationshipProvider(final EntityManager entityManager) {
+    RelationshipProvider(final EntityManager entityManager) {
         this.entityManager = entityManager;
     }
 
@@ -48,9 +48,9 @@ public class RelationshipProvider {
         final Query query = entityManager.createNativeQuery(QUERY);
         final List resultList = query.getResultList();
         for (Object o : resultList) {
-            Object[] row = (Object[]) o;
+            final Object[] row = (Object[]) o;
 
-            ForeignKeyRelation relation = ForeignKeyRelation.newInstance((String)row[0], (String)row[1],(String) row[2], (String)row[3]);
+            final ForeignKeyRelation relation = ForeignKeyRelation.newInstance((String)row[0], (String)row[1],(String) row[2], (String)row[3]);
             foreignKeyRelations.add(relation);
         }
 

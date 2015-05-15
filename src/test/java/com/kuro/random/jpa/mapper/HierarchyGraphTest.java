@@ -6,6 +6,7 @@ import org.junit.Test;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Kumar Rohit on 5/3/15.
@@ -30,18 +31,20 @@ public class HierarchyGraphTest {
         final FieldValue to = FieldValue.newInstance(id);
 
         final HierarchyGraph hierarchyGraph = HierarchyGraph.newInstance();
-        hierarchyGraph.addRelation(from, to);
-        final List<TableNode> children = hierarchyGraph.getParent(testClass1);
 
-        Assert.assertEquals(1, children.size());
-        final TableNode tableNode = children.get(0);
-        Assert.assertEquals(TestClass2.class, tableNode.getTableClass());
-        Assert.assertEquals(1, tableNode.getFieldValues().size());
+        final Relation relation = Relation.newInstance(from, to);
+        hierarchyGraph.addRelation(relation);
+        final Set<Class<?>> parent = hierarchyGraph.getParents(testClass1);
+        Assert.assertEquals(1, parent.size());
+        Assert.assertTrue(parent.contains(TestClass2.class));
 
-        for (Object o : tableNode.getFieldValues()) {
-            final FieldValue fieldValue = (FieldValue) o;
-            Assert.assertEquals("attr1", fieldValue.getField().getName());
-        }
+        final TableNode tableNode = hierarchyGraph.getTableNode(TestClass.class);
+        final List<Relation<?, ?>> relations = tableNode.getRelations();
+        Assert.assertEquals(1, relations.size());
+        Assert.assertEquals(from.getField(), relations.get(0).getFrom().getField());
+        Assert.assertEquals(to.getField(), relations.get(0).getTo().getField());
+
+        Assert.assertNull(hierarchyGraph.getTableNode(TestClass2.class));
     }
 
     /**
@@ -65,25 +68,27 @@ public class HierarchyGraphTest {
         final FieldValue to2 = FieldValue.newInstance(attr22);
 
         final HierarchyGraph hierarchyGraph = HierarchyGraph.newInstance();
-        hierarchyGraph.addRelation(from1, to1);
-        hierarchyGraph.addRelation(from2, to2);
+        hierarchyGraph.addRelation(Relation.newInstance(from1, to1));
+        hierarchyGraph.addRelation(Relation.newInstance(from2, to2));
 
-        final List<TableNode> children = hierarchyGraph.getParent(testClass1);
+        final Set<Class<?>> children = hierarchyGraph.getParents(testClass1);
 
         Assert.assertEquals(1, children.size());
-        final TableNode tableNode = children.get(0);
+        final TableNode tableNode = hierarchyGraph.getTableNode(testClass1);
 
-        Assert.assertEquals(TestClass2.class, tableNode.getTableClass());
-        Assert.assertEquals(2, tableNode.getFieldValues().size());
+        Assert.assertTrue(tableNode.getParentClasses().contains(TestClass2.class));
+        final List<Relation<?, ?>> relations = tableNode.getRelations();
+        Assert.assertEquals(2, relations.size());
 
         final List<String> fieldNames = new ArrayList<String>();
         fieldNames.add("attr1");
         fieldNames.add("attr2");
 
-        for (Object o : tableNode.getFieldValues()) {
-            final FieldValue fieldValue = (FieldValue) o;
-            Assert.assertTrue(fieldNames.contains(fieldValue.getField().getName()));
-        }
+        Assert.assertEquals("attr1", relations.get(0).getFrom().getField().getName());
+        Assert.assertEquals("attr1", relations.get(0).getTo().getField().getName());
+
+        Assert.assertEquals("attr2", relations.get(1).getFrom().getField().getName());
+        Assert.assertEquals("attr2", relations.get(1).getTo().getField().getName());
     }
 
     /**
@@ -109,33 +114,18 @@ public class HierarchyGraphTest {
         final FieldValue to2 = FieldValue.newInstance(attr3);
 
         final HierarchyGraph hierarchyGraph = HierarchyGraph.newInstance();
-        hierarchyGraph.addRelation(from1, to1);
-        hierarchyGraph.addRelation(from2, to2);
+        hierarchyGraph.addRelation(Relation.newInstance(from1, to1));
+        hierarchyGraph.addRelation(Relation.newInstance(from2, to2));
 
 
-        final List<TableNode> children = hierarchyGraph.getParent(testClass1);
-        Assert.assertEquals(1, children.size());
-        final TableNode tableNode = children.get(0);
+        final Set<Class<?>> parents = hierarchyGraph.getParents(testClass1);
+        Assert.assertEquals(1, parents.size());
 
-        Assert.assertEquals(TestClass2.class, tableNode.getTableClass());
-        Assert.assertEquals(1, tableNode.getFieldValues().size());
+        final Set<Class<?>> parents1 = hierarchyGraph.getParents(testClass2);
+        Assert.assertEquals(1, parents1.size());
 
-        for (Object o : tableNode.getFieldValues()) {
-            final FieldValue fieldValue = (FieldValue) o;
-            Assert.assertEquals("attr1", fieldValue.getField().getName());
-        }
-
-        final List<TableNode> children2 = hierarchyGraph.getParent(testClass1);
-        Assert.assertEquals(1, children2.size());
-        final TableNode tableNode2 = children2.get(0);
-
-        Assert.assertEquals(TestClass2.class, tableNode2.getTableClass());
-        Assert.assertEquals(1, tableNode2.getFieldValues().size());
-
-        for (Object o : tableNode2.getFieldValues()) {
-            final FieldValue fieldValue = (FieldValue) o;
-            Assert.assertEquals("attr1", fieldValue.getField().getName());
-        }
+        final Set<Class<?>> parents2 = hierarchyGraph.getParents(testClass3);
+        Assert.assertEquals(0, parents2.size());
     }
 
     private class TestClass {

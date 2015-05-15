@@ -2,55 +2,69 @@ package com.kuro.random.jpa.mapper;
 
 import com.kuro.random.jpa.util.FieldValueHelper;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 /**
  * Created by Kumar Rohit on 5/1/15.
  */
-public class HierarchyGraph {
+public final class HierarchyGraph {
 
-    private Map<TableNode, List<TableNode>> parentRelations;
+    private Map<Class<?>, TableNode> parentRelations;
 
     private HierarchyGraph() {
-        this.parentRelations = new HashMap<TableNode, List<TableNode>>();
+        this.parentRelations = new HashMap<Class<?>, TableNode>();
     }
 
     public static HierarchyGraph newInstance() {
         return new HierarchyGraph();
     }
 
-    public void addRelation(final FieldValue from, final FieldValue to) {
-        List<TableNode> fromNodes = parentRelations.get(FieldValueHelper.getTableNode(from));
-        if (fromNodes == null) {
-            fromNodes = new ArrayList<TableNode>();
-            parentRelations.put(FieldValueHelper.getTableNode(from), fromNodes);
+    public void addRelation(final Relation relation) {
+
+        System.out.println(relation.getFrom().getField() + " --> " + relation.getTo().getField());
+
+        final Class<?> fromClass = FieldValueHelper.getDeclaringClass(relation.getFrom());
+        TableNode tableNode = parentRelations.get(fromClass);
+        if (tableNode == null) {
+            tableNode = TableNode.newInstance();
         }
 
-        final TableNode<?> toNode = FieldValueHelper.getTableNode(to);
+        tableNode.addRelation(relation);
+        final Class<?> toClass = FieldValueHelper.getDeclaringClass(relation.getTo());
+        tableNode.addParent(toClass);
+        parentRelations.put(fromClass, tableNode);
 
-        if (fromNodes.contains(toNode)) {
-            final TableNode<?> tableNode = fromNodes.get(fromNodes.indexOf(toNode));
-            tableNode.addAttributes(to);
-        } else {
-            fromNodes.add(toNode);
+        if (!parentRelations.containsKey(toClass)) {
+            parentRelations.put(toClass, TableNode.newInstance());
         }
+
+//        final TableNode toNode = FieldValueHelper.getTableNode(relation.getTo());
+//        if (!parentNodes.contains(toNode)) {
+//            parentNodes.add(toNode);
+//        }
+//
+//        final TableNode fromTableNode = FieldValueHelper.getTableNode(relation.getFrom());
+//        fromTableNode.addRelation(relation);
+//        parentRelations.put(fromTableNode, parentNodes);
     }
 
-    public Set<TableNode> getKeySet() {
+    public Set<Class<?>> getKeySet() {
         return parentRelations.keySet();
     }
 
-    public List<TableNode> getParent(final Class tableClass) {
-        final TableNode tableNode = TableNode.newInstance(tableClass);
-        return parentRelations.get(tableNode);
+    public Set<Class<?>> getParents(final Class tableClass) {
+        final TableNode tableNode = parentRelations.get(tableClass);
+        return tableNode != null ? tableNode.getParentClasses() : new HashSet<Class<?>>();
     }
 
-    public Map<TableNode, List<TableNode>> getParentRelations() {
+    public TableNode getTableNode(final Class tableClass) {
+        return parentRelations.get(tableClass);
+    }
+
+    public Map<Class<?>, TableNode> getParentRelations() {
         return parentRelations;
     }
 

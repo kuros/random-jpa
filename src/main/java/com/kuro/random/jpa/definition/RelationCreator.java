@@ -47,8 +47,8 @@ public final class RelationCreator {
         final ArrayList<Relation> relations = new ArrayList<Relation>();
 
         for (ForeignKeyRelation foreignKeyRelation : foreignKeyRelations) {
-            final FieldValue from = getTableNode(foreignKeyRelation);
-            final FieldValue to = getReferencedTableNode(foreignKeyRelation);
+            final FieldValue from = getFieldValue(foreignKeyRelation);
+            final FieldValue to = getReferencedFieldValue(foreignKeyRelation);
 
             if (from != null && to != null) {
                 final Relation relation = Relation.newInstance(from, to);
@@ -60,15 +60,15 @@ public final class RelationCreator {
         return relations;
     }
 
-    private FieldValue getReferencedTableNode(final ForeignKeyRelation foreignKeyRelation) {
-        return getTableNode(foreignKeyRelation.getReferencedTable(), foreignKeyRelation.getReferencedAttribute());
+    private FieldValue getReferencedFieldValue(final ForeignKeyRelation foreignKeyRelation) {
+        return getFieldValue(foreignKeyRelation.getReferencedTable(), foreignKeyRelation.getReferencedAttribute());
     }
 
-    private FieldValue getTableNode(final ForeignKeyRelation foreignKeyRelation) {
-        return getTableNode(foreignKeyRelation.getTable(), foreignKeyRelation.getAttribute());
+    private FieldValue getFieldValue(final ForeignKeyRelation foreignKeyRelation) {
+        return getFieldValue(foreignKeyRelation.getTable(), foreignKeyRelation.getAttribute());
     }
 
-    private FieldValue getTableNode(final String table, final String attribute) {
+    private FieldValue getFieldValue(final String table, final String attribute) {
         final EntityType<?> entityType = metaModelRelations.get(table);
 
         if (entityType == null) {

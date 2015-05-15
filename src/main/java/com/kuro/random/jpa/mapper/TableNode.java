@@ -1,51 +1,43 @@
 package com.kuro.random.jpa.mapper;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
  * Created by Kumar Rohit on 5/2/15.
  */
-public class TableNode<T> {
+public final class TableNode {
 
-    private Class<T> tableClass;
-    private Set<FieldValue> fieldValues;
+    private Set<Class<?>> parentClasses;
+    private List<Relation<?, ?>> relations;
 
-    public static <T> TableNode<T> newInstance(final Class<T> tableEntity) {
-        return new TableNode<T>(tableEntity);
+    public static TableNode newInstance() {
+        return new TableNode();
     }
 
-    private TableNode(final Class<T> tableClass) {
-        this.tableClass = tableClass;
-        this.fieldValues = new HashSet<FieldValue>();
+    private TableNode() {
+        this.parentClasses = new HashSet<Class<?>>();
+        this.relations = new ArrayList<Relation<?, ?>>();
     }
 
-    public Set<FieldValue> addAttributes(final FieldValue fieldValue) {
-        fieldValues.add(fieldValue);
-        return fieldValues;
+    public TableNode addRelation(final Relation relation) {
+        this.relations.add(relation);
+        return this;
     }
 
-    public Class<T> getTableClass() {
-        return tableClass;
+    public TableNode addParent(final Class<?> parentClass) {
+        parentClasses.add(parentClass);
+        return this;
     }
 
-    public Set<FieldValue> getFieldValues() {
-        return fieldValues;
+    public Set<Class<?>> getParentClasses() {
+        return parentClasses;
     }
 
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        final TableNode<?> tableNode = (TableNode<?>) o;
-
-        return tableClass.equals(tableNode.tableClass);
-
+    public List<Relation<?, ?>> getRelations() {
+        return relations;
     }
 
-    @Override
-    public int hashCode() {
-        return tableClass.hashCode();
-    }
 }

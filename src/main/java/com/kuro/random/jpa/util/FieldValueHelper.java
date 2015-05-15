@@ -12,8 +12,12 @@ public class FieldValueHelper {
 
     public static TableNode getTableNode(final FieldValue fieldValue) {
         final Field field = fieldValue.getField();
-        final TableNode tableNode = TableNode.newInstance(field.getDeclaringClass());
-        tableNode.addAttributes(fieldValue);
+        final TableNode tableNode = TableNode.newInstance();
         return tableNode;
+    }
+
+    public static Class<?> getDeclaringClass(final FieldValue fieldValue) {
+        final Field field = fieldValue.getField();
+        return field.getDeclaringClass();
     }
 }

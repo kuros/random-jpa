@@ -8,7 +8,7 @@ import java.lang.reflect.Field;
 public final class FieldValue<V> {
 
     private final Field field;
-    private final V value;
+    private V value;
 
     public static <V> FieldValue<V> newInstance(final Field field) {
         return new FieldValue<V>(field, null);
@@ -31,4 +31,7 @@ public final class FieldValue<V> {
         return value;
     }
 
+    public void setValue(final V value) {
+        this.value = value;
+    }
 }

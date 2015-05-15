@@ -12,7 +12,7 @@ public class HierarchyGeneratorImpl implements HierarchyGenerator {
 
     public HierarchyGraph addRelation(final HierarchyGraph hierarchyGraph, final List<Relation> relations) {
         for (Relation relation : relations) {
-            hierarchyGraph.addRelation(relation.getFrom(), relation.getTo());
+            hierarchyGraph.addRelation(relation);
         }
 
         return hierarchyGraph;

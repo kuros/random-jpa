@@ -7,10 +7,15 @@ import com.kuro.random.jpa.link.Dependencies;
 import com.kuro.random.jpa.mapper.HierarchyGraph;
 import com.kuro.random.jpa.mapper.Relation;
 import com.kuro.random.jpa.mapper.TableNode;
+import com.kuro.random.jpa.persistor.Persistor;
+import com.kuro.random.jpa.persistor.PersistorImpl;
+import com.kuro.random.jpa.persistor.model.ResultMap;
 import com.kuro.random.jpa.provider.ForeignKeyRelation;
 import com.kuro.random.jpa.provider.MetaModelProvider;
 import com.kuro.random.jpa.provider.RelationshipProvider;
 import com.kuro.random.jpa.types.CreationPlan;
+import com.openpojo.random.RandomFactory;
+import com.openpojo.random.RandomGenerator;
 
 import javax.persistence.EntityManager;
 import javax.persistence.metamodel.EntityType;
@@ -27,6 +32,7 @@ public final class JPAContext {
     private final Map<String, EntityType<?>> metaModelRelations;
     private HierarchyGraph hierarchyGraph;
     private Dependencies dependencies;
+    private RandomFactory randomFactory;
 
     public static JPAContext newInstance(final EntityManager entityManager) {
         return new JPAContext(entityManager, null);
@@ -42,6 +48,7 @@ public final class JPAContext {
 
         final MetaModelProvider metaModelProvider = MetaModelProvider.newInstance(entityManager);
         this.metaModelRelations = metaModelProvider.getMetaModelRelations();
+        this.randomFactory = new RandomFactory();
 
         initialize();
     }
@@ -59,35 +66,40 @@ public final class JPAContext {
         hierarchyGraph = hierarchyGenerator.generate(relations);
     }
 
-    public void create() {
-
-        final CreationPlan creationPlan = CreationPlan.newIntance();
-
-        final Map<TableNode, List<TableNode>> parentRelations = hierarchyGraph.getParentRelations();
-        final Set<TableNode> tableNodes = parentRelations.keySet();
-
-        for (TableNode tableNode : tableNodes) {
-            System.out.println(tableNode.getTableClass());
-            generateCreationOrder(creationPlan, parentRelations, tableNode);
-            creationPlan.add(tableNode);
-        }
-
-        for (TableNode tableNode : creationPlan.getCreationPlan()) {
-            System.out.println(tableNode.getTableClass());
-        }
+    public void addRandomGenerator(final RandomGenerator randomGenerator) {
+        this.randomFactory.addRandomGenerator(randomGenerator);
     }
 
-    private void generateCreationOrder(final CreationPlan creationPlan, final Map<TableNode, List<TableNode>> parentRelations, final TableNode tableNode) {
-        final List<TableNode> parents = parentRelations.get(tableNode);
-        for (TableNode parent : parents) {
+    public ResultMap create(final Class<?> aClass) {
+
+        final CreationPlan creationPlan = getCreationPlan(aClass);
+
+        final List<Class<?>> creationPlan1 = creationPlan.getCreationPlan();
+        for (Class<?> tableNode : creationPlan1) {
+            System.out.println(tableNode);
+        }
+
+        final Persistor persistor = PersistorImpl.newInstance(entityManager, randomFactory);
+        return persistor.persist(creationPlan);
+    }
+
+    private CreationPlan getCreationPlan(final Class<?> type) {
+        final CreationPlan creationPlan = CreationPlan.newInstance();
+
+        final Map<Class<?>, TableNode> parentRelations = hierarchyGraph.getParentRelations();
+
+        generateCreationOrder(creationPlan, parentRelations, type);
+        return creationPlan;
+    }
+
+    private void generateCreationOrder(final CreationPlan creationPlan, final Map<Class<?>, TableNode> parentRelations, final Class<?> type) {
+        final TableNode tableNode = parentRelations.get(type);
+        for (Class<?> parent : tableNode.getParentClasses()) {
             if (!creationPlan.contains(parent)) {
-                if (parentRelations.containsKey(parent)) {
-                    generateCreationOrder(creationPlan, parentRelations, parent);
-                } else {
-                    creationPlan.add(parent);
-                }
+                generateCreationOrder(creationPlan, parentRelations, parent);
             }
         }
+        creationPlan.add(type);
     }
 
     private HierarchyGenerator getHierarchyGenerator() {

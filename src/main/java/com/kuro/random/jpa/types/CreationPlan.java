@@ -8,26 +8,26 @@ import java.util.List;
 /**
  * Created by Kumar Rohit on 5/10/15.
  */
-public class CreationPlan {
-    private List<TableNode> creationPlan;
+public final class CreationPlan {
+    private List<Class<?>> creationPlan;
 
     private CreationPlan() {
-        this.creationPlan = new ArrayList<TableNode>();
+        this.creationPlan = new ArrayList<Class<?>>();
     }
 
-    public static CreationPlan newIntance() {
+    public static CreationPlan newInstance() {
         return new CreationPlan();
     }
 
-    public void add(final TableNode tableNode) {
-        this.creationPlan.add(tableNode);
+    public void add(final Class<?> type) {
+        creationPlan.add(type);
     }
 
-    public List<TableNode> getCreationPlan() {
+    public List<Class<?>> getCreationPlan() {
         return creationPlan;
     }
 
-    public boolean contains(final TableNode node) {
-        return this.creationPlan.contains(node);
+    public boolean contains(final Class<?> type) {
+        return creationPlan.contains(type);
     }
 }
