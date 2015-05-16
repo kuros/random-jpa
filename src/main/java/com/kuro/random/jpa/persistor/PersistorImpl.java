@@ -6,10 +6,13 @@ import com.kuro.random.jpa.mapper.TableNode;
 import com.kuro.random.jpa.persistor.model.ResultMap;
 import com.kuro.random.jpa.persistor.random.Randomize;
 import com.kuro.random.jpa.persistor.random.RandomizeImpl;
+import com.kuro.random.jpa.persistor.random.generator.RandomGenerator;
 import com.kuro.random.jpa.types.CreationPlan;
-import com.openpojo.random.RandomFactory;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Id;
+import java.lang.reflect.Field;
 import java.util.List;
 
 /**
@@ -18,42 +21,77 @@ import java.util.List;
 public final class PersistorImpl implements Persistor {
 
     private EntityManager entityManager;
-    private RandomFactory randomFactory;
+    private RandomGenerator randomGenerator;
     private Randomize randomize;
 
-    private PersistorImpl(final EntityManager entityManager, final RandomFactory randomFactory) {
+    private PersistorImpl(final EntityManager entityManager, final RandomGenerator randomGenerator) {
         this.entityManager = entityManager;
-        this.randomFactory = randomFactory;
-        this.randomize = RandomizeImpl.newInstance(randomFactory);
+        this.randomGenerator = randomGenerator;
+        this.randomize = RandomizeImpl.newInstance(randomGenerator);
     }
 
-    public static Persistor newInstance(final EntityManager entityManager, final RandomFactory randomFactory) {
-        return new PersistorImpl(entityManager, randomFactory);
+    public static Persistor newInstance(final EntityManager entityManager, final RandomGenerator randomGenerator) {
+        return new PersistorImpl(entityManager, randomGenerator);
     }
 
-//    public ResultMap persist(final CreationPlan creationPlan) {
-//        final ResultMap resultMap = ResultMap.newInstance();
-//        final List<TableNode> plan = creationPlan.getCreationPlan();
-//        for (TableNode tableNode : plan) {
-//            final Class tableClass = tableNode.getParentClasses();
-//            final Object random = randomize.createRandom(tableClass);
-//
-//            final List<Relation> relations = tableNode.getRelations();
-//
-//            for (Relation relation : relations) {
-//                createRelation(resultMap, relation, random);
-//            }
-//
-//            resultMap.put(tableClass, random);
-//        }
-//        return resultMap;
-//    }
+    public ResultMap persist(final CreationPlan creationPlan) {
+        final ResultMap resultMap = ResultMap.newInstance();
+        final List<Class<?>> plan = creationPlan.getCreationPlan();
+        for (Class tableClass : plan) {
+            final Object random = createRandomObject(tableClass, creationPlan, resultMap);
+            final EntityManagerFactory entityManagerFactory = entityManager.getEntityManagerFactory();
+            final EntityManager em = entityManagerFactory.createEntityManager();
+            em.getTransaction().begin();
+            em.persist(random);
+            em.getTransaction().commit();
+            em.close();
+            final Object persistedObject = findElementById(tableClass, random);
+            resultMap.put(tableClass, persistedObject);
+        }
+        return resultMap;
+    }
+
+    private Object findElementById(final Class tableClass, final Object persistedObject) {
+        final Field[] declaredFields = tableClass.getDeclaredFields();
+        Field field = null;
+        for (Field declaredField : declaredFields) {
+            if (declaredField.getAnnotation(Id.class) != null) {
+                field = declaredField;
+                break;
+            }
+        }
+
+        field.setAccessible(true);
+        Object id = null;
+        try {
+            id = field.get(persistedObject);
+        } catch (final IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+        return entityManager.find(tableClass, id);
+    }
+
+
+    private Object createRandomObject(final Class tableClass, final CreationPlan creationPlan, final ResultMap resultMap) {
+        final Object random = randomize.createRandom(tableClass);
+
+        final TableNode tableNode = creationPlan.getTableNode(tableClass);
+        final List<Relation<?, ?>> relations = tableNode.getRelations();
+
+        for (Relation relation : relations) {
+            createRelation(resultMap, relation, random);
+        }
+
+
+        return random;
+    }
 
     private <F, T> void createRelation(final ResultMap resultMap, final Relation<F, T> relation, final Object object) {
         try {
             final Object value = getFieldValue(resultMap, relation.getTo());
             setFieldValue(object, relation.getFrom(), value);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             System.out.println(relation.getFrom().getField() + " -- " + relation.getTo().getField());
             e.printStackTrace();
         }
@@ -72,7 +110,7 @@ public final class PersistorImpl implements Persistor {
 
     private Object castNumber(final Class<?> type, final Object value) {
         Object returnValue = value;
-        if (type.equals(value.getClass())) {
+        if (value == null || type.equals(value.getClass())) {
             return returnValue;
         }
 
@@ -105,10 +143,5 @@ public final class PersistorImpl implements Persistor {
         } catch (final IllegalAccessException e) {
         }
         return value;
-    }
-
-
-    public ResultMap persist(final CreationPlan creationPlan) {
-        return null;
     }
 }

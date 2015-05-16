@@ -10,18 +10,17 @@ import com.kuro.random.jpa.mapper.TableNode;
 import com.kuro.random.jpa.persistor.Persistor;
 import com.kuro.random.jpa.persistor.PersistorImpl;
 import com.kuro.random.jpa.persistor.model.ResultMap;
+import com.kuro.random.jpa.persistor.random.generator.Generator;
+import com.kuro.random.jpa.persistor.random.generator.RandomGenerator;
 import com.kuro.random.jpa.provider.ForeignKeyRelation;
 import com.kuro.random.jpa.provider.MetaModelProvider;
 import com.kuro.random.jpa.provider.RelationshipProvider;
 import com.kuro.random.jpa.types.CreationPlan;
-import com.openpojo.random.RandomFactory;
-import com.openpojo.random.RandomGenerator;
 
 import javax.persistence.EntityManager;
 import javax.persistence.metamodel.EntityType;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Created by Kumar Rohit on 4/22/15.
@@ -32,7 +31,7 @@ public final class JPAContext {
     private final Map<String, EntityType<?>> metaModelRelations;
     private HierarchyGraph hierarchyGraph;
     private Dependencies dependencies;
-    private RandomFactory randomFactory;
+    private RandomGenerator generator;
 
     public static JPAContext newInstance(final EntityManager entityManager) {
         return new JPAContext(entityManager, null);
@@ -48,7 +47,7 @@ public final class JPAContext {
 
         final MetaModelProvider metaModelProvider = MetaModelProvider.newInstance(entityManager);
         this.metaModelRelations = metaModelProvider.getMetaModelRelations();
-        this.randomFactory = new RandomFactory();
+        this.generator = RandomGenerator.newInstance(Generator.newInstance());
 
         initialize();
     }
@@ -66,8 +65,8 @@ public final class JPAContext {
         hierarchyGraph = hierarchyGenerator.generate(relations);
     }
 
-    public void addRandomGenerator(final RandomGenerator randomGenerator) {
-        this.randomFactory.addRandomGenerator(randomGenerator);
+    public void addRandomGenerator(final Generator randomGenerator) {
+        this.generator = RandomGenerator.newInstance(randomGenerator);
     }
 
     public ResultMap create(final Class<?> aClass) {
@@ -79,12 +78,12 @@ public final class JPAContext {
             System.out.println(tableNode);
         }
 
-        final Persistor persistor = PersistorImpl.newInstance(entityManager, randomFactory);
+        final Persistor persistor = PersistorImpl.newInstance(entityManager, generator);
         return persistor.persist(creationPlan);
     }
 
     private CreationPlan getCreationPlan(final Class<?> type) {
-        final CreationPlan creationPlan = CreationPlan.newInstance();
+        final CreationPlan creationPlan = CreationPlan.newInstance(hierarchyGraph);
 
         final Map<Class<?>, TableNode> parentRelations = hierarchyGraph.getParentRelations();
 
