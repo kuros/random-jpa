@@ -27,23 +27,13 @@ public class CreationPlanResolver {
     }
 
     public CreationPlan getCreationPlan() {
-        CreationPlan creationPlan = null;
+        final CreationPlan creationPlan = CreationPlan.newInstance(hierarchyGraph);
         final List<Entity> entities = plan.getEntities();
         for (Entity entity : entities) {
             final Class type = entity.getType();
-            creationPlan = getCreationPlan(type);
-            break;
+            generateCreationOrder(creationPlan, hierarchyGraph.getParentRelations(), type);
         }
 
-        return creationPlan;
-    }
-
-    private CreationPlan getCreationPlan(final Class<?> type) {
-        final CreationPlan creationPlan = CreationPlan.newInstance(hierarchyGraph);
-
-        final Map<Class<?>, TableNode> parentRelations = hierarchyGraph.getParentRelations();
-
-        generateCreationOrder(creationPlan, parentRelations, type);
         return creationPlan;
     }
 
