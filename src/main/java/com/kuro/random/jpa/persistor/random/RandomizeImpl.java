@@ -2,10 +2,15 @@ package com.kuro.random.jpa.persistor.random;
 
 import com.kuro.random.jpa.persistor.random.generator.RandomGenerator;
 
+import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.metamodel.EntityType;
+import javax.persistence.metamodel.SingularAttribute;
 import java.lang.reflect.Field;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by Kumar Rohit on 5/14/15.
@@ -24,6 +29,7 @@ public final class RandomizeImpl implements Randomize {
 
     public <T> T createRandom(final Class<T> type) {
         final T t = randomGenerator.generateRandom(type);
+
         final Field[] declaredFields = type.getDeclaredFields();
         for (Field declaredField : declaredFields) {
             declaredField.setAccessible(true);
@@ -39,6 +45,10 @@ public final class RandomizeImpl implements Randomize {
 
     private boolean isRandomRequired(final Field declaredField) {
 
+        if (fieldIsNotColumn(declaredField)) {
+            return false;
+        }
+
         final Id annotation = declaredField.getAnnotation(Id.class);
         if (annotation == null) {
             return true;
@@ -53,5 +63,9 @@ public final class RandomizeImpl implements Randomize {
         }
 
         return true;
+    }
+
+    private boolean fieldIsNotColumn(final Field field) {
+        return field.getAnnotation(Column.class) == null;
     }
 }

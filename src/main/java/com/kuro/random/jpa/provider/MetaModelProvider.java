@@ -24,8 +24,7 @@ public final class MetaModelProvider {
 
     public Map<String, EntityType<?>> getMetaModelRelations() {
 
-        final EntityManagerFactory entityManagerFactory = entityManager.getEntityManagerFactory();
-        final Set<EntityType<?>> entities = entityManagerFactory.getMetamodel().getEntities();
+        final Set<EntityType<?>> entities = getEntityTypes();
 
         final Map<String, EntityType<?>> entityMap = new HashMap<String, EntityType<?>>(entities.size());
         for (EntityType<?> entity : entities) {
@@ -38,6 +37,27 @@ public final class MetaModelProvider {
         }
 
         return entityMap;
+    }
+
+    public Map<Class<?>, EntityType<?>> getMetaModelClassMapping() {
+
+        final Set<EntityType<?>> entities = getEntityTypes();
+
+        final Map<Class<?>, EntityType<?>> entityMap = new HashMap<Class<?>, EntityType<?>>(entities.size());
+        for (EntityType<?> entity : entities) {
+            final Class<?> javaType = entity.getJavaType();
+
+            if (isEntityTable(javaType)) {
+                entityMap.put(javaType, entity);
+            }
+        }
+
+        return entityMap;
+    }
+
+    private Set<EntityType<?>> getEntityTypes() {
+        final EntityManagerFactory entityManagerFactory = entityManager.getEntityManagerFactory();
+        return entityManagerFactory.getMetamodel().getEntities();
     }
 
     private String getTableName(final Class<?> javaType) {

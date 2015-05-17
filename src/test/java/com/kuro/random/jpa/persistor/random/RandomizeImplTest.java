@@ -3,7 +3,13 @@ package com.kuro.random.jpa.persistor.random;
 import com.kuro.random.jpa.persistor.random.generator.Generator;
 import com.kuro.random.jpa.persistor.random.generator.RandomGenerator;
 import com.kuro.random.jpa.testUtil.entity.Employee;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+
+import javax.persistence.EntityManager;
 
 import static org.junit.Assert.assertNotNull;
 
@@ -11,7 +17,6 @@ import static org.junit.Assert.assertNotNull;
  * Created by Kumar Rohit on 5/14/15.
  */
 public class RandomizeImplTest {
-
     @Test
     public void shouldRandmoizeEmployeeClass() throws InstantiationException, IllegalAccessException {
         final RandomGenerator randomFactory = RandomGenerator.newInstance(Generator.newInstance());

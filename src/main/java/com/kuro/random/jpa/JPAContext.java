@@ -15,7 +15,10 @@ import com.kuro.random.jpa.persistor.random.generator.RandomGenerator;
 import com.kuro.random.jpa.provider.ForeignKeyRelation;
 import com.kuro.random.jpa.provider.MetaModelProvider;
 import com.kuro.random.jpa.provider.RelationshipProvider;
+import com.kuro.random.jpa.resolver.CreationPlanResolver;
+import com.kuro.random.jpa.resolver.EntityResolver;
 import com.kuro.random.jpa.types.CreationPlan;
+import com.kuro.random.jpa.types.Plan;
 
 import javax.persistence.EntityManager;
 import javax.persistence.metamodel.EntityType;
@@ -69,36 +72,16 @@ public final class JPAContext {
         this.generator = RandomGenerator.newInstance(randomGenerator);
     }
 
-    public ResultMap create(final Class<?> aClass) {
+    public ResultMap create(final Plan plan) {
 
-        final CreationPlan creationPlan = getCreationPlan(aClass);
+        final EntityResolver entityResolver = EntityResolver.newInstance(plan);
+        generator.addFieldValue(entityResolver.getFieldValueMap());
 
-        final List<Class<?>> creationPlan1 = creationPlan.getCreationPlan();
-        for (Class<?> tableNode : creationPlan1) {
-            System.out.println(tableNode);
-        }
+        final CreationPlanResolver creationPlanResolver = CreationPlanResolver.newInstance(hierarchyGraph, plan);
+        final CreationPlan creationPlan = creationPlanResolver.getCreationPlan();
 
         final Persistor persistor = PersistorImpl.newInstance(entityManager, generator);
         return persistor.persist(creationPlan);
-    }
-
-    private CreationPlan getCreationPlan(final Class<?> type) {
-        final CreationPlan creationPlan = CreationPlan.newInstance(hierarchyGraph);
-
-        final Map<Class<?>, TableNode> parentRelations = hierarchyGraph.getParentRelations();
-
-        generateCreationOrder(creationPlan, parentRelations, type);
-        return creationPlan;
-    }
-
-    private void generateCreationOrder(final CreationPlan creationPlan, final Map<Class<?>, TableNode> parentRelations, final Class<?> type) {
-        final TableNode tableNode = parentRelations.get(type);
-        for (Class<?> parent : tableNode.getParentClasses()) {
-            if (!creationPlan.contains(parent)) {
-                generateCreationOrder(creationPlan, parentRelations, parent);
-            }
-        }
-        creationPlan.add(type);
     }
 
     private HierarchyGenerator getHierarchyGenerator() {

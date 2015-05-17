@@ -39,37 +39,52 @@ public final class PersistorImpl implements Persistor {
         final List<Class<?>> plan = creationPlan.getCreationPlan();
         for (Class tableClass : plan) {
             final Object random = createRandomObject(tableClass, creationPlan, resultMap);
-            final EntityManagerFactory entityManagerFactory = entityManager.getEntityManagerFactory();
-            final EntityManager em = entityManagerFactory.createEntityManager();
-            em.getTransaction().begin();
-            em.persist(random);
-            em.getTransaction().commit();
-            em.close();
-            final Object persistedObject = findElementById(tableClass, random);
+
+            Object persistedObject;
+            if (getId(tableClass, random) != null
+                    && findElementById(tableClass, random) != null) {
+                persistedObject = findElementById(tableClass, random);
+            } else {
+                persistedObject = persistAndReturnPersistedObject(tableClass, random);
+            }
+
             resultMap.put(tableClass, persistedObject);
         }
         return resultMap;
     }
 
+    private Object persistAndReturnPersistedObject(final Class tableClass, final Object random) {
+        final EntityManagerFactory entityManagerFactory = entityManager.getEntityManagerFactory();
+        final EntityManager em = entityManagerFactory.createEntityManager();
+        em.getTransaction().begin();
+        em.persist(random);
+        em.getTransaction().commit();
+        em.close();
+        return findElementById(tableClass, random);
+    }
+
     private Object findElementById(final Class tableClass, final Object persistedObject) {
+        return entityManager.find(tableClass, getId(tableClass, persistedObject));
+    }
+
+    private Object getId(final Class tableClass, final Object persistedObject) {
         final Field[] declaredFields = tableClass.getDeclaredFields();
         Field field = null;
         for (Field declaredField : declaredFields) {
             if (declaredField.getAnnotation(Id.class) != null) {
                 field = declaredField;
+                field.setAccessible(true);
                 break;
             }
         }
 
-        field.setAccessible(true);
         Object id = null;
         try {
             id = field.get(persistedObject);
         } catch (final IllegalAccessException e) {
             e.printStackTrace();
         }
-
-        return entityManager.find(tableClass, id);
+        return id;
     }
 
 

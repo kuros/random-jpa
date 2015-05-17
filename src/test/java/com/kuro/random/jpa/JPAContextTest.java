@@ -21,7 +21,7 @@ public class JPAContextTest {
         final EntityManager entityManager = mockEntityManagerProvider.getEntityManager();
         MockRelationshipProvider.addMockRelationship(entityManager);
 
-//        JPAContext jpaContext = JPAContext.newInstance(entityManager);
+//        JPAContext jpaContext = JPAContext.create(entityManager);
 //        jpaContext.create();
 
         final Person randomValue = RandomFactory.getRandomValue(Person.class);
