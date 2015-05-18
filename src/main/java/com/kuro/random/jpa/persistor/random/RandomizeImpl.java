@@ -45,6 +45,10 @@ public final class RandomizeImpl implements Randomize {
 
     private boolean isRandomRequired(final Field declaredField) {
 
+        if (randomGenerator.isValueProvided(declaredField)) {
+            return true;
+        }
+
         if (fieldIsNotColumn(declaredField)) {
             return false;
         }

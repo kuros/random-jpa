@@ -68,6 +68,10 @@ public final class RandomGenerator {
         return randomFactory.getRandomValue(type);
     }
 
+    public boolean isValueProvided(final Field field) {
+        return fieldValue.get(field) != null;
+    }
+
     private void addRandomClassGenerator(final RandomClassGenerator randomClassGenerator) {
         randomFactory.addRandomGenerator(RandomClassGeneratorAdapter.adapt(randomClassGenerator));
     }
