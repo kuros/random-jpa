@@ -44,7 +44,10 @@ public class HierarchyGraphTest {
         Assert.assertEquals(from.getField(), relations.get(0).getFrom().getField());
         Assert.assertEquals(to.getField(), relations.get(0).getTo().getField());
 
-        Assert.assertNull(hierarchyGraph.getTableNode(TestClass2.class));
+
+        final TableNode actual = hierarchyGraph.getTableNode(TestClass2.class);
+        Assert.assertEquals(0, actual.getParentClasses().size());
+        Assert.assertEquals(0, actual.getRelations().size());
     }
 
     /**
