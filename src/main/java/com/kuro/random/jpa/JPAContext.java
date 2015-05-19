@@ -74,7 +74,7 @@ public final class JPAContext {
 
     public ResultMap create(final Plan plan) {
 
-        final EntityResolver entityResolver = EntityResolver.newInstance(plan);
+        final EntityResolver entityResolver = EntityResolver.newInstance(entityManager, hierarchyGraph, plan);
         generator.addFieldValue(entityResolver.getFieldValueMap());
 
         final CreationPlanResolver creationPlanResolver = CreationPlanResolver.newInstance(hierarchyGraph, plan);

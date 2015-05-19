@@ -2,8 +2,10 @@ package com.kuro.random.jpa.mapper;
 
 import com.kuro.random.jpa.util.FieldValueHelper;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -13,9 +15,11 @@ import java.util.Set;
 public final class HierarchyGraph {
 
     private Map<Class<?>, TableNode> parentRelations;
+    private Map<Class<?>, Set<Relation>> attributeRelations;
 
     private HierarchyGraph() {
         this.parentRelations = new HashMap<Class<?>, TableNode>();
+        attributeRelations = new HashMap<Class<?>, Set<Relation>>();
     }
 
     public static HierarchyGraph newInstance() {
@@ -23,8 +27,6 @@ public final class HierarchyGraph {
     }
 
     public void addRelation(final Relation relation) {
-
-        System.out.println(relation.getFrom().getField() + " --> " + relation.getTo().getField());
 
         final Class<?> fromClass = FieldValueHelper.getDeclaringClass(relation.getFrom());
         TableNode tableNode = parentRelations.get(fromClass);
@@ -41,14 +43,17 @@ public final class HierarchyGraph {
             parentRelations.put(toClass, TableNode.newInstance());
         }
 
-//        final TableNode toNode = FieldValueHelper.getTableNode(relation.getTo());
-//        if (!parentNodes.contains(toNode)) {
-//            parentNodes.add(toNode);
-//        }
-//
-//        final TableNode fromTableNode = FieldValueHelper.getTableNode(relation.getFrom());
-//        fromTableNode.addRelation(relation);
-//        parentRelations.put(fromTableNode, parentNodes);
+        populateAttributeRelations(fromClass, relation);
+    }
+
+    private void populateAttributeRelations(final Class<?> fromClass, final Relation relation) {
+        Set<Relation> relations = attributeRelations.get(fromClass);
+        if (relations == null) {
+            relations = new HashSet<Relation>();
+            attributeRelations.put(fromClass, relations);
+        }
+
+        relations.add(relation);
     }
 
     public Set<Class<?>> getKeySet() {
@@ -68,5 +73,7 @@ public final class HierarchyGraph {
         return parentRelations;
     }
 
-
+    public Set<Relation> getAttributeRelations(final Class<?> tableClass) {
+        return attributeRelations.get(tableClass);
+    }
 }

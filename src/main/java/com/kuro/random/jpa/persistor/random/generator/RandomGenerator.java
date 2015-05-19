@@ -45,6 +45,10 @@ public final class RandomGenerator {
         return new RandomGenerator(generator);
     }
 
+    public static RandomGenerator newInstance() {
+        return new RandomGenerator(Generator.newInstance());
+    }
+
     public void addFieldValue(final Map<Field, Object> fieldValueMap) {
         this.fieldValue = fieldValueMap;
     }

@@ -24,4 +24,23 @@ public class Relation<F, T> {
     public FieldValue<T> getTo() {
         return to;
     }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        final Relation<?, ?> relation = (Relation<?, ?>) o;
+
+        if (!from.getField().equals(relation.from.getField())) return false;
+        return to.getField().equals(relation.to.getField());
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = from.getField().hashCode();
+        result = 31 * result + to.getField().hashCode();
+        return result;
+    }
 }

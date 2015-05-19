@@ -8,6 +8,7 @@ import com.kuro.random.jpa.persistor.random.Randomize;
 import com.kuro.random.jpa.persistor.random.RandomizeImpl;
 import com.kuro.random.jpa.persistor.random.generator.RandomGenerator;
 import com.kuro.random.jpa.types.CreationPlan;
+import com.kuro.random.jpa.util.NumberUtil;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -107,7 +108,6 @@ public final class PersistorImpl implements Persistor {
             final Object value = getFieldValue(resultMap, relation.getTo());
             setFieldValue(object, relation.getFrom(), value);
         } catch (final Exception e) {
-            System.out.println(relation.getFrom().getField() + " -- " + relation.getTo().getField());
             e.printStackTrace();
         }
 
@@ -118,36 +118,12 @@ public final class PersistorImpl implements Persistor {
 
             final Class<?> type = fieldValue.getField().getType();
             fieldValue.getField().setAccessible(true);
-            fieldValue.getField().set(object, castNumber(type, value));
+            fieldValue.getField().set(object, NumberUtil.castNumber(type, value));
         } catch (final IllegalAccessException e) {
         }
     }
 
-    private Object castNumber(final Class<?> type, final Object value) {
-        Object returnValue = value;
-        if (value == null || type.equals(value.getClass())) {
-            return returnValue;
-        }
 
-        if (value instanceof Number) {
-            final  Number number = (Number) value;
-            if (Integer.TYPE == type || Integer.class == type) {
-                returnValue = number.intValue();
-            } else if (Long.TYPE == type || Long.class == type) {
-                returnValue = number.longValue();
-            } else if (Short.TYPE == type || Short.class == type) {
-                returnValue = number.shortValue();
-            } else if (Float.TYPE == type || Float.class == type) {
-                returnValue = number.floatValue();
-            } else if (Double.TYPE == type || Double.class == type) {
-                returnValue = number.doubleValue();
-            } else if (Byte.TYPE == type || Byte.class == type) {
-                returnValue = number.byteValue();
-            }
-        }
-
-        return returnValue;
-    }
 
     private <T> Object getFieldValue(final ResultMap resultMap, final FieldValue<T> fieldValue) {
         final Object object = resultMap.get(fieldValue.getField().getDeclaringClass());
