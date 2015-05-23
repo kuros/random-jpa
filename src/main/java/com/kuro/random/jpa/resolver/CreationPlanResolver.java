@@ -12,8 +12,10 @@ import javax.persistence.Id;
 import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.Set;
+import java.util.Stack;
 
 /**
  * Created by Kumar Rohit on 5/17/15.
@@ -37,7 +39,12 @@ public class CreationPlanResolver {
         final List<Entity> entities = plan.getEntities();
         for (Entity entity : entities) {
             final Class type = entity.getType();
-            generateCreationOrder(creationPlan, hierarchyGraph.getParentRelations(), type);
+
+            try {
+                generateCreationOrder(creationPlan, type);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         filterAlreadyGenerated(creationPlan, plan.getEntities());
@@ -63,6 +70,7 @@ public class CreationPlanResolver {
         creationPlan.getCreationPlan().removeAll(itemsWithId);
     }
 
+    @SuppressWarnings("unchecked")
     private boolean isFilterRequired(final Entity entity) {
         final List<AttributeValue> attributeValues = entity.getAttributeValues();
 
@@ -81,14 +89,27 @@ public class CreationPlanResolver {
         return false;
     }
 
-    private void generateCreationOrder(final CreationPlan creationPlan, final Map<Class<?>, TableNode> parentRelations, final Class<?> type) {
-        final TableNode tableNode = parentRelations.get(type);
-        for (Class<?> parent : tableNode.getParentClasses()) {
-            if (!creationPlan.contains(parent)) {
-                generateCreationOrder(creationPlan, parentRelations, parent);
+    private void generateCreationOrder(final CreationPlan creationPlan, final Class<?> type) throws ClassNotFoundException {
+
+        final Queue<String> queue = new PriorityQueue<String>();
+        queue.offer(type.getName());
+        final Stack<Class<?>> stack = new Stack<Class<?>>();
+        stack.push(type);
+
+        while(!queue.isEmpty()) {
+            final Set<Class<?>> parents = hierarchyGraph.getParents(Class.forName(queue.poll()));
+            for (Class<?> parent : parents) {
+                if (!stack.contains(parent) && !creationPlan.contains(parent)) {
+                    queue.offer(parent.getName());
+                    stack.push(parent);
+                }
             }
         }
-        creationPlan.add(type);
+
+        while(!stack.isEmpty()) {
+            final Class<?> pop = stack.pop();
+                creationPlan.add(pop);
+        }
     }
 
 
