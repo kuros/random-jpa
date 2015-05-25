@@ -7,7 +7,7 @@ import com.kuro.random.jpa.persistor.model.ResultMap;
 import com.kuro.random.jpa.persistor.random.Randomize;
 import com.kuro.random.jpa.persistor.random.RandomizeImpl;
 import com.kuro.random.jpa.persistor.random.generator.RandomGenerator;
-import com.kuro.random.jpa.types.CreationPlan;
+import com.kuro.random.jpa.types.CreationOrder;
 import com.kuro.random.jpa.util.NumberUtil;
 
 import javax.persistence.EntityManager;
@@ -22,12 +22,10 @@ import java.util.List;
 public final class PersistorImpl implements Persistor {
 
     private EntityManager entityManager;
-    private RandomGenerator randomGenerator;
     private Randomize randomize;
 
     private PersistorImpl(final EntityManager entityManager, final RandomGenerator randomGenerator) {
         this.entityManager = entityManager;
-        this.randomGenerator = randomGenerator;
         this.randomize = RandomizeImpl.newInstance(randomGenerator);
     }
 
@@ -35,11 +33,11 @@ public final class PersistorImpl implements Persistor {
         return new PersistorImpl(entityManager, randomGenerator);
     }
 
-    public ResultMap persist(final CreationPlan creationPlan) {
+    public ResultMap persist(final CreationOrder creationOrder) {
         final ResultMap resultMap = ResultMap.newInstance();
-        final List<Class<?>> plan = creationPlan.getCreationPlan();
+        final List<Class<?>> plan = creationOrder.getCreationPlan();
         for (Class tableClass : plan) {
-            final Object random = createRandomObject(tableClass, creationPlan, resultMap);
+            final Object random = createRandomObject(tableClass, creationOrder, resultMap);
 
             Object persistedObject;
             if (getId(tableClass, random) != null
@@ -89,10 +87,10 @@ public final class PersistorImpl implements Persistor {
     }
 
 
-    private Object createRandomObject(final Class tableClass, final CreationPlan creationPlan, final ResultMap resultMap) {
+    private Object createRandomObject(final Class tableClass, final CreationOrder creationOrder, final ResultMap resultMap) {
         final Object random = randomize.createRandom(tableClass);
 
-        final TableNode tableNode = creationPlan.getTableNode(tableClass);
+        final TableNode tableNode = creationOrder.getTableNode(tableClass);
         final List<Relation<?, ?>> relations = tableNode.getRelations();
 
         for (Relation relation : relations) {

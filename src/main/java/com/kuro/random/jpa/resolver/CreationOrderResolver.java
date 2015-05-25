@@ -1,9 +1,8 @@
 package com.kuro.random.jpa.resolver;
 
 import com.kuro.random.jpa.mapper.HierarchyGraph;
-import com.kuro.random.jpa.mapper.TableNode;
 import com.kuro.random.jpa.types.AttributeValue;
-import com.kuro.random.jpa.types.CreationPlan;
+import com.kuro.random.jpa.types.CreationOrder;
 import com.kuro.random.jpa.types.Entity;
 import com.kuro.random.jpa.types.Plan;
 import com.kuro.random.jpa.util.AttributeHelper;
@@ -20,39 +19,39 @@ import java.util.Stack;
 /**
  * Created by Kumar Rohit on 5/17/15.
  */
-public class CreationPlanResolver {
+public final class CreationOrderResolver {
 
     private HierarchyGraph hierarchyGraph;
     private Plan plan;
 
-    private CreationPlanResolver(final HierarchyGraph hierarchyGraph, final Plan plan) {
+    private CreationOrderResolver(final HierarchyGraph hierarchyGraph, final Plan plan) {
         this.hierarchyGraph = hierarchyGraph;
         this.plan = plan;
     }
 
-    public static CreationPlanResolver newInstance(final HierarchyGraph hierarchyGraph, final Plan plan) {
-        return new CreationPlanResolver(hierarchyGraph, plan);
+    public static CreationOrderResolver newInstance(final HierarchyGraph hierarchyGraph, final Plan plan) {
+        return new CreationOrderResolver(hierarchyGraph, plan);
     }
 
-    public CreationPlan getCreationPlan() {
-        final CreationPlan creationPlan = CreationPlan.newInstance(hierarchyGraph);
+    public CreationOrder getCreationOrder() {
+        final CreationOrder creationOrder = CreationOrder.newInstance(hierarchyGraph);
         final List<Entity> entities = plan.getEntities();
         for (Entity entity : entities) {
             final Class type = entity.getType();
 
             try {
-                generateCreationOrder(creationPlan, type);
-            } catch (ClassNotFoundException e) {
+                generateCreationOrder(creationOrder, type);
+            } catch (final ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
         }
 
-        filterAlreadyGenerated(creationPlan, plan.getEntities());
+        filterAlreadyGenerated(creationOrder, plan.getEntities());
 
-        return creationPlan;
+        return creationOrder;
     }
 
-    private void filterAlreadyGenerated(final CreationPlan creationPlan, final List<Entity> entities) {
+    private void filterAlreadyGenerated(final CreationOrder creationOrder, final List<Entity> entities) {
 
         final Set<Class<?>> itemsWithId = new HashSet<Class<?>>();
         final Set<Class<?>> itemsWithoutId = new HashSet<Class<?>>();
@@ -67,7 +66,7 @@ public class CreationPlanResolver {
 
         itemsWithId.removeAll(itemsWithoutId);
 
-        creationPlan.getCreationPlan().removeAll(itemsWithId);
+        creationOrder.getCreationPlan().removeAll(itemsWithId);
     }
 
     @SuppressWarnings("unchecked")
@@ -89,26 +88,26 @@ public class CreationPlanResolver {
         return false;
     }
 
-    private void generateCreationOrder(final CreationPlan creationPlan, final Class<?> type) throws ClassNotFoundException {
+    private void generateCreationOrder(final CreationOrder creationOrder, final Class<?> type) throws ClassNotFoundException {
 
         final Queue<String> queue = new PriorityQueue<String>();
         queue.offer(type.getName());
         final Stack<Class<?>> stack = new Stack<Class<?>>();
         stack.push(type);
 
-        while(!queue.isEmpty()) {
+        while (!queue.isEmpty()) {
             final Set<Class<?>> parents = hierarchyGraph.getParents(Class.forName(queue.poll()));
             for (Class<?> parent : parents) {
-                if (!stack.contains(parent) && !creationPlan.contains(parent)) {
+                if (!stack.contains(parent) && !creationOrder.contains(parent)) {
                     queue.offer(parent.getName());
                     stack.push(parent);
                 }
             }
         }
 
-        while(!stack.isEmpty()) {
+        while (!stack.isEmpty()) {
             final Class<?> pop = stack.pop();
-                creationPlan.add(pop);
+                creationOrder.add(pop);
         }
     }
 

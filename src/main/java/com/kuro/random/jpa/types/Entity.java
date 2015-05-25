@@ -14,13 +14,12 @@ public final class Entity<T> {
     private int count;
 
     private Entity(final Class<T> type) {
-        this.type = type;
-        this.attributeValues = new ArrayList<AttributeValue>();
-        this.count = 1;
+        this(type, 1);
     }
 
-    private Entity(final int count) {
-        attributeValues = new ArrayList<AttributeValue>();
+    private Entity(final Class<T> type, final int count) {
+        this.type = type;
+        this.attributeValues = new ArrayList<AttributeValue>();
         this.count = count;
     }
 
@@ -29,7 +28,7 @@ public final class Entity<T> {
     }
 
     public static <T> Entity<T> of(final Class<T> type, final int count) {
-        return new Entity<T>(count);
+        return new Entity<T>(type, count);
     }
 
     public <V> Entity<T> with(final Attribute<T, V> attribute, final V value) {

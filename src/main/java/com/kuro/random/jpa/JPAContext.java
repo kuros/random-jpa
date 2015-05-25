@@ -6,7 +6,6 @@ import com.kuro.random.jpa.definition.RelationCreator;
 import com.kuro.random.jpa.link.Dependencies;
 import com.kuro.random.jpa.mapper.HierarchyGraph;
 import com.kuro.random.jpa.mapper.Relation;
-import com.kuro.random.jpa.mapper.TableNode;
 import com.kuro.random.jpa.persistor.Persistor;
 import com.kuro.random.jpa.persistor.PersistorImpl;
 import com.kuro.random.jpa.persistor.model.ResultMap;
@@ -15,9 +14,9 @@ import com.kuro.random.jpa.persistor.random.generator.RandomGenerator;
 import com.kuro.random.jpa.provider.ForeignKeyRelation;
 import com.kuro.random.jpa.provider.MetaModelProvider;
 import com.kuro.random.jpa.provider.RelationshipProvider;
-import com.kuro.random.jpa.resolver.CreationPlanResolver;
+import com.kuro.random.jpa.resolver.CreationOrderResolver;
 import com.kuro.random.jpa.resolver.EntityResolver;
-import com.kuro.random.jpa.types.CreationPlan;
+import com.kuro.random.jpa.types.CreationOrder;
 import com.kuro.random.jpa.types.Plan;
 
 import javax.persistence.EntityManager;
@@ -77,11 +76,11 @@ public final class JPAContext {
         final EntityResolver entityResolver = EntityResolver.newInstance(entityManager, hierarchyGraph, plan);
         generator.addFieldValue(entityResolver.getFieldValueMap());
 
-        final CreationPlanResolver creationPlanResolver = CreationPlanResolver.newInstance(hierarchyGraph, plan);
-        final CreationPlan creationPlan = creationPlanResolver.getCreationPlan();
+        final CreationOrderResolver creationOrderResolver = CreationOrderResolver.newInstance(hierarchyGraph, plan);
+        final CreationOrder creationOrder = creationOrderResolver.getCreationOrder();
 
         final Persistor persistor = PersistorImpl.newInstance(entityManager, generator);
-        return persistor.persist(creationPlan);
+        return persistor.persist(creationOrder);
     }
 
     private HierarchyGenerator getHierarchyGenerator() {
