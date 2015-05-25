@@ -35,7 +35,7 @@ public final class PersistorImpl implements Persistor {
 
     public ResultMap persist(final CreationOrder creationOrder) {
         final ResultMap resultMap = ResultMap.newInstance();
-        final List<Class<?>> plan = creationOrder.getCreationPlan();
+        final List<Class<?>> plan = creationOrder.getOrder();
         for (Class tableClass : plan) {
             final Object random = createRandomObject(tableClass, creationOrder, resultMap);
 

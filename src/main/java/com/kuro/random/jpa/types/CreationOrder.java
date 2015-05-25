@@ -13,11 +13,11 @@ import java.util.Map;
  */
 public final class CreationOrder {
     private final HierarchyGraph hierarchyGraph;
-    private List<Class<?>> creationPlan;
+    private List<Class<?>> order;
     private Map<Class<?>, Integer> creationCount;
 
     private CreationOrder(final HierarchyGraph hierarchyGraph) {
-        this.creationPlan = new ArrayList<Class<?>>();
+        this.order = new ArrayList<Class<?>>();
         this.hierarchyGraph = hierarchyGraph;
         creationCount = new HashMap<Class<?>, Integer>();
     }
@@ -27,7 +27,7 @@ public final class CreationOrder {
     }
 
     public void add(final Class<?> type) {
-        creationPlan.add(type);
+        order.add(type);
     }
 
     public void addCreationCount(final Class<?> type, final int count) {
@@ -39,12 +39,12 @@ public final class CreationOrder {
         return integer == null ? 1 : integer;
     }
 
-    public List<Class<?>> getCreationPlan() {
-        return creationPlan;
+    public List<Class<?>> getOrder() {
+        return order;
     }
 
     public boolean contains(final Class<?> type) {
-        return creationPlan.contains(type);
+        return order.contains(type);
     }
 
     public TableNode getTableNode(final Class<?> type) {

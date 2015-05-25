@@ -38,7 +38,7 @@ public final class CreationOrderResolver {
         final List<Entity> entities = plan.getEntities();
         for (Entity entity : entities) {
             final Class type = entity.getType();
-
+            addCreationCount(creationOrder, entity);
             try {
                 generateCreationOrder(creationOrder, type);
             } catch (final ClassNotFoundException e) {
@@ -49,6 +49,10 @@ public final class CreationOrderResolver {
         filterAlreadyGenerated(creationOrder, plan.getEntities());
 
         return creationOrder;
+    }
+
+    private void addCreationCount(final CreationOrder creationOrder, final Entity entity) {
+        creationOrder.addCreationCount(entity.getType(), entity.getCount());
     }
 
     private void filterAlreadyGenerated(final CreationOrder creationOrder, final List<Entity> entities) {
@@ -66,7 +70,7 @@ public final class CreationOrderResolver {
 
         itemsWithId.removeAll(itemsWithoutId);
 
-        creationOrder.getCreationPlan().removeAll(itemsWithId);
+        creationOrder.getOrder().removeAll(itemsWithId);
     }
 
     @SuppressWarnings("unchecked")
