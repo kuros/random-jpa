@@ -39,6 +39,10 @@ public final class CreationOrder {
         return integer == null ? 1 : integer;
     }
 
+    public Map<Class<?>, Integer> getCreationCount() {
+        return creationCount;
+    }
+
     public List<Class<?>> getOrder() {
         return order;
     }

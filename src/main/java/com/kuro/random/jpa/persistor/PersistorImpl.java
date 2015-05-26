@@ -4,10 +4,9 @@ import com.kuro.random.jpa.mapper.FieldValue;
 import com.kuro.random.jpa.mapper.Relation;
 import com.kuro.random.jpa.mapper.TableNode;
 import com.kuro.random.jpa.persistor.model.ResultMap;
-import com.kuro.random.jpa.persistor.random.Randomize;
-import com.kuro.random.jpa.persistor.random.RandomizeImpl;
-import com.kuro.random.jpa.persistor.random.generator.RandomGenerator;
 import com.kuro.random.jpa.types.CreationOrder;
+import com.kuro.random.jpa.types.CreationPlan;
+import com.kuro.random.jpa.types.Node;
 import com.kuro.random.jpa.util.NumberUtil;
 
 import javax.persistence.EntityManager;
@@ -15,6 +14,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Id;
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Kumar Rohit on 5/13/15.
@@ -22,34 +22,78 @@ import java.util.List;
 public final class PersistorImpl implements Persistor {
 
     private EntityManager entityManager;
-    private Randomize randomize;
 
-    private PersistorImpl(final EntityManager entityManager, final RandomGenerator randomGenerator) {
+    private PersistorImpl(final EntityManager entityManager) {
         this.entityManager = entityManager;
-        this.randomize = RandomizeImpl.newInstance(randomGenerator);
     }
 
-    public static Persistor newInstance(final EntityManager entityManager, final RandomGenerator randomGenerator) {
-        return new PersistorImpl(entityManager, randomGenerator);
+    public static Persistor newInstance(final EntityManager entityManager) {
+        return new PersistorImpl(entityManager);
     }
 
-    public ResultMap persist(final CreationOrder creationOrder) {
-        final ResultMap resultMap = ResultMap.newInstance();
-        final List<Class<?>> plan = creationOrder.getOrder();
-        for (Class tableClass : plan) {
-            final Object random = createRandomObject(tableClass, creationOrder, resultMap);
+    public ResultMap persist(final CreationPlan creationPlan) {
+        final Node root = Node.newInstance();
+        final ResultMap resultMap = ResultMap.newInstance(root);
 
-            Object persistedObject;
-            if (getId(tableClass, random) != null
-                    && findElementById(tableClass, random) != null) {
-                persistedObject = findElementById(tableClass, random);
-            } else {
-                persistedObject = persistAndReturnPersistedObject(tableClass, random);
+
+        final Node creationPlanRoot = creationPlan.getRoot();
+        final List<Node> childNodes = creationPlanRoot.getChildNodes();
+        for (Node node : childNodes) {
+            if (node.getValue() != null) {
+                final Node childNode = Node.newInstance(node.getType(), getIndex(resultMap, node.getType()));
+                root.addChildNode(childNode);
+                persist(childNode, creationPlan.getCreationOrder(), resultMap, node);
             }
-
-            resultMap.put(tableClass, persistedObject);
         }
+
+
+//        final List<Class<?>> plan = creationOrder.getOrder();
+//        for (Class tableClass : plan) {
+//            final Object random = createRandomObject(tableClass, creationOrder, resultMap);
+//
+//            Object persistedObject;
+//            if (getId(tableClass, random) != null
+//                    && findElementById(tableClass, random) != null) {
+//                persistedObject = findElementById(tableClass, random);
+//            } else {
+//                persistedObject = persistAndReturnPersistedObject(tableClass, random);
+//            }
+//
+//            resultMap.put(tableClass, persistedObject);
+//        }
         return resultMap;
+    }
+
+    private int getIndex(final ResultMap resultMap, final Class type) {
+        final List<Object> objects = resultMap.getCreatedEntities().get(type);
+        return isEmpty(objects) ? 0 : objects.size();
+    }
+
+    private boolean isEmpty(final List<Object> objects) {
+        return objects == null || objects.isEmpty();
+    }
+
+    private void persist(final Node resultNode, final CreationOrder creationOrder, final ResultMap resultMap, final Node node) {
+        final Object random = createRandomObject(node, creationOrder, resultMap);
+        Object persistedObject;
+        if (getId(node.getType(), random) != null
+                && findElementById(node.getType(), random) != null) {
+            persistedObject = findElementById(node.getType(), random);
+        } else {
+            persistedObject = persistAndReturnPersistedObject(node.getType(), random);
+        }
+
+        resultMap.put(node.getType(), persistedObject);
+
+        final List<Node> childNodes = node.getChildNodes();
+        for (Node childNode : childNodes) {
+            if (childNode.getValue() != null) {
+                final Node resultChildNode = Node.newInstance(childNode.getType(), getIndex(resultMap, childNode.getType()));
+                resultNode.addChildNode(resultChildNode);
+                persist(resultChildNode, creationOrder, resultMap, childNode);
+            }
+        }
+
     }
 
     private Object persistAndReturnPersistedObject(final Class tableClass, final Object random) {
@@ -87,10 +131,10 @@ public final class PersistorImpl implements Persistor {
     }
 
 
-    private Object createRandomObject(final Class tableClass, final CreationOrder creationOrder, final ResultMap resultMap) {
-        final Object random = randomize.createRandom(tableClass);
+    private Object createRandomObject(final Node node, final CreationOrder creationOrder, final ResultMap resultMap) {
+        final Object random = node.getValue();
 
-        final TableNode tableNode = creationOrder.getTableNode(tableClass);
+        final TableNode tableNode = creationOrder.getTableNode(node.getType());
         final List<Relation<?, ?>> relations = tableNode.getRelations();
 
         for (Relation relation : relations) {
@@ -124,7 +168,9 @@ public final class PersistorImpl implements Persistor {
 
 
     private <T> Object getFieldValue(final ResultMap resultMap, final FieldValue<T> fieldValue) {
-        final Object object = resultMap.get(fieldValue.getField().getDeclaringClass());
+        final Map<Class<?>, List<Object>> createdEntities = resultMap.getCreatedEntities();
+        final List<Object> objects = createdEntities.get(fieldValue.getField().getDeclaringClass());
+        final Object object = objects.get(objects.size() - 1);
         Object value = null;
         try {
             fieldValue.getField().setAccessible(true);

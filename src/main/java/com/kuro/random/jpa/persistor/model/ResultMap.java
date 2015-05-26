@@ -1,5 +1,8 @@
 package com.kuro.random.jpa.persistor.model;
 
+import com.kuro.random.jpa.types.Node;
+import com.kuro.random.jpa.types.Printer;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,14 +13,16 @@ import java.util.Map;
  */
 public final class ResultMap {
 
+    private final Node root;
     private Map<Class<?>, List<Object>> resultMap;
 
-    private ResultMap() {
+    private ResultMap(final Node root) {
         this.resultMap = new HashMap<Class<?>, List<Object>>();
+        this.root = root;
     }
 
-    public static ResultMap newInstance() {
-        return new ResultMap();
+    public static ResultMap newInstance(final Node root) {
+        return new ResultMap(root);
     }
 
     public void put(final Class<?> type, final Object object) {
@@ -45,4 +50,11 @@ public final class ResultMap {
         return (List<T>) resultMap.get(type);
     }
 
+    public Map<Class<?>, List<Object>> getCreatedEntities() {
+        return resultMap;
+    }
+
+    public void print(final Printer printer) {
+        root.print(printer);
+    }
 }
