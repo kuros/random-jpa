@@ -5,6 +5,7 @@ import com.github.kuros.random.jpa.definition.HierarchyGeneratorImpl;
 import com.github.kuros.random.jpa.definition.RelationCreator;
 import com.github.kuros.random.jpa.link.Dependencies;
 import com.github.kuros.random.jpa.mapper.HierarchyGraph;
+import com.github.kuros.random.jpa.mapper.ProcessingType;
 import com.github.kuros.random.jpa.mapper.Relation;
 import com.github.kuros.random.jpa.metamodel.annotation.AnnotatedMetaModelProvider;
 import com.github.kuros.random.jpa.metamodel.MetaModelProvider;
@@ -54,7 +55,7 @@ public final class JPAContextFactory {
         final HierarchyGenerator hierarchyGenerator = new HierarchyGeneratorImpl();
         final HierarchyGraph hierarchyGraph = hierarchyGenerator.generate(relations);
 
-        return JPAContext.newInstance(entityManager, generator, hierarchyGraph);
+        return JPAContext.newInstance(ProcessingType.ANNOTATION, entityManager, generator, hierarchyGraph);
     }
 }
 
