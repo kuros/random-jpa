@@ -6,6 +6,7 @@ import com.github.kuros.random.jpa.mapper.FieldValue;
 import com.github.kuros.random.jpa.persistor.random.Randomize;
 import com.github.kuros.random.jpa.types.CreationOrder;
 import com.github.kuros.random.jpa.types.CreationPlan;
+import com.github.kuros.random.jpa.types.CreationPlanImpl;
 import com.github.kuros.random.jpa.types.Node;
 import com.github.kuros.random.jpa.util.NumberUtil;
 
@@ -36,7 +37,7 @@ public final class CreationPlanResolver {
     }
 
     public CreationPlan create() {
-        creationPlan = new CreationPlan(creationOrder);
+        creationPlan = new CreationPlanImpl(creationOrder);
 
         add(creationPlan.getRoot(), 0);
 

@@ -34,11 +34,6 @@ public final class CreationOrder {
         creationCount.put(type, count);
     }
 
-    public int getCreationCount(final Class<?> type) {
-        final Integer integer = creationCount.get(type);
-        return integer == null ? 1 : integer;
-    }
-
     public Map<Class<?>, Integer> getCreationCount() {
         return creationCount;
     }
