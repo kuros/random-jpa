@@ -1,40 +1,38 @@
 package com.github.kuros.random.jpa.definition;
 
-import com.github.kuros.random.jpa.mapper.Relation;
-import com.github.kuros.random.jpa.resolver.DependencyResolver;
 import com.github.kuros.random.jpa.link.Dependencies;
 import com.github.kuros.random.jpa.mapper.FieldValue;
+import com.github.kuros.random.jpa.mapper.Relation;
+import com.github.kuros.random.jpa.metamodel.FieldName;
+import com.github.kuros.random.jpa.metamodel.MetaModelProvider;
 import com.github.kuros.random.jpa.provider.ForeignKeyRelation;
-import com.github.kuros.random.jpa.util.EntityTypeHelper;
+import com.github.kuros.random.jpa.provider.RelationshipProvider;
+import com.github.kuros.random.jpa.resolver.DependencyResolver;
 
-import javax.persistence.metamodel.EntityType;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
  * Created by Kumar Rohit on 5/10/15.
+ * Generates the list of relations.
  */
 public final class RelationCreator {
-    private Map<String, EntityType<?>> metaModelRelations;
+    private final Map<String, List<FieldName>> fieldsByTableName;
     private List<ForeignKeyRelation> foreignKeyRelations;
     private Dependencies dependencies;
 
-    private RelationCreator() {
-        metaModelRelations = new HashMap<String, EntityType<?>>();
+    private RelationCreator(final MetaModelProvider metaModelProvider) {
+        fieldsByTableName = metaModelProvider.getFieldsByTableName();
         this.foreignKeyRelations = new ArrayList<ForeignKeyRelation>();
     }
 
-    public static RelationCreator from(final Map<String, EntityType<?>> metaModelRelations) {
-        final RelationCreator relationCreator = new RelationCreator();
-        relationCreator.metaModelRelations.putAll(metaModelRelations);
-        return relationCreator;
+    public static RelationCreator from(final MetaModelProvider metaModelProvider) {
+        return new RelationCreator(metaModelProvider);
     }
 
-    public RelationCreator with(final List<ForeignKeyRelation> foreignKeyRelation) {
-        this.foreignKeyRelations.addAll(foreignKeyRelation);
+    public RelationCreator with(final RelationshipProvider relationshipProvider) {
+        this.foreignKeyRelations.addAll(relationshipProvider.getForeignKeyRelations());
         return this;
     }
 
@@ -69,13 +67,19 @@ public final class RelationCreator {
     }
 
     private FieldValue getFieldValue(final String table, final String attribute) {
-        final EntityType<?> entityType = metaModelRelations.get(table);
-
-        if (entityType == null) {
-            return null;
+        final List<FieldName> fieldNames = fieldsByTableName.get(table);
+        if (fieldNames != null) {
+            for (FieldName fieldName : fieldNames) {
+                if (isFieldFound(attribute, fieldName)) {
+                    return FieldValue.newInstance(fieldName.getField());
+                }
+            }
         }
+        return null;
+    }
 
-        final Field field = EntityTypeHelper.getField(entityType, attribute);
-        return field != null ? FieldValue.newInstance(field) : null;
+    private boolean isFieldFound(final String attribute, final FieldName fieldName) {
+        return (fieldName.getOverridenFieldName() != null && fieldName.getOverridenFieldName().equals(attribute))
+                || (fieldName.getOverridenFieldName() == null && fieldName.getFieldName().equals(attribute));
     }
 }
