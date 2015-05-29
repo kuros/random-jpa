@@ -4,6 +4,7 @@ import com.github.kuros.random.jpa.mapper.Relation;
 import com.github.kuros.random.jpa.mapper.TableNode;
 import com.github.kuros.random.jpa.mapper.FieldValue;
 import com.github.kuros.random.jpa.persistor.model.ResultMap;
+import com.github.kuros.random.jpa.persistor.model.ResultMapImpl;
 import com.github.kuros.random.jpa.types.CreationOrder;
 import com.github.kuros.random.jpa.types.CreationPlan;
 import com.github.kuros.random.jpa.types.Node;
@@ -33,7 +34,7 @@ public final class PersistorImpl implements Persistor {
 
     public ResultMap persist(final CreationPlan creationPlan) {
         final Node root = Node.newInstance();
-        final ResultMap resultMap = ResultMap.newInstance(root);
+        final ResultMapImpl resultMap = ResultMapImpl.newInstance(root);
 
 
         final Node creationPlanRoot = creationPlan.getRoot();
@@ -46,25 +47,10 @@ public final class PersistorImpl implements Persistor {
             }
         }
 
-
-//        final List<Class<?>> plan = creationOrder.getOrder();
-//        for (Class tableClass : plan) {
-//            final Object random = createRandomObject(tableClass, creationOrder, resultMap);
-//
-//            Object persistedObject;
-//            if (getId(tableClass, random) != null
-//                    && findElementById(tableClass, random) != null) {
-//                persistedObject = findElementById(tableClass, random);
-//            } else {
-//                persistedObject = persistAndReturnPersistedObject(tableClass, random);
-//            }
-//
-//            resultMap.put(tableClass, persistedObject);
-//        }
         return resultMap;
     }
 
-    private int getIndex(final ResultMap resultMap, final Class type) {
+    private int getIndex(final ResultMapImpl resultMap, final Class type) {
         final List<Object> objects = resultMap.getCreatedEntities().get(type);
         return isEmpty(objects) ? 0 : objects.size();
     }
@@ -73,7 +59,7 @@ public final class PersistorImpl implements Persistor {
         return objects == null || objects.isEmpty();
     }
 
-    private void persist(final Node resultNode, final CreationOrder creationOrder, final ResultMap resultMap, final Node node) {
+    private void persist(final Node resultNode, final CreationOrder creationOrder, final ResultMapImpl resultMap, final Node node) {
         final Object random = createRandomObject(node, creationOrder, resultMap);
         Object persistedObject;
         if (getId(node.getType(), random) != null
@@ -131,7 +117,7 @@ public final class PersistorImpl implements Persistor {
     }
 
 
-    private Object createRandomObject(final Node node, final CreationOrder creationOrder, final ResultMap resultMap) {
+    private Object createRandomObject(final Node node, final CreationOrder creationOrder, final ResultMapImpl resultMap) {
         final Object random = node.getValue();
 
         final TableNode tableNode = creationOrder.getTableNode(node.getType());
@@ -145,7 +131,7 @@ public final class PersistorImpl implements Persistor {
         return random;
     }
 
-    private <F, T> void createRelation(final ResultMap resultMap, final Relation<F, T> relation, final Object object) {
+    private <F, T> void createRelation(final ResultMapImpl resultMap, final Relation<F, T> relation, final Object object) {
         try {
             final Object value = getFieldValue(resultMap, relation.getTo());
             setFieldValue(object, relation.getFrom(), value);
@@ -167,7 +153,7 @@ public final class PersistorImpl implements Persistor {
 
 
 
-    private <T> Object getFieldValue(final ResultMap resultMap, final FieldValue<T> fieldValue) {
+    private <T> Object getFieldValue(final ResultMapImpl resultMap, final FieldValue<T> fieldValue) {
         final Map<Class<?>, List<Object>> createdEntities = resultMap.getCreatedEntities();
         final List<Object> objects = createdEntities.get(fieldValue.getField().getDeclaringClass());
         final Object object = objects.get(objects.size() - 1);

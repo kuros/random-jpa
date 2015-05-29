@@ -1,60 +1,22 @@
 package com.github.kuros.random.jpa.persistor.model;
 
 import com.github.kuros.random.jpa.types.Printer;
-import com.github.kuros.random.jpa.types.Node;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
- * Created by Kumar Rohit on 5/14/15.
+ * Created by Kumar Rohit on 5/29/15.
+ *
  */
-public final class ResultMap {
-
-    private final Node root;
-    private Map<Class<?>, List<Object>> resultMap;
-
-    private ResultMap(final Node root) {
-        this.resultMap = new HashMap<Class<?>, List<Object>>();
-        this.root = root;
-    }
-
-    public static ResultMap newInstance(final Node root) {
-        return new ResultMap(root);
-    }
-
-    public void put(final Class<?> type, final Object object) {
-        List<Object> objects = resultMap.get(type);
-        if (objects == null) {
-            objects = new ArrayList<Object>();
-            resultMap.put(type, objects);
-        }
-        objects.add(object);
-    }
+public interface ResultMap {
+    @SuppressWarnings("unchecked")
+    <T> T get(Class<T> type);
 
     @SuppressWarnings("unchecked")
-    public <T> T get(final Class<T> type) {
-        return get(type, 0);
-    }
+    <T> T get(Class<T> type, int index);
 
     @SuppressWarnings("unchecked")
-    public <T> T get(final Class<T> type, final int index) {
-        final List<?> objects = resultMap.get(type);
-        return objects == null ? null : (T) objects.get(index);
-    }
+    <T> List<T> getAll(Class<T> type);
 
-    @SuppressWarnings("unchecked")
-    public <T> List<T> getAll(final Class<T> type) {
-        return (List<T>) resultMap.get(type);
-    }
-
-    public Map<Class<?>, List<Object>> getCreatedEntities() {
-        return resultMap;
-    }
-
-    public void print(final Printer printer) {
-        root.print(printer);
-    }
+    void print(Printer printer);
 }

@@ -1,6 +1,7 @@
 package com.github.kuros.random.jpa.types;
 
 import com.github.kuros.random.jpa.persistor.model.ResultMap;
+import com.github.kuros.random.jpa.persistor.model.ResultMapImpl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,7 +20,7 @@ public class CreationPlan {
     public CreationPlan(final CreationOrder creationOrder) {
         this.createdNodeMap = new HashMap<Class<?>, List<Node>>();
         this.root = Node.newInstance();
-        this.resultMap = ResultMap.newInstance(root);
+        this.resultMap = ResultMapImpl.newInstance(root);
         this.creationOrder = creationOrder;
     }
 
