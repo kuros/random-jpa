@@ -2,12 +2,15 @@ package com.github.kuros.random.jpa;
 
 import com.github.kuros.random.jpa.definition.HierarchyGenerator;
 import com.github.kuros.random.jpa.mapper.HierarchyGraph;
+import com.github.kuros.random.jpa.mapper.ProcessingType;
 import com.github.kuros.random.jpa.persistor.PersistorImpl;
 import com.github.kuros.random.jpa.persistor.model.ResultMap;
 import com.github.kuros.random.jpa.random.RandomizeImpl;
 import com.github.kuros.random.jpa.resolver.CreationOrderResolver;
 import com.github.kuros.random.jpa.resolver.CreationPlanResolver;
 import com.github.kuros.random.jpa.resolver.EntityResolver;
+import com.github.kuros.random.jpa.resolver.EntityResolverFactory;
+import com.github.kuros.random.jpa.resolver.annotation.AnnotatedEntityResolver;
 import com.github.kuros.random.jpa.types.Plan;
 import com.github.kuros.random.jpa.definition.HierarchyGeneratorImpl;
 import com.github.kuros.random.jpa.persistor.Persistor;
@@ -40,7 +43,7 @@ public final class JPAContext {
 
     public CreationPlan create(final Plan plan) {
 
-        final EntityResolver entityResolver = EntityResolver.newInstance(entityManager, hierarchyGraph, plan);
+        final EntityResolver entityResolver = EntityResolverFactory.getEntityResolver(ProcessingType.ANNOTATION, entityManager, hierarchyGraph, plan);
         generator.addFieldValue(entityResolver.getFieldValueMap());
 
         final CreationOrderResolver creationOrderResolver = CreationOrderResolver.newInstance(hierarchyGraph, plan);

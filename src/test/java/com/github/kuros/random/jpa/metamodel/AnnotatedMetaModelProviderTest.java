@@ -1,5 +1,6 @@
 package com.github.kuros.random.jpa.metamodel;
 
+import com.github.kuros.random.jpa.metamodel.annotation.AnnotatedMetaModelProvider;
 import com.github.kuros.random.jpa.testUtil.MockEntityManagerProvider;
 import org.junit.Before;
 import org.junit.Test;

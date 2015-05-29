@@ -1,4 +1,7 @@
-package com.github.kuros.random.jpa.metamodel;
+package com.github.kuros.random.jpa.metamodel.annotation;
+
+import com.github.kuros.random.jpa.metamodel.FieldName;
+import com.github.kuros.random.jpa.metamodel.MetaModelProvider;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
