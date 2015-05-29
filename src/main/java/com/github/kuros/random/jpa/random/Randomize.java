@@ -1,4 +1,4 @@
-package com.github.kuros.random.jpa.persistor.random;
+package com.github.kuros.random.jpa.random;
 
 /**
  * Created by Kumar Rohit on 5/14/15.

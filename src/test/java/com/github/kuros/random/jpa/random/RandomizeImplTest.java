@@ -1,8 +1,8 @@
-package com.github.kuros.random.jpa.persistor.random;
+package com.github.kuros.random.jpa.random;
 
 import com.github.kuros.random.jpa.testUtil.entity.Employee;
-import com.github.kuros.random.jpa.persistor.random.generator.Generator;
-import com.github.kuros.random.jpa.persistor.random.generator.RandomGenerator;
+import com.github.kuros.random.jpa.random.generator.Generator;
+import com.github.kuros.random.jpa.random.generator.RandomGenerator;
 import org.junit.Test;
 
 import static org.junit.Assert.assertNotNull;

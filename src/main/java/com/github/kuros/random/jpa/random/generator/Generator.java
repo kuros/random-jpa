@@ -1,4 +1,4 @@
-package com.github.kuros.random.jpa.persistor.random.generator;
+package com.github.kuros.random.jpa.random.generator;
 
 import java.util.ArrayList;
 import java.util.List;

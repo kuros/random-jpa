@@ -1,7 +1,7 @@
-package com.github.kuros.random.jpa.persistor.random.generator;
+package com.github.kuros.random.jpa.random.generator;
 
 import com.github.kuros.random.jpa.util.AttributeHelper;
-import com.github.kuros.random.jpa.persistor.random.adapter.RandomClassGeneratorAdapter;
+import com.github.kuros.random.jpa.random.adapter.RandomClassGeneratorAdapter;
 import com.openpojo.random.RandomFactory;
 
 import javax.persistence.metamodel.Attribute;

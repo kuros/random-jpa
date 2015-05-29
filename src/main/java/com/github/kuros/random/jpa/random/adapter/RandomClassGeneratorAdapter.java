@@ -1,6 +1,6 @@
-package com.github.kuros.random.jpa.persistor.random.adapter;
+package com.github.kuros.random.jpa.random.adapter;
 
-import com.github.kuros.random.jpa.persistor.random.generator.RandomClassGenerator;
+import com.github.kuros.random.jpa.random.generator.RandomClassGenerator;
 import com.openpojo.random.RandomGenerator;
 
 import java.util.Collection;

@@ -1,6 +1,6 @@
-package com.github.kuros.random.jpa.persistor.random;
+package com.github.kuros.random.jpa.random;
 
-import com.github.kuros.random.jpa.persistor.random.generator.RandomGenerator;
+import com.github.kuros.random.jpa.random.generator.RandomGenerator;
 
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
