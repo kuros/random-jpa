@@ -5,7 +5,7 @@ import org.junit.Test;
 /**
  * Created by Kumar Rohit on 5/14/15.
  */
-public class PersistorImplTest {
+public class AnnotatedEntityPersistorTest {
 
     //TODO - ADD test
     @Test

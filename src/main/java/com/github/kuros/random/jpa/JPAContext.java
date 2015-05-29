@@ -5,12 +5,13 @@ import com.github.kuros.random.jpa.definition.HierarchyGeneratorImpl;
 import com.github.kuros.random.jpa.mapper.HierarchyGraph;
 import com.github.kuros.random.jpa.mapper.ProcessingType;
 import com.github.kuros.random.jpa.persistor.Persistor;
-import com.github.kuros.random.jpa.persistor.PersistorImpl;
+import com.github.kuros.random.jpa.persistor.PersistorFactory;
 import com.github.kuros.random.jpa.persistor.model.ResultMap;
 import com.github.kuros.random.jpa.random.RandomizeImpl;
 import com.github.kuros.random.jpa.random.generator.Generator;
 import com.github.kuros.random.jpa.random.generator.RandomGenerator;
 import com.github.kuros.random.jpa.resolver.CreationOrderResolver;
+import com.github.kuros.random.jpa.resolver.CreationOrderResolverFactory;
 import com.github.kuros.random.jpa.resolver.CreationPlanResolver;
 import com.github.kuros.random.jpa.resolver.EntityResolver;
 import com.github.kuros.random.jpa.resolver.EntityResolverFactory;
@@ -48,7 +49,8 @@ public final class JPAContext {
                 .getEntityResolver(processingType, entityManager, hierarchyGraph, plan);
         generator.addFieldValue(entityResolver.getFieldValueMap());
 
-        final CreationOrderResolver creationOrderResolver = CreationOrderResolver.newInstance(hierarchyGraph, plan);
+        final CreationOrderResolver creationOrderResolver = CreationOrderResolverFactory
+                .getCreationOrderResolver(processingType, hierarchyGraph, plan);
         final CreationOrder creationOrder = creationOrderResolver.getCreationOrder();
 
         final CreationPlanResolver creationPlanResolver = CreationPlanResolver.newInstance(creationOrder, RandomizeImpl.newInstance(generator));
@@ -57,8 +59,12 @@ public final class JPAContext {
     }
 
     public ResultMap persist(final CreationPlan creationPlan) {
-        final Persistor persistor = PersistorImpl.newInstance(entityManager);
+        final Persistor persistor = PersistorFactory.getPersistor(processingType, entityManager);
         return persistor.persist(creationPlan);
+    }
+
+    public ResultMap createAndPersist(final Plan plan) {
+        return persist(create(plan));
     }
 
     private HierarchyGenerator getHierarchyGenerator() {

@@ -1,8 +1,9 @@
-package com.github.kuros.random.jpa.persistor;
+package com.github.kuros.random.jpa.persistor.annotation;
 
 import com.github.kuros.random.jpa.mapper.Relation;
 import com.github.kuros.random.jpa.mapper.TableNode;
 import com.github.kuros.random.jpa.mapper.FieldValue;
+import com.github.kuros.random.jpa.persistor.Persistor;
 import com.github.kuros.random.jpa.persistor.model.ResultMap;
 import com.github.kuros.random.jpa.persistor.model.ResultMapImpl;
 import com.github.kuros.random.jpa.types.CreationOrder;
@@ -20,16 +21,16 @@ import java.util.Map;
 /**
  * Created by Kumar Rohit on 5/13/15.
  */
-public final class PersistorImpl implements Persistor {
+public final class AnnotatedEntityPersistor implements Persistor {
 
     private EntityManager entityManager;
 
-    private PersistorImpl(final EntityManager entityManager) {
+    private AnnotatedEntityPersistor(final EntityManager entityManager) {
         this.entityManager = entityManager;
     }
 
     public static Persistor newInstance(final EntityManager entityManager) {
-        return new PersistorImpl(entityManager);
+        return new AnnotatedEntityPersistor(entityManager);
     }
 
     public ResultMap persist(final CreationPlan creationPlan) {
