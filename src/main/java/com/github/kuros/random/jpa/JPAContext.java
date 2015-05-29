@@ -18,7 +18,7 @@ import com.github.kuros.random.jpa.persistor.Persistor;
 import com.github.kuros.random.jpa.persistor.random.generator.Generator;
 import com.github.kuros.random.jpa.persistor.random.generator.RandomGenerator;
 import com.github.kuros.random.jpa.provider.ForeignKeyRelation;
-import com.github.kuros.random.jpa.provider.RelationshipProvider;
+import com.github.kuros.random.jpa.database.mssql.provider.MSSQLRelationshipProvider;
 import com.github.kuros.random.jpa.types.CreationOrder;
 import com.github.kuros.random.jpa.types.CreationPlan;
 
@@ -58,7 +58,7 @@ public final class JPAContext {
     }
 
     private void initialize() {
-        final RelationshipProvider relationshipProvider = RelationshipProvider.newInstance(entityManager);
+        final MSSQLRelationshipProvider relationshipProvider = MSSQLRelationshipProvider.newInstance(entityManager);
         final List<ForeignKeyRelation> foreignKeyRelations = relationshipProvider.getForeignKeyRelations();
 
         final List<Relation> relations = RelationCreator.from(metaModelRelations)
