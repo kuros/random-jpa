@@ -5,6 +5,8 @@ import com.github.kuros.random.jpa.testUtil.entity.Department;
 import com.github.kuros.random.jpa.testUtil.entity.Employee;
 import com.github.kuros.random.jpa.testUtil.entity.EmployeeDepartment;
 import com.github.kuros.random.jpa.testUtil.entity.Person;
+import org.hibernate.jpa.HibernateEntityManager;
+import org.hibernate.jpa.HibernateEntityManagerFactory;
 import org.mockito.Mockito;
 
 import javax.persistence.EntityManager;
@@ -30,8 +32,8 @@ public final class MockEntityManagerProvider {
     }
 
     private MockEntityManagerProvider() {
-        this.entityManager = Mockito.mock(EntityManager.class);
-        this.entityManagerFactory = Mockito.mock(EntityManagerFactory.class);
+        this.entityManager = Mockito.mock(HibernateEntityManager.class);
+        this.entityManagerFactory = Mockito.mock(HibernateEntityManagerFactory.class);
         this.metamodel = Mockito.mock(Metamodel.class);
     }
 
