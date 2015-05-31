@@ -1,15 +1,14 @@
 package com.github.kuros.random.jpa.resolver.annotation;
 
-import com.github.kuros.random.jpa.resolver.CreationOrderResolver;
-import com.github.kuros.random.jpa.types.Plan;
 import com.github.kuros.random.jpa.mapper.HierarchyGraph;
+import com.github.kuros.random.jpa.metamodel.AttributeProvider;
+import com.github.kuros.random.jpa.metamodel.EntityTableMapping;
+import com.github.kuros.random.jpa.resolver.CreationOrderResolver;
 import com.github.kuros.random.jpa.types.AttributeValue;
 import com.github.kuros.random.jpa.types.CreationOrder;
 import com.github.kuros.random.jpa.types.Entity;
-import com.github.kuros.random.jpa.util.AttributeHelper;
+import com.github.kuros.random.jpa.types.Plan;
 
-import javax.persistence.Id;
-import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.List;
 import java.util.PriorityQueue;
@@ -22,16 +21,19 @@ import java.util.Stack;
  */
 public final class AnnotatedCreationOrderResolver implements CreationOrderResolver {
 
+    private AttributeProvider attributeProvider;
     private HierarchyGraph hierarchyGraph;
     private Plan plan;
 
-    private AnnotatedCreationOrderResolver(final HierarchyGraph hierarchyGraph, final Plan plan) {
+
+    private AnnotatedCreationOrderResolver(final AttributeProvider attributeProvider, final HierarchyGraph hierarchyGraph, final Plan plan) {
+        this.attributeProvider = attributeProvider;
         this.hierarchyGraph = hierarchyGraph;
         this.plan = plan;
     }
 
-    public static CreationOrderResolver newInstance(final HierarchyGraph hierarchyGraph, final Plan plan) {
-        return new AnnotatedCreationOrderResolver(hierarchyGraph, plan);
+    public static CreationOrderResolver newInstance(final AttributeProvider attributeProvider, final HierarchyGraph hierarchyGraph, final Plan plan) {
+        return new AnnotatedCreationOrderResolver(attributeProvider, hierarchyGraph, plan);
     }
 
     @Override
@@ -79,15 +81,12 @@ public final class AnnotatedCreationOrderResolver implements CreationOrderResolv
     private boolean isFilterRequired(final Entity entity) {
         final List<AttributeValue> attributeValues = entity.getAttributeValues();
 
+        final EntityTableMapping entityTableMapping = attributeProvider.get(entity.getType());
+
         for (AttributeValue attributeValue : attributeValues) {
-            try {
-                final Field field = AttributeHelper.getField(attributeValue.getAttribute());
-                final Id annotation = field.getAnnotation(Id.class);
-                if (annotation != null) {
-                    return true;
-                }
-            } catch (final NoSuchFieldException e) {
-                return false;
+            final String attributeName = attributeValue.getAttribute().getName();
+            if (entityTableMapping.getAttributeIds().contains(attributeName)) {
+                return true;
             }
         }
 
@@ -116,6 +115,5 @@ public final class AnnotatedCreationOrderResolver implements CreationOrderResolv
                 creationOrder.add(pop);
         }
     }
-
 
 }

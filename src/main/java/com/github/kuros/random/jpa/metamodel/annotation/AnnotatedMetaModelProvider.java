@@ -1,14 +1,12 @@
 package com.github.kuros.random.jpa.metamodel.annotation;
 
+import com.github.kuros.random.jpa.metamodel.AttributeProvider;
+import com.github.kuros.random.jpa.metamodel.EntityTableMapping;
 import com.github.kuros.random.jpa.metamodel.FieldName;
 import com.github.kuros.random.jpa.metamodel.MetaModelProvider;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
-import javax.persistence.Column;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Table;
 import javax.persistence.metamodel.EntityType;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -23,9 +21,11 @@ import java.util.Set;
  */
 public class AnnotatedMetaModelProvider implements MetaModelProvider {
     private EntityManager entityManager;
+    private AttributeProvider attributeProvider;
 
     public AnnotatedMetaModelProvider(final EntityManager entityManager) {
         this.entityManager = entityManager;
+        attributeProvider = AttributeProvider.getInstance(entityManager);
     }
 
     @Override
@@ -36,37 +36,26 @@ public class AnnotatedMetaModelProvider implements MetaModelProvider {
         for (EntityType<?> entity : entities) {
             final Class<?> javaType = entity.getJavaType();
 
-            if (isEntityTable(javaType)) {
-                final String tableName = getTableName(javaType);
-                entityMap.put(tableName, getFields(javaType));
-            }
+            final EntityTableMapping entityTableMapping = attributeProvider.get(javaType);
+
+            entityMap.put(entityTableMapping.getTableName(), getFields(javaType));
         }
 
         return entityMap;
     }
 
     private List<FieldName> getFields(final Class<?> type) {
+
+        final EntityTableMapping entityTableMapping = attributeProvider.get(type);
+
         final List<FieldName> fields = new ArrayList<FieldName>();
         final Field[] declaredFields = type.getDeclaredFields();
 
         for (Field declaredField : declaredFields) {
 
-            final Column column = declaredField.getAnnotation(Column.class);
-            final AttributeOverrides attributeOverrides = declaredField.getAnnotation(AttributeOverrides.class);
-            final AttributeOverride attributeOverride = declaredField.getAnnotation(AttributeOverride.class);
-
-            if (column != null) {
-                fields.add(new FieldName(declaredField, column.name()));
-            } else if (attributeOverrides != null) {
-                final AttributeOverride[] overrides = attributeOverrides.value();
-                for (AttributeOverride override : overrides) {
-                    if (override.column() != null) {
-                        fields.add(new FieldName(declaredField, override.column().name()));
-                        break;
-                    }
-                }
-            } else if (attributeOverride != null && attributeOverride.column() != null) {
-                fields.add(new FieldName(declaredField, attributeOverride.column().name()));
+            final String columnName = entityTableMapping.getColumnName(declaredField.getName());
+            if (columnName != null) {
+                fields.add(new FieldName(declaredField, columnName));
             }
         }
 
@@ -76,15 +65,5 @@ public class AnnotatedMetaModelProvider implements MetaModelProvider {
     private Set<EntityType<?>> getEntityTypes() {
         final EntityManagerFactory entityManagerFactory = entityManager.getEntityManagerFactory();
         return entityManagerFactory.getMetamodel().getEntities();
-    }
-
-    private String getTableName(final Class<?> javaType) {
-        final Table annotation = javaType.getAnnotation(Table.class);
-        final String tableName = annotation.name();
-        return tableName.isEmpty() ? javaType.getSimpleName() : tableName;
-    }
-
-    private boolean isEntityTable(final Class<?> javaType) {
-        return javaType.getAnnotation(Table.class) != null;
     }
 }

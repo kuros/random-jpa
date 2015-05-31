@@ -31,7 +31,7 @@
 
     <groupId>com.github.kuros</groupId>
     <artifactId>random-jpa</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>0.0.1-SNAPSHOT</version>
     <name>${project.artifactId}</name>
 
     <description>This project was born out of a need to create test data for complex database hierarchy.
@@ -94,6 +94,12 @@
             <groupId>org.hibernate.javax.persistence</groupId>
             <artifactId>hibernate-jpa-2.1-api</artifactId>
             <version>${hibernate-jpa-2.1-api.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
+            <version>4.3.7.Final</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
