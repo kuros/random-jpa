@@ -1,9 +1,4 @@
-package com.github.kuros.random.jpa.metamodel.annotation;
-
-import com.github.kuros.random.jpa.metamodel.AttributeProvider;
-import com.github.kuros.random.jpa.metamodel.EntityTableMapping;
-import com.github.kuros.random.jpa.metamodel.FieldName;
-import com.github.kuros.random.jpa.metamodel.MetaModelProvider;
+package com.github.kuros.random.jpa.metamodel;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -19,11 +14,11 @@ import java.util.Set;
  * Created by Kumar Rohit on 5/30/15.
  * MetaModel provider for Annotated entity classes.
  */
-public class AnnotatedMetaModelProvider implements MetaModelProvider {
+public class MetaModelProviderImpl implements MetaModelProvider {
     private EntityManager entityManager;
     private AttributeProvider attributeProvider;
 
-    public AnnotatedMetaModelProvider(final EntityManager entityManager) {
+    public MetaModelProviderImpl(final EntityManager entityManager) {
         this.entityManager = entityManager;
         attributeProvider = AttributeProvider.getInstance(entityManager);
     }

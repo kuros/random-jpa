@@ -1,6 +1,5 @@
 package com.github.kuros.random.jpa.metamodel;
 
-import com.github.kuros.random.jpa.metamodel.annotation.AnnotatedMetaModelProvider;
 import com.github.kuros.random.jpa.testUtil.MockEntityManagerProvider;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,7 +13,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * Created by Kumar Rohit on 5/30/15.
  */
-public class AnnotatedMetaModelProviderTest {
+public class MetaModelProviderImplTest {
 
     private MockEntityManagerProvider entityManagerProvider;
     private EntityManager entityManager;
@@ -24,7 +23,7 @@ public class AnnotatedMetaModelProviderTest {
     public void setUp() throws Exception {
         entityManagerProvider = MockEntityManagerProvider.createMockEntityManager();
         entityManager = entityManagerProvider.getEntityManager();
-        metaModelProvider = new AnnotatedMetaModelProvider(entityManager);
+        metaModelProvider = new MetaModelProviderImpl(entityManager);
     }
 
     @Test

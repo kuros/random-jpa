@@ -7,7 +7,7 @@ import com.github.kuros.random.jpa.link.Dependencies;
 import com.github.kuros.random.jpa.mapper.HierarchyGraph;
 import com.github.kuros.random.jpa.mapper.ProcessingType;
 import com.github.kuros.random.jpa.mapper.Relation;
-import com.github.kuros.random.jpa.metamodel.annotation.AnnotatedMetaModelProvider;
+import com.github.kuros.random.jpa.metamodel.MetaModelProviderImpl;
 import com.github.kuros.random.jpa.metamodel.MetaModelProvider;
 import com.github.kuros.random.jpa.random.generator.Generator;
 import com.github.kuros.random.jpa.provider.RelationProviderFactory;
@@ -45,7 +45,7 @@ public final class JPAContextFactory {
     }
 
     public JPAContext createWithAnnotatedEntities() {
-        final MetaModelProvider metaModelProvider = new AnnotatedMetaModelProvider(entityManager);
+        final MetaModelProvider metaModelProvider = new MetaModelProviderImpl(entityManager);
         final List<Relation> relations = RelationCreator
                 .from(metaModelProvider)
                 .with(dependencies)
