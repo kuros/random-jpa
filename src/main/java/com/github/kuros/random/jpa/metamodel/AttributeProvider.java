@@ -1,6 +1,9 @@
 package com.github.kuros.random.jpa.metamodel;
 
 import com.github.kuros.random.jpa.util.AttributeHelper;
+import org.hibernate.id.IdentityGenerator;
+import org.hibernate.id.SelectGenerator;
+import org.hibernate.id.SequenceIdentityGenerator;
 import org.hibernate.jpa.HibernateEntityManagerFactory;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.persister.entity.SingleTableEntityPersister;
@@ -9,6 +12,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.EntityType;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -47,6 +51,7 @@ public final class AttributeProvider {
 
                 entityTableMapping.addColumnIds(singleTableEntityPersister.getKeyColumnNames());
                 entityTableMapping.setTableName(getTableName(singleTableEntityPersister));
+                entityTableMapping.setIdentifierGenerator(singleTableEntityPersister.getIdentifierGenerator().getClass());
 
                 for (Attribute attribute : entity.getAttributes()) {
                     final String name = AttributeHelper.getName(attribute);
@@ -86,5 +91,14 @@ public final class AttributeProvider {
 
     public EntityTableMapping get(final String tableName) {
         return entityTableMappingByTableName.get(tableName.toLowerCase());
+    }
+
+    public Set<Class<?>> getSupportedGeneratorType() {
+        final Set<Class<?>> generators = new HashSet<Class<?>>();
+        generators.add(IdentityGenerator.class);
+        generators.add(SelectGenerator.class);
+        generators.add(SequenceIdentityGenerator.class);
+
+        return generators;
     }
 }

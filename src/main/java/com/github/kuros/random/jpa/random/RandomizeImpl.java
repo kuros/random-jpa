@@ -1,11 +1,9 @@
 package com.github.kuros.random.jpa.random;
 
+import com.github.kuros.random.jpa.metamodel.AttributeProvider;
+import com.github.kuros.random.jpa.metamodel.EntityTableMapping;
 import com.github.kuros.random.jpa.random.generator.RandomGenerator;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import java.lang.reflect.Field;
 
 /**
@@ -14,13 +12,15 @@ import java.lang.reflect.Field;
 public final class RandomizeImpl implements Randomize {
 
     private final RandomGenerator randomGenerator;
+    private final AttributeProvider attributProvider;
 
-    private RandomizeImpl(final RandomGenerator randomGenerator) {
+    private RandomizeImpl(final AttributeProvider attributeProvider, final RandomGenerator randomGenerator) {
+        this.attributProvider = attributeProvider;
         this.randomGenerator = randomGenerator;
     }
 
-    public static Randomize newInstance(final RandomGenerator randomGenerator) {
-        return new RandomizeImpl(randomGenerator);
+    public static Randomize newInstance(final AttributeProvider attributeProvider, final RandomGenerator randomGenerator) {
+        return new RandomizeImpl(attributeProvider, randomGenerator);
     }
 
     public <T> T createRandom(final Class<T> type) {
@@ -46,27 +46,16 @@ public final class RandomizeImpl implements Randomize {
             return true;
         }
 
-        if (fieldIsNotColumn(declaredField)) {
-            return false;
-        }
+        final EntityTableMapping entityTableMapping = attributProvider.get(declaredField.getDeclaringClass());
 
-        final Id annotation = declaredField.getAnnotation(Id.class);
-        if (annotation == null) {
-            return true;
-        }
+        return !(entityTableMapping == null || fieldIsNotColumn(entityTableMapping, declaredField))
+                && (!entityTableMapping.getAttributeIds().contains(declaredField.getName())
+                || !attributProvider.getSupportedGeneratorType().contains(entityTableMapping.getIdentifierGenerator()));
 
-        final GeneratedValue generatedValue = declaredField.getAnnotation(GeneratedValue.class);
-        if (generatedValue != null) {
-            final GenerationType strategy = generatedValue.strategy();
-            if (strategy == GenerationType.IDENTITY) {
-                return false;
-            }
-        }
-
-        return true;
     }
 
-    private boolean fieldIsNotColumn(final Field field) {
-        return field.getAnnotation(Column.class) == null;
+    private boolean fieldIsNotColumn(final EntityTableMapping entityTableMapping, final Field field) {
+
+        return !entityTableMapping.getAttributeNames().contains(field.getName());
     }
 }

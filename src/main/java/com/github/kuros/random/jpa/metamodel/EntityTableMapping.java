@@ -17,6 +17,7 @@ public class EntityTableMapping {
 
     private List<String> attributeIds;
     private List<String> columnIds;
+    private Class<?> identifierGenerator;
 
     private Map<String, String> attributeColumnMapping;
     private Map<String, String> columnAttributeMapping;
@@ -36,6 +37,14 @@ public class EntityTableMapping {
 
     public String getEntityName() {
         return entityName;
+    }
+
+    public Class<?> getIdentifierGenerator() {
+        return identifierGenerator;
+    }
+
+    public void setIdentifierGenerator(final Class<?> identifierGenerator) {
+        this.identifierGenerator = identifierGenerator;
     }
 
     public String getTableName() {

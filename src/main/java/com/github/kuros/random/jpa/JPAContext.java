@@ -47,7 +47,7 @@ public final class JPAContext {
         final CreationOrderResolver creationOrderResolver = CreationOrderResolverImpl.newInstance(AttributeProvider.getInstance(entityManager), hierarchyGraph, plan);
         final CreationOrder creationOrder = creationOrderResolver.getCreationOrder();
 
-        final CreationPlanResolver creationPlanResolver = CreationPlanResolver.newInstance(creationOrder, RandomizeImpl.newInstance(generator));
+        final CreationPlanResolver creationPlanResolver = CreationPlanResolver.newInstance(creationOrder, RandomizeImpl.newInstance(AttributeProvider.getInstance(entityManager), generator));
 
         return creationPlanResolver.create();
     }
