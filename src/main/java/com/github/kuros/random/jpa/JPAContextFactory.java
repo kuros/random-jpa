@@ -5,12 +5,11 @@ import com.github.kuros.random.jpa.definition.HierarchyGeneratorImpl;
 import com.github.kuros.random.jpa.definition.RelationCreator;
 import com.github.kuros.random.jpa.link.Dependencies;
 import com.github.kuros.random.jpa.mapper.HierarchyGraph;
-import com.github.kuros.random.jpa.mapper.ProcessingType;
 import com.github.kuros.random.jpa.mapper.Relation;
-import com.github.kuros.random.jpa.metamodel.MetaModelProviderImpl;
 import com.github.kuros.random.jpa.metamodel.MetaModelProvider;
-import com.github.kuros.random.jpa.random.generator.Generator;
+import com.github.kuros.random.jpa.metamodel.MetaModelProviderImpl;
 import com.github.kuros.random.jpa.provider.RelationProviderFactory;
+import com.github.kuros.random.jpa.random.generator.Generator;
 
 import javax.persistence.EntityManager;
 import java.util.List;
@@ -44,7 +43,7 @@ public final class JPAContextFactory {
         return this;
     }
 
-    public JPAContext createWithAnnotatedEntities() {
+    public JPAContext create() {
         final MetaModelProvider metaModelProvider = new MetaModelProviderImpl(entityManager);
         final List<Relation> relations = RelationCreator
                 .from(metaModelProvider)
@@ -55,7 +54,7 @@ public final class JPAContextFactory {
         final HierarchyGenerator hierarchyGenerator = new HierarchyGeneratorImpl();
         final HierarchyGraph hierarchyGraph = hierarchyGenerator.generate(relations);
 
-        return JPAContext.newInstance(ProcessingType.ANNOTATION, entityManager, generator, hierarchyGraph);
+        return JPAContext.newInstance(entityManager, generator, hierarchyGraph);
     }
 }
 

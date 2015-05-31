@@ -1,10 +1,9 @@
 package com.github.kuros.random.jpa;
 
 import com.github.kuros.random.jpa.mapper.HierarchyGraph;
-import com.github.kuros.random.jpa.mapper.ProcessingType;
 import com.github.kuros.random.jpa.metamodel.AttributeProvider;
+import com.github.kuros.random.jpa.persistor.EntityPersistorImpl;
 import com.github.kuros.random.jpa.persistor.Persistor;
-import com.github.kuros.random.jpa.persistor.PersistorFactory;
 import com.github.kuros.random.jpa.persistor.model.ResultMap;
 import com.github.kuros.random.jpa.random.RandomizeImpl;
 import com.github.kuros.random.jpa.random.generator.Generator;
@@ -25,18 +24,16 @@ import javax.persistence.EntityManager;
  */
 public final class JPAContext {
 
-    private ProcessingType processingType;
     private final EntityManager entityManager;
     private HierarchyGraph hierarchyGraph;
     private RandomGenerator generator;
 
-    static JPAContext newInstance(final ProcessingType processingType, final EntityManager entityManager,
+    static JPAContext newInstance(final EntityManager entityManager,
                                   final Generator generator, final HierarchyGraph hierarchyGraph) {
-        return new JPAContext(processingType, entityManager, generator, hierarchyGraph);
+        return new JPAContext( entityManager, generator, hierarchyGraph);
     }
 
-    private JPAContext(final ProcessingType processingType, final EntityManager entityManager, final Generator generator, final HierarchyGraph hierarchyGraph) {
-        this.processingType = processingType;
+    private JPAContext(final EntityManager entityManager, final Generator generator, final HierarchyGraph hierarchyGraph) {
         this.entityManager = entityManager;
         this.hierarchyGraph = hierarchyGraph;
         this.generator = RandomGenerator.newInstance(generator);
@@ -56,7 +53,7 @@ public final class JPAContext {
     }
 
     public ResultMap persist(final CreationPlan creationPlan) {
-        final Persistor persistor = PersistorFactory.getPersistor(processingType, entityManager);
+        final Persistor persistor = EntityPersistorImpl.newInstance(entityManager);
         return persistor.persist(creationPlan);
     }
 

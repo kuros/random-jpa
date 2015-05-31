@@ -1,9 +1,10 @@
-package com.github.kuros.random.jpa.persistor.annotation;
+package com.github.kuros.random.jpa.persistor;
 
+import com.github.kuros.random.jpa.mapper.FieldValue;
 import com.github.kuros.random.jpa.mapper.Relation;
 import com.github.kuros.random.jpa.mapper.TableNode;
-import com.github.kuros.random.jpa.mapper.FieldValue;
-import com.github.kuros.random.jpa.persistor.Persistor;
+import com.github.kuros.random.jpa.metamodel.AttributeProvider;
+import com.github.kuros.random.jpa.metamodel.EntityTableMapping;
 import com.github.kuros.random.jpa.persistor.model.ResultMap;
 import com.github.kuros.random.jpa.persistor.model.ResultMapImpl;
 import com.github.kuros.random.jpa.types.CreationOrder;
@@ -13,7 +14,6 @@ import com.github.kuros.random.jpa.util.NumberUtil;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Id;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
@@ -21,16 +21,18 @@ import java.util.Map;
 /**
  * Created by Kumar Rohit on 5/13/15.
  */
-public final class AnnotatedEntityPersistor implements Persistor {
+public final class EntityPersistorImpl implements Persistor {
 
     private EntityManager entityManager;
+    private AttributeProvider attributeProvider;
 
-    private AnnotatedEntityPersistor(final EntityManager entityManager) {
+    private EntityPersistorImpl(final EntityManager entityManager) {
         this.entityManager = entityManager;
+        this.attributeProvider = AttributeProvider.getInstance(entityManager);
     }
 
     public static Persistor newInstance(final EntityManager entityManager) {
-        return new AnnotatedEntityPersistor(entityManager);
+        return new EntityPersistorImpl(entityManager);
     }
 
     public ResultMap persist(final CreationPlan creationPlan) {
@@ -98,10 +100,11 @@ public final class AnnotatedEntityPersistor implements Persistor {
     }
 
     private Object getId(final Class tableClass, final Object persistedObject) {
+        final EntityTableMapping entityTableMapping = attributeProvider.get(tableClass);
         final Field[] declaredFields = tableClass.getDeclaredFields();
         Field field = null;
         for (Field declaredField : declaredFields) {
-            if (declaredField.getAnnotation(Id.class) != null) {
+            if (entityTableMapping.getAttributeIds().contains(declaredField.getName())) {
                 field = declaredField;
                 field.setAccessible(true);
                 break;
