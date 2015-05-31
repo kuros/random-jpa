@@ -79,7 +79,7 @@ public final class RelationCreator {
     }
 
     private boolean isFieldFound(final String attribute, final FieldName fieldName) {
-        return (fieldName.getOverridenFieldName() != null && fieldName.getOverridenFieldName().equals(attribute))
-                || (fieldName.getOverridenFieldName() == null && fieldName.getFieldName().equals(attribute));
+        return (fieldName.getOverriddenFieldName() != null && fieldName.getOverriddenFieldName().equals(attribute))
+                || (fieldName.getOverriddenFieldName() == null && fieldName.getFieldName().equals(attribute));
     }
 }

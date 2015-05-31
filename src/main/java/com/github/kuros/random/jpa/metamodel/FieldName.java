@@ -9,12 +9,12 @@ public class FieldName {
 
     private final Field field;
     private final String fieldName;
-    private final String overridenFieldName;
+    private final String overriddenFieldName;
 
-    public FieldName(final Field field, final String overridenFieldName) {
+    public FieldName(final Field field, final String overriddenFieldName) {
         this.field = field;
         this.fieldName = field.getName();
-        this.overridenFieldName = overridenFieldName;
+        this.overriddenFieldName = overriddenFieldName;
     }
 
     public Field getField() {
@@ -25,7 +25,7 @@ public class FieldName {
         return fieldName;
     }
 
-    public String getOverridenFieldName() {
-        return overridenFieldName;
+    public String getOverriddenFieldName() {
+        return overriddenFieldName;
     }
 }

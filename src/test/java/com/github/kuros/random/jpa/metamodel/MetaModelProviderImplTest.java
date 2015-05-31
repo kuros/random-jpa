@@ -32,10 +32,10 @@ public class MetaModelProviderImplTest {
 
         final List<FieldName> fieldNames = result.get("Employee");
         assertEquals(3, fieldNames.size());
-        validate("employee_id", fieldNames.get(0).getOverridenFieldName());
-        validate("person_id", fieldNames.get(1).getOverridenFieldName());
+        validate("employee_id", fieldNames.get(0).getOverriddenFieldName());
+        validate("person_id", fieldNames.get(1).getOverriddenFieldName());
         validate("salary", fieldNames.get(2).getFieldName());
-        validate("", fieldNames.get(2).getOverridenFieldName());
+        validate("", fieldNames.get(2).getOverriddenFieldName());
     }
 
     private void validate(final String expected, final String actual) {
