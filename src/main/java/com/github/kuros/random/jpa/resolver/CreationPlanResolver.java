@@ -102,7 +102,7 @@ public final class CreationPlanResolver {
             final Object value = getFieldValue(relation.getTo());
             setFieldValue(object, relation.getFrom(), value);
         } catch (final Exception e) {
-            e.printStackTrace();
+            //do nothing
         }
 
     }
@@ -114,6 +114,7 @@ public final class CreationPlanResolver {
             fieldValue.getField().setAccessible(true);
             fieldValue.getField().set(object, NumberUtil.castNumber(type, value));
         } catch (final IllegalAccessException e) {
+            //do nothing
         }
     }
 
@@ -130,6 +131,7 @@ public final class CreationPlanResolver {
             fieldValue.getField().setAccessible(true);
             value = fieldValue.getField().get(object);
         } catch (final IllegalAccessException e) {
+            //do nothing
         }
         return value;
     }

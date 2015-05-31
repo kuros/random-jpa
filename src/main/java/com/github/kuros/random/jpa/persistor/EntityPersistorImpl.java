@@ -35,6 +35,7 @@ public final class EntityPersistorImpl implements Persistor {
         return new EntityPersistorImpl(entityManager);
     }
 
+    @Override
     public ResultMap persist(final CreationPlan creationPlan) {
         final Node root = Node.newInstance();
         final ResultMapImpl resultMap = ResultMapImpl.newInstance(root);
@@ -115,7 +116,7 @@ public final class EntityPersistorImpl implements Persistor {
         try {
             id = field.get(persistedObject);
         } catch (final IllegalAccessException e) {
-            e.printStackTrace();
+            //do nothing
         }
         return id;
     }
@@ -140,7 +141,7 @@ public final class EntityPersistorImpl implements Persistor {
             final Object value = getFieldValue(resultMap, relation.getTo());
             setFieldValue(object, relation.getFrom(), value);
         } catch (final Exception e) {
-            e.printStackTrace();
+            //do nothing
         }
 
     }
@@ -152,6 +153,7 @@ public final class EntityPersistorImpl implements Persistor {
             fieldValue.getField().setAccessible(true);
             fieldValue.getField().set(object, NumberUtil.castNumber(type, value));
         } catch (final IllegalAccessException e) {
+            //do nothing
         }
     }
 
@@ -166,6 +168,7 @@ public final class EntityPersistorImpl implements Persistor {
             fieldValue.getField().setAccessible(true);
             value = fieldValue.getField().get(object);
         } catch (final IllegalAccessException e) {
+            //do nothing
         }
         return value;
     }

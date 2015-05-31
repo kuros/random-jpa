@@ -27,6 +27,7 @@ public class DependencyResolver {
                     final FieldValue to = getFieldValue(link.getTo());
                     relations.add(Relation.newInstance(from, to));
                 } catch (final NoSuchFieldException e) {
+                    //do nothing
                 }
             }
         }

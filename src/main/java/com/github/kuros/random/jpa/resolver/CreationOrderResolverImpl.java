@@ -1,5 +1,6 @@
 package com.github.kuros.random.jpa.resolver;
 
+import com.github.kuros.random.jpa.exception.RandomJPAException;
 import com.github.kuros.random.jpa.mapper.HierarchyGraph;
 import com.github.kuros.random.jpa.metamodel.AttributeProvider;
 import com.github.kuros.random.jpa.metamodel.EntityTableMapping;
@@ -45,7 +46,7 @@ public final class CreationOrderResolverImpl implements CreationOrderResolver {
             try {
                 generateCreationOrder(creationOrder, type);
             } catch (final ClassNotFoundException e) {
-                throw new RuntimeException(e);
+                throw new RandomJPAException("Class Not Found", e);
             }
         }
 

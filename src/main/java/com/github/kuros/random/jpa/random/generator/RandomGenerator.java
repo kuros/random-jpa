@@ -85,6 +85,7 @@ public final class RandomGenerator {
             try {
                 attributeGeneratorMap.put(AttributeHelper.getField(attribute), randomAttributeGenerator);
             } catch (final NoSuchFieldException e) {
+                //do nothing
             }
         }
     }

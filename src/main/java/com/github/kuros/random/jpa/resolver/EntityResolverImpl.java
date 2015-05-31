@@ -39,11 +39,7 @@ public final class EntityResolverImpl implements EntityResolver {
         return new EntityResolverImpl(entityManager, hierarchyGraph, plan);
     }
 
-    public List<Entity> getEntities() {
-        return entityList.getEntities();
-    }
-
-    @Override
+    @Override @SuppressWarnings("unchecked")
     public Map<Field, Object> getFieldValueMap() {
         final Map<Field, Object> fieldValue = new HashMap<Field, Object>();
         final List<Entity> entities = this.entityList.getEntities();
@@ -56,6 +52,7 @@ public final class EntityResolverImpl implements EntityResolver {
                     fieldValue.put(field, attributeValue.getValue());
                     addParentDetailsForIdField(fieldValue, field);
                 } catch (final Exception e) {
+                    //do nothing
                 }
             }
         }

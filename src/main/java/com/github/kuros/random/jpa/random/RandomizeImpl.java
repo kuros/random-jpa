@@ -34,6 +34,7 @@ public final class RandomizeImpl implements Randomize {
                     declaredField.set(t, randomGenerator.generateRandom(declaredField));
                 }
             } catch (final Exception e) {
+                //do nothing
             }
         }
         return t;
