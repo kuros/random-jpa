@@ -15,7 +15,7 @@ import com.github.kuros.random.jpa.resolver.CreationOrderResolver;
 import com.github.kuros.random.jpa.resolver.CreationPlanResolver;
 import com.github.kuros.random.jpa.resolver.EntityResolver;
 import com.github.kuros.random.jpa.resolver.EntityResolverFactory;
-import com.github.kuros.random.jpa.resolver.annotation.AnnotatedCreationOrderResolver;
+import com.github.kuros.random.jpa.resolver.CreationOrderResolverImpl;
 import com.github.kuros.random.jpa.types.CreationOrder;
 import com.github.kuros.random.jpa.types.CreationPlan;
 import com.github.kuros.random.jpa.types.Plan;
@@ -50,7 +50,7 @@ public final class JPAContext {
                 .getEntityResolver(processingType, entityManager, hierarchyGraph, plan);
         generator.addFieldValue(entityResolver.getFieldValueMap());
 
-        final CreationOrderResolver creationOrderResolver = AnnotatedCreationOrderResolver.newInstance(AttributeProvider.getInstance(entityManager), hierarchyGraph, plan);
+        final CreationOrderResolver creationOrderResolver = CreationOrderResolverImpl.newInstance(AttributeProvider.getInstance(entityManager), hierarchyGraph, plan);
         final CreationOrder creationOrder = creationOrderResolver.getCreationOrder();
 
         final CreationPlanResolver creationPlanResolver = CreationPlanResolver.newInstance(creationOrder, RandomizeImpl.newInstance(generator));

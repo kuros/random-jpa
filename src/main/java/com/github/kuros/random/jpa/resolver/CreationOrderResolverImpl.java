@@ -1,9 +1,8 @@
-package com.github.kuros.random.jpa.resolver.annotation;
+package com.github.kuros.random.jpa.resolver;
 
 import com.github.kuros.random.jpa.mapper.HierarchyGraph;
 import com.github.kuros.random.jpa.metamodel.AttributeProvider;
 import com.github.kuros.random.jpa.metamodel.EntityTableMapping;
-import com.github.kuros.random.jpa.resolver.CreationOrderResolver;
 import com.github.kuros.random.jpa.types.AttributeValue;
 import com.github.kuros.random.jpa.types.CreationOrder;
 import com.github.kuros.random.jpa.types.Entity;
@@ -19,21 +18,21 @@ import java.util.Stack;
 /**
  * Created by Kumar Rohit on 5/17/15.
  */
-public final class AnnotatedCreationOrderResolver implements CreationOrderResolver {
+public final class CreationOrderResolverImpl implements CreationOrderResolver {
 
     private AttributeProvider attributeProvider;
     private HierarchyGraph hierarchyGraph;
     private Plan plan;
 
 
-    private AnnotatedCreationOrderResolver(final AttributeProvider attributeProvider, final HierarchyGraph hierarchyGraph, final Plan plan) {
+    private CreationOrderResolverImpl(final AttributeProvider attributeProvider, final HierarchyGraph hierarchyGraph, final Plan plan) {
         this.attributeProvider = attributeProvider;
         this.hierarchyGraph = hierarchyGraph;
         this.plan = plan;
     }
 
     public static CreationOrderResolver newInstance(final AttributeProvider attributeProvider, final HierarchyGraph hierarchyGraph, final Plan plan) {
-        return new AnnotatedCreationOrderResolver(attributeProvider, hierarchyGraph, plan);
+        return new CreationOrderResolverImpl(attributeProvider, hierarchyGraph, plan);
     }
 
     @Override
