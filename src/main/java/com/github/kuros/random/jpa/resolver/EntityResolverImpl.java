@@ -1,16 +1,16 @@
-package com.github.kuros.random.jpa.resolver.annotation;
+package com.github.kuros.random.jpa.resolver;
 
-import com.github.kuros.random.jpa.mapper.Relation;
-import com.github.kuros.random.jpa.resolver.EntityResolver;
-import com.github.kuros.random.jpa.types.Plan;
 import com.github.kuros.random.jpa.mapper.HierarchyGraph;
+import com.github.kuros.random.jpa.mapper.Relation;
+import com.github.kuros.random.jpa.metamodel.AttributeProvider;
+import com.github.kuros.random.jpa.metamodel.EntityTableMapping;
 import com.github.kuros.random.jpa.types.AttributeValue;
 import com.github.kuros.random.jpa.types.Entity;
+import com.github.kuros.random.jpa.types.Plan;
 import com.github.kuros.random.jpa.util.AttributeHelper;
 import com.github.kuros.random.jpa.util.NumberUtil;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Id;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
@@ -20,21 +20,23 @@ import java.util.Set;
 /**
  * Created by Kumar Rohit on 5/17/15.
  */
-public final class AnnotatedEntityResolver implements EntityResolver {
+public final class EntityResolverImpl implements EntityResolver {
 
     private final HierarchyGraph hierarchyGraph;
     private final EntityManager entityManager;
     private final Plan entityList;
+    private AttributeProvider attributeProvider;
 
-    private AnnotatedEntityResolver(final EntityManager entityManager, final HierarchyGraph hierarchyGraph, final Plan plan) {
+    private EntityResolverImpl(final EntityManager entityManager, final HierarchyGraph hierarchyGraph, final Plan plan) {
         this.entityList = plan;
         this.entityManager = entityManager;
         this.hierarchyGraph = hierarchyGraph;
+        this.attributeProvider = AttributeProvider.getInstance(entityManager);
     }
 
 
-    public static AnnotatedEntityResolver newInstance(final EntityManager entityManager, final HierarchyGraph hierarchyGraph, final Plan plan) {
-        return new AnnotatedEntityResolver(entityManager, hierarchyGraph, plan);
+    public static EntityResolverImpl newInstance(final EntityManager entityManager, final HierarchyGraph hierarchyGraph, final Plan plan) {
+        return new EntityResolverImpl(entityManager, hierarchyGraph, plan);
     }
 
     public List<Entity> getEntities() {
@@ -66,12 +68,11 @@ public final class AnnotatedEntityResolver implements EntityResolver {
     }
 
     private void generateIdForParent(final Map<Field, Object> fieldValueMap, final Field field) throws IllegalAccessException {
-        if (field.getAnnotation(Id.class) == null) {
-            return;
-        }
 
+        final EntityTableMapping entityTableMapping = attributeProvider.get(field.getDeclaringClass());
         final Set<Relation> relations = hierarchyGraph.getAttributeRelations(field.getDeclaringClass());
-        if (relations == null) {
+
+        if (entityTableMapping.getAttributeIds().contains(field.getName()) || relations == null) {
             return;
         }
 

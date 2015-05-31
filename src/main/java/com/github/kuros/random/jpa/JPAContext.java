@@ -1,7 +1,5 @@
 package com.github.kuros.random.jpa;
 
-import com.github.kuros.random.jpa.definition.HierarchyGenerator;
-import com.github.kuros.random.jpa.definition.HierarchyGeneratorImpl;
 import com.github.kuros.random.jpa.mapper.HierarchyGraph;
 import com.github.kuros.random.jpa.mapper.ProcessingType;
 import com.github.kuros.random.jpa.metamodel.AttributeProvider;
@@ -12,10 +10,10 @@ import com.github.kuros.random.jpa.random.RandomizeImpl;
 import com.github.kuros.random.jpa.random.generator.Generator;
 import com.github.kuros.random.jpa.random.generator.RandomGenerator;
 import com.github.kuros.random.jpa.resolver.CreationOrderResolver;
+import com.github.kuros.random.jpa.resolver.CreationOrderResolverImpl;
 import com.github.kuros.random.jpa.resolver.CreationPlanResolver;
 import com.github.kuros.random.jpa.resolver.EntityResolver;
-import com.github.kuros.random.jpa.resolver.EntityResolverFactory;
-import com.github.kuros.random.jpa.resolver.CreationOrderResolverImpl;
+import com.github.kuros.random.jpa.resolver.EntityResolverImpl;
 import com.github.kuros.random.jpa.types.CreationOrder;
 import com.github.kuros.random.jpa.types.CreationPlan;
 import com.github.kuros.random.jpa.types.Plan;
@@ -46,8 +44,7 @@ public final class JPAContext {
 
     public CreationPlan create(final Plan plan) {
 
-        final EntityResolver entityResolver = EntityResolverFactory
-                .getEntityResolver(processingType, entityManager, hierarchyGraph, plan);
+        final EntityResolver entityResolver = EntityResolverImpl.newInstance(entityManager, hierarchyGraph, plan);
         generator.addFieldValue(entityResolver.getFieldValueMap());
 
         final CreationOrderResolver creationOrderResolver = CreationOrderResolverImpl.newInstance(AttributeProvider.getInstance(entityManager), hierarchyGraph, plan);
@@ -67,7 +64,4 @@ public final class JPAContext {
         return persist(create(plan));
     }
 
-    private HierarchyGenerator getHierarchyGenerator() {
-        return new HierarchyGeneratorImpl();
-    }
 }
