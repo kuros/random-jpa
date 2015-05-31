@@ -1,9 +1,7 @@
 package com.github.kuros.random.jpa.metamodel;
 
 import com.github.kuros.random.jpa.util.AttributeHelper;
-import org.hibernate.id.IdentityGenerator;
-import org.hibernate.id.SelectGenerator;
-import org.hibernate.id.SequenceIdentityGenerator;
+import org.hibernate.id.Assigned;
 import org.hibernate.jpa.HibernateEntityManagerFactory;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.persister.entity.SingleTableEntityPersister;
@@ -93,12 +91,9 @@ public final class AttributeProvider {
         return entityTableMappingByTableName.get(tableName.toLowerCase());
     }
 
-    public Set<Class<?>> getSupportedGeneratorType() {
+    public Set<Class<?>> getUnSupportedGeneratorType() {
         final Set<Class<?>> generators = new HashSet<Class<?>>();
-        generators.add(IdentityGenerator.class);
-        generators.add(SelectGenerator.class);
-        generators.add(SequenceIdentityGenerator.class);
-
+        generators.add(Assigned.class);
         return generators;
     }
 }

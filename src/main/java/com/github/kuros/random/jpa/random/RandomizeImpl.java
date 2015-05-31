@@ -50,7 +50,7 @@ public final class RandomizeImpl implements Randomize {
 
         return !(entityTableMapping == null || fieldIsNotColumn(entityTableMapping, declaredField))
                 && (!entityTableMapping.getAttributeIds().contains(declaredField.getName())
-                || !attributProvider.getSupportedGeneratorType().contains(entityTableMapping.getIdentifierGenerator()));
+                || attributProvider.getUnSupportedGeneratorType().contains(entityTableMapping.getIdentifierGenerator()));
 
     }
 
