@@ -1,5 +1,5 @@
 # Random-JPA
----It has been always been a challenge to create a test data. This project aims at providing easier mechanism to create test data.
+It has been always been a challenge to create a test data. This project aims at providing easier mechanism to create test data.
 
 ## Feature
 1. Uses table's foreign key relations to maintain creation order dynamically
@@ -18,7 +18,7 @@
 ## Usage
 In order to use.
 ### Initialize JPAContextFactory
---- JPAContextFactory accepts two parameters Database and EntityManager. I am using MS_SQL_SERVER for demo.
+JPAContextFactory accepts two parameters Database and EntityManager. I am using MS_SQL_SERVER for demo.
 ```java
 JPAContext jpaContext = JPAContextFactory.newInstance(Database.MS_SQL_SERVER, entityManager)
     .create();
