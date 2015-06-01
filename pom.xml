@@ -137,6 +137,7 @@
                 <version>2.1</version>
                 <configuration>
                     <arguments>-Psonatype-oss-release,random-jpa-release</arguments>
+                    <pushChanges>false</pushChanges>
                 </configuration>
             </plugin>
             <plugin>
