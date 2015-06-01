@@ -169,3 +169,5 @@ it will print the hierarchy with the index number of the object followed by
         ├── com.github.kuros.entity.Employee|0
         └── com.github.kuros.entity.Employee|1
 ```
+
+* Random object creation provided by OpenPojo (http://openpojo.com) *
