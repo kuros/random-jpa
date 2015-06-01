@@ -130,6 +130,15 @@ creationPlan.print(new Printer() {
             }
         });
 ```
+
+it will print the hierarchy with the index number of the object followed by
+```
+└── *ROOT*
+    └── com.github.kuros.entity.Person|0
+        ├── com.github.kuros.entity.Employee|0
+        └── com.github.kuros.entity.Employee|1
+```
+
 ### Persisting the creationPlan
 ```java
 final ResultMap resultMap = jpaContext.persist(creationPlan);
@@ -152,4 +161,11 @@ resultMap.print(new Printer() {
                 System.out.println(string); // you can use logger
             }
         });
+```
+it will print the hierarchy with the index number of the object followed by
+```
+└── *ROOT*
+    └── com.github.kuros.entity.Person|0
+        ├── com.github.kuros.entity.Employee|0
+        └── com.github.kuros.entity.Employee|1
 ```
