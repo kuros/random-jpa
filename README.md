@@ -38,8 +38,8 @@ JPAContext jpaContext = JPAContextFactory.newInstance(Database.MS_SQL_SERVER, en
 
 #### Creating RandomGenerators
 There are two ways in which you can control the random generation behavior.
-1. At Class level
-2. At Attribute level.
+..* At Class level
+..* At Attribute level.
 
 Let us say that you want all the dates to be current date. And all the Long/Integer values to be positive between 0-1000
 ```java
