@@ -101,12 +101,23 @@ public final class CreationOrderResolverImpl implements CreationOrderResolver {
         stack.push(type);
 
         while (!queue.isEmpty()) {
-            final Set<Class<?>> parents = hierarchyGraph.getParents(Class.forName(queue.poll()));
+            final Class<?> polledClass = Class.forName(queue.poll());
+            final Set<Class<?>> parents = hierarchyGraph.getParents(polledClass);
+            Integer index = null;
             for (Class<?> parent : parents) {
-                if (!stack.contains(parent) && !creationOrder.contains(parent)) {
+                if (!stack.contains(parent)) {
                     queue.offer(parent.getName());
-                    stack.push(parent);
+                } else {
+                    if (index == null || index > stack.indexOf(parent)) {
+                        index = stack.indexOf(parent);
+                    }
                 }
+            }
+
+            if (index != null) {
+                stack.add(index, polledClass);
+            } else if (!stack.contains(polledClass)) {
+                stack.push(polledClass);
             }
         }
 
@@ -116,4 +127,18 @@ public final class CreationOrderResolverImpl implements CreationOrderResolver {
         }
     }
 
+//    private void generateCreationOrder(final CreationOrder creationOrder, final Class<?> type) throws ClassNotFoundException {
+//
+//        final Set<Class<?>> parents = hierarchyGraph.getParents(type);
+//        if (parents == null || parents.isEmpty()) {
+//            return;
+//        }
+//
+//        for (Class<?> parent : parents) {
+//            if (!creationOrder.contains(parent)) {
+//                generateCreationOrder(creationOrder, parent);
+//                creationOrder.add(parent);
+//            }
+//        }
+//    }
 }

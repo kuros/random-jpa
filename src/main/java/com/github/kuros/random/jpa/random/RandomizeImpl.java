@@ -1,8 +1,10 @@
 package com.github.kuros.random.jpa.random;
 
+import com.github.kuros.random.jpa.exception.RandomJPAException;
 import com.github.kuros.random.jpa.metamodel.AttributeProvider;
 import com.github.kuros.random.jpa.metamodel.EntityTableMapping;
 import com.github.kuros.random.jpa.random.generator.RandomGenerator;
+import com.github.kuros.random.jpa.util.NumberUtil;
 
 import java.lang.reflect.Field;
 
@@ -27,14 +29,15 @@ public final class RandomizeImpl implements Randomize {
         final T t = randomGenerator.generateRandom(type);
 
         final Field[] declaredFields = type.getDeclaredFields();
-        for (Field declaredField : declaredFields) {
+        for (final Field declaredField : declaredFields) {
             declaredField.setAccessible(true);
             try {
                 if (isRandomRequired(declaredField)) {
-                    declaredField.set(t, randomGenerator.generateRandom(declaredField));
+                    declaredField.set(t, NumberUtil.castNumber(declaredField.getType(), randomGenerator.generateRandom(declaredField)));
                 }
             } catch (final Exception e) {
-                //do nothing
+                throw new RandomJPAException("Try adding RandomClassGenerator/RandomAttributeGenerator, Unable to set random value for "
+                        + declaredField.getDeclaringClass() + " - " + declaredField.getName() , e);
             }
         }
         return t;
