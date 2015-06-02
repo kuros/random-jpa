@@ -88,7 +88,7 @@ generator.addAttributeGenerator(new RandomAttributeGenerator() {
 
             @Override
             public Object doGenerate() {
-                return RandomStringUtils.randomAlphanumeric(2);
+                return "Test-" + RandomStringUtils.randomAlphanumeric(2);
             }
         });
 
