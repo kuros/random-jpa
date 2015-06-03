@@ -36,7 +36,6 @@ public final class CreationOrderResolverImpl implements CreationOrderResolver {
         return new CreationOrderResolverImpl(attributeProvider, hierarchyGraph, plan);
     }
 
-    @Override
     public CreationOrder getCreationOrder() {
         final CreationOrder creationOrder = CreationOrder.newInstance(hierarchyGraph);
         final List<Entity> entities = plan.getEntities();
@@ -123,22 +122,9 @@ public final class CreationOrderResolverImpl implements CreationOrderResolver {
 
         while (!stack.isEmpty()) {
             final Class<?> pop = stack.pop();
+            if (!creationOrder.contains(pop)) {
                 creationOrder.add(pop);
+            }
         }
     }
-
-//    private void generateCreationOrder(final CreationOrder creationOrder, final Class<?> type) throws ClassNotFoundException {
-//
-//        final Set<Class<?>> parents = hierarchyGraph.getParents(type);
-//        if (parents == null || parents.isEmpty()) {
-//            return;
-//        }
-//
-//        for (Class<?> parent : parents) {
-//            if (!creationOrder.contains(parent)) {
-//                generateCreationOrder(creationOrder, parent);
-//                creationOrder.add(parent);
-//            }
-//        }
-//    }
 }
