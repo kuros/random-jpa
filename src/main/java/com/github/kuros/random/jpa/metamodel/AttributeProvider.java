@@ -1,5 +1,6 @@
 package com.github.kuros.random.jpa.metamodel;
 
+import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.util.AttributeHelper;
 import org.hibernate.id.Assigned;
 import org.hibernate.jpa.HibernateEntityManagerFactory;
@@ -22,19 +23,21 @@ public final class AttributeProvider {
     private Map<String, EntityTableMapping> entityTableMappingByTableName;
     private static AttributeProvider attributeProvider;
 
-    public static AttributeProvider getInstance(final EntityManager entityManager) {
+    public static AttributeProvider getInstance() {
         if (attributeProvider == null) {
-            attributeProvider = new AttributeProvider(entityManager);
+            attributeProvider = new AttributeProvider();
         }
 
         return attributeProvider;
     }
 
-    private AttributeProvider(final EntityManager entityManager) {
-        init(entityManager);
+    private AttributeProvider() {
+        init();
     }
 
-    private void init(final EntityManager entityManager) {
+    private void init() {
+        final Cache cache = Cache.getInstance();
+        final EntityManager entityManager = cache.getEntityManager();
         entityTableMappingByClass = new HashMap<Class<?>, EntityTableMapping>();
         entityTableMappingByTableName = new HashMap<String, EntityTableMapping>();
         final HibernateEntityManagerFactory entityManagerFactory = (HibernateEntityManagerFactory) entityManager.getEntityManagerFactory();

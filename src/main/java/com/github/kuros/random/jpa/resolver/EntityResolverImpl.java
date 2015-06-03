@@ -1,5 +1,6 @@
 package com.github.kuros.random.jpa.resolver;
 
+import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.mapper.HierarchyGraph;
 import com.github.kuros.random.jpa.mapper.Relation;
 import com.github.kuros.random.jpa.metamodel.AttributeProvider;
@@ -27,19 +28,19 @@ public final class EntityResolverImpl implements EntityResolver {
     private final Plan entityList;
     private AttributeProvider attributeProvider;
 
-    private EntityResolverImpl(final EntityManager entityManager, final HierarchyGraph hierarchyGraph, final Plan plan) {
+    private EntityResolverImpl(final HierarchyGraph hierarchyGraph, final Plan plan) {
         this.entityList = plan;
-        this.entityManager = entityManager;
+        this.entityManager = Cache.getInstance().getEntityManager();
         this.hierarchyGraph = hierarchyGraph;
-        this.attributeProvider = AttributeProvider.getInstance(entityManager);
+        this.attributeProvider = AttributeProvider.getInstance();
     }
 
 
-    public static EntityResolverImpl newInstance(final EntityManager entityManager, final HierarchyGraph hierarchyGraph, final Plan plan) {
-        return new EntityResolverImpl(entityManager, hierarchyGraph, plan);
+    public static EntityResolverImpl newInstance(final HierarchyGraph hierarchyGraph, final Plan plan) {
+        return new EntityResolverImpl(hierarchyGraph, plan);
     }
 
-    @Override @SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked")
     public Map<Field, Object> getFieldValueMap() {
         final Map<Field, Object> fieldValue = new HashMap<Field, Object>();
         final List<Entity> entities = this.entityList.getEntities();

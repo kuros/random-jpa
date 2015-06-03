@@ -26,14 +26,14 @@ public final class CreationOrderResolverImpl implements CreationOrderResolver {
     private Plan plan;
 
 
-    private CreationOrderResolverImpl(final AttributeProvider attributeProvider, final HierarchyGraph hierarchyGraph, final Plan plan) {
-        this.attributeProvider = attributeProvider;
+    private CreationOrderResolverImpl(final HierarchyGraph hierarchyGraph, final Plan plan) {
+        this.attributeProvider = AttributeProvider.getInstance();
         this.hierarchyGraph = hierarchyGraph;
         this.plan = plan;
     }
 
-    public static CreationOrderResolver newInstance(final AttributeProvider attributeProvider, final HierarchyGraph hierarchyGraph, final Plan plan) {
-        return new CreationOrderResolverImpl(attributeProvider, hierarchyGraph, plan);
+    public static CreationOrderResolver newInstance(final HierarchyGraph hierarchyGraph, final Plan plan) {
+        return new CreationOrderResolverImpl(hierarchyGraph, plan);
     }
 
     public CreationOrder getCreationOrder() {

@@ -1,5 +1,6 @@
 package com.github.kuros.random.jpa;
 
+import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.definition.HierarchyGenerator;
 import com.github.kuros.random.jpa.definition.HierarchyGeneratorImpl;
 import com.github.kuros.random.jpa.definition.RelationCreator;
@@ -44,6 +45,7 @@ public final class JPAContextFactory {
     }
 
     public JPAContext create() {
+        Cache.init(database, entityManager);
         final MetaModelProvider metaModelProvider = new MetaModelProviderImpl(entityManager);
         final List<Relation> relations = RelationCreator
                 .from(metaModelProvider)

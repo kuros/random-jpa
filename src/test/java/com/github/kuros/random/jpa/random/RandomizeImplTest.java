@@ -15,7 +15,7 @@ public class RandomizeImplTest {
     @Test @Ignore
     public void shouldRandmoizeEmployeeClass() throws InstantiationException, IllegalAccessException {
         final RandomGenerator randomFactory = RandomGenerator.newInstance(Generator.newInstance());
-        final Randomize randomize = RandomizeImpl.newInstance(null, randomFactory);
+        final Randomize randomize = RandomizeImpl.newInstance(randomFactory);
         final Employee randomEmployee = randomize.createRandom(Employee.class);
 
         assertNotNull(randomEmployee);

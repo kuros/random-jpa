@@ -1,7 +1,6 @@
 package com.github.kuros.random.jpa;
 
 import com.github.kuros.random.jpa.mapper.HierarchyGraph;
-import com.github.kuros.random.jpa.metamodel.AttributeProvider;
 import com.github.kuros.random.jpa.persistor.EntityPersistorImpl;
 import com.github.kuros.random.jpa.persistor.Persistor;
 import com.github.kuros.random.jpa.persistor.model.ResultMap;
@@ -41,13 +40,13 @@ public final class JPAContext {
 
     public CreationPlan create(final Plan plan) {
 
-        final EntityResolver entityResolver = EntityResolverImpl.newInstance(entityManager, hierarchyGraph, plan);
+        final EntityResolver entityResolver = EntityResolverImpl.newInstance(hierarchyGraph, plan);
         generator.addFieldValue(entityResolver.getFieldValueMap());
 
-        final CreationOrderResolver creationOrderResolver = CreationOrderResolverImpl.newInstance(AttributeProvider.getInstance(entityManager), hierarchyGraph, plan);
+        final CreationOrderResolver creationOrderResolver = CreationOrderResolverImpl.newInstance(hierarchyGraph, plan);
         final CreationOrder creationOrder = creationOrderResolver.getCreationOrder();
 
-        final CreationPlanResolver creationPlanResolver = CreationPlanResolver.newInstance(creationOrder, RandomizeImpl.newInstance(AttributeProvider.getInstance(entityManager), generator));
+        final CreationPlanResolver creationPlanResolver = CreationPlanResolver.newInstance(creationOrder, RandomizeImpl.newInstance(generator));
 
         return creationPlanResolver.create();
     }

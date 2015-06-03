@@ -20,10 +20,9 @@ public class MetaModelProviderImpl implements MetaModelProvider {
 
     public MetaModelProviderImpl(final EntityManager entityManager) {
         this.entityManager = entityManager;
-        attributeProvider = AttributeProvider.getInstance(entityManager);
+        attributeProvider = AttributeProvider.getInstance();
     }
 
-    @Override
     public Map<String, List<FieldName>> getFieldsByTableName() {
         final Set<EntityType<?>> entities = getEntityTypes();
 

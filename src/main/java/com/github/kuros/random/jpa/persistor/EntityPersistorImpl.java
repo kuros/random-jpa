@@ -28,14 +28,13 @@ public final class EntityPersistorImpl implements Persistor {
 
     private EntityPersistorImpl(final EntityManager entityManager) {
         this.entityManager = entityManager;
-        this.attributeProvider = AttributeProvider.getInstance(entityManager);
+        this.attributeProvider = AttributeProvider.getInstance();
     }
 
     public static Persistor newInstance(final EntityManager entityManager) {
         return new EntityPersistorImpl(entityManager);
     }
 
-    @Override
     public ResultMap persist(final CreationPlan creationPlan) {
         final Node root = Node.newInstance();
         final ResultMapImpl resultMap = ResultMapImpl.newInstance(root);

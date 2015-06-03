@@ -16,13 +16,13 @@ public final class RandomizeImpl implements Randomize {
     private final RandomGenerator randomGenerator;
     private final AttributeProvider attributProvider;
 
-    private RandomizeImpl(final AttributeProvider attributeProvider, final RandomGenerator randomGenerator) {
-        this.attributProvider = attributeProvider;
+    private RandomizeImpl(final RandomGenerator randomGenerator) {
+        this.attributProvider = AttributeProvider.getInstance();
         this.randomGenerator = randomGenerator;
     }
 
-    public static Randomize newInstance(final AttributeProvider attributeProvider, final RandomGenerator randomGenerator) {
-        return new RandomizeImpl(attributeProvider, randomGenerator);
+    public static Randomize newInstance(final RandomGenerator randomGenerator) {
+        return new RandomizeImpl(randomGenerator);
     }
 
     public <T> T createRandom(final Class<T> type) {

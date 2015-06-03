@@ -8,4 +8,8 @@ public class RandomJPAException extends RuntimeException {
     public RandomJPAException(final String message, final Throwable cause) {
         super(message, cause);
     }
+
+    public RandomJPAException(final String message) {
+        super(message);
+    }
 }
