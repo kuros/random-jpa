@@ -104,6 +104,21 @@ final JPAContext jpaContext = JPAContextFactory.newInstance(Database.MS_SQL_SERV
                 .with(generator)
                 .create();
 ```
+
+### Adding Preconditions
+There are scenario's where we want to create some schema in advance before creating our table, and this schema doesn't fall under the hierarchy of main table.
+To handle such scenarios, we can define **PreConditions**
+```java
+
+final JPAContext jpaContext = JPAContextFactory.newInstance(Database.MS_SQL_SERVER, entityManager)
+                .withPreconditions(Before.of(Employee.class)
+                                            .create(Entity.of(Department.class), Entity.of(XXX.class)),
+                                   Before.of(Person.class)
+                                            .create(Entity.of(Y.class), Entity.of(Z.class)))
+                .create();
+
+```
+
 ## Using JPAContext
 ### Creating Plan
 Once JPAContext is initialized, you can use it to create plans and persist them accordingly.
