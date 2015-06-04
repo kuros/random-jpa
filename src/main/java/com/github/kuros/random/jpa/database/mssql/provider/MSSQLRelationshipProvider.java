@@ -43,7 +43,6 @@ public final class MSSQLRelationshipProvider implements RelationshipProvider {
         return new MSSQLRelationshipProvider(entityManager);
     }
 
-    @Override
     public List<ForeignKeyRelation> getForeignKeyRelations() {
         final List<ForeignKeyRelation> foreignKeyRelations = new ArrayList<ForeignKeyRelation>();
 
