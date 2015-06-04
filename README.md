@@ -1,6 +1,10 @@
 # Random-JPA
 It has been always been a challenge to create a test data. This project aims at providing easier mechanism to create test data.
 
+Maven Group Plugin | Latest Version
+------------------ | ---------------
+com.github.kuros.random-jpa | 0.0.3
+
 ## Feature
 1. Uses table's foreign key relations to maintain creation order dynamically
 2. Creates in memory creation plan which can be used to modify column values before persist.
