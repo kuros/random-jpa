@@ -60,6 +60,11 @@ public final class CreationOrderResolverImpl implements CreationOrderResolver {
 
         final Set<Class<?>> identifiers = PreconditionCache.getInstance().getIdentifiers();
         for (Class<?> identifier : identifiers) {
+
+            if (!creationOrder.contains(identifier)) {
+                continue;
+            }
+
             final Plan preConditionPlan = PreconditionCache.getInstance().getPlan(identifier);
             for (Entity entity : preConditionPlan.getEntities()) {
 
@@ -71,7 +76,7 @@ public final class CreationOrderResolverImpl implements CreationOrderResolver {
 
                 Class<?> location = null;
                 int i = minIndex;
-                while (i >= 0) {
+                while (i > 0) {
                     final Class<?> aClass = createdOrder.get(--i);
                     if (!newOrder.contains(aClass)) {
                         location = aClass;
@@ -169,7 +174,7 @@ public final class CreationOrderResolverImpl implements CreationOrderResolver {
 
         for (Class<?> type : order) {
             final int i = from.indexOf(type);
-            if (index > i) {
+            if (index > i && i != -1) {
                 index = i;
             }
         }
