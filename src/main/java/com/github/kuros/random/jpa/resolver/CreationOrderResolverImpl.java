@@ -1,5 +1,6 @@
 package com.github.kuros.random.jpa.resolver;
 
+import com.github.kuros.random.jpa.cache.PreconditionCache;
 import com.github.kuros.random.jpa.exception.RandomJPAException;
 import com.github.kuros.random.jpa.mapper.HierarchyGraph;
 import com.github.kuros.random.jpa.metamodel.AttributeProvider;
@@ -44,6 +45,7 @@ public final class CreationOrderResolverImpl implements CreationOrderResolver {
             addCreationCount(creationOrder, entity);
             try {
                 generateCreationOrder(creationOrder, type);
+                applyPrecondition(creationOrder);
             } catch (final ClassNotFoundException e) {
                 throw new RandomJPAException("Class Not Found", e);
             }
@@ -52,6 +54,40 @@ public final class CreationOrderResolverImpl implements CreationOrderResolver {
         filterAlreadyGenerated(creationOrder, plan.getEntities());
 
         return creationOrder;
+    }
+
+    private void applyPrecondition(final CreationOrder creationOrder) throws ClassNotFoundException {
+
+        final Set<Class<?>> identifiers = PreconditionCache.getInstance().getIdentifiers();
+        for (Class<?> identifier : identifiers) {
+            final Plan preConditionPlan = PreconditionCache.getInstance().getPlan(identifier);
+            for (Entity entity : preConditionPlan.getEntities()) {
+
+                final CreationOrder tempCreationOrder = CreationOrder.newInstance(hierarchyGraph);
+                generateCreationOrder(tempCreationOrder, entity.getType());
+                final List<Class<?>> newOrder = tempCreationOrder.getOrder();
+                final List<Class<?>> createdOrder = creationOrder.getOrder();
+                final int minIndex = getMinIndex(createdOrder, newOrder);
+
+                Class<?> location = null;
+                int i = minIndex;
+                while (i >= 0) {
+                    final Class<?> aClass = createdOrder.get(--i);
+                    if (!newOrder.contains(aClass)) {
+                        location = aClass;
+                        break;
+                    }
+                }
+
+                createdOrder.removeAll(newOrder);
+
+                i = minIndex;
+                if (location != null) {
+                    i = createdOrder.indexOf(location);
+                }
+                createdOrder.addAll(i + 1, newOrder);
+            }
+        }
     }
 
     private void addCreationCount(final CreationOrder creationOrder, final Entity entity) {
@@ -126,5 +162,18 @@ public final class CreationOrderResolverImpl implements CreationOrderResolver {
                 creationOrder.add(pop);
             }
         }
+    }
+
+    private int getMinIndex(final List<Class<?>> from, final List<Class<?>> order) {
+        int index = from.size();
+
+        for (Class<?> type : order) {
+            final int i = from.indexOf(type);
+            if (index > i) {
+                index = i;
+            }
+        }
+
+        return index;
     }
 }
