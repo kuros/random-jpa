@@ -1,5 +1,8 @@
 package com.github.kuros.random.jpa.random.generator;
 
+import com.github.kuros.random.jpa.cache.Cache;
+import com.github.kuros.random.jpa.provider.SQLCharacterLengthProvider;
+import com.github.kuros.random.jpa.provider.SQLCharacterLengthProviderFactory;
 import com.github.kuros.random.jpa.util.AttributeHelper;
 import com.github.kuros.random.jpa.random.adapter.RandomClassGeneratorAdapter;
 import com.openpojo.random.RandomFactory;
@@ -10,8 +13,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by Kumar Rohit on 5/16/15.
+/*
+ * Copyright (c) 2015 Kumar Rohit
+ *
+ *    This program is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU Lesser General Public License as published by
+ *    the Free Software Foundation, either version 3 of the License or any
+ *    later version.
+ *
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU Lesser General Public License for more details.
+ *
+ *    You should have received a copy of the GNU Lesser General Public License
+ *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 public final class RandomGenerator {
 
@@ -19,12 +35,15 @@ public final class RandomGenerator {
     private Map<Field, RandomAttributeGenerator> attributeGeneratorMap;
     private RandomFactory randomFactory;
     private Map<Field, Object> fieldValue;
+    private SQLCharacterLengthProvider sqlCharacterLengthProvider;
 
     private RandomGenerator(final Generator generator) {
         this.generator = generator;
         attributeGeneratorMap = new HashMap<Field, RandomAttributeGenerator>();
         randomFactory = new RandomFactory();
         fieldValue = new HashMap<Field, Object>();
+        sqlCharacterLengthProvider = SQLCharacterLengthProviderFactory
+                .getSqlCharacterLengthProvider(Cache.getInstance().getDatabase());
         init();
     }
 
@@ -61,10 +80,20 @@ public final class RandomGenerator {
 
         final RandomAttributeGenerator randomAttributeGenerator = attributeGeneratorMap.get(field);
         if (randomAttributeGenerator != null) {
-            return randomAttributeGenerator.doGenerate();
+            return applyLengthConstraint(field, randomAttributeGenerator.doGenerate());
         }
 
-        return randomFactory.getRandomValue(field.getType());
+        return applyLengthConstraint(field, randomFactory.getRandomValue(field.getType()));
+    }
+
+    private Object applyLengthConstraint(final Field field, final Object o) {
+        final Integer maxLength = sqlCharacterLengthProvider.getMaxLength(field.getDeclaringClass().getName(), field.getName());
+        if (maxLength != null && o != null && o instanceof String) {
+            final String s = o.toString();
+            final int length = s.length() < maxLength ? s.length() : maxLength;
+            return s.substring(0, length);
+        }
+        return o;
     }
 
     public <T> T generateRandom(final Class<T> type) {

@@ -1,11 +1,7 @@
 package com.github.kuros.random.jpa.provider;
 
 import com.github.kuros.random.jpa.Database;
-import com.github.kuros.random.jpa.database.mssql.provider.MSSQLRelationshipProvider;
-
-import javax.persistence.EntityManager;
-import java.util.ArrayList;
-import java.util.List;
+import com.github.kuros.random.jpa.database.mssql.provider.MSSQLCharacterLengthProvider;
 
 /*
  * Copyright (c) 2015 Kumar Rohit
@@ -23,29 +19,25 @@ import java.util.List;
  *    You should have received a copy of the GNU Lesser General Public License
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class RelationProviderFactory {
+public class SQLCharacterLengthProviderFactory {
 
-    public static RelationshipProvider getRelationshipProvider(final Database database, final EntityManager entityManager) {
-        RelationshipProvider relationshipProvider;
+    public static SQLCharacterLengthProvider getSqlCharacterLengthProvider(final Database database) {
+        SQLCharacterLengthProvider sqlCharacterLengthProvider;
         switch (database) {
             case MS_SQL_SERVER:
-                relationshipProvider = MSSQLRelationshipProvider.newInstance(entityManager);
-                break;
-            case NONE:
-                relationshipProvider = new EmptyRelationshipProvider();
+                sqlCharacterLengthProvider = MSSQLCharacterLengthProvider.getInstance();
                 break;
             default:
-                relationshipProvider = new EmptyRelationshipProvider();
+                sqlCharacterLengthProvider = new DefaultSQLCharacterLengthProvider();
+                break;
         }
 
-        return relationshipProvider;
+        return sqlCharacterLengthProvider;
     }
 
-    public static class EmptyRelationshipProvider implements RelationshipProvider {
-
-        public List<ForeignKeyRelation> getForeignKeyRelations() {
-            return new ArrayList<ForeignKeyRelation>();
+    public static class DefaultSQLCharacterLengthProvider implements SQLCharacterLengthProvider {
+        public Integer getMaxLength(final String entityName, final String attributeName) {
+            return null;
         }
     }
 }
-
