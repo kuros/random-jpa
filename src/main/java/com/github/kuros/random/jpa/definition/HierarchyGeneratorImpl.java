@@ -1,6 +1,5 @@
 package com.github.kuros.random.jpa.definition;
 
-import com.github.kuros.random.jpa.mapper.HierarchyGraph;
 import com.github.kuros.random.jpa.mapper.Relation;
 
 import java.util.List;

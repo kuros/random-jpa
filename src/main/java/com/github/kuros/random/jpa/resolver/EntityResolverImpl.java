@@ -1,7 +1,7 @@
 package com.github.kuros.random.jpa.resolver;
 
 import com.github.kuros.random.jpa.cache.Cache;
-import com.github.kuros.random.jpa.mapper.HierarchyGraph;
+import com.github.kuros.random.jpa.definition.HierarchyGraph;
 import com.github.kuros.random.jpa.mapper.Relation;
 import com.github.kuros.random.jpa.metamodel.AttributeProvider;
 import com.github.kuros.random.jpa.metamodel.EntityTableMapping;

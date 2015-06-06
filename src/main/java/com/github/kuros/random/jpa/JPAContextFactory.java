@@ -8,7 +8,7 @@ import com.github.kuros.random.jpa.definition.RelationCreator;
 import com.github.kuros.random.jpa.link.Before;
 import com.github.kuros.random.jpa.link.Dependencies;
 import com.github.kuros.random.jpa.link.Preconditions;
-import com.github.kuros.random.jpa.mapper.HierarchyGraph;
+import com.github.kuros.random.jpa.definition.HierarchyGraph;
 import com.github.kuros.random.jpa.mapper.Relation;
 import com.github.kuros.random.jpa.metamodel.MetaModelProvider;
 import com.github.kuros.random.jpa.metamodel.MetaModelProviderImpl;

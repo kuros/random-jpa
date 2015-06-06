@@ -1,6 +1,6 @@
 package com.github.kuros.random.jpa.types;
 
-import com.github.kuros.random.jpa.mapper.HierarchyGraph;
+import com.github.kuros.random.jpa.definition.HierarchyGraph;
 import com.github.kuros.random.jpa.mapper.TableNode;
 
 import java.util.ArrayList;

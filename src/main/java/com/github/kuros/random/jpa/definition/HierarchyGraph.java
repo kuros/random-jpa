@@ -1,5 +1,7 @@
-package com.github.kuros.random.jpa.mapper;
+package com.github.kuros.random.jpa.definition;
 
+import com.github.kuros.random.jpa.mapper.Relation;
+import com.github.kuros.random.jpa.mapper.TableNode;
 import com.github.kuros.random.jpa.util.FieldValueHelper;
 
 import java.util.HashMap;

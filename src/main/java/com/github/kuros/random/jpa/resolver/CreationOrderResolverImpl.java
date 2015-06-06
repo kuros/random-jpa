@@ -2,7 +2,7 @@ package com.github.kuros.random.jpa.resolver;
 
 import com.github.kuros.random.jpa.cache.PreconditionCache;
 import com.github.kuros.random.jpa.exception.RandomJPAException;
-import com.github.kuros.random.jpa.mapper.HierarchyGraph;
+import com.github.kuros.random.jpa.definition.HierarchyGraph;
 import com.github.kuros.random.jpa.metamodel.AttributeProvider;
 import com.github.kuros.random.jpa.metamodel.EntityTableMapping;
 import com.github.kuros.random.jpa.types.AttributeValue;

@@ -1,5 +1,6 @@
 package com.github.kuros.random.jpa.mapper;
 
+import com.github.kuros.random.jpa.definition.HierarchyGraph;
 import org.junit.Assert;
 import org.junit.Test;
 
