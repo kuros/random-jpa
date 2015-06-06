@@ -1,7 +1,7 @@
 package com.github.kuros.random.jpa.persistor;
 
 import com.github.kuros.random.jpa.mapper.Relation;
-import com.github.kuros.random.jpa.mapper.TableNode;
+import com.github.kuros.random.jpa.definition.TableNode;
 import com.github.kuros.random.jpa.metamodel.AttributeProvider;
 import com.github.kuros.random.jpa.metamodel.EntityTableMapping;
 import com.github.kuros.random.jpa.persistor.model.ResultMap;

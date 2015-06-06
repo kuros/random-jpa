@@ -1,7 +1,7 @@
 package com.github.kuros.random.jpa.resolver;
 
 import com.github.kuros.random.jpa.mapper.Relation;
-import com.github.kuros.random.jpa.mapper.TableNode;
+import com.github.kuros.random.jpa.definition.TableNode;
 import com.github.kuros.random.jpa.random.Randomize;
 import com.github.kuros.random.jpa.types.CreationOrder;
 import com.github.kuros.random.jpa.types.CreationPlan;
