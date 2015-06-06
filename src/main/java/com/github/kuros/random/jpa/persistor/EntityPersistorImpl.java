@@ -1,6 +1,5 @@
 package com.github.kuros.random.jpa.persistor;
 
-import com.github.kuros.random.jpa.mapper.FieldValue;
 import com.github.kuros.random.jpa.mapper.Relation;
 import com.github.kuros.random.jpa.mapper.TableNode;
 import com.github.kuros.random.jpa.metamodel.AttributeProvider;
@@ -18,8 +17,21 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by Kumar Rohit on 5/13/15.
+/*
+ * Copyright (c) 2015 Kumar Rohit
+ *
+ *    This program is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU Lesser General Public License as published by
+ *    the Free Software Foundation, either version 3 of the License or any
+ *    later version.
+ *
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU Lesser General Public License for more details.
+ *
+ *    You should have received a copy of the GNU Lesser General Public License
+ *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 public final class EntityPersistorImpl implements Persistor {
 
@@ -35,6 +47,7 @@ public final class EntityPersistorImpl implements Persistor {
         return new EntityPersistorImpl(entityManager);
     }
 
+    @SuppressWarnings("unchecked")
     public ResultMap persist(final CreationPlan creationPlan) {
         final Node root = Node.newInstance();
         final ResultMapImpl resultMap = ResultMapImpl.newInstance(root);
@@ -62,6 +75,7 @@ public final class EntityPersistorImpl implements Persistor {
         return objects == null || objects.isEmpty();
     }
 
+    @SuppressWarnings("unchecked")
     private void persist(final Node resultNode, final CreationOrder creationOrder, final ResultMapImpl resultMap, final Node node) {
         final Object random = createRandomObject(node, creationOrder, resultMap);
         Object persistedObject;
@@ -113,7 +127,7 @@ public final class EntityPersistorImpl implements Persistor {
 
         Object id = null;
         try {
-            id = field.get(persistedObject);
+            id = field != null ? field.get(persistedObject) : null;
         } catch (final IllegalAccessException e) {
             //do nothing
         }
@@ -125,7 +139,7 @@ public final class EntityPersistorImpl implements Persistor {
         final Object random = node.getValue();
 
         final TableNode tableNode = creationOrder.getTableNode(node.getType());
-        final List<Relation<?, ?>> relations = tableNode.getRelations();
+        final List<Relation> relations = tableNode.getRelations();
 
         for (Relation relation : relations) {
             createRelation(resultMap, relation, random);
@@ -135,7 +149,7 @@ public final class EntityPersistorImpl implements Persistor {
         return random;
     }
 
-    private <F, T> void createRelation(final ResultMapImpl resultMap, final Relation<F, T> relation, final Object object) {
+    private void createRelation(final ResultMapImpl resultMap, final Relation relation, final Object object) {
         try {
             final Object value = getFieldValue(resultMap, relation.getTo());
             setFieldValue(object, relation.getFrom(), value);
@@ -145,12 +159,12 @@ public final class EntityPersistorImpl implements Persistor {
 
     }
 
-    private <F> void setFieldValue(final Object object, final FieldValue<F> fieldValue, final Object value) {
+    private void setFieldValue(final Object object, final Field field, final Object value) {
         try {
 
-            final Class<?> type = fieldValue.getField().getType();
-            fieldValue.getField().setAccessible(true);
-            fieldValue.getField().set(object, NumberUtil.castNumber(type, value));
+            final Class<?> type = field.getType();
+            field.setAccessible(true);
+            field.set(object, NumberUtil.castNumber(type, value));
         } catch (final IllegalAccessException e) {
             //do nothing
         }
@@ -158,14 +172,14 @@ public final class EntityPersistorImpl implements Persistor {
 
 
 
-    private <T> Object getFieldValue(final ResultMapImpl resultMap, final FieldValue<T> fieldValue) {
+    private Object getFieldValue(final ResultMapImpl resultMap, final Field field) {
         final Map<Class<?>, List<Object>> createdEntities = resultMap.getCreatedEntities();
-        final List<Object> objects = createdEntities.get(fieldValue.getField().getDeclaringClass());
+        final List<Object> objects = createdEntities.get(field.getDeclaringClass());
         final Object object = objects.get(objects.size() - 1);
         Object value = null;
         try {
-            fieldValue.getField().setAccessible(true);
-            value = fieldValue.getField().get(object);
+            field.setAccessible(true);
+            value = field.get(object);
         } catch (final IllegalAccessException e) {
             //do nothing
         }

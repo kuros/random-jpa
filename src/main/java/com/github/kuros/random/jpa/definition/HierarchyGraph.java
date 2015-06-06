@@ -2,15 +2,27 @@ package com.github.kuros.random.jpa.definition;
 
 import com.github.kuros.random.jpa.mapper.Relation;
 import com.github.kuros.random.jpa.mapper.TableNode;
-import com.github.kuros.random.jpa.util.FieldValueHelper;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * Created by Kumar Rohit on 5/1/15.
+/*
+ * Copyright (c) 2015 Kumar Rohit
+ *
+ *    This program is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU Lesser General Public License as published by
+ *    the Free Software Foundation, either version 3 of the License or any
+ *    later version.
+ *
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU Lesser General Public License for more details.
+ *
+ *    You should have received a copy of the GNU Lesser General Public License
+ *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 public final class HierarchyGraph {
 
@@ -28,14 +40,14 @@ public final class HierarchyGraph {
 
     public void addRelation(final Relation relation) {
 
-        final Class<?> fromClass = FieldValueHelper.getDeclaringClass(relation.getFrom());
+        final Class<?> fromClass = relation.getFrom().getDeclaringClass();
         TableNode tableNode = parentRelations.get(fromClass);
         if (tableNode == null) {
             tableNode = TableNode.newInstance();
         }
 
         tableNode.addRelation(relation);
-        final Class<?> toClass = FieldValueHelper.getDeclaringClass(relation.getTo());
+        final Class<?> toClass = relation.getTo().getDeclaringClass();
         tableNode.addParent(toClass);
         parentRelations.put(fromClass, tableNode);
 

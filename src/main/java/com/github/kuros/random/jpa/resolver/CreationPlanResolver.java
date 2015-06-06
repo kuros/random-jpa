@@ -2,7 +2,6 @@ package com.github.kuros.random.jpa.resolver;
 
 import com.github.kuros.random.jpa.mapper.Relation;
 import com.github.kuros.random.jpa.mapper.TableNode;
-import com.github.kuros.random.jpa.mapper.FieldValue;
 import com.github.kuros.random.jpa.random.Randomize;
 import com.github.kuros.random.jpa.types.CreationOrder;
 import com.github.kuros.random.jpa.types.CreationPlan;
@@ -10,12 +9,26 @@ import com.github.kuros.random.jpa.types.CreationPlanImpl;
 import com.github.kuros.random.jpa.types.Node;
 import com.github.kuros.random.jpa.util.NumberUtil;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by Kumar Rohit on 5/25/15.
+/*
+ * Copyright (c) 2015 Kumar Rohit
+ *
+ *    This program is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU Lesser General Public License as published by
+ *    the Free Software Foundation, either version 3 of the License or any
+ *    later version.
+ *
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU Lesser General Public License for more details.
+ *
+ *    You should have received a copy of the GNU Lesser General Public License
+ *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 public final class CreationPlanResolver {
 
@@ -44,6 +57,7 @@ public final class CreationPlanResolver {
         return creationPlan;
     }
 
+    @SuppressWarnings("unchecked")
     private void add(final Node node, final int index) {
         if (index >= order.size()) {
             return;
@@ -87,7 +101,7 @@ public final class CreationPlanResolver {
         final Object random = randomize.createRandom(type);
 
         final TableNode tableNode = creationOrder.getTableNode(type);
-        final List<Relation<?, ?>> relations = tableNode.getRelations();
+        final List<Relation> relations = tableNode.getRelations();
 
         for (Relation relation : relations) {
             createRelation(relation, random);
@@ -97,7 +111,7 @@ public final class CreationPlanResolver {
         return random;
     }
 
-    private <F, T> void createRelation(final Relation<F, T> relation, final Object object) {
+    private void createRelation(final Relation relation, final Object object) {
         try {
             final Object value = getFieldValue(relation.getTo());
             setFieldValue(object, relation.getFrom(), value);
@@ -107,12 +121,12 @@ public final class CreationPlanResolver {
 
     }
 
-    private <F> void setFieldValue(final Object object, final FieldValue<F> fieldValue, final Object value) {
+    private void setFieldValue(final Object object, final Field fieldValue, final Object value) {
         try {
 
-            final Class<?> type = fieldValue.getField().getType();
-            fieldValue.getField().setAccessible(true);
-            fieldValue.getField().set(object, NumberUtil.castNumber(type, value));
+            final Class<?> type = fieldValue.getType();
+            fieldValue.setAccessible(true);
+            fieldValue.set(object, NumberUtil.castNumber(type, value));
         } catch (final IllegalAccessException e) {
             //do nothing
         }
@@ -120,16 +134,16 @@ public final class CreationPlanResolver {
 
 
 
-    private <T> Object getFieldValue(final FieldValue<T> fieldValue) {
-        final List<Node> nodes = creationPlan.getCreatedNodeMap().get(fieldValue.getField().getDeclaringClass());
+    private Object getFieldValue(final Field field) {
+        final List<Node> nodes = creationPlan.getCreatedNodeMap().get(field.getDeclaringClass());
         if (nodes == null || nodes.isEmpty()) {
             return null;
         }
         final Object object = nodes.get(nodes.size() - 1).getValue();
         Object value = null;
         try {
-            fieldValue.getField().setAccessible(true);
-            value = fieldValue.getField().get(object);
+            field.setAccessible(true);
+            value = field.get(object);
         } catch (final IllegalAccessException e) {
             //do nothing
         }

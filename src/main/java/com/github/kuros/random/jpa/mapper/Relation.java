@@ -1,46 +1,62 @@
 package com.github.kuros.random.jpa.mapper;
 
-/**
- * Created by Kumar Rohit on 5/10/15.
+import java.lang.reflect.Field;
+
+/*
+ * Copyright (c) 2015 Kumar Rohit
+ *
+ *    This program is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU Lesser General Public License as published by
+ *    the Free Software Foundation, either version 3 of the License or any
+ *    later version.
+ *
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU Lesser General Public License for more details.
+ *
+ *    You should have received a copy of the GNU Lesser General Public License
+ *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-public final class Relation<F, T> {
+public final class Relation {
 
-    private final FieldValue<F> from;
-    private final FieldValue<T> to;
+    private final Field from;
+    private final Field to;
 
-    private Relation(final FieldValue<F> from, final FieldValue<T> to) {
+    private Relation(final Field from, final Field to) {
         this.from = from;
         this.to = to;
     }
 
-    public static <F, T> Relation<F, T> newInstance(final FieldValue<F> from, final FieldValue<T> to) {
-        return new Relation<F, T>(from, to);
+    public static Relation newInstance(final Field from, final Field to) {
+        return new Relation(from, to);
     }
 
-    public FieldValue<F> getFrom() {
+    public Field getFrom() {
         return from;
     }
 
-    public FieldValue<T> getTo() {
+    public Field getTo() {
         return to;
     }
 
     @Override
     public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
-        final Relation<?, ?> relation = (Relation<?, ?>) o;
+        final Relation relation = (Relation) o;
 
-        if (!from.getField().equals(relation.from.getField())) return false;
-        return to.getField().equals(relation.to.getField());
+        return from.equals(relation.from) && to.equals(relation.to);
 
     }
 
     @Override
     public int hashCode() {
-        int result = from.getField().hashCode();
-        result = 31 * result + to.getField().hashCode();
+        int result = from.hashCode();
+        result = 31 * result + to.hashCode();
         return result;
     }
 }
