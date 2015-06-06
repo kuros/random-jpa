@@ -2,7 +2,7 @@ package com.github.kuros.random.jpa.database.mssql.provider;
 
 import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.metamodel.AttributeProvider;
-import com.github.kuros.random.jpa.metamodel.EntityTableMapping;
+import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
 import com.github.kuros.random.jpa.provider.ColumnCharacterLength;
 import com.github.kuros.random.jpa.provider.SQLCharacterLengthProvider;
 
