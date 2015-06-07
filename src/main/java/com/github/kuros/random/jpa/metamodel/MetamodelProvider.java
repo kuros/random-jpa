@@ -23,6 +23,7 @@ import java.util.Map;
  */
 public interface MetaModelProvider {
 
+
     Map<String, List<FieldName>> getFieldsByTableName();
 
 }
