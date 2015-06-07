@@ -1,5 +1,6 @@
 package com.github.kuros.random.jpa.database.mssql.provider;
 
+import com.github.kuros.random.jpa.annotation.VisibleForTesting;
 import com.github.kuros.random.jpa.provider.ForeignKeyRelation;
 import com.github.kuros.random.jpa.provider.RelationshipProvider;
 
@@ -48,6 +49,7 @@ public final class MSSQLRelationshipProvider implements RelationshipProvider {
 
     private EntityManager entityManager;
 
+    @VisibleForTesting
     MSSQLRelationshipProvider(final EntityManager entityManager) {
         this.entityManager = entityManager;
     }

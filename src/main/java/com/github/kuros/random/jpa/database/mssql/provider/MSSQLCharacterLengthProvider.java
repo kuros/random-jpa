@@ -1,5 +1,6 @@
 package com.github.kuros.random.jpa.database.mssql.provider;
 
+import com.github.kuros.random.jpa.annotation.VisibleForTesting;
 import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.metamodel.AttributeProvider;
 import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
@@ -44,6 +45,7 @@ public final class MSSQLCharacterLengthProvider implements SQLCharacterLengthPro
     private static MSSQLCharacterLengthProvider instance;
     private AttributeProvider attributeProvider;
 
+    @VisibleForTesting
     MSSQLCharacterLengthProvider(final EntityManager entityManager, final AttributeProvider attributeProvider) {
         this.entityManager = entityManager;
         this.attributeProvider = attributeProvider;

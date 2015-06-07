@@ -1,5 +1,7 @@
 package com.github.kuros.random.jpa.mapper;
 
+import com.github.kuros.random.jpa.annotation.VisibleForTesting;
+
 import java.lang.reflect.Field;
 
 /*
@@ -18,12 +20,13 @@ import java.lang.reflect.Field;
  *    You should have received a copy of the GNU Lesser General Public License
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-public final class Relation {
+public class Relation {
 
     private final Field from;
     private final Field to;
 
-    private Relation(final Field from, final Field to) {
+    @VisibleForTesting
+    Relation(final Field from, final Field to) {
         this.from = from;
         this.to = to;
     }

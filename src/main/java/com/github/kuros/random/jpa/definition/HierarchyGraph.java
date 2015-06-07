@@ -1,5 +1,6 @@
 package com.github.kuros.random.jpa.definition;
 
+import com.github.kuros.random.jpa.annotation.VisibleForTesting;
 import com.github.kuros.random.jpa.mapper.Relation;
 
 import java.util.HashMap;
@@ -23,12 +24,13 @@ import java.util.Set;
  *    You should have received a copy of the GNU Lesser General Public License
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-public final class HierarchyGraph {
+public class HierarchyGraph {
 
     private Map<Class<?>, TableNode> parentRelations;
     private Map<Class<?>, Set<Relation>> attributeRelations;
 
-    private HierarchyGraph() {
+    @VisibleForTesting
+    HierarchyGraph() {
         this.parentRelations = new HashMap<Class<?>, TableNode>();
         attributeRelations = new HashMap<Class<?>, Set<Relation>>();
     }
