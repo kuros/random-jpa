@@ -36,6 +36,7 @@ public final class RelationCreator {
     private RelationCreator(final MetaModelProvider metaModelProvider) {
         fieldsByTableName = metaModelProvider.getFieldsByTableName();
         this.foreignKeyRelations = new ArrayList<ForeignKeyRelation>();
+        this.dependencies = Dependencies.newInstance();
     }
 
     public static RelationCreator from(final MetaModelProvider metaModelProvider) {
