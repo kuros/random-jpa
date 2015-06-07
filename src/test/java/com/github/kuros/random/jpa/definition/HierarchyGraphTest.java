@@ -1,12 +1,14 @@
-package com.github.kuros.random.jpa.mapper;
+package com.github.kuros.random.jpa.definition;
 
 import com.github.kuros.random.jpa.definition.HierarchyGraph;
 import com.github.kuros.random.jpa.definition.TableNode;
+import com.github.kuros.random.jpa.mapper.Relation;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -132,6 +134,67 @@ public class HierarchyGraphTest {
 
         final Set<Class<?>> parents2 = hierarchyGraph.getParents(testClass3);
         Assert.assertEquals(0, parents2.size());
+    }
+
+    @Test
+    public void shouldReturnKeySet() throws NoSuchFieldException {
+        final Class<TestClass> testClass1 = TestClass.class;
+        final Field from = testClass1.getDeclaredField("attr1");
+
+        final Class<TestClass2> testClass2 = TestClass2.class;
+        final Field to = testClass2.getDeclaredField("attr1");
+
+        final HierarchyGraph hierarchyGraph = HierarchyGraph.newInstance();
+
+        final Relation relation = Relation.newInstance(from, to);
+        hierarchyGraph.addRelation(relation);
+
+        final Set<Class<?>> keySet = hierarchyGraph.getKeySet();
+        Assert.assertEquals(2, keySet.size());
+        Assert.assertTrue(keySet.contains(TestClass.class));
+        Assert.assertTrue(keySet.contains(TestClass2.class));
+    }
+
+    @Test
+    public void shouldGetParentRelations() throws NoSuchFieldException {
+        final Class<TestClass> testClass1 = TestClass.class;
+        final Field from = testClass1.getDeclaredField("attr1");
+
+        final Class<TestClass2> testClass2 = TestClass2.class;
+        final Field to = testClass2.getDeclaredField("attr1");
+
+        final HierarchyGraph hierarchyGraph = HierarchyGraph.newInstance();
+
+        final Relation relation = Relation.newInstance(from, to);
+        hierarchyGraph.addRelation(relation);
+
+        final Set<Class<?>> keySet = hierarchyGraph.getParents(TestClass.class);
+        Assert.assertEquals(1, keySet.size());
+        Assert.assertTrue(keySet.contains(TestClass2.class));
+    }
+
+    @Test
+    public void shouldGetAttributeRelations() throws NoSuchFieldException {
+        final Class<TestClass> testClass1 = TestClass.class;
+        final Field from = testClass1.getDeclaredField("attr1");
+
+        final Class<TestClass2> testClass2 = TestClass2.class;
+        final Field to = testClass2.getDeclaredField("attr1");
+
+        final HierarchyGraph hierarchyGraph = HierarchyGraph.newInstance();
+
+        final Relation relation = Relation.newInstance(from, to);
+        hierarchyGraph.addRelation(relation);
+
+        Assert.assertNotNull(hierarchyGraph.getParentRelations());
+
+        final Set<Relation> keySet = hierarchyGraph.getAttributeRelations(TestClass.class);
+        Assert.assertEquals(1, keySet.size());
+
+        List<Relation> relations = new ArrayList<Relation>();
+        relations.addAll(keySet);
+        Assert.assertEquals(from, relations.get(0).getFrom());
+        Assert.assertEquals(to, relations.get(0).getTo());
     }
 
     private class TestClass {
