@@ -40,25 +40,25 @@ public final class MSSQLCharacterLengthProvider implements SQLCharacterLengthPro
 
     private Map<String, ColumnCharacterLength> columnLengthsByTable;
 
-    private final EntityManager entityManager;
+    private EntityManager entityManager;
     private static MSSQLCharacterLengthProvider instance;
+    private AttributeProvider attributeProvider;
 
-    private MSSQLCharacterLengthProvider() {
-        this.entityManager = Cache.getInstance().getEntityManager();
+    MSSQLCharacterLengthProvider(final EntityManager entityManager, final AttributeProvider attributeProvider) {
+        this.entityManager = entityManager;
+        this.attributeProvider = attributeProvider;
         this.columnLengthsByTable = init();
     }
 
     public static MSSQLCharacterLengthProvider getInstance() {
         if (instance == null) {
-            instance = new MSSQLCharacterLengthProvider();
+            instance = new MSSQLCharacterLengthProvider(Cache.getInstance().getEntityManager(),
+                    AttributeProvider.getInstance());
         }
         return instance;
     }
 
     private Map<String, ColumnCharacterLength> init() {
-
-        final AttributeProvider attributeProvider = AttributeProvider.getInstance();
-
         final Map<String, ColumnCharacterLength> lengths = new HashMap<String, ColumnCharacterLength>();
         final Query query = entityManager.createNativeQuery(QUERY);
         final List resultList = query.getResultList();
@@ -91,5 +91,4 @@ public final class MSSQLCharacterLengthProvider implements SQLCharacterLengthPro
         final ColumnCharacterLength columnCharacterLength = columnLengthsByTable.get(entityName);
         return columnCharacterLength != null ? columnCharacterLength.getLength(attributeName) : null;
     }
-
 }

@@ -32,7 +32,7 @@ import java.util.Set;
  *    You should have received a copy of the GNU Lesser General Public License
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-public final class AttributeProvider {
+public class AttributeProvider {
     private Map<Class<?>, EntityTableMapping> entityTableMappingByClass;
     private Map<String, EntityTableMapping> entityTableMappingByTableName;
     private static AttributeProvider attributeProvider;
@@ -45,7 +45,7 @@ public final class AttributeProvider {
         return attributeProvider;
     }
 
-    private AttributeProvider() {
+    AttributeProvider() {
         init();
     }
 
