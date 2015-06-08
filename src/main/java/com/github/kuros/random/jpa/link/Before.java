@@ -33,9 +33,9 @@ public final class Before {
         return new Before(type);
     }
 
-    public Before create(final Entity... entities) {
-        for (Entity entity : entities) {
-            plan.add(entity);
+    public Before create(final Class<?>... types) {
+        for (Class<?> type : types) {
+            plan.add(Entity.of(type));
         }
 
         return this;
