@@ -1,5 +1,8 @@
 package com.github.kuros.random.jpa.persistor;
 
+import com.github.kuros.random.jpa.exception.RandomJPAException;
+import com.github.kuros.random.jpa.log.LogFactory;
+import com.github.kuros.random.jpa.log.Logger;
 import com.github.kuros.random.jpa.mapper.Relation;
 import com.github.kuros.random.jpa.definition.TableNode;
 import com.github.kuros.random.jpa.metamodel.AttributeProvider;
@@ -34,6 +37,8 @@ import java.util.Map;
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 public final class EntityPersistorImpl implements Persistor {
+
+    private static final Logger LOGGER = LogFactory.getLogger(EntityPersistorImpl.class);
 
     private EntityManager entityManager;
     private AttributeProvider attributeProvider;
@@ -100,12 +105,18 @@ public final class EntityPersistorImpl implements Persistor {
     }
 
     private Object persistAndReturnPersistedObject(final Class tableClass, final Object random) {
-        final EntityManagerFactory entityManagerFactory = entityManager.getEntityManagerFactory();
-        final EntityManager em = entityManagerFactory.createEntityManager();
-        em.getTransaction().begin();
-        em.persist(random);
-        em.getTransaction().commit();
-        em.close();
+        try {
+            final EntityManagerFactory entityManagerFactory = entityManager.getEntityManagerFactory();
+            final EntityManager em = entityManagerFactory.createEntityManager();
+            em.getTransaction().begin();
+            em.persist(random);
+            em.getTransaction().commit();
+            em.close();
+            LOGGER.debug("Persisted values for table: " + tableClass.getName());
+        } catch (Exception e) {
+            LOGGER.error("Failed to persist: " + tableClass.getName());
+            throw new RandomJPAException(e);
+        }
         return findElementById(tableClass, random);
     }
 

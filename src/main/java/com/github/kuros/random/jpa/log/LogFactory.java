@@ -1,4 +1,6 @@
-package com.github.kuros.random.jpa.exception;
+package com.github.kuros.random.jpa.log;
+
+import com.openpojo.log.LoggerFactory;
 
 /*
  * Copyright (c) 2015 Kumar Rohit
@@ -15,18 +17,13 @@ package com.github.kuros.random.jpa.exception;
  *
  *    You should have received a copy of the GNU Lesser General Public License
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *    Logging functionality provided by OpenPojo (http://openpojo.com)
  */
-public class RandomJPAException extends RuntimeException {
+public class LogFactory {
 
-    public RandomJPAException(final String message, final Throwable cause) {
-        super(message, cause);
-    }
-
-    public RandomJPAException(final String message) {
-        super(message);
-    }
-
-    public RandomJPAException(Throwable cause) {
-        super(cause);
+    public static Logger getLogger(final Class<?> clazz) {
+        final com.openpojo.log.Logger logger = LoggerFactory.getLogger(clazz);
+        return new Logger(logger);
     }
 }
