@@ -1,4 +1,4 @@
-package com.github.kuros.random.jpa.database.mssql.provider;
+package com.github.kuros.random.jpa.provider.mssql;
 
 import com.github.kuros.random.jpa.annotation.VisibleForTesting;
 import com.github.kuros.random.jpa.cache.Cache;

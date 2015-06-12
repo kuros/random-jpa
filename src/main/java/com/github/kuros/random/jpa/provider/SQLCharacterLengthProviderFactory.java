@@ -1,7 +1,7 @@
 package com.github.kuros.random.jpa.provider;
 
 import com.github.kuros.random.jpa.Database;
-import com.github.kuros.random.jpa.database.mssql.provider.MSSQLCharacterLengthProvider;
+import com.github.kuros.random.jpa.provider.mssql.MSSQLCharacterLengthProvider;
 
 /*
  * Copyright (c) 2015 Kumar Rohit
