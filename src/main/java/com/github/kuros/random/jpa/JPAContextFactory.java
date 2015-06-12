@@ -12,7 +12,7 @@ import com.github.kuros.random.jpa.definition.HierarchyGraph;
 import com.github.kuros.random.jpa.mapper.Relation;
 import com.github.kuros.random.jpa.metamodel.MetaModelProvider;
 import com.github.kuros.random.jpa.metamodel.MetaModelProviderImpl;
-import com.github.kuros.random.jpa.provider.RelationProviderFactory;
+import com.github.kuros.random.jpa.provider.RelationshipProviderFactory;
 import com.github.kuros.random.jpa.random.generator.Generator;
 
 import javax.persistence.EntityManager;
@@ -79,7 +79,7 @@ public final class JPAContextFactory {
         final List<Relation> relations = RelationCreator
                 .from(metaModelProvider)
                 .with(dependencies)
-                .with(RelationProviderFactory.getRelationshipProvider(database, entityManager))
+                .with(RelationshipProviderFactory.getRelationshipProvider(database, entityManager))
                 .generate();
 
         final HierarchyGenerator hierarchyGenerator = new HierarchyGeneratorImpl();
