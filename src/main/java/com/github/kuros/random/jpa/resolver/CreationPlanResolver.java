@@ -101,12 +101,14 @@ public final class CreationPlanResolver {
         final Object random = randomize.createRandom(type);
 
         final TableNode tableNode = creationOrder.getTableNode(type);
-        final List<Relation> relations = tableNode.getRelations();
 
-        for (Relation relation : relations) {
-            createRelation(relation, random);
+        if (tableNode != null) {
+            final List<Relation> relations = tableNode.getRelations();
+
+            for (Relation relation : relations) {
+                createRelation(relation, random);
+            }
         }
-
 
         return random;
     }
