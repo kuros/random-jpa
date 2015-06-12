@@ -1,5 +1,7 @@
 package com.github.kuros.random.jpa.provider;
 
+import com.github.kuros.random.jpa.provider.model.ForeignKeyRelation;
+
 import java.util.List;
 
 /*

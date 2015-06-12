@@ -3,7 +3,7 @@ package com.github.kuros.random.jpa.mapper;
 import com.github.kuros.random.jpa.link.Dependencies;
 import com.github.kuros.random.jpa.metamodel.MetaModelProvider;
 import com.github.kuros.random.jpa.metamodel.model.FieldName;
-import com.github.kuros.random.jpa.provider.ForeignKeyRelation;
+import com.github.kuros.random.jpa.provider.model.ForeignKeyRelation;
 import com.github.kuros.random.jpa.provider.RelationshipProvider;
 import com.github.kuros.random.jpa.resolver.DependencyResolver;
 

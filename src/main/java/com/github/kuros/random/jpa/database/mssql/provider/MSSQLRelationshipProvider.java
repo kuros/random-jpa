@@ -1,7 +1,7 @@
 package com.github.kuros.random.jpa.database.mssql.provider;
 
 import com.github.kuros.random.jpa.annotation.VisibleForTesting;
-import com.github.kuros.random.jpa.provider.ForeignKeyRelation;
+import com.github.kuros.random.jpa.provider.model.ForeignKeyRelation;
 import com.github.kuros.random.jpa.provider.RelationshipProvider;
 
 import javax.persistence.EntityManager;

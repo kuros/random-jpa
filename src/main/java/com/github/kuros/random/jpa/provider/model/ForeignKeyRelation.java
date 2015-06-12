@@ -1,4 +1,4 @@
-package com.github.kuros.random.jpa.provider;
+package com.github.kuros.random.jpa.provider.model;
 
 /*
  * Copyright (c) 2015 Kumar Rohit

@@ -1,4 +1,4 @@
-package com.github.kuros.random.jpa.provider;
+package com.github.kuros.random.jpa.provider.model;
 
 import java.util.HashMap;
 import java.util.Map;

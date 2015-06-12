@@ -2,6 +2,7 @@ package com.github.kuros.random.jpa.provider;
 
 import com.github.kuros.random.jpa.Database;
 import com.github.kuros.random.jpa.database.mssql.provider.MSSQLRelationshipProvider;
+import com.github.kuros.random.jpa.provider.model.ForeignKeyRelation;
 
 import javax.persistence.EntityManager;
 import java.util.ArrayList;

@@ -4,7 +4,7 @@ import com.github.kuros.random.jpa.annotation.VisibleForTesting;
 import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.metamodel.AttributeProvider;
 import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
-import com.github.kuros.random.jpa.provider.ColumnCharacterLength;
+import com.github.kuros.random.jpa.provider.model.ColumnCharacterLength;
 import com.github.kuros.random.jpa.provider.SQLCharacterLengthProvider;
 
 import javax.persistence.EntityManager;

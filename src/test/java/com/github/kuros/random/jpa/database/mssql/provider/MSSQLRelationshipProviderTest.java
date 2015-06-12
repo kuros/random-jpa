@@ -1,6 +1,6 @@
 package com.github.kuros.random.jpa.database.mssql.provider;
 
-import com.github.kuros.random.jpa.provider.ForeignKeyRelation;
+import com.github.kuros.random.jpa.provider.model.ForeignKeyRelation;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
