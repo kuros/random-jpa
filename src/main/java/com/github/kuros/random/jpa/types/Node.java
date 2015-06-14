@@ -69,19 +69,21 @@ public final class Node<T> {
         childNodes.add(node);
     }
 
-    public void print(final Printer printer) {
-        print(printer, "", true);
+    public String print() {
+        final StringBuilder stringBuilder = new StringBuilder();
+        print(stringBuilder, "", true);
+        return stringBuilder.toString();
     }
 
-    private void print(final Printer printer, final String prefix, final boolean isTail) {
+    private void print(final StringBuilder stringBuilder, final String prefix, final boolean isTail) {
 
         final String detail = type == null ? "*ROOT*" : type.getName() + "|" + index;
-        printer.print(prefix + (isTail ? "└── " : "├── ") + detail);
+        stringBuilder.append("\n").append(prefix).append(isTail ? "└── " : "├── ").append(detail);
         for (int i = 0; i < childNodes.size() - 1; i++) {
-            childNodes.get(i).print(printer, prefix + (isTail ? "    " : "│   "), false);
+            childNodes.get(i).print(stringBuilder, prefix + (isTail ? "    " : "│   "), false);
         }
         if (childNodes.size() > 0) {
-            childNodes.get(childNodes.size() - 1).print(printer, prefix + (isTail ? "    " : "│   "), true);
+            childNodes.get(childNodes.size() - 1).print(stringBuilder, prefix + (isTail ? "    " : "│   "), true);
         }
     }
 }

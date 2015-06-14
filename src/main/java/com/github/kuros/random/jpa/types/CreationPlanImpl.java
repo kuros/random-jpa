@@ -51,7 +51,7 @@ public class CreationPlanImpl implements CreationPlan {
     }
 
     public void print(final Printer printer) {
-        root.print(printer);
+        printer.print(root.print());
     }
 
     public CreationOrder getCreationOrder() {

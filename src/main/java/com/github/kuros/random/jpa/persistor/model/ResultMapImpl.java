@@ -70,6 +70,6 @@ public final class ResultMapImpl implements ResultMap {
     }
 
     public void print(final Printer printer) {
-        root.print(printer);
+        printer.print(root.print());
     }
 }
