@@ -1,21 +1,29 @@
 package com.github.kuros.random.jpa.persistor;
 
+import com.github.kuros.random.jpa.definition.TableNode;
 import com.github.kuros.random.jpa.exception.RandomJPAException;
 import com.github.kuros.random.jpa.log.LogFactory;
 import com.github.kuros.random.jpa.log.Logger;
 import com.github.kuros.random.jpa.mapper.Relation;
-import com.github.kuros.random.jpa.definition.TableNode;
 import com.github.kuros.random.jpa.metamodel.AttributeProvider;
 import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
 import com.github.kuros.random.jpa.persistor.model.ResultMap;
 import com.github.kuros.random.jpa.persistor.model.ResultMapImpl;
+import com.github.kuros.random.jpa.provider.UniqueConstraintProvider;
+import com.github.kuros.random.jpa.provider.UniqueConstraintProviderFactory;
 import com.github.kuros.random.jpa.types.CreationOrder;
 import com.github.kuros.random.jpa.types.CreationPlan;
 import com.github.kuros.random.jpa.types.Node;
 import com.github.kuros.random.jpa.util.NumberUtil;
+import com.github.kuros.random.jpa.util.Util;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
@@ -42,10 +50,12 @@ public final class EntityPersistorImpl implements Persistor {
 
     private EntityManager entityManager;
     private AttributeProvider attributeProvider;
+    private UniqueConstraintProvider uniqueConstraintProvider;
 
     private EntityPersistorImpl(final EntityManager entityManager) {
         this.entityManager = entityManager;
         this.attributeProvider = AttributeProvider.getInstance();
+        this.uniqueConstraintProvider = UniqueConstraintProviderFactory.getUniqueConstraintProvider();
     }
 
     public static Persistor newInstance(final EntityManager entityManager) {
@@ -88,7 +98,8 @@ public final class EntityPersistorImpl implements Persistor {
                 && findElementById(node.getType(), random) != null) {
             persistedObject = findElementById(node.getType(), random);
         } else {
-            persistedObject = persistAndReturnPersistedObject(node.getType(), random);
+            final Object foundRow = findRowByUniqueIdentities(node.getType(), random);
+            persistedObject = foundRow != null ? foundRow : persistAndReturnPersistedObject(node.getType(), random);
         }
 
         resultMap.put(node.getType(), persistedObject);
@@ -113,11 +124,50 @@ public final class EntityPersistorImpl implements Persistor {
             em.getTransaction().commit();
             em.close();
             LOGGER.debug("Persisted values for table: " + tableClass.getName());
-        } catch (Exception e) {
+        } catch (final Exception e) {
             LOGGER.error("Failed to persist: " + tableClass.getName());
             throw new RandomJPAException(e);
         }
         return findElementById(tableClass, random);
+    }
+
+    @SuppressWarnings("unchecked")
+    private Object findRowByUniqueIdentities(final Class tableClass, final Object random) {
+        final List<String> uniqueCombinationAttributes = uniqueConstraintProvider.getUniqueCombinationAttributes(tableClass);
+        if (uniqueCombinationAttributes == null || uniqueCombinationAttributes.size() <= 1) {
+            return null;
+        }
+
+        final CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        final CriteriaQuery q = criteriaBuilder.createQuery(tableClass);
+
+        final Root<?> from = q.from(tableClass);
+
+        q.select(from);
+
+        final Predicate[] predicates = new Predicate[uniqueCombinationAttributes.size()];
+
+        for (int i = 0; i < uniqueCombinationAttributes.size(); i++) {
+            final String attribute = uniqueCombinationAttributes.get(i);
+            try {
+                final Field declaredField = tableClass.getDeclaredField(attribute);
+                declaredField.setAccessible(true);
+                predicates[i] = criteriaBuilder.equal(from.get(attribute), declaredField.get(random));
+            } catch (final Exception e) {
+                throw new RandomJPAException(e);
+            }
+        }
+
+        q.where(predicates);
+
+        final TypedQuery typedQuery = entityManager.createQuery(q);
+        final List resultList = typedQuery.getResultList();
+
+        if (resultList.size() > 0) {
+            LOGGER.debug("Reusing data for: " + tableClass + " " + Util.printValues(random));
+        }
+
+        return resultList.size() == 0 ? null : resultList.get(0);
     }
 
     private Object findElementById(final Class tableClass, final Object persistedObject) {
