@@ -14,6 +14,7 @@ import com.github.kuros.random.jpa.provider.UniqueConstraintProviderFactory;
 import com.github.kuros.random.jpa.types.CreationOrder;
 import com.github.kuros.random.jpa.types.CreationPlan;
 import com.github.kuros.random.jpa.types.Node;
+import com.github.kuros.random.jpa.types.ResultNode;
 import com.github.kuros.random.jpa.util.NumberUtil;
 import com.github.kuros.random.jpa.util.Util;
 
@@ -64,7 +65,7 @@ public final class EntityPersistorImpl implements Persistor {
 
     @SuppressWarnings("unchecked")
     public ResultMap persist(final CreationPlan creationPlan) {
-        final Node root = Node.newInstance();
+        final ResultNode root = ResultNode.newInstance();
         final ResultMapImpl resultMap = ResultMapImpl.newInstance(root);
 
 
@@ -72,7 +73,7 @@ public final class EntityPersistorImpl implements Persistor {
         final List<Node> childNodes = creationPlanRoot.getChildNodes();
         for (Node node : childNodes) {
             if (node.getValue() != null) {
-                final Node childNode = Node.newInstance(node.getType(), getIndex(resultMap, node.getType()));
+                final ResultNode childNode = ResultNode.newInstance(node.getType(), getIndex(resultMap, node.getType()));
                 root.addChildNode(childNode);
                 persist(childNode, creationPlan.getCreationOrder(), resultMap, node);
             }
@@ -91,7 +92,7 @@ public final class EntityPersistorImpl implements Persistor {
     }
 
     @SuppressWarnings("unchecked")
-    private void persist(final Node resultNode, final CreationOrder creationOrder, final ResultMapImpl resultMap, final Node node) {
+    private void persist(final ResultNode resultNode, final CreationOrder creationOrder, final ResultMapImpl resultMap, final Node node) {
         final Object random = createRandomObject(node, creationOrder, resultMap);
         Object persistedObject;
         if (getId(node.getType(), random) != null
@@ -108,7 +109,7 @@ public final class EntityPersistorImpl implements Persistor {
         final List<Node> childNodes = node.getChildNodes();
         for (Node childNode : childNodes) {
             if (childNode.getValue() != null) {
-                final Node resultChildNode = Node.newInstance(childNode.getType(), getIndex(resultMap, childNode.getType()));
+                final ResultNode resultChildNode = ResultNode.newInstance(childNode.getType(), getIndex(resultMap, childNode.getType()));
                 resultNode.addChildNode(resultChildNode);
                 persist(resultChildNode, creationOrder, resultMap, childNode);
             }

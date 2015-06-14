@@ -1,7 +1,7 @@
 package com.github.kuros.random.jpa.persistor.model;
 
 import com.github.kuros.random.jpa.types.Printer;
-import com.github.kuros.random.jpa.types.Node;
+import com.github.kuros.random.jpa.types.ResultNode;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,15 +26,15 @@ import java.util.Map;
  */
 public final class ResultMapImpl implements ResultMap {
 
-    private final Node root;
+    private final ResultNode root;
     private Map<Class<?>, List<Object>> resultMap;
 
-    private ResultMapImpl(final Node root) {
+    private ResultMapImpl(final ResultNode root) {
         this.resultMap = new HashMap<Class<?>, List<Object>>();
         this.root = root;
     }
 
-    public static ResultMapImpl newInstance(final Node root) {
+    public static ResultMapImpl newInstance(final ResultNode root) {
         return new ResultMapImpl(root);
     }
 

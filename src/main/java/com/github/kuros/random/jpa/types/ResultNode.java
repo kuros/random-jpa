@@ -1,5 +1,7 @@
 package com.github.kuros.random.jpa.types;
 
+import com.github.kuros.random.jpa.util.Util;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,26 +21,26 @@ import java.util.List;
  *    You should have received a copy of the GNU Lesser General Public License
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-public final class Node<T> {
+public final class ResultNode<T> {
 
     private final Class<T> type;
     private final int index;
     private T value;
-    private List<Node> childNodes;
+    private List<ResultNode> childNodes;
 
-    private Node(final Class<T> type, final int index) {
+    private ResultNode(final Class<T> type, final int index) {
         this.type = type;
         this.index = index;
-        this.childNodes = new ArrayList<Node>();
+        this.childNodes = new ArrayList<ResultNode>();
     }
 
-    public static <T> Node<T> newInstance(final Class<T> type, final int index) {
-        return new Node<T>(type, index);
+    public static <T> ResultNode<T> newInstance(final Class<T> type, final int index) {
+        return new ResultNode<T>(type, index);
     }
 
     @SuppressWarnings("unchecked")
-    public static Node newInstance() {
-        return new Node(null, 0);
+    public static ResultNode newInstance() {
+        return new ResultNode(null, 0);
     }
 
     public Class<T> getType() {
@@ -57,15 +59,15 @@ public final class Node<T> {
         this.value = value;
     }
 
-    public void setChildNodes(final List<Node> childNodes) {
+    public void setChildNodes(final List<ResultNode> childNodes) {
         this.childNodes = childNodes;
     }
 
-    public List<Node> getChildNodes() {
+    public List<ResultNode> getChildNodes() {
         return childNodes;
     }
 
-    public void addChildNode(final Node node) {
+    public void addChildNode(final ResultNode node) {
         childNodes.add(node);
     }
 
@@ -75,7 +77,7 @@ public final class Node<T> {
 
     private void print(final Printer printer, final String prefix, final boolean isTail) {
 
-        final String detail = type == null ? "*ROOT*" : type.getName() + "|" + index;
+        final String detail = type == null ? "*ROOT*" : type.getName() + "|" + index + " " + Util.printEntityId(value);
         printer.print(prefix + (isTail ? "└── " : "├── ") + detail);
         for (int i = 0; i < childNodes.size() - 1; i++) {
             childNodes.get(i).print(printer, prefix + (isTail ? "    " : "│   "), false);

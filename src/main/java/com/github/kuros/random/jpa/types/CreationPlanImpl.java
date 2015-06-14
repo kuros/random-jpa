@@ -1,8 +1,5 @@
 package com.github.kuros.random.jpa.types;
 
-import com.github.kuros.random.jpa.persistor.model.ResultMap;
-import com.github.kuros.random.jpa.persistor.model.ResultMapImpl;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,14 +23,12 @@ import java.util.Map;
  */
 public class CreationPlanImpl implements CreationPlan {
     private CreationOrder creationOrder;
-    private ResultMap resultMap;
     private Map<Class<?>, List<Node>> createdNodeMap;
     private Node root;
 
     public CreationPlanImpl(final CreationOrder creationOrder) {
         this.createdNodeMap = new HashMap<Class<?>, List<Node>>();
         this.root = Node.newInstance();
-        this.resultMap = ResultMapImpl.newInstance(root);
         this.creationOrder = creationOrder;
     }
 
@@ -63,6 +58,7 @@ public class CreationPlanImpl implements CreationPlan {
         return creationOrder;
     }
 
+    @SuppressWarnings("unchecked")
     public <T> void deleteItem(final Class<T> type, final int index) {
         final Node node = createdNodeMap.get(type).get(index);
         node.setValue(null);
