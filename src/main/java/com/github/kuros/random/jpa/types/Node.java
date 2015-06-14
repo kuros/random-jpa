@@ -1,5 +1,7 @@
 package com.github.kuros.random.jpa.types;
 
+import com.github.kuros.random.jpa.util.Util;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +38,7 @@ public final class Node<T> {
         return new Node<T>(type, index);
     }
 
+    @SuppressWarnings("unchecked")
     public static Node newInstance() {
         return new Node(null, 0);
     }
@@ -74,7 +77,7 @@ public final class Node<T> {
 
     private void print(final Printer printer, final String prefix, final boolean isTail) {
 
-        final String detail = type == null ? "*ROOT*" : type.getName() + "|" + index;
+        final String detail = type == null ? "*ROOT*" : type.getName() + "|" + index + " " + Util.printEntityId(value);
         printer.print(prefix + (isTail ? "└── " : "├── ") + detail);
         for (int i = 0; i < childNodes.size() - 1; i++) {
             childNodes.get(i).print(printer, prefix + (isTail ? "    " : "│   "), false);

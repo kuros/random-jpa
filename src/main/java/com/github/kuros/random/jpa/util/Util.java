@@ -1,8 +1,11 @@
 package com.github.kuros.random.jpa.util;
 
 import com.github.kuros.random.jpa.exception.RandomJPAException;
+import com.github.kuros.random.jpa.metamodel.AttributeProvider;
+import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
 
 import java.lang.reflect.Field;
+import java.util.List;
 
 /*
  * Copyright (c) 2015 Kumar Rohit
@@ -23,6 +26,10 @@ import java.lang.reflect.Field;
 public class Util {
 
     public static String printValues(final Object object) {
+        if (object == null) {
+            return "";
+        }
+
         final Class<?> type = object.getClass();
         final Field[] declaredFields = type.getDeclaredFields();
         final StringBuilder builder = new StringBuilder();
@@ -40,6 +47,40 @@ public class Util {
                     builder.append(", ");
                 }
             } catch (final IllegalAccessException e) {
+                throw new RandomJPAException(e);
+            }
+        }
+
+        builder.append("]");
+
+        return builder.toString();
+    }
+
+    public static String printEntityId(final Object object) {
+        if (object == null) {
+            return "";
+        }
+
+        final Class<?> type = object.getClass();
+        final EntityTableMapping entityTableMapping = AttributeProvider.getInstance().get(type);
+        final List<String> attributeIds = entityTableMapping.getAttributeIds();
+
+        final StringBuilder builder = new StringBuilder();
+        builder.append("[");
+
+        for (int i = 0; i < attributeIds.size(); i++) {
+            try {
+                final String attribute = attributeIds.get(i);
+                final Field declaredField = type.getDeclaredField(attribute);
+                declaredField.setAccessible(true);
+                final Object value = declaredField.get(object);
+                builder.append(declaredField.getName())
+                        .append(": ")
+                        .append(value);
+                if (i != attributeIds.size() - 1) {
+                    builder.append(", ");
+                }
+            } catch (final Exception e) {
                 throw new RandomJPAException(e);
             }
         }

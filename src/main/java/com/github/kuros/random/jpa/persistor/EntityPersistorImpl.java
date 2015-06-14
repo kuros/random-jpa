@@ -102,6 +102,7 @@ public final class EntityPersistorImpl implements Persistor {
             persistedObject = foundRow != null ? foundRow : persistAndReturnPersistedObject(node.getType(), random);
         }
 
+        resultNode.setValue(persistedObject);
         resultMap.put(node.getType(), persistedObject);
 
         final List<Node> childNodes = node.getChildNodes();
