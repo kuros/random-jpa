@@ -1,16 +1,12 @@
 package com.github.kuros.random.jpa.resolver;
 
 import com.github.kuros.random.jpa.cache.PreconditionCache;
-import com.github.kuros.random.jpa.exception.RandomJPAException;
 import com.github.kuros.random.jpa.definition.HierarchyGraph;
-import com.github.kuros.random.jpa.metamodel.AttributeProvider;
-import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
-import com.github.kuros.random.jpa.types.AttributeValue;
+import com.github.kuros.random.jpa.exception.RandomJPAException;
 import com.github.kuros.random.jpa.types.CreationOrder;
 import com.github.kuros.random.jpa.types.Entity;
 import com.github.kuros.random.jpa.types.Plan;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Queue;
@@ -35,13 +31,11 @@ import java.util.Stack;
  */
 public final class CreationOrderResolverImpl implements CreationOrderResolver {
 
-    private AttributeProvider attributeProvider;
     private HierarchyGraph hierarchyGraph;
     private Plan plan;
 
 
     private CreationOrderResolverImpl(final HierarchyGraph hierarchyGraph, final Plan plan) {
-        this.attributeProvider = AttributeProvider.getInstance();
         this.hierarchyGraph = hierarchyGraph;
         this.plan = plan;
     }
@@ -63,8 +57,6 @@ public final class CreationOrderResolverImpl implements CreationOrderResolver {
                 throw new RandomJPAException("Class Not Found", e);
             }
         }
-
-        filterAlreadyGenerated(creationOrder, plan.getEntities());
 
         return creationOrder;
     }
@@ -110,40 +102,6 @@ public final class CreationOrderResolverImpl implements CreationOrderResolver {
 
     private void addCreationCount(final CreationOrder creationOrder, final Entity entity) {
         creationOrder.addCreationCount(entity.getType(), entity.getCount());
-    }
-
-    private void filterAlreadyGenerated(final CreationOrder creationOrder, final List<Entity> entities) {
-
-        final Set<Class<?>> itemsWithId = new HashSet<Class<?>>();
-        final Set<Class<?>> itemsWithoutId = new HashSet<Class<?>>();
-
-        for (Entity entity : entities) {
-            if (isFilterRequired(entity)) {
-                itemsWithId.addAll(hierarchyGraph.getParents(entity.getType()));
-            } else {
-                itemsWithoutId.addAll(hierarchyGraph.getParents(entity.getType()));
-            }
-        }
-
-        itemsWithId.removeAll(itemsWithoutId);
-
-        creationOrder.getOrder().removeAll(itemsWithId);
-    }
-
-    @SuppressWarnings("unchecked")
-    private boolean isFilterRequired(final Entity entity) {
-        final List<AttributeValue> attributeValues = entity.getAttributeValues();
-
-        final EntityTableMapping entityTableMapping = attributeProvider.get(entity.getType());
-
-        for (AttributeValue attributeValue : attributeValues) {
-            final String attributeName = attributeValue.getAttribute().getName();
-            if (entityTableMapping.getAttributeIds().contains(attributeName)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     private void generateCreationOrder(final CreationOrder creationOrder, final Class<?> type) throws ClassNotFoundException {
