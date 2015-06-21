@@ -2,6 +2,7 @@ package com.github.kuros.random.jpa;
 
 import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.cache.PreconditionCache;
+import com.github.kuros.random.jpa.definition.CyclicValidator;
 import com.github.kuros.random.jpa.definition.HierarchyGenerator;
 import com.github.kuros.random.jpa.definition.HierarchyGeneratorImpl;
 import com.github.kuros.random.jpa.mapper.RelationCreator;
@@ -82,10 +83,19 @@ public final class JPAContextFactory {
                 .with(RelationshipProviderFactory.getRelationshipProvider(database, entityManager))
                 .generate();
 
-        final HierarchyGenerator hierarchyGenerator = new HierarchyGeneratorImpl();
-        final HierarchyGraph hierarchyGraph = hierarchyGenerator.generate(relations);
-
+        final HierarchyGraph hierarchyGraph = createHierarchyGraph(relations);
+        detectCyclicDependency(hierarchyGraph);
         return JPAContext.newInstance(entityManager, generator, hierarchyGraph);
+    }
+
+    private HierarchyGraph createHierarchyGraph(final List<Relation> relations) {
+        final HierarchyGenerator hierarchyGenerator = new HierarchyGeneratorImpl();
+        return hierarchyGenerator.generate(relations);
+    }
+
+    private void detectCyclicDependency(final HierarchyGraph hierarchyGraph) {
+        final CyclicValidator cyclicValidator = new CyclicValidator(hierarchyGraph);
+        cyclicValidator.validate();
     }
 }
 
