@@ -181,12 +181,12 @@ resultMap.print(new Printer() {
             }
         });
 ```
-it will print the hierarchy with the index number of the object followed by
+it will print the hierarchy with the index number of the object followed by the primary key of the persisted objects
 ```
 └── *ROOT*
-    └── com.github.kuros.entity.Person|0
-        ├── com.github.kuros.entity.Employee|0
-        └── com.github.kuros.entity.Employee|1
+    └── com.github.kuros.entity.Person|0 [personId: 1]
+        ├── com.github.kuros.entity.Employee|0 [employeeId: 1]
+        └── com.github.kuros.entity.Employee|1 [employeeId: 2]
 ```
 
 _Random object creation provided by OpenPojo (http://openpojo.com)_
