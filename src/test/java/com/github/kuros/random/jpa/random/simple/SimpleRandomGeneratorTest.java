@@ -158,7 +158,8 @@ public class SimpleRandomGeneratorTest {
 
         final TestArray random = simpleRandomGenerator.getRandom(TestArray.class);
         assertNotNull(random.i);
-        System.out.println(random.testClass1s.length);
+        assertNotNull(random.testClass1s);
+        assertNotNull(random.testEnums);
     }
 
     @Test

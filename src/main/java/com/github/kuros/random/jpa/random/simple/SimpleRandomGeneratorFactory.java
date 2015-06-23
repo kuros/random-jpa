@@ -2,11 +2,9 @@ package com.github.kuros.random.jpa.random.simple;
 
 import com.github.kuros.random.jpa.exception.RandomJPAException;
 import com.github.kuros.random.jpa.random.generator.RandomClassGenerator;
+import com.github.kuros.random.jpa.random.generator.RandomFactory;
 import com.github.kuros.random.jpa.random.generator.RandomFieldGenerator;
-import com.openpojo.random.RandomFactory;
-import com.openpojo.random.RandomGenerator;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -45,15 +43,7 @@ public final class SimpleRandomGeneratorFactory {
 
     public SimpleRandomGeneratorFactory with(final RandomClassGenerator... randomClassGenerators) {
         for (final RandomClassGenerator randomClassGenerator : randomClassGenerators) {
-            randomFactory.addRandomGenerator(new RandomGenerator() {
-                public Collection<Class<?>> getTypes() {
-                    return randomClassGenerator.getTypes();
-                }
-
-                public Object doGenerate(final Class<?> aClass) {
-                    return randomClassGenerator.doGenerate(aClass);
-                }
-            });
+            randomFactory.addRandomGenerator(randomClassGenerator);
         }
 
         return this;

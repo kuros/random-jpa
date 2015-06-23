@@ -1,8 +1,8 @@
 package com.github.kuros.random.jpa.random.simple;
 
 import com.github.kuros.random.jpa.exception.RandomJPAException;
+import com.github.kuros.random.jpa.random.generator.RandomFactory;
 import com.github.kuros.random.jpa.random.generator.RandomFieldGenerator;
-import com.openpojo.random.RandomFactory;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
@@ -44,7 +44,7 @@ public class SimpleRandomGenerator {
 
     public <T> T getRandom(final Class<T> type) {
 
-        final T randomObject = randomFactory.getRandomValue(type);
+        final T randomObject = randomFactory.generateRandom(type);
 
         if (!type.isEnum()) {
             if (randomNotRequired(randomObject)) {
@@ -59,24 +59,12 @@ public class SimpleRandomGenerator {
                         && randomFieldGenerator.getFieldNames().contains(field.getName())) {
                     final Object randomValue = randomFieldGenerator.doGenerate(field.getName());
                     setFieldRandomValue(randomObject, field, randomValue);
+                } else if (field.getType().isArray()) {
+                    setArrays(randomObject, field);
                 } else if (fieldIsCustomObject(field)) {
-
-                    if (field.getType().isArray()) {
-
-                        final int count = random.nextInt(5) + 1;
-                        final Object arrayInstance = Array.newInstance(field.getType().getComponentType(), count);
-
-                        for (int i = 0; i < count; i++) {
-                            Array.set(arrayInstance, i, getRandom(field.getType().getComponentType()));
-                        }
-                        setFieldRandomValue(randomObject, field, arrayInstance);
-                    } else {
-                        setFieldRandomValue(randomObject, field, getRandom(field.getType()));
-                    }
-
+                    setFieldRandomValue(randomObject, field, getRandom(field.getType()));
                 } else {
-                    Object randomValue = randomFactory.getRandomValue(field.getType());
-
+                    Object randomValue = randomFactory.generateRandom(field.getType());
                     if (randomNotRequired(randomValue)) {
                         randomValue = null;
                     }
@@ -86,6 +74,16 @@ public class SimpleRandomGenerator {
         }
 
         return randomObject;
+    }
+
+    private <T> void setArrays(final T randomObject, final Field field) {
+        final int count = random.nextInt(5) + 1;
+        final Object arrayInstance = Array.newInstance(field.getType().getComponentType(), count);
+
+        for (int i = 0; i < count; i++) {
+            Array.set(arrayInstance, i, getRandom(field.getType().getComponentType()));
+        }
+        setFieldRandomValue(randomObject, field, arrayInstance);
     }
 
     private boolean randomNotRequired(final Object randomObject) {

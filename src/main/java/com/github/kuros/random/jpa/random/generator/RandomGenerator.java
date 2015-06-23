@@ -4,8 +4,6 @@ import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.provider.SQLCharacterLengthProvider;
 import com.github.kuros.random.jpa.provider.SQLCharacterLengthProviderFactory;
 import com.github.kuros.random.jpa.util.AttributeHelper;
-import com.github.kuros.random.jpa.random.adapter.RandomClassGeneratorAdapter;
-import com.openpojo.random.RandomFactory;
 
 import javax.persistence.metamodel.Attribute;
 import java.lang.reflect.Field;
@@ -83,7 +81,7 @@ public final class RandomGenerator {
             return applyLengthConstraint(field, randomAttributeGenerator.doGenerate());
         }
 
-        return applyLengthConstraint(field, randomFactory.getRandomValue(field.getType()));
+        return applyLengthConstraint(field, randomFactory.generateRandom(field.getType()));
     }
 
     private Object applyLengthConstraint(final Field field, final Object o) {
@@ -97,7 +95,7 @@ public final class RandomGenerator {
     }
 
     public <T> T generateRandom(final Class<T> type) {
-        return randomFactory.getRandomValue(type);
+        return randomFactory.generateRandom(type);
     }
 
     public boolean isValueProvided(final Field field) {
@@ -105,7 +103,7 @@ public final class RandomGenerator {
     }
 
     private void addRandomClassGenerator(final RandomClassGenerator randomClassGenerator) {
-        randomFactory.addRandomGenerator(RandomClassGeneratorAdapter.adapt(randomClassGenerator));
+        randomFactory.addRandomGenerator(randomClassGenerator);
     }
 
     private void addAttributeGenerator(final RandomAttributeGenerator randomAttributeGenerator) {
