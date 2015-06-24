@@ -28,17 +28,15 @@ import java.util.Set;
 public final class SimpleRandomGeneratorFactory {
 
     private final RandomFactory randomFactory;
-    private final String[] packageNames;
     private Map<Class<?>, RandomFieldGenerator> randomFieldGeneratorMap;
 
-    private SimpleRandomGeneratorFactory(final String[] packageNames) {
-        this.packageNames = packageNames;
+    private SimpleRandomGeneratorFactory() {
         this.randomFactory = new RandomFactory();
         this.randomFieldGeneratorMap = new HashMap<Class<?>, RandomFieldGenerator>();
     }
 
-    public static SimpleRandomGeneratorFactory newInstance(final String... packageNames) {
-        return new SimpleRandomGeneratorFactory(packageNames);
+    public static SimpleRandomGeneratorFactory newInstance() {
+        return new SimpleRandomGeneratorFactory();
     }
 
     public SimpleRandomGeneratorFactory with(final RandomClassGenerator... randomClassGenerators) {
@@ -59,7 +57,7 @@ public final class SimpleRandomGeneratorFactory {
 
     public SimpleRandomGenerator create() {
         validate();
-        return new SimpleRandomGenerator(randomFactory, packageNames, randomFieldGeneratorMap);
+        return new SimpleRandomGenerator(randomFactory, randomFieldGeneratorMap);
     }
 
     private void validate() {

@@ -1,11 +1,13 @@
 package com.github.kuros.random.jpa.random.simple;
 
-import com.github.kuros.random.jpa.exception.RandomJPAException;
+import com.github.kuros.random.jpa.log.LogFactory;
+import com.github.kuros.random.jpa.log.Logger;
 import com.github.kuros.random.jpa.random.generator.RandomFactory;
 import com.github.kuros.random.jpa.random.generator.RandomFieldGenerator;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Random;
@@ -28,16 +30,14 @@ import java.util.Random;
  */
 public class SimpleRandomGenerator {
 
+    private static final Logger LOGGER = LogFactory.getLogger(SimpleRandomGenerator.class);
     private final RandomFactory randomFactory;
-    private final String[] packageNames;
     private final Map<Class<?>, RandomFieldGenerator> randomFieldGeneratorMap;
     private final Random random;
 
     SimpleRandomGenerator(final RandomFactory randomFactory,
-                          final String[] packageNames,
                           final Map<Class<?>, RandomFieldGenerator> randomFieldGeneratorMap) {
         this.randomFactory = randomFactory;
-        this.packageNames = packageNames;
         this.randomFieldGeneratorMap = randomFieldGeneratorMap;
         this.random = new Random();
     }
@@ -61,8 +61,6 @@ public class SimpleRandomGenerator {
                     setFieldRandomValue(randomObject, field, randomValue);
                 } else if (field.getType().isArray()) {
                     setArrays(randomObject, field);
-                } else if (fieldIsCustomObject(field)) {
-                    setFieldRandomValue(randomObject, field, getRandom(field.getType()));
                 } else {
                     Object randomValue = randomFactory.generateRandom(field.getType());
                     if (randomNotRequired(randomValue)) {
@@ -90,22 +88,15 @@ public class SimpleRandomGenerator {
         return randomObject instanceof Collection || randomObject instanceof Map;
     }
 
-    private boolean fieldIsCustomObject(final Field field) {
-        final String fieldClassName = field.getType().getName();
-
-        for (String packageName : packageNames) {
-            if (fieldClassName.contains(packageName)) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     private <T> void setFieldRandomValue(final T randomObject, final Field field, final Object randomValue) {
         try {
-            field.set(randomObject, randomValue);
+            final int mod = field.getModifiers();
+            if ((mod & Modifier.FINAL) == 0 && (mod & Modifier.STATIC) == 0) {
+                field.set(randomObject, randomValue);
+            }
         } catch (final IllegalAccessException e) {
-            throw new RandomJPAException("Unable to access field: " + field);
+            LOGGER.debug("Unable to access field: " + field);
         }
     }
 }

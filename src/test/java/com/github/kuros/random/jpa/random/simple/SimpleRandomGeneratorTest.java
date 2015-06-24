@@ -38,7 +38,7 @@ public class SimpleRandomGeneratorTest {
     @Test
     public void testRandomObjectIsCreatedWithSimpleAttributes() throws Exception {
         final SimpleRandomGenerator simpleRandomGenerator = SimpleRandomGeneratorFactory
-                .newInstance("com.github.kuros.random")
+                .newInstance()
                 .create();
 
         final TestClass1 random = simpleRandomGenerator.getRandom(TestClass1.class);
@@ -76,24 +76,6 @@ public class SimpleRandomGeneratorTest {
         assertNull(testClass1.i);
         assertNull(testClass1.s);
         assertNull(testClass1.d);
-
-    }
-
-    @Test
-    public void testRandomObjectIsCreatedForComplexObjectsButCustomAttributesIsAlsoGenerated() throws Exception {
-        final SimpleRandomGenerator simpleRandomGenerator = SimpleRandomGeneratorFactory
-                .newInstance("com.github.kuros")
-                .create();
-
-        final TestClass2 testClass2 = simpleRandomGenerator.getRandom(TestClass2.class);
-
-        assertNotNull(testClass2);
-        assertNotNull(testClass2.i);
-        final TestClass1 testClass1 = testClass2.testClass1;
-        assertNotNull(testClass1);
-        assertNotNull(testClass1.i);
-        assertNotNull(testClass1.s);
-        assertNotNull(testClass1.d);
 
     }
 
@@ -153,7 +135,7 @@ public class SimpleRandomGeneratorTest {
     @Test
     public void testArrayIsGenerated() throws Exception {
         final SimpleRandomGenerator simpleRandomGenerator = SimpleRandomGeneratorFactory
-                .newInstance("com.github.kuros")
+                .newInstance()
                 .create();
 
         final TestArray random = simpleRandomGenerator.getRandom(TestArray.class);
