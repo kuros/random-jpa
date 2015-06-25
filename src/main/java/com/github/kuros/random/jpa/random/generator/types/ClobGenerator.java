@@ -51,7 +51,7 @@ public final class ClobGenerator implements RandomClassGenerator {
         final char[] chars = new char[count];
 
         for (int i = 0; i < count; i++) {
-            chars[i] = (Character) generator.doGenerate(null);
+            chars[i] = (Character) generator.doGenerate(Character.class);
         }
 
 

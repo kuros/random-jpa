@@ -50,7 +50,7 @@ public final class BlobGenerator implements RandomClassGenerator {
         String random = "";
 
         for (int i = 0; i < RANDOM.nextInt(MAX_ITER_COUNT); i++) {
-            random += stringGenerator.doGenerate(null);
+            random += stringGenerator.doGenerate(String.class);
         }
 
 
