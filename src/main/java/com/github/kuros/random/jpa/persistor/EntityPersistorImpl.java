@@ -136,7 +136,7 @@ public final class EntityPersistorImpl implements Persistor {
     @SuppressWarnings("unchecked")
     private Object findRowByUniqueIdentities(final Class tableClass, final Object random) {
         final List<String> uniqueCombinationAttributes = uniqueConstraintProvider.getUniqueCombinationAttributes(tableClass);
-        if (uniqueCombinationAttributes == null || uniqueCombinationAttributes.size() <= 1) {
+        if (uniqueCombinationAttributes == null) {
             return null;
         }
 

@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /*
  * Copyright (c) 2015 Kumar Rohit
@@ -38,7 +39,6 @@ public class MSSQLUniqueConstraintProvider implements UniqueConstraintProvider {
     private static final String QUERY = "select t.name as TABLE_NAME , c.name as COLUMN_NAME" +
             " from sys.indexes i, sys.tables t, sys.index_columns ic, sys.columns c " +
             " where i.object_id = t.object_id " +
-            " and i.type_desc = 'NONCLUSTERED' " +
             " and i.object_id = ic.object_id " +
             " and i.index_id = ic.index_id " +
             " and i.is_unique = 1 " +
@@ -85,7 +85,19 @@ public class MSSQLUniqueConstraintProvider implements UniqueConstraintProvider {
                 }
             }
         }
+
+        filter();
     }
+
+    private void filter() {
+        final Set<Map.Entry<Class<?>, List<String>>> entries = uniqueColumnCombinations.entrySet();
+        for (Map.Entry<Class<?>, List<String>> entry : entries) {
+            if (entry.getValue().size() <= 1) {
+                uniqueColumnCombinations.remove(entry.getKey());
+            }
+        }
+    }
+
 
     public List<String> getUniqueCombinationAttributes(final Class<?> entityName) {
         return uniqueColumnCombinations.get(entityName);
