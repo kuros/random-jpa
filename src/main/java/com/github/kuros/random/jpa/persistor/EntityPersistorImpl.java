@@ -9,6 +9,8 @@ import com.github.kuros.random.jpa.metamodel.AttributeProvider;
 import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
 import com.github.kuros.random.jpa.persistor.model.ResultMap;
 import com.github.kuros.random.jpa.persistor.model.ResultMapImpl;
+import com.github.kuros.random.jpa.provider.MultiplePrimaryKeyProvider;
+import com.github.kuros.random.jpa.provider.MultiplePrimaryKeyProviderFactory;
 import com.github.kuros.random.jpa.provider.UniqueConstraintProvider;
 import com.github.kuros.random.jpa.provider.UniqueConstraintProviderFactory;
 import com.github.kuros.random.jpa.types.CreationOrder;
@@ -52,11 +54,13 @@ public final class EntityPersistorImpl implements Persistor {
     private EntityManager entityManager;
     private AttributeProvider attributeProvider;
     private UniqueConstraintProvider uniqueConstraintProvider;
+    private MultiplePrimaryKeyProvider multiplePrimaryKeyProvider;
 
     private EntityPersistorImpl(final EntityManager entityManager) {
         this.entityManager = entityManager;
         this.attributeProvider = AttributeProvider.getInstance();
         this.uniqueConstraintProvider = UniqueConstraintProviderFactory.getUniqueConstraintProvider();
+        this.multiplePrimaryKeyProvider = MultiplePrimaryKeyProviderFactory.getMultiplePrimaryKeyProvider();
     }
 
     public static Persistor newInstance(final EntityManager entityManager) {
@@ -136,8 +140,16 @@ public final class EntityPersistorImpl implements Persistor {
     @SuppressWarnings("unchecked")
     private Object findRowByUniqueIdentities(final Class tableClass, final Object random) {
         final List<String> uniqueCombinationAttributes = uniqueConstraintProvider.getUniqueCombinationAttributes(tableClass);
-        if (uniqueCombinationAttributes == null) {
+        final List multiplePrimaryKeyAttributes = multiplePrimaryKeyProvider.getMultiplePrimaryKeyAttributes(tableClass);
+        if (uniqueCombinationAttributes == null && multiplePrimaryKeyAttributes == null) {
             return null;
+        }
+
+        List<String> combinations;
+        if (uniqueCombinationAttributes != null) {
+            combinations = uniqueCombinationAttributes;
+        } else {
+            combinations = multiplePrimaryKeyAttributes;
         }
 
         final CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -147,10 +159,10 @@ public final class EntityPersistorImpl implements Persistor {
 
         q.select(from);
 
-        final Predicate[] predicates = new Predicate[uniqueCombinationAttributes.size()];
+        final Predicate[] predicates = new Predicate[combinations.size()];
 
-        for (int i = 0; i < uniqueCombinationAttributes.size(); i++) {
-            final String attribute = uniqueCombinationAttributes.get(i);
+        for (int i = 0; i < combinations.size(); i++) {
+            final String attribute = combinations.get(i);
             try {
                 final Field declaredField = tableClass.getDeclaredField(attribute);
                 declaredField.setAccessible(true);

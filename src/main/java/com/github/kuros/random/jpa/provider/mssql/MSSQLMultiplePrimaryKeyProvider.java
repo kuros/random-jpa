@@ -4,7 +4,7 @@ import com.github.kuros.random.jpa.annotation.VisibleForTesting;
 import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.metamodel.AttributeProvider;
 import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
-import com.github.kuros.random.jpa.provider.UniqueConstraintProvider;
+import com.github.kuros.random.jpa.provider.MultiplePrimaryKeyProvider;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -30,16 +30,16 @@ import java.util.Set;
  *    You should have received a copy of the GNU Lesser General Public License
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class MSSQLUniqueConstraintProvider implements UniqueConstraintProvider {
+public class MSSQLMultiplePrimaryKeyProvider implements MultiplePrimaryKeyProvider {
 
-    private Map<Class<?>, List<String>> uniqueColumnCombinations;
+    private Map<Class<?>, List<String>> multiplePrimaryKeyCombinations;
     private AttributeProvider attributeProvider;
     private EntityManager entityManager;
-    private static UniqueConstraintProvider uniqueConstraintProvider;
+    private static MultiplePrimaryKeyProvider multiplePrimaryKeyProvider;
     private static final String QUERY = "select t.name as TABLE_NAME , c.name as COLUMN_NAME" +
             " from sys.indexes i, sys.tables t, sys.index_columns ic, sys.columns c " +
             " where i.object_id = t.object_id " +
-            " and i.type_desc = 'NONCLUSTERED' " +
+            " and i.type_desc = 'CLUSTERED' " +
             " and i.object_id = ic.object_id " +
             " and i.index_id = ic.index_id " +
             " and i.is_unique = 1 " +
@@ -48,24 +48,24 @@ public class MSSQLUniqueConstraintProvider implements UniqueConstraintProvider {
             " order by t.name ";
 
 
-    private MSSQLUniqueConstraintProvider() {
+    private MSSQLMultiplePrimaryKeyProvider() {
         this(Cache.getInstance().getEntityManager(), AttributeProvider.getInstance());
     }
 
     @VisibleForTesting
-    MSSQLUniqueConstraintProvider(final EntityManager entityManager, final AttributeProvider attributeProvider) {
+    MSSQLMultiplePrimaryKeyProvider(final EntityManager entityManager, final AttributeProvider attributeProvider) {
         this.attributeProvider = attributeProvider;
         this.entityManager = entityManager;
-        this.uniqueColumnCombinations = new HashMap<Class<?>, List<String>>();
+        this.multiplePrimaryKeyCombinations = new HashMap<Class<?>, List<String>>();
         init();
     }
 
-    public static UniqueConstraintProvider getInstance() {
-        if (uniqueConstraintProvider == null) {
-            uniqueConstraintProvider = new MSSQLUniqueConstraintProvider();
+    public static MultiplePrimaryKeyProvider getInstance() {
+        if (multiplePrimaryKeyProvider == null) {
+            multiplePrimaryKeyProvider = new MSSQLMultiplePrimaryKeyProvider();
         }
 
-        return uniqueConstraintProvider;
+        return multiplePrimaryKeyProvider;
     }
 
     private void init() {
@@ -77,10 +77,10 @@ public class MSSQLUniqueConstraintProvider implements UniqueConstraintProvider {
             if (entityTableMapping != null) {
                 final String attributeName = entityTableMapping.getAttributeName((String) row[1]);
                 if (attributeName != null) {
-                    List<String> attributeList = uniqueColumnCombinations.get(entityTableMapping.getEntityClass());
+                    List<String> attributeList = multiplePrimaryKeyCombinations.get(entityTableMapping.getEntityClass());
                     if (attributeList == null) {
                         attributeList = new ArrayList<String>();
-                        uniqueColumnCombinations.put(entityTableMapping.getEntityClass(), attributeList);
+                        multiplePrimaryKeyCombinations.put(entityTableMapping.getEntityClass(), attributeList);
                     }
                     attributeList.add(attributeName);
                 }
@@ -91,7 +91,7 @@ public class MSSQLUniqueConstraintProvider implements UniqueConstraintProvider {
     }
 
     private void filter() {
-        final Set<Map.Entry<Class<?>, List<String>>> entries = uniqueColumnCombinations.entrySet();
+        final Set<Map.Entry<Class<?>, List<String>>> entries = multiplePrimaryKeyCombinations.entrySet();
 
         final List<Class<?>> singleColumnTables = new ArrayList<Class<?>>();
 
@@ -102,13 +102,12 @@ public class MSSQLUniqueConstraintProvider implements UniqueConstraintProvider {
         }
 
         for (Class<?> singleColumnTable : singleColumnTables) {
-            uniqueColumnCombinations.remove(singleColumnTable);
+            multiplePrimaryKeyCombinations.remove(singleColumnTable);
         }
 
     }
 
-
-    public List<String> getUniqueCombinationAttributes(final Class<?> entityName) {
-        return uniqueColumnCombinations.get(entityName);
+    public List<String> getMultiplePrimaryKeyAttributes(final Class<?> entityName) {
+        return multiplePrimaryKeyCombinations.get(entityName);
     }
 }
