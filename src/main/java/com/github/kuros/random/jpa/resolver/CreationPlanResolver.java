@@ -1,15 +1,11 @@
 package com.github.kuros.random.jpa.resolver;
 
-import com.github.kuros.random.jpa.mapper.Relation;
-import com.github.kuros.random.jpa.definition.TableNode;
 import com.github.kuros.random.jpa.random.Randomize;
 import com.github.kuros.random.jpa.types.CreationOrder;
 import com.github.kuros.random.jpa.types.CreationPlan;
 import com.github.kuros.random.jpa.types.CreationPlanImpl;
 import com.github.kuros.random.jpa.types.Node;
-import com.github.kuros.random.jpa.util.NumberUtil;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -50,7 +46,7 @@ public final class CreationPlanResolver {
     }
 
     public CreationPlan create() {
-        creationPlan = new CreationPlanImpl(creationOrder);
+        creationPlan = new CreationPlanImpl(creationOrder, randomize);
 
         add(creationPlan.getRoot(), 0);
 
@@ -78,7 +74,6 @@ public final class CreationPlanResolver {
         }
     }
 
-
     private void addToCreatedNode(final Class<?> key, final Node node) {
         List<Node> nodes = creationPlan.getCreatedNodeMap().get(key);
         if (nodes == null) {
@@ -89,67 +84,12 @@ public final class CreationPlanResolver {
         nodes.add(node);
     }
 
-
     private int getCreatedIndex(final Class<?> key) {
         final List<Node> nodes = creationPlan.getCreatedNodeMap().get(key);
         return nodes == null ? 0 : nodes.size();
     }
 
-
     private Object createRandomObject(final Node node) {
-        final Class<?> type = node.getType();
-        final Object random = randomize.createRandom(type);
-
-        final TableNode tableNode = creationOrder.getTableNode(type);
-
-        if (tableNode != null) {
-            final List<Relation> relations = tableNode.getRelations();
-
-            for (Relation relation : relations) {
-                createRelation(relation, random);
-            }
-        }
-
-        return random;
+        return randomize.createRandom(node.getType());
     }
-
-    private void createRelation(final Relation relation, final Object object) {
-        try {
-            final Object value = getFieldValue(relation.getTo());
-            setFieldValue(object, relation.getFrom(), value);
-        } catch (final Exception e) {
-            //do nothing
-        }
-
-    }
-
-    private void setFieldValue(final Object object, final Field fieldValue, final Object value) {
-        try {
-
-            final Class<?> type = fieldValue.getType();
-            fieldValue.setAccessible(true);
-            fieldValue.set(object, NumberUtil.castNumber(type, value));
-        } catch (final IllegalAccessException e) {
-            //do nothing
-        }
-    }
-
-
-
-    private Object getFieldValue(final Field field) {
-        final List<Node> nodes = creationPlan.getCreatedNodeMap().get(field.getDeclaringClass());
-        if (nodes == null || nodes.isEmpty()) {
-            return null;
-        }
-        final Object object = nodes.get(nodes.size() - 1).getValue();
-        Object value = null;
-        try {
-            field.setAccessible(true);
-            value = field.get(object);
-        } catch (final IllegalAccessException e) {
-            //do nothing
-        }
-        return value;
-    }
-
 }

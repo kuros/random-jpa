@@ -7,6 +7,8 @@ import com.github.kuros.random.jpa.random.generator.RandomGenerator;
 import com.github.kuros.random.jpa.util.NumberUtil;
 
 import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.Map;
 
 /*
  * Copyright (c) 2015 Kumar Rohit
@@ -27,11 +29,13 @@ import java.lang.reflect.Field;
 public final class RandomizeImpl implements Randomize {
 
     private final RandomGenerator randomGenerator;
-    private final AttributeProvider attributProvider;
+    private final AttributeProvider attributeProvider;
+    private Map<Field, Object> fieldValueMap;
 
     private RandomizeImpl(final RandomGenerator randomGenerator) {
-        this.attributProvider = AttributeProvider.getInstance();
+        this.attributeProvider = AttributeProvider.getInstance();
         this.randomGenerator = randomGenerator;
+        this.fieldValueMap = new HashMap<Field, Object>();
     }
 
     public static Randomize newInstance(final RandomGenerator randomGenerator) {
@@ -39,13 +43,19 @@ public final class RandomizeImpl implements Randomize {
     }
 
     public <T> T createRandom(final Class<T> type) {
-        final T t = randomGenerator.generateRandom(type);
+        return randomGenerator.generateRandom(type);
+    }
 
+    public <T> T populateRandomFields(final T t) {
+        final Class<?> type = t.getClass();
         final Field[] declaredFields = type.getDeclaredFields();
         for (final Field declaredField : declaredFields) {
             declaredField.setAccessible(true);
             try {
-                if (isRandomRequired(declaredField)) {
+                final Object value = fieldValueMap.get(declaredField);
+                if (value != null) {
+                    declaredField.set(t, value);
+                } else if (isFieldEmpty(declaredField, t) && isRandomRequired(declaredField)) {
                     declaredField.set(t, NumberUtil.castNumber(declaredField.getType(), randomGenerator.generateRandom(declaredField)));
                 }
             } catch (final Exception e) {
@@ -53,20 +63,33 @@ public final class RandomizeImpl implements Randomize {
                         + declaredField.getDeclaringClass() + " - " + declaredField.getName() , e);
             }
         }
+
         return t;
     }
 
-    private boolean isRandomRequired(final Field declaredField) {
+    public boolean isValueProvided(final Field field) {
+        return fieldValueMap.get(field) != null;
+    }
 
-        if (randomGenerator.isValueProvided(declaredField)) {
-            return true;
+    public void addFieldValue(final Map<Field, Object> fieldValues) {
+        this.fieldValueMap = fieldValues;
+    }
+
+    private <T> boolean isFieldEmpty(final Field declaredField, final T t) {
+        try {
+            declaredField.setAccessible(true);
+            return declaredField.get(t) == null;
+        } catch (final IllegalAccessException e) {
+            return false;
         }
+    }
 
-        final EntityTableMapping entityTableMapping = attributProvider.get(declaredField.getDeclaringClass());
+    private boolean isRandomRequired(final Field declaredField) {
+        final EntityTableMapping entityTableMapping = attributeProvider.get(declaredField.getDeclaringClass());
 
         return !(entityTableMapping == null || fieldIsNotColumn(entityTableMapping, declaredField))
                 && (!entityTableMapping.getAttributeIds().contains(declaredField.getName())
-                || attributProvider.getUnSupportedGeneratorType().contains(entityTableMapping.getIdentifierGenerator()));
+                || attributeProvider.getUnSupportedGeneratorType().contains(entityTableMapping.getIdentifierGenerator()));
 
     }
 

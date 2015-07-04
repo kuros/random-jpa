@@ -4,6 +4,7 @@ import com.github.kuros.random.jpa.definition.HierarchyGraph;
 import com.github.kuros.random.jpa.persistor.EntityPersistorImpl;
 import com.github.kuros.random.jpa.persistor.Persistor;
 import com.github.kuros.random.jpa.persistor.model.ResultMap;
+import com.github.kuros.random.jpa.random.Randomize;
 import com.github.kuros.random.jpa.random.RandomizeImpl;
 import com.github.kuros.random.jpa.random.generator.Generator;
 import com.github.kuros.random.jpa.random.generator.RandomGenerator;
@@ -14,6 +15,7 @@ import com.github.kuros.random.jpa.resolver.EntityResolver;
 import com.github.kuros.random.jpa.resolver.EntityResolverImpl;
 import com.github.kuros.random.jpa.types.CreationOrder;
 import com.github.kuros.random.jpa.types.CreationPlan;
+import com.github.kuros.random.jpa.types.CreationPlanImpl;
 import com.github.kuros.random.jpa.types.Plan;
 
 import javax.persistence.EntityManager;
@@ -53,19 +55,21 @@ public final class JPAContext {
 
     public CreationPlan create(final Plan plan) {
 
+        final Randomize randomize = RandomizeImpl.newInstance(generator);
         final EntityResolver entityResolver = EntityResolverImpl.newInstance(hierarchyGraph, plan);
-        generator.addFieldValue(entityResolver.getFieldValueMap());
+        randomize.addFieldValue(entityResolver.getFieldValueMap());
 
         final CreationOrderResolver creationOrderResolver = CreationOrderResolverImpl.newInstance(hierarchyGraph, plan);
         final CreationOrder creationOrder = creationOrderResolver.getCreationOrder();
 
-        final CreationPlanResolver creationPlanResolver = CreationPlanResolver.newInstance(creationOrder, RandomizeImpl.newInstance(generator));
+        final CreationPlanResolver creationPlanResolver = CreationPlanResolver.newInstance(creationOrder, randomize);
 
         return creationPlanResolver.create();
     }
 
     public ResultMap persist(final CreationPlan creationPlan) {
-        final Persistor persistor = EntityPersistorImpl.newInstance(entityManager);
+        final CreationPlanImpl creationPlanImpl = (CreationPlanImpl) creationPlan;
+        final Persistor persistor = EntityPersistorImpl.newInstance(entityManager, creationPlanImpl.getRandomize());
         return persistor.persist(creationPlan);
     }
 

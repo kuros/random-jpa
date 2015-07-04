@@ -13,6 +13,7 @@ import com.github.kuros.random.jpa.provider.MultiplePrimaryKeyProvider;
 import com.github.kuros.random.jpa.provider.MultiplePrimaryKeyProviderFactory;
 import com.github.kuros.random.jpa.provider.UniqueConstraintProvider;
 import com.github.kuros.random.jpa.provider.UniqueConstraintProviderFactory;
+import com.github.kuros.random.jpa.random.Randomize;
 import com.github.kuros.random.jpa.types.CreationOrder;
 import com.github.kuros.random.jpa.types.CreationPlan;
 import com.github.kuros.random.jpa.types.Node;
@@ -52,19 +53,21 @@ public final class EntityPersistorImpl implements Persistor {
     private static final Logger LOGGER = LogFactory.getLogger(EntityPersistorImpl.class);
 
     private EntityManager entityManager;
+    private Randomize randomize;
     private AttributeProvider attributeProvider;
     private UniqueConstraintProvider uniqueConstraintProvider;
     private MultiplePrimaryKeyProvider multiplePrimaryKeyProvider;
 
-    private EntityPersistorImpl(final EntityManager entityManager) {
+    private EntityPersistorImpl(final EntityManager entityManager, final Randomize randomize) {
         this.entityManager = entityManager;
+        this.randomize = randomize;
         this.attributeProvider = AttributeProvider.getInstance();
         this.uniqueConstraintProvider = UniqueConstraintProviderFactory.getUniqueConstraintProvider();
         this.multiplePrimaryKeyProvider = MultiplePrimaryKeyProviderFactory.getMultiplePrimaryKeyProvider();
     }
 
-    public static Persistor newInstance(final EntityManager entityManager) {
-        return new EntityPersistorImpl(entityManager);
+    public static Persistor newInstance(final EntityManager entityManager, final Randomize randomize) {
+        return new EntityPersistorImpl(entityManager, randomize);
     }
 
     @SuppressWarnings("unchecked")
@@ -220,14 +223,15 @@ public final class EntityPersistorImpl implements Persistor {
             createRelation(resultMap, relation, random);
         }
 
-
-        return random;
+        return randomize.populateRandomFields(random);
     }
 
     private void createRelation(final ResultMapImpl resultMap, final Relation relation, final Object object) {
         try {
-            final Object value = getFieldValue(resultMap, relation.getTo());
-            setFieldValue(object, relation.getFrom(), value);
+            if (!randomize.isValueProvided(relation.getFrom())) {
+                final Object value = getFieldValue(resultMap, relation.getTo());
+                setFieldValue(object, relation.getFrom(), value);
+            }
         } catch (final Exception e) {
             //do nothing
         }

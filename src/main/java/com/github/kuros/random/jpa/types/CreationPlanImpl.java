@@ -1,5 +1,7 @@
 package com.github.kuros.random.jpa.types;
 
+import com.github.kuros.random.jpa.random.Randomize;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,14 +24,16 @@ import java.util.Map;
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 public class CreationPlanImpl implements CreationPlan {
+    private Randomize randomize;
     private CreationOrder creationOrder;
     private Map<Class<?>, List<Node>> createdNodeMap;
     private Node root;
 
-    public CreationPlanImpl(final CreationOrder creationOrder) {
+    public CreationPlanImpl(final CreationOrder creationOrder, final Randomize randomize) {
         this.createdNodeMap = new HashMap<Class<?>, List<Node>>();
         this.root = Node.newInstance();
         this.creationOrder = creationOrder;
+        this.randomize = randomize;
     }
 
     public Map<Class<?>, List<Node>> getCreatedNodeMap() {
@@ -63,5 +67,9 @@ public class CreationPlanImpl implements CreationPlan {
         final Node node = createdNodeMap.get(type).get(index);
         node.setValue(null);
         node.setChildNodes(new ArrayList<Node>());
+    }
+
+    public Randomize getRandomize() {
+        return randomize;
     }
 }

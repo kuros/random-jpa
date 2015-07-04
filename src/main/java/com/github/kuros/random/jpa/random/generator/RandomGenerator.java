@@ -32,14 +32,12 @@ public final class RandomGenerator {
     private final Generator generator;
     private Map<Field, RandomAttributeGenerator> attributeGeneratorMap;
     private RandomFactory randomFactory;
-    private Map<Field, Object> fieldValue;
     private SQLCharacterLengthProvider sqlCharacterLengthProvider;
 
     private RandomGenerator(final Generator generator) {
         this.generator = generator;
         attributeGeneratorMap = new HashMap<Field, RandomAttributeGenerator>();
         randomFactory = new RandomFactory();
-        fieldValue = new HashMap<Field, Object>();
         sqlCharacterLengthProvider = SQLCharacterLengthProviderFactory
                 .getSqlCharacterLengthProvider(Cache.getInstance().getDatabase());
         init();
@@ -65,17 +63,7 @@ public final class RandomGenerator {
         return new RandomGenerator(Generator.newInstance());
     }
 
-    public void addFieldValue(final Map<Field, Object> fieldValueMap) {
-        this.fieldValue = fieldValueMap;
-    }
-
     public Object generateRandom(final Field field) {
-
-        final Object value = fieldValue.get(field);
-        if (value != null) {
-            return value;
-        }
-
         final RandomAttributeGenerator randomAttributeGenerator = attributeGeneratorMap.get(field);
         if (randomAttributeGenerator != null) {
             return applyLengthConstraint(field, randomAttributeGenerator.doGenerate());
@@ -96,10 +84,6 @@ public final class RandomGenerator {
 
     public <T> T generateRandom(final Class<T> type) {
         return randomFactory.generateRandom(type);
-    }
-
-    public boolean isValueProvided(final Field field) {
-        return fieldValue.get(field) != null;
     }
 
     private void addRandomClassGenerator(final RandomClassGenerator randomClassGenerator) {

@@ -1,5 +1,8 @@
 package com.github.kuros.random.jpa.random;
 
+import java.lang.reflect.Field;
+import java.util.Map;
+
 /*
  * Copyright (c) 2015 Kumar Rohit
  *
@@ -19,4 +22,10 @@ package com.github.kuros.random.jpa.random;
 public interface Randomize {
 
     <T> T createRandom(Class<T> type);
+
+    <T> T populateRandomFields(T t);
+
+    boolean isValueProvided(final Field field);
+
+    void addFieldValue(Map<Field, Object> fieldValueMap);
 }
