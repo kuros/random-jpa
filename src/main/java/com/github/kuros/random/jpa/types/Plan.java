@@ -1,6 +1,8 @@
 package com.github.kuros.random.jpa.types;
 
+import javax.persistence.metamodel.Attribute;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /*
@@ -22,9 +24,11 @@ import java.util.List;
 public final class Plan {
 
     private List<Entity> entities;
+    private List<Attribute<?, ?>> nullValueAttributes;
 
     private Plan() {
         this.entities = new ArrayList<Entity>();
+        this.nullValueAttributes = new ArrayList<Attribute<?, ?>>();
     }
 
     public static Plan create() {
@@ -36,7 +40,16 @@ public final class Plan {
         return this;
     }
 
+    public <T, V> Plan withNullValues(final Attribute<T, V>... attributes) {
+        Collections.addAll(nullValueAttributes, attributes);
+        return this;
+    }
+
     public List<Entity> getEntities() {
         return entities;
+    }
+
+    public List<Attribute<?, ?>> getNullValueAttributes() {
+        return nullValueAttributes;
     }
 }

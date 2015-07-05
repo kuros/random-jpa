@@ -4,7 +4,6 @@ import com.github.kuros.random.jpa.definition.HierarchyGraph;
 import com.github.kuros.random.jpa.persistor.EntityPersistorImpl;
 import com.github.kuros.random.jpa.persistor.Persistor;
 import com.github.kuros.random.jpa.persistor.model.ResultMap;
-import com.github.kuros.random.jpa.random.Randomize;
 import com.github.kuros.random.jpa.random.RandomizeImpl;
 import com.github.kuros.random.jpa.random.generator.Generator;
 import com.github.kuros.random.jpa.random.generator.RandomGenerator;
@@ -17,6 +16,7 @@ import com.github.kuros.random.jpa.types.CreationOrder;
 import com.github.kuros.random.jpa.types.CreationPlan;
 import com.github.kuros.random.jpa.types.CreationPlanImpl;
 import com.github.kuros.random.jpa.types.Plan;
+import com.github.kuros.random.jpa.util.AttributeHelper;
 
 import javax.persistence.EntityManager;
 
@@ -55,9 +55,10 @@ public final class JPAContext {
 
     public CreationPlan create(final Plan plan) {
 
-        final Randomize randomize = RandomizeImpl.newInstance(generator);
+        final RandomizeImpl randomize = RandomizeImpl.newInstance(generator);
         final EntityResolver entityResolver = EntityResolverImpl.newInstance(hierarchyGraph, plan);
         randomize.addFieldValue(entityResolver.getFieldValueMap());
+        randomize.setNullValueFields(AttributeHelper.getFields(plan.getNullValueAttributes()));
 
         final CreationOrderResolver creationOrderResolver = CreationOrderResolverImpl.newInstance(hierarchyGraph, plan);
         final CreationOrder creationOrder = creationOrderResolver.getCreationOrder();

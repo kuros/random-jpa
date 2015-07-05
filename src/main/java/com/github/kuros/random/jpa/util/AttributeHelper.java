@@ -1,8 +1,12 @@
 package com.github.kuros.random.jpa.util;
 
+import com.github.kuros.random.jpa.exception.RandomJPAException;
+
 import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.PluralAttribute;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 
 /*
  * Copyright (c) 2015 Kumar Rohit
@@ -47,5 +51,18 @@ public class AttributeHelper {
         }
 
         return attribute.getJavaMember().getDeclaringClass().getDeclaredField(getName(attribute));
+    }
+
+    public static List<Field> getFields(final List<Attribute<?, ?>> attributes) {
+        final List<Field> fields = new ArrayList<Field>();
+        for (Attribute<?, ?> attribute : attributes) {
+            try {
+                fields.add(AttributeHelper.getField(attribute));
+            } catch (final NoSuchFieldException e) {
+                throw new RandomJPAException(e);
+            }
+        }
+
+        return fields;
     }
 }

@@ -7,7 +7,9 @@ import com.github.kuros.random.jpa.random.generator.RandomGenerator;
 import com.github.kuros.random.jpa.util.NumberUtil;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /*
@@ -31,14 +33,16 @@ public final class RandomizeImpl implements Randomize {
     private final RandomGenerator randomGenerator;
     private final AttributeProvider attributeProvider;
     private Map<Field, Object> fieldValueMap;
+    private List<Field> nullValueFields;
 
     private RandomizeImpl(final RandomGenerator randomGenerator) {
         this.attributeProvider = AttributeProvider.getInstance();
         this.randomGenerator = randomGenerator;
         this.fieldValueMap = new HashMap<Field, Object>();
+        this.nullValueFields = new ArrayList<Field>();
     }
 
-    public static Randomize newInstance(final RandomGenerator randomGenerator) {
+    public static RandomizeImpl newInstance(final RandomGenerator randomGenerator) {
         return new RandomizeImpl(randomGenerator);
     }
 
@@ -55,7 +59,7 @@ public final class RandomizeImpl implements Randomize {
                 final Object value = fieldValueMap.get(declaredField);
                 if (value != null) {
                     declaredField.set(t, value);
-                } else if (isFieldEmpty(declaredField, t) && isRandomRequired(declaredField)) {
+                } else if (isFieldEmpty(declaredField, t) && isRandomRequired(declaredField) && isNotNullValue(declaredField)) {
                     declaredField.set(t, NumberUtil.castNumber(declaredField.getType(), randomGenerator.generateRandom(declaredField)));
                 }
             } catch (final Exception e) {
@@ -67,12 +71,20 @@ public final class RandomizeImpl implements Randomize {
         return t;
     }
 
+    private boolean isNotNullValue(final Field declaredField) {
+        return !nullValueFields.contains(declaredField);
+    }
+
     public boolean isValueProvided(final Field field) {
         return fieldValueMap.get(field) != null;
     }
 
     public void addFieldValue(final Map<Field, Object> fieldValues) {
         this.fieldValueMap = fieldValues;
+    }
+
+    public void setNullValueFields(final List<Field> nullValueFields) {
+        this.nullValueFields = nullValueFields;
     }
 
     private <T> boolean isFieldEmpty(final Field declaredField, final T t) {
