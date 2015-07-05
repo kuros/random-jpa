@@ -52,11 +52,11 @@ public final class EntityPersistorImpl implements Persistor {
 
     private static final Logger LOGGER = LogFactory.getLogger(EntityPersistorImpl.class);
 
-    private EntityManager entityManager;
-    private Randomize randomize;
-    private AttributeProvider attributeProvider;
-    private UniqueConstraintProvider uniqueConstraintProvider;
-    private MultiplePrimaryKeyProvider multiplePrimaryKeyProvider;
+    private final EntityManager entityManager;
+    private final Randomize randomize;
+    private final AttributeProvider attributeProvider;
+    private final UniqueConstraintProvider uniqueConstraintProvider;
+    private final MultiplePrimaryKeyProvider multiplePrimaryKeyProvider;
 
     private EntityPersistorImpl(final EntityManager entityManager, final Randomize randomize) {
         this.entityManager = entityManager;
@@ -102,12 +102,12 @@ public final class EntityPersistorImpl implements Persistor {
     private void persist(final ResultNode resultNode, final CreationOrder creationOrder, final ResultMapImpl resultMap, final Node node) {
         final Object random = createRandomObject(node, creationOrder, resultMap);
         Object persistedObject;
-        if (getId(node.getType(), random) != null
-                && findElementById(node.getType(), random) != null) {
-            persistedObject = findElementById(node.getType(), random);
+        final Object elementById = findElementById(random);
+        if (elementById != null) {
+            persistedObject = elementById;
         } else {
-            final Object foundRow = findRowByUniqueIdentities(node.getType(), random);
-            persistedObject = foundRow != null ? foundRow : persistAndReturnPersistedObject(node.getType(), random);
+            final Object foundRow = findRowByUniqueIdentities(random);
+            persistedObject = foundRow != null ? foundRow : persistAndReturnPersistedObject(random);
         }
 
         resultNode.setValue(persistedObject);
@@ -124,7 +124,8 @@ public final class EntityPersistorImpl implements Persistor {
 
     }
 
-    private Object persistAndReturnPersistedObject(final Class tableClass, final Object random) {
+    private Object persistAndReturnPersistedObject(final Object random) {
+        final Class<?> tableClass = random.getClass();
         try {
             final EntityManagerFactory entityManagerFactory = entityManager.getEntityManagerFactory();
             final EntityManager em = entityManagerFactory.createEntityManager();
@@ -137,24 +138,32 @@ public final class EntityPersistorImpl implements Persistor {
             LOGGER.error("Failed to persist: " + tableClass.getName());
             throw new RandomJPAException(e);
         }
-        return findElementById(tableClass, random);
+        return findElementById(random);
     }
 
     @SuppressWarnings("unchecked")
-    private Object findRowByUniqueIdentities(final Class tableClass, final Object random) {
+    private Object findRowByUniqueIdentities(final Object random) {
+        final Class<?> tableClass = random.getClass();
         final List<String> uniqueCombinationAttributes = uniqueConstraintProvider.getUniqueCombinationAttributes(tableClass);
         final List multiplePrimaryKeyAttributes = multiplePrimaryKeyProvider.getMultiplePrimaryKeyAttributes(tableClass);
         if (uniqueCombinationAttributes == null && multiplePrimaryKeyAttributes == null) {
             return null;
         }
 
-        List<String> combinations;
         if (uniqueCombinationAttributes != null) {
-            combinations = uniqueCombinationAttributes;
+            final Object found = findByQuery(random, uniqueCombinationAttributes);
+            if (found != null) {
+                return found;
+            }
         } else {
-            combinations = multiplePrimaryKeyAttributes;
+            return findByQuery(random, multiplePrimaryKeyAttributes);
         }
 
+        return null;
+    }
+
+    private Object findByQuery(final Object random, final List<String> attributes) {
+        final Class<?> tableClass = random.getClass();
         final CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         final CriteriaQuery q = criteriaBuilder.createQuery(tableClass);
 
@@ -162,10 +171,10 @@ public final class EntityPersistorImpl implements Persistor {
 
         q.select(from);
 
-        final Predicate[] predicates = new Predicate[combinations.size()];
+        final Predicate[] predicates = new Predicate[attributes.size()];
 
-        for (int i = 0; i < combinations.size(); i++) {
-            final String attribute = combinations.get(i);
+        for (int i = 0; i < attributes.size(); i++) {
+            final String attribute = attributes.get(i);
             try {
                 final Field declaredField = tableClass.getDeclaredField(attribute);
                 declaredField.setAccessible(true);
@@ -187,11 +196,14 @@ public final class EntityPersistorImpl implements Persistor {
         return resultList.size() == 0 ? null : resultList.get(0);
     }
 
-    private Object findElementById(final Class tableClass, final Object persistedObject) {
-        return entityManager.find(tableClass, getId(tableClass, persistedObject));
+    private Object findElementById(final Object persistedObject) {
+        final Class<?> tableClass = persistedObject.getClass();
+        final Object id = getId(persistedObject);
+        return id == null ? null : entityManager.find(tableClass, id);
     }
 
-    private Object getId(final Class tableClass, final Object persistedObject) {
+    private Object getId(final Object persistedObject) {
+        final Class<?> tableClass = persistedObject.getClass();
         final EntityTableMapping entityTableMapping = attributeProvider.get(tableClass);
         final Field[] declaredFields = tableClass.getDeclaredFields();
         Field field = null;
@@ -211,7 +223,6 @@ public final class EntityPersistorImpl implements Persistor {
         }
         return id;
     }
-
 
     private Object createRandomObject(final Node node, final CreationOrder creationOrder, final ResultMapImpl resultMap) {
         final Object random = node.getValue();
@@ -248,8 +259,6 @@ public final class EntityPersistorImpl implements Persistor {
             //do nothing
         }
     }
-
-
 
     private Object getFieldValue(final ResultMapImpl resultMap, final Field field) {
         final Map<Class<?>, List<Object>> createdEntities = resultMap.getCreatedEntities();
