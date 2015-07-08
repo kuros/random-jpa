@@ -86,6 +86,10 @@ public final class RandomGenerator {
         return randomFactory.generateRandom(type);
     }
 
+    public boolean isRandomAttributeGeneratorProvided(final Field field) {
+        return attributeGeneratorMap.get(field) != null;
+    }
+
     private void addRandomClassGenerator(final RandomClassGenerator randomClassGenerator) {
         randomFactory.addRandomGenerator(randomClassGenerator);
     }

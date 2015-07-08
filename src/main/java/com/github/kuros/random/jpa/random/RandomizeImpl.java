@@ -59,7 +59,9 @@ public final class RandomizeImpl implements Randomize {
                 final Object value = fieldValueMap.get(declaredField);
                 if (value != null) {
                     declaredField.set(t, value);
-                } else if (isFieldEmpty(declaredField, t) && isRandomRequired(declaredField) && isNotNullValue(declaredField)) {
+                } else if (isFieldEmpty(declaredField, t)
+                        && isRandomRequired(declaredField)
+                        && isNotNullValue(declaredField)) {
                     declaredField.set(t, NumberUtil.castNumber(declaredField.getType(), randomGenerator.generateRandom(declaredField)));
                 }
             } catch (final Exception e) {
@@ -99,14 +101,17 @@ public final class RandomizeImpl implements Randomize {
     private boolean isRandomRequired(final Field declaredField) {
         final EntityTableMapping entityTableMapping = attributeProvider.get(declaredField.getDeclaringClass());
 
-        return !(entityTableMapping == null || fieldIsNotColumn(entityTableMapping, declaredField))
-                && (!entityTableMapping.getAttributeIds().contains(declaredField.getName())
-                || attributeProvider.getUnSupportedGeneratorType().contains(entityTableMapping.getIdentifierGenerator()));
+        return (fieldIsColumn(entityTableMapping, declaredField) && !fieldIsId(entityTableMapping, declaredField)
+                || attributeProvider.getUnSupportedGeneratorType().contains(entityTableMapping.getIdentifierGenerator()))
+                || randomGenerator.isRandomAttributeGeneratorProvided(declaredField);
 
     }
 
-    private boolean fieldIsNotColumn(final EntityTableMapping entityTableMapping, final Field field) {
+    private boolean fieldIsColumn(final EntityTableMapping entityTableMapping, final Field field) {
+        return entityTableMapping != null && entityTableMapping.getAttributeNames().contains(field.getName());
+    }
 
-        return !entityTableMapping.getAttributeNames().contains(field.getName());
+    private boolean fieldIsId(final EntityTableMapping entityTableMapping, final Field field) {
+        return entityTableMapping != null && entityTableMapping.getAttributeIds().contains(field.getName());
     }
 }

@@ -3,7 +3,7 @@ It has been always been a challenge to create a test data. This project aims at 
 
 Maven Group Plugin | Latest Version
 ------------------ | ---------------
-com.github.kuros.random-jpa | 0.1.6
+com.github.kuros.random-jpa | 0.1.7
 
 ## Feature
 1. Uses table's foreign key relations to maintain creation order dynamically
