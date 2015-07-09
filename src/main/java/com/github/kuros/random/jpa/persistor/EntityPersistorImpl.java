@@ -22,7 +22,6 @@ import com.github.kuros.random.jpa.util.NumberUtil;
 import com.github.kuros.random.jpa.util.Util;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -127,12 +126,7 @@ public final class EntityPersistorImpl implements Persistor {
     private Object persistAndReturnPersistedObject(final Object random) {
         final Class<?> tableClass = random.getClass();
         try {
-            final EntityManagerFactory entityManagerFactory = entityManager.getEntityManagerFactory();
-            final EntityManager em = entityManagerFactory.createEntityManager();
-            em.getTransaction().begin();
-            em.persist(random);
-            em.getTransaction().commit();
-            em.close();
+            entityManager.persist(random);
             LOGGER.debug("Persisted values for table: " + tableClass.getName());
         } catch (final Exception e) {
             LOGGER.error("Failed to persist: " + tableClass.getName());
