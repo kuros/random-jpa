@@ -55,17 +55,21 @@ public final class JPAContext {
 
     public CreationPlan create(final Plan plan) {
 
-        final RandomizeImpl randomize = RandomizeImpl.newInstance(generator);
-        final EntityResolver entityResolver = EntityResolverImpl.newInstance(hierarchyGraph, plan);
-        randomize.addFieldValue(entityResolver.getFieldValueMap());
-        randomize.setNullValueFields(AttributeHelper.getFields(plan.getNullValueAttributes()));
-
+        final RandomizeImpl randomize = getRandomizer(plan);
         final CreationOrderResolver creationOrderResolver = CreationOrderResolverImpl.newInstance(hierarchyGraph, plan);
         final CreationOrder creationOrder = creationOrderResolver.getCreationOrder();
 
         final CreationPlanResolver creationPlanResolver = CreationPlanResolver.newInstance(creationOrder, randomize);
 
         return creationPlanResolver.create();
+    }
+
+    private RandomizeImpl getRandomizer(final Plan plan) {
+        final RandomizeImpl randomize = RandomizeImpl.newInstance(generator);
+        final EntityResolver entityResolver = EntityResolverImpl.newInstance(hierarchyGraph, plan);
+        randomize.addFieldValue(entityResolver.getFieldValueMap());
+        randomize.setNullValueFields(AttributeHelper.getFields(plan.getNullValueAttributes()));
+        return randomize;
     }
 
     public ResultMap persist(final CreationPlan creationPlan) {

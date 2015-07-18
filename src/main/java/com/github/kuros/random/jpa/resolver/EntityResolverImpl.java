@@ -2,18 +2,28 @@ package com.github.kuros.random.jpa.resolver;
 
 import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.definition.HierarchyGraph;
+import com.github.kuros.random.jpa.exception.RandomJPAException;
 import com.github.kuros.random.jpa.mapper.Relation;
 import com.github.kuros.random.jpa.metamodel.AttributeProvider;
 import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
 import com.github.kuros.random.jpa.types.AttributeValue;
 import com.github.kuros.random.jpa.types.Entity;
 import com.github.kuros.random.jpa.types.Plan;
+import com.github.kuros.random.jpa.util.ArrayListMultimap;
 import com.github.kuros.random.jpa.util.AttributeHelper;
+import com.github.kuros.random.jpa.util.Multimap;
 import com.github.kuros.random.jpa.util.NumberUtil;
 
 import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -74,16 +84,12 @@ public final class EntityResolverImpl implements EntityResolver {
         return fieldValue;
     }
 
-    private void addParentDetailsForIdField(final Map<Field, Object> fieldValueMap, final Field field) throws IllegalAccessException {
-        generateIdForParent(fieldValueMap, field);
-    }
-
-    private void generateIdForParent(final Map<Field, Object> fieldValueMap, final Field field) throws IllegalAccessException {
-
+    private void addParentDetailsForIdField(final Map<Field, Object> fieldValueMap, final Field field) throws IllegalAccessException, NoSuchFieldException {
         final EntityTableMapping entityTableMapping = attributeProvider.get(field.getDeclaringClass());
         final Set<Relation> relations = hierarchyGraph.getAttributeRelations(field.getDeclaringClass());
 
-        if (entityTableMapping.getAttributeIds().contains(field.getName()) || relations == null) {
+        if ((entityTableMapping != null && !entityTableMapping.getAttributeIds().contains(field.getName()))
+                || relations == null) {
             return;
         }
 
@@ -93,21 +99,117 @@ public final class EntityResolverImpl implements EntityResolver {
                     + ", Class: " + field.getDeclaringClass());
         }
 
+        generateIdForParent(fieldValueMap, field.getDeclaringClass(), byId);
+    }
+
+    private void generateIdForParent(final Map<Field, Object> fieldValueMap, final Class<?> type, final Object object) throws IllegalAccessException, NoSuchFieldException {
+
+        final Set<Relation> relations = hierarchyGraph.getAttributeRelations(type);
+        if (relations == null || relations.isEmpty()) {
+            return;
+        }
+
+        final Multimap<Class, FieldValue> multimap = ArrayListMultimap.newArrayListMultimap();
+
         for (Relation relation : relations) {
             final Field from = relation.getFrom();
-            from.setAccessible(true);
-            final Object value = from.get(byId);
-            final Field to = relation.getTo();
-
-            fieldValueMap.put(to, NumberUtil.castNumber(to.getType(), value));
-
-            generateIdForParent(fieldValueMap, to);
+            final FieldValue fieldValue = new FieldValue(relation.getTo(), getFieldValue(object, from));
+            multimap.put(relation.getTo().getDeclaringClass(), fieldValue);
         }
+
+        for (Class aClass : multimap.getKeySet()) {
+            final Object row = findByQuery(aClass, new ArrayList<FieldValue>(multimap.get(aClass)));
+            findId(fieldValueMap, aClass, row);
+            generateIdForParent(fieldValueMap, aClass, row);
+        }
+    }
+
+    private Object getFieldValue(final Object object, final Field field) throws IllegalAccessException {
+        field.setAccessible(true);
+        return field.get(object);
+    }
+
+    private void findId(final Map<Field, Object> fieldValueMap, final Class aClass, final Object row) throws NoSuchFieldException, IllegalAccessException {
+        final EntityTableMapping entityTableMapping = attributeProvider.get(aClass);
+
+        if (entityTableMapping == null || row == null) {
+            return;
+        }
+
+        final List<String> attributeIds = entityTableMapping.getAttributeIds();
+
+        for (String attributeId : attributeIds) {
+            final Field declaredField = aClass.getDeclaredField(attributeId);
+            fieldValueMap.put(declaredField, getFieldValue(row, declaredField));
+        }
+    }
+
+    private Object findByQuery(final Class<?> tableClass, final List<FieldValue> fieldValues) throws IllegalAccessException {
+        filterEmptyFields(fieldValues);
+
+        final CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        final CriteriaQuery q = criteriaBuilder.createQuery(tableClass);
+
+        final Root<?> from = q.from(tableClass);
+
+        q.select(from);
+
+        final Predicate[] predicates = new Predicate[fieldValues.size()];
+
+        for (int i = 0; i < fieldValues.size(); i++) {
+            try {
+                final FieldValue fieldValue = fieldValues.get(i);
+                final Field key = fieldValue.getField();
+                predicates[i] = criteriaBuilder.equal(from.get(key.getName()), NumberUtil.castNumber(key.getDeclaringClass(), fieldValue.getValue()));
+            } catch (final Exception e) {
+                throw new RandomJPAException(e);
+            }
+        }
+
+        q.where(predicates);
+
+        final TypedQuery typedQuery = entityManager.createQuery(q);
+        final List resultList = typedQuery.getResultList();
+
+        if (resultList.size() > 0) {
+//            LOGGER.debug("Reusing data for: " + tableClass + " " + Util.printValues(random));
+        }
+
+        return resultList.size() == 0 ? null : resultList.get(0);
+    }
+
+    private void filterEmptyFields(final List<FieldValue> fieldValues) throws IllegalAccessException {
+        final Set<FieldValue> emptyFields = new HashSet<FieldValue>();
+        for (FieldValue keyValue : fieldValues) {
+            if (keyValue.getValue() == null) {
+                emptyFields.add(keyValue);
+            }
+        }
+
+        fieldValues.removeAll(emptyFields);
     }
 
 
     public <T> T findById(final Class<T> type, final Object value) {
         return entityManager.find(type, value);
+    }
+
+    private class FieldValue {
+        private Field field;
+        private Object value;
+
+        public FieldValue(final Field field, final Object value) {
+            this.field = field;
+            this.value = value;
+        }
+
+        public Field getField() {
+            return field;
+        }
+
+        public Object getValue() {
+            return value;
+        }
     }
 
 }
