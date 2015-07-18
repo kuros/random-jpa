@@ -3,6 +3,8 @@ package com.github.kuros.random.jpa.resolver;
 import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.definition.HierarchyGraph;
 import com.github.kuros.random.jpa.exception.RandomJPAException;
+import com.github.kuros.random.jpa.log.LogFactory;
+import com.github.kuros.random.jpa.log.Logger;
 import com.github.kuros.random.jpa.mapper.Relation;
 import com.github.kuros.random.jpa.metamodel.AttributeProvider;
 import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
@@ -13,6 +15,7 @@ import com.github.kuros.random.jpa.util.ArrayListMultimap;
 import com.github.kuros.random.jpa.util.AttributeHelper;
 import com.github.kuros.random.jpa.util.Multimap;
 import com.github.kuros.random.jpa.util.NumberUtil;
+import com.github.kuros.random.jpa.util.Util;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -46,6 +49,7 @@ import java.util.Set;
  */
 public final class EntityResolverImpl implements EntityResolver {
 
+    private static final Logger LOGGER = LogFactory.getLogger(EntityResolverImpl.class);
     private final HierarchyGraph hierarchyGraph;
     private final EntityManager entityManager;
     private final Plan entityList;
@@ -74,7 +78,7 @@ public final class EntityResolverImpl implements EntityResolver {
                 try {
                     final Field field = AttributeHelper.getField(attributeValue.getAttribute());
                     fieldValue.put(field, attributeValue.getValue());
-                    addParentDetailsForIdField(fieldValue, field);
+                    addParentDetailsForField(fieldValue, field);
                 } catch (final Exception e) {
                     //do nothing
                 }
@@ -84,7 +88,7 @@ public final class EntityResolverImpl implements EntityResolver {
         return fieldValue;
     }
 
-    private void addParentDetailsForIdField(final Map<Field, Object> fieldValueMap, final Field field) throws IllegalAccessException, NoSuchFieldException {
+    private void addParentDetailsForField(final Map<Field, Object> fieldValueMap, final Field field) throws IllegalAccessException, NoSuchFieldException {
         final EntityTableMapping entityTableMapping = attributeProvider.get(field.getDeclaringClass());
         final Set<Relation> relations = hierarchyGraph.getAttributeRelations(field.getDeclaringClass());
 
@@ -172,7 +176,7 @@ public final class EntityResolverImpl implements EntityResolver {
         final List resultList = typedQuery.getResultList();
 
         if (resultList.size() > 0) {
-//            LOGGER.debug("Reusing data for: " + tableClass + " " + Util.printValues(random));
+            LOGGER.debug("Reusing data for: " + tableClass + " " + Util.printValues(resultList.get(0)));
         }
 
         return resultList.size() == 0 ? null : resultList.get(0);
