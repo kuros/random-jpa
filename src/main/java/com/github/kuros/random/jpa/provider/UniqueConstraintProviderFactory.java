@@ -2,6 +2,7 @@ package com.github.kuros.random.jpa.provider;
 
 import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.provider.mssql.MSSQLUniqueConstraintProvider;
+import com.github.kuros.random.jpa.provider.oracle.OracleUniqueConstraintProvider;
 
 import java.util.List;
 
@@ -28,6 +29,9 @@ public class UniqueConstraintProviderFactory {
         switch (Cache.getInstance().getDatabase()) {
             case MS_SQL_SERVER:
                 uniqueConstraintProvider = MSSQLUniqueConstraintProvider.getInstance();
+                break;
+            case ORACLE:
+                uniqueConstraintProvider = OracleUniqueConstraintProvider.getInstance();
                 break;
             default:
                 uniqueConstraintProvider = new DefaultUniqueConstraintProvider();

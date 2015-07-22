@@ -2,6 +2,7 @@ package com.github.kuros.random.jpa.provider;
 
 import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.provider.mssql.MSSQLMultiplePrimaryKeyProvider;
+import com.github.kuros.random.jpa.provider.oracle.OracleMultiplePrimaryKeyProvider;
 
 import java.util.List;
 
@@ -28,6 +29,9 @@ public class MultiplePrimaryKeyProviderFactory {
         switch (Cache.getInstance().getDatabase()) {
             case MS_SQL_SERVER:
                 multiplePrimaryKeyProvider = MSSQLMultiplePrimaryKeyProvider.getInstance();
+                break;
+            case ORACLE:
+                multiplePrimaryKeyProvider = OracleMultiplePrimaryKeyProvider.getInstance();
                 break;
             default:
                 multiplePrimaryKeyProvider = new DefaultUniqueConstraintProvider();

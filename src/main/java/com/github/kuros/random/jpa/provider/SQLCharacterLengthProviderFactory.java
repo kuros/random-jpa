@@ -2,6 +2,7 @@ package com.github.kuros.random.jpa.provider;
 
 import com.github.kuros.random.jpa.Database;
 import com.github.kuros.random.jpa.provider.mssql.MSSQLCharacterLengthProvider;
+import com.github.kuros.random.jpa.provider.oracle.OracleCharacterLengthProvider;
 
 /*
  * Copyright (c) 2015 Kumar Rohit
@@ -26,6 +27,9 @@ public class SQLCharacterLengthProviderFactory {
         switch (database) {
             case MS_SQL_SERVER:
                 sqlCharacterLengthProvider = MSSQLCharacterLengthProvider.getInstance();
+                break;
+            case ORACLE:
+                sqlCharacterLengthProvider = OracleCharacterLengthProvider.getInstance();
                 break;
             default:
                 sqlCharacterLengthProvider = new DefaultSQLCharacterLengthProvider();
