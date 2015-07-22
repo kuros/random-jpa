@@ -1,13 +1,9 @@
 package com.github.kuros.random.jpa.provider.mssql;
 
 import com.github.kuros.random.jpa.annotation.VisibleForTesting;
-import com.github.kuros.random.jpa.provider.model.ForeignKeyRelation;
-import com.github.kuros.random.jpa.provider.RelationshipProvider;
+import com.github.kuros.random.jpa.provider.base.AbstractRelationshipProvider;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import java.util.ArrayList;
-import java.util.List;
 
 /*
  * Copyright (c) 2015 Kumar Rohit
@@ -25,7 +21,7 @@ import java.util.List;
  *    You should have received a copy of the GNU Lesser General Public License
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-public final class MSSQLRelationshipProvider implements RelationshipProvider {
+public final class MSSQLRelationshipProvider extends AbstractRelationshipProvider {
 
     private static final String QUERY = "SELECT\n" +
             "  tp.name 'parent_table',\n" +
@@ -47,30 +43,18 @@ public final class MSSQLRelationshipProvider implements RelationshipProvider {
             "  ORDER BY\n" +
             "  tp.name, cp.column_id";
 
-    private EntityManager entityManager;
-
     @VisibleForTesting
     MSSQLRelationshipProvider(final EntityManager entityManager) {
-        this.entityManager = entityManager;
+        super(entityManager);
+    }
+
+    @Override
+    protected String getQuery() {
+        return QUERY;
     }
 
     public static MSSQLRelationshipProvider newInstance(final EntityManager entityManager) {
         return new MSSQLRelationshipProvider(entityManager);
-    }
-
-    public List<ForeignKeyRelation> getForeignKeyRelations() {
-        final List<ForeignKeyRelation> foreignKeyRelations = new ArrayList<ForeignKeyRelation>();
-
-        final Query query = entityManager.createNativeQuery(QUERY);
-        final List resultList = query.getResultList();
-        for (Object o : resultList) {
-            final Object[] row = (Object[]) o;
-
-            final ForeignKeyRelation relation = ForeignKeyRelation.newInstance((String)row[0], (String)row[1], (String) row[2], (String)row[3]);
-            foreignKeyRelations.add(relation);
-        }
-
-        return foreignKeyRelations;
     }
 
 }
