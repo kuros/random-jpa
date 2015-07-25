@@ -18,4 +18,6 @@ package com.github.kuros.random.jpa.provider;
  */
 public interface SQLCharacterLengthProvider {
     Integer getMaxLength(final String entityName, final String attributeName);
+
+    Object applyLengthConstraint(final String entityName, final String attributeName, final Object value);
 }

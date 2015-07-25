@@ -66,14 +66,19 @@ public class MSSQLCharacterLengthProviderTest {
         assertNull(sqlCharacterLengthProvider.getMaxLength(Employee.class.getName(), "anyColumnName"));
     }
 
+    @Test
+    public void testApplyLengthConstraint() throws Exception {
+        assertEquals("abcdefghij", sqlCharacterLengthProvider.applyLengthConstraint(Department.class.getName(), "departmentName", "abcdefghijkl"));
+    }
+
     private void mockAttributeProvider() {
-        EntityTableMapping personTableMapping = new EntityTableMapping(Person.class);
+        final EntityTableMapping personTableMapping = new EntityTableMapping(Person.class);
 
         personTableMapping.addAttributeColumnMapping("firstName", "first_name");
         personTableMapping.addAttributeColumnMapping("lastName", "last_name");
         when(attributeProvider.get(eq("person"))).thenReturn(personTableMapping);
 
-        EntityTableMapping departmentTableMapping = new EntityTableMapping(Department.class);
+        final EntityTableMapping departmentTableMapping = new EntityTableMapping(Department.class);
         departmentTableMapping.addAttributeColumnMapping("departmentId", "department_id");
         departmentTableMapping.addAttributeColumnMapping("departmentName", "department_name");
         when(attributeProvider.get(eq("department"))).thenReturn(departmentTableMapping);

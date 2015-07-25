@@ -73,13 +73,7 @@ public final class RandomGenerator {
     }
 
     private Object applyLengthConstraint(final Field field, final Object o) {
-        final Integer maxLength = sqlCharacterLengthProvider.getMaxLength(field.getDeclaringClass().getName(), field.getName());
-        if (maxLength != null && o != null && o instanceof String) {
-            final String s = o.toString();
-            final int length = s.length() < maxLength ? s.length() : maxLength;
-            return s.substring(0, length);
-        }
-        return o;
+        return sqlCharacterLengthProvider.applyLengthConstraint(field.getDeclaringClass().getName(), field.getName(), o);
     }
 
     public <T> T generateRandom(final Class<T> type) {

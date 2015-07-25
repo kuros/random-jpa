@@ -72,5 +72,15 @@ public abstract class AbstractCharacterLengthProvider implements SQLCharacterLen
         return columnCharacterLength != null ? columnCharacterLength.getLength(attributeName) : null;
     }
 
+    public Object applyLengthConstraint(final String entityName, final String attributeName, final Object value) {
+        final Integer maxLength = getMaxLength(entityName, attributeName);
+        if (maxLength != null && value != null && value instanceof String) {
+            final String s = value.toString();
+            final int length = s.length() < maxLength ? s.length() : maxLength;
+            return s.substring(0, length);
+        }
+        return value;
+    }
+
     protected abstract String getQuery();
 }

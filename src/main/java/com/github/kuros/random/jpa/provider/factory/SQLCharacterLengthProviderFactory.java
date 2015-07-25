@@ -44,5 +44,9 @@ public class SQLCharacterLengthProviderFactory {
         public Integer getMaxLength(final String entityName, final String attributeName) {
             return null;
         }
+
+        public Object applyLengthConstraint(final String entityName, final String attributeName, final Object value) {
+            return null;
+        }
     }
 }
