@@ -1,6 +1,7 @@
-package com.github.kuros.random.jpa.provider;
+package com.github.kuros.random.jpa.provider.factory;
 
 import com.github.kuros.random.jpa.Database;
+import com.github.kuros.random.jpa.provider.SQLCharacterLengthProvider;
 import com.github.kuros.random.jpa.provider.mssql.MSSQLCharacterLengthProvider;
 import com.github.kuros.random.jpa.provider.oracle.OracleCharacterLengthProvider;
 

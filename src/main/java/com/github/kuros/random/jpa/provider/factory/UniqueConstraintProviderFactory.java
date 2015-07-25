@@ -1,8 +1,9 @@
-package com.github.kuros.random.jpa.provider;
+package com.github.kuros.random.jpa.provider.factory;
 
 import com.github.kuros.random.jpa.cache.Cache;
-import com.github.kuros.random.jpa.provider.mssql.MSSQLMultiplePrimaryKeyProvider;
-import com.github.kuros.random.jpa.provider.oracle.OracleMultiplePrimaryKeyProvider;
+import com.github.kuros.random.jpa.provider.UniqueConstraintProvider;
+import com.github.kuros.random.jpa.provider.mssql.MSSQLUniqueConstraintProvider;
+import com.github.kuros.random.jpa.provider.oracle.OracleUniqueConstraintProvider;
 
 import java.util.List;
 
@@ -22,27 +23,26 @@ import java.util.List;
  *    You should have received a copy of the GNU Lesser General Public License
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class MultiplePrimaryKeyProviderFactory {
+public class UniqueConstraintProviderFactory {
 
-    public static MultiplePrimaryKeyProvider getMultiplePrimaryKeyProvider() {
-        final MultiplePrimaryKeyProvider multiplePrimaryKeyProvider;
+    public static UniqueConstraintProvider getUniqueConstraintProvider() {
+        final UniqueConstraintProvider uniqueConstraintProvider;
         switch (Cache.getInstance().getDatabase()) {
             case MS_SQL_SERVER:
-                multiplePrimaryKeyProvider = MSSQLMultiplePrimaryKeyProvider.getInstance();
+                uniqueConstraintProvider = MSSQLUniqueConstraintProvider.getInstance();
                 break;
             case ORACLE:
-                multiplePrimaryKeyProvider = OracleMultiplePrimaryKeyProvider.getInstance();
+                uniqueConstraintProvider = OracleUniqueConstraintProvider.getInstance();
                 break;
             default:
-                multiplePrimaryKeyProvider = new DefaultUniqueConstraintProvider();
+                uniqueConstraintProvider = new DefaultUniqueConstraintProvider();
         }
 
-        return multiplePrimaryKeyProvider;
+        return uniqueConstraintProvider;
     }
 
-    private static class DefaultUniqueConstraintProvider implements MultiplePrimaryKeyProvider {
-
-        public List<String> getMultiplePrimaryKeyAttributes(final Class<?> entityName) {
+    private static class DefaultUniqueConstraintProvider implements UniqueConstraintProvider {
+        public List<String> getUniqueCombinationAttributes(final Class<?> entityName) {
             return null;
         }
     }

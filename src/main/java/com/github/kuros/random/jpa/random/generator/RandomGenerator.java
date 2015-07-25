@@ -2,7 +2,7 @@ package com.github.kuros.random.jpa.random.generator;
 
 import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.provider.SQLCharacterLengthProvider;
-import com.github.kuros.random.jpa.provider.SQLCharacterLengthProviderFactory;
+import com.github.kuros.random.jpa.provider.factory.SQLCharacterLengthProviderFactory;
 import com.github.kuros.random.jpa.util.AttributeHelper;
 
 import javax.persistence.metamodel.Attribute;

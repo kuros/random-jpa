@@ -13,7 +13,7 @@ import com.github.kuros.random.jpa.definition.HierarchyGraph;
 import com.github.kuros.random.jpa.mapper.Relation;
 import com.github.kuros.random.jpa.metamodel.MetaModelProvider;
 import com.github.kuros.random.jpa.metamodel.MetaModelProviderImpl;
-import com.github.kuros.random.jpa.provider.RelationshipProviderFactory;
+import com.github.kuros.random.jpa.provider.factory.RelationshipProviderFactory;
 import com.github.kuros.random.jpa.random.generator.Generator;
 
 import javax.persistence.EntityManager;
