@@ -222,10 +222,12 @@ public final class EntityPersistorImpl implements Persistor {
         final Object random = node.getValue();
 
         final TableNode tableNode = creationOrder.getTableNode(node.getType());
-        final List<Relation> relations = tableNode.getRelations();
+        if (tableNode != null) {
+            final List<Relation> relations = tableNode.getRelations();
 
-        for (Relation relation : relations) {
-            createRelation(resultMap, relation, random);
+            for (Relation relation : relations) {
+                createRelation(resultMap, relation, random);
+            }
         }
 
         return randomize.populateRandomFields(random);

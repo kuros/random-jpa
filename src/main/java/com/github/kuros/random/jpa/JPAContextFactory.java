@@ -51,6 +51,7 @@ public final class JPAContextFactory {
         this.database = database;
         this.entityManager = entityManager;
         this.preconditions = new Preconditions();
+        this.generator = Generator.newInstance();
     }
 
     public JPAContextFactory with(final Dependencies customDependencies) {

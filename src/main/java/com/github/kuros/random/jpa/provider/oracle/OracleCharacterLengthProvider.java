@@ -3,9 +3,16 @@ package com.github.kuros.random.jpa.provider.oracle;
 import com.github.kuros.random.jpa.annotation.VisibleForTesting;
 import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.metamodel.AttributeProvider;
+import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
 import com.github.kuros.random.jpa.provider.base.AbstractCharacterLengthProvider;
+import com.github.kuros.random.jpa.provider.model.ColumnCharacterLength;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /*
  * Copyright (c) 2015 Kumar Rohit
@@ -49,5 +56,34 @@ public final class OracleCharacterLengthProvider extends AbstractCharacterLength
     @Override
     public String getQuery() {
         return QUERY;
+    }
+
+    protected Map<String, ColumnCharacterLength> init() {
+        final Map<String, ColumnCharacterLength> lengths = new HashMap<String, ColumnCharacterLength>();
+        final Query query = entityManager.createNativeQuery(getQuery());
+        final List resultList = query.getResultList();
+        for (Object o : resultList) {
+            final Object[] row = (Object[]) o;
+
+            final EntityTableMapping entityTableMapping = attributeProvider.get((String) row[0]);
+
+            if (entityTableMapping == null) {
+                continue;
+            }
+
+            final String attributeName = entityTableMapping.getAttributeName((String) row[1]);
+            final BigDecimal length = (BigDecimal) row[2];
+
+            final String entityName = entityTableMapping.getEntityName();
+            ColumnCharacterLength columnCharacterLength = lengths.get(entityName);
+            if (columnCharacterLength == null) {
+                columnCharacterLength = ColumnCharacterLength.newInstance();
+                lengths.put(entityName, columnCharacterLength);
+            }
+
+            columnCharacterLength.add(attributeName, length.intValue());
+        }
+
+        return lengths;
     }
 }

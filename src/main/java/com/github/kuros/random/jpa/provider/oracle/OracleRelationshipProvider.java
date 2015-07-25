@@ -33,7 +33,7 @@ public final class OracleRelationshipProvider extends AbstractRelationshipProvid
             "      AND c_list.R_CONSTRAINT_NAME = c_dest.CONSTRAINT_NAME\n" +
             "      AND c_list.CONSTRAINT_TYPE = 'R'\n" +
             "      And c_list.owner = (select user from dual)\n" +
-            "order by c_src.TABLE_NAME, c_src.COLUMN_NAME;";
+            "order by c_src.TABLE_NAME, c_src.COLUMN_NAME";
 
 
     @VisibleForTesting

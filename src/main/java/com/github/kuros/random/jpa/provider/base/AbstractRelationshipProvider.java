@@ -39,7 +39,7 @@ public abstract class AbstractRelationshipProvider implements RelationshipProvid
         for (Object o : resultList) {
             final Object[] row = (Object[]) o;
 
-            final ForeignKeyRelation relation = ForeignKeyRelation.newInstance((String)row[0], (String)row[1], (String) row[2], (String)row[3]);
+            final ForeignKeyRelation relation = ForeignKeyRelation.newInstance(String.valueOf(row[0]).toLowerCase(), String.valueOf(row[1]).toLowerCase(), String.valueOf(row[2]).toLowerCase(), String.valueOf(row[3]).toLowerCase());
             foreignKeyRelations.add(relation);
         }
 

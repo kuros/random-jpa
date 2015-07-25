@@ -47,28 +47,36 @@ public class MetaModelProviderImpl implements MetaModelProvider {
 
             final EntityTableMapping entityTableMapping = attributeProvider.get(javaType);
 
-            entityMap.put(entityTableMapping.getTableName(), getFields(javaType));
+            entityMap.put(entityTableMapping.getTableName().toLowerCase(), getFields(javaType));
         }
 
         return entityMap;
     }
 
     private List<FieldName> getFields(final Class<?> type) {
-
+        final List<FieldName> fields = new ArrayList<FieldName>();
         final EntityTableMapping entityTableMapping = attributeProvider.get(type);
 
-        final List<FieldName> fields = new ArrayList<FieldName>();
+        getFieldsIncludingSuperClass(type, entityTableMapping, fields);
+
+        return fields;
+    }
+
+    private void getFieldsIncludingSuperClass(final Class<?> type, final EntityTableMapping entityTableMapping, final List<FieldName> fields) {
         final Field[] declaredFields = type.getDeclaredFields();
 
         for (Field declaredField : declaredFields) {
 
             final String columnName = entityTableMapping.getColumnName(declaredField.getName());
             if (columnName != null) {
-                fields.add(new FieldName(declaredField, columnName));
+                fields.add(new FieldName(declaredField, columnName.toLowerCase()));
             }
         }
 
-        return fields;
+        // TODO - fix parent relationship
+        if (type.getSuperclass() != Object.class) {
+            getFieldsIncludingSuperClass(type.getSuperclass(), entityTableMapping, fields);
+        }
     }
 
     private Set<EntityType<?>> getEntityTypes() {

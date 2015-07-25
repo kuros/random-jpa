@@ -29,8 +29,8 @@ import java.util.Map;
  */
 public abstract class AbstractCharacterLengthProvider implements SQLCharacterLengthProvider {
     private Map<String, ColumnCharacterLength> columnLengthsByTable;
-    private EntityManager entityManager;
-    private AttributeProvider attributeProvider;
+    protected EntityManager entityManager;
+    protected AttributeProvider attributeProvider;
 
     public AbstractCharacterLengthProvider(final AttributeProvider attributeProvider, final EntityManager entityManager) {
         this.attributeProvider = attributeProvider;
