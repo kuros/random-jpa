@@ -1,6 +1,6 @@
 package com.github.kuros.random.jpa.metamodel;
 
-import com.github.kuros.random.jpa.metamodel.model.FieldName;
+import com.github.kuros.random.jpa.metamodel.model.FieldWrapper;
 
 import java.util.List;
 import java.util.Map;
@@ -22,5 +22,5 @@ import java.util.Map;
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 public interface MetaModelProvider {
-    Map<String, List<FieldName>> getFieldsByTableName();
+    Map<String, List<FieldWrapper>> getFieldsByTableName();
 }

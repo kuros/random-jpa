@@ -2,7 +2,7 @@ package com.github.kuros.random.jpa.mapper;
 
 import com.github.kuros.random.jpa.link.Dependencies;
 import com.github.kuros.random.jpa.metamodel.MetaModelProvider;
-import com.github.kuros.random.jpa.metamodel.model.FieldName;
+import com.github.kuros.random.jpa.metamodel.model.FieldWrapper;
 import com.github.kuros.random.jpa.provider.model.ForeignKeyRelation;
 import com.github.kuros.random.jpa.provider.RelationshipProvider;
 import com.github.kuros.random.jpa.resolver.DependencyResolver;
@@ -29,7 +29,7 @@ import java.util.Map;
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 public final class RelationCreator {
-    private final Map<String, List<FieldName>> fieldsByTableName;
+    private final Map<String, List<FieldWrapper>> fieldsByTableName;
     private List<ForeignKeyRelation> foreignKeyRelations;
     private Dependencies dependencies;
 
@@ -79,19 +79,19 @@ public final class RelationCreator {
     }
 
     private Field getFieldValue(final String table, final String attribute) {
-        final List<FieldName> fieldNames = fieldsByTableName.get(table);
-        if (fieldNames != null) {
-            for (FieldName fieldName : fieldNames) {
-                if (isFieldFound(attribute, fieldName)) {
-                    return fieldName.getField();
+        final List<FieldWrapper> fieldWrappers = fieldsByTableName.get(table);
+        if (fieldWrappers != null) {
+            for (FieldWrapper fieldWrapper : fieldWrappers) {
+                if (isFieldFound(attribute, fieldWrapper)) {
+                    return fieldWrapper.getField();
                 }
             }
         }
         return null;
     }
 
-    private boolean isFieldFound(final String attribute, final FieldName fieldName) {
-        return (fieldName.getOverriddenFieldName() != null && fieldName.getOverriddenFieldName().equals(attribute))
-                || (fieldName.getOverriddenFieldName() == null && fieldName.getFieldName().equals(attribute));
+    private boolean isFieldFound(final String attribute, final FieldWrapper fieldWrapper) {
+        return (fieldWrapper.getOverriddenFieldName() != null && fieldWrapper.getOverriddenFieldName().equals(attribute))
+                || (fieldWrapper.getOverriddenFieldName() == null && fieldWrapper.getFieldName().equals(attribute));
     }
 }

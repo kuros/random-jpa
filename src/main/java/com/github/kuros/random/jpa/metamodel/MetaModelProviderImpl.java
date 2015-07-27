@@ -1,7 +1,7 @@
 package com.github.kuros.random.jpa.metamodel;
 
 import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
-import com.github.kuros.random.jpa.metamodel.model.FieldName;
+import com.github.kuros.random.jpa.metamodel.model.FieldWrapper;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -38,10 +38,10 @@ public class MetaModelProviderImpl implements MetaModelProvider {
         attributeProvider = AttributeProvider.getInstance();
     }
 
-    public Map<String, List<FieldName>> getFieldsByTableName() {
+    public Map<String, List<FieldWrapper>> getFieldsByTableName() {
         final Set<EntityType<?>> entities = getEntityTypes();
 
-        final Map<String, List<FieldName>> entityMap = new HashMap<String, List<FieldName>>();
+        final Map<String, List<FieldWrapper>> entityMap = new HashMap<String, List<FieldWrapper>>();
         for (EntityType<?> entity : entities) {
             final Class<?> javaType = entity.getJavaType();
 
@@ -53,8 +53,8 @@ public class MetaModelProviderImpl implements MetaModelProvider {
         return entityMap;
     }
 
-    private List<FieldName> getFields(final Class<?> type) {
-        final List<FieldName> fields = new ArrayList<FieldName>();
+    private List<FieldWrapper> getFields(final Class<?> type) {
+        final List<FieldWrapper> fields = new ArrayList<FieldWrapper>();
         final EntityTableMapping entityTableMapping = attributeProvider.get(type);
 
         getFieldsIncludingSuperClass(type, entityTableMapping, fields);
@@ -62,14 +62,14 @@ public class MetaModelProviderImpl implements MetaModelProvider {
         return fields;
     }
 
-    private void getFieldsIncludingSuperClass(final Class<?> type, final EntityTableMapping entityTableMapping, final List<FieldName> fields) {
+    private void getFieldsIncludingSuperClass(final Class<?> type, final EntityTableMapping entityTableMapping, final List<FieldWrapper> fields) {
         final Field[] declaredFields = type.getDeclaredFields();
 
         for (Field declaredField : declaredFields) {
 
             final String columnName = entityTableMapping.getColumnName(declaredField.getName());
             if (columnName != null) {
-                fields.add(new FieldName(declaredField, columnName.toLowerCase()));
+                fields.add(new FieldWrapper(declaredField, columnName.toLowerCase()));
             }
         }
 

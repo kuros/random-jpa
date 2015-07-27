@@ -18,13 +18,13 @@ import java.lang.reflect.Field;
  *    You should have received a copy of the GNU Lesser General Public License
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class FieldName {
+public class FieldWrapper {
 
     private final Field field;
     private final String fieldName;
     private final String overriddenFieldName;
 
-    public FieldName(final Field field, final String overriddenFieldName) {
+    public FieldWrapper(final Field field, final String overriddenFieldName) {
         this.field = field;
         this.fieldName = field.getName();
         this.overriddenFieldName = overriddenFieldName;

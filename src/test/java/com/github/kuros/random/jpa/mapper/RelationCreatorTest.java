@@ -2,9 +2,9 @@ package com.github.kuros.random.jpa.mapper;
 
 import com.github.kuros.random.jpa.link.Dependencies;
 import com.github.kuros.random.jpa.metamodel.MetaModelProvider;
-import com.github.kuros.random.jpa.metamodel.model.FieldName;
-import com.github.kuros.random.jpa.provider.model.ForeignKeyRelation;
+import com.github.kuros.random.jpa.metamodel.model.FieldWrapper;
 import com.github.kuros.random.jpa.provider.RelationshipProvider;
+import com.github.kuros.random.jpa.provider.model.ForeignKeyRelation;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
 /*
@@ -50,7 +50,7 @@ public class RelationCreatorTest {
 
     @Test
     public void testRelationCreatorWithEmptyMetaModelProvider() throws Exception {
-        when(metaModelProvider.getFieldsByTableName()).thenReturn(new HashMap<String, List<FieldName>>());
+        when(metaModelProvider.getFieldsByTableName()).thenReturn(new HashMap<String, List<FieldWrapper>>());
         final List<Relation> generate = RelationCreator.from(metaModelProvider).generate();
         assertEquals(0, generate.size());
     }
@@ -112,28 +112,28 @@ public class RelationCreatorTest {
         when(relationshipProvider.getForeignKeyRelations()).thenReturn(foreignKeyRelations);
     }
 
-    private Map<String, List<FieldName>> getFieldsByTableName() throws NoSuchFieldException {
-        final Map<String, List<FieldName>> fieldsByTableName = new HashMap<String, List<FieldName>>();
+    private Map<String, List<FieldWrapper>> getFieldsByTableName() throws NoSuchFieldException {
+        final Map<String, List<FieldWrapper>> fieldsByTableName = new HashMap<String, List<FieldWrapper>>();
 
-        FieldName attr1 = new FieldName(getDeclaredField(TestClass.class, "attr1"), null);
-        FieldName attr2 = new FieldName(getDeclaredField(TestClass.class, "attr2"), "attr_2");
-        List<FieldName> testClassFieldNames = new ArrayList<FieldName>();
-        testClassFieldNames.add(attr1);
-        testClassFieldNames.add(attr2);
-        fieldsByTableName.put("test_class_table_name", testClassFieldNames);
+        final FieldWrapper attr1 = new FieldWrapper(getDeclaredField(TestClass.class, "attr1"), null);
+        final FieldWrapper attr2 = new FieldWrapper(getDeclaredField(TestClass.class, "attr2"), "attr_2");
+        final List<FieldWrapper> testClassFieldWrappers = new ArrayList<FieldWrapper>();
+        testClassFieldWrappers.add(attr1);
+        testClassFieldWrappers.add(attr2);
+        fieldsByTableName.put("test_class_table_name", testClassFieldWrappers);
 
 
-        FieldName attr3 = new FieldName(getDeclaredField(TestClass2.class, "attr1"), null);
-        FieldName attr4 = new FieldName(getDeclaredField(TestClass2.class, "attr2"), null);
-        List<FieldName> testClass2FieldNames = new ArrayList<FieldName>();
-        testClass2FieldNames.add(attr3);
-        testClass2FieldNames.add(attr4);
-        fieldsByTableName.put("test_class_2_table_name", testClass2FieldNames);
+        final FieldWrapper attr3 = new FieldWrapper(getDeclaredField(TestClass2.class, "attr1"), null);
+        final FieldWrapper attr4 = new FieldWrapper(getDeclaredField(TestClass2.class, "attr2"), null);
+        final List<FieldWrapper> testClass2FieldWrappers = new ArrayList<FieldWrapper>();
+        testClass2FieldWrappers.add(attr3);
+        testClass2FieldWrappers.add(attr4);
+        fieldsByTableName.put("test_class_2_table_name", testClass2FieldWrappers);
 
         return fieldsByTableName;
     }
 
-    private Field getDeclaredField(Class<?> type, String attr1) throws NoSuchFieldException {
+    private Field getDeclaredField(final Class<?> type, final String attr1) throws NoSuchFieldException {
         return type.getDeclaredField(attr1);
     }
 

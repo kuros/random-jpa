@@ -1,6 +1,6 @@
 package com.github.kuros.random.jpa.metamodel;
 
-import com.github.kuros.random.jpa.metamodel.model.FieldName;
+import com.github.kuros.random.jpa.metamodel.model.FieldWrapper;
 import com.github.kuros.random.jpa.testUtil.MockEntityManagerProvider;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -43,14 +43,14 @@ public class MetaModelProviderImplTest {
 
     @Test @Ignore
     public void mapMetaModelsToTheirTableNames() {
-        final Map<String, List<FieldName>> result = metaModelProvider.getFieldsByTableName();
+        final Map<String, List<FieldWrapper>> result = metaModelProvider.getFieldsByTableName();
 
-        final List<FieldName> fieldNames = result.get("Employee");
-        assertEquals(3, fieldNames.size());
-        validate("employee_id", fieldNames.get(0).getOverriddenFieldName());
-        validate("person_id", fieldNames.get(1).getOverriddenFieldName());
-        validate("salary", fieldNames.get(2).getFieldName());
-        validate("", fieldNames.get(2).getOverriddenFieldName());
+        final List<FieldWrapper> fieldWrappers = result.get("Employee");
+        assertEquals(3, fieldWrappers.size());
+        validate("employee_id", fieldWrappers.get(0).getOverriddenFieldName());
+        validate("person_id", fieldWrappers.get(1).getOverriddenFieldName());
+        validate("salary", fieldWrappers.get(2).getFieldName());
+        validate("", fieldWrappers.get(2).getOverriddenFieldName());
     }
 
     private void validate(final String expected, final String actual) {
