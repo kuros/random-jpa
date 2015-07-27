@@ -1,5 +1,10 @@
 package com.github.kuros.random.jpa.util;
 
+import com.github.kuros.random.jpa.exception.RandomJPAException;
+
+import java.text.NumberFormat;
+import java.text.ParseException;
+
 /*
  * Copyright (c) 2015 Kumar Rohit
  *
@@ -42,5 +47,15 @@ public class NumberUtil {
         }
 
         return returnValue;
+    }
+
+    public static Object parseNumber(final Class<?> type, final String value) {
+        final NumberFormat numberFormat = NumberFormat.getNumberInstance();
+        try {
+            final Number parse = numberFormat.parse(value);
+            return castNumber(type, parse);
+        } catch (final ParseException e) {
+            throw new RandomJPAException(e);
+        }
     }
 }

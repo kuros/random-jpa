@@ -6,6 +6,7 @@ import com.github.kuros.random.jpa.metamodel.AttributeProvider;
 import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
 import com.github.kuros.random.jpa.provider.base.AbstractCharacterLengthProvider;
 import com.github.kuros.random.jpa.provider.model.ColumnCharacterLength;
+import com.github.kuros.random.jpa.provider.model.ColumnDetail;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -33,9 +34,8 @@ import java.util.Map;
 public final class OracleCharacterLengthProvider extends AbstractCharacterLengthProvider {
 
     private static final String QUERY = "SELECT" +
-            " dt.table_name, dt.column_name, dt.char_col_decl_length" +
-            " FROM user_tab_columns dt" +
-            " WHERE dt.char_col_decl_length is not null";
+            " dt.table_name, dt.column_name, dt.char_col_decl_length, dt.DATA_PRECISION, dt.DATA_SCALE" +
+            " FROM user_tab_columns dt";
 
     private static OracleCharacterLengthProvider instance;
 
@@ -73,6 +73,8 @@ public final class OracleCharacterLengthProvider extends AbstractCharacterLength
 
             final String attributeName = entityTableMapping.getAttributeName((String) row[1]);
             final BigDecimal length = (BigDecimal) row[2];
+            final BigDecimal precision = (BigDecimal) row[3];
+            final BigDecimal scale = (BigDecimal) row[4];
 
             final String entityName = entityTableMapping.getEntityName();
             ColumnCharacterLength columnCharacterLength = lengths.get(entityName);
@@ -81,9 +83,13 @@ public final class OracleCharacterLengthProvider extends AbstractCharacterLength
                 lengths.put(entityName, columnCharacterLength);
             }
 
-            columnCharacterLength.add(attributeName, length.intValue());
+            columnCharacterLength.add(attributeName, new ColumnDetail(getValue(length), getValue(precision), getValue(scale)));
         }
 
         return lengths;
+    }
+
+    private Integer getValue(final BigDecimal bigDecimal) {
+        return bigDecimal == null ? null : bigDecimal.intValue();
     }
 }

@@ -1,4 +1,4 @@
-package com.github.kuros.random.jpa.provider;
+package com.github.kuros.random.jpa.provider.model;
 
 /*
  * Copyright (c) 2015 Kumar Rohit
@@ -16,7 +16,30 @@ package com.github.kuros.random.jpa.provider;
  *    You should have received a copy of the GNU Lesser General Public License
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-public interface SQLCharacterLengthProvider {
+public class ColumnDetail {
+    private Integer stringLength;
+    private Integer precision;
+    private Integer scale;
 
-    Object applyLengthConstraint(final String entityName, final String attributeName, final Object value);
+    public ColumnDetail(final Integer stringLength) {
+        this.stringLength = stringLength;
+    }
+
+    public ColumnDetail(final Integer stringLength, final Integer precision, final Integer scale) {
+        this.stringLength = stringLength;
+        this.precision = precision;
+        this.scale = scale;
+    }
+
+    public Integer getStringLength() {
+        return stringLength;
+    }
+
+    public Integer getPrecision() {
+        return precision;
+    }
+
+    public Integer getScale() {
+        return scale;
+    }
 }

@@ -21,21 +21,25 @@ import java.util.Map;
  */
 public final class ColumnCharacterLength {
 
-    private final Map<String, Integer> lengths;
+    private final Map<String, ColumnDetail> nameColumnDetails;
 
     private ColumnCharacterLength() {
-        this.lengths = new HashMap<String, Integer>();
+        this.nameColumnDetails = new HashMap<String, ColumnDetail>();
     }
 
     public static ColumnCharacterLength newInstance() {
         return new ColumnCharacterLength();
     }
 
-    public void add(final String columnName, final Integer length) {
-        lengths.put(columnName, length);
+    public void add(final String columnName, final ColumnDetail columnDetail) {
+        nameColumnDetails.put(columnName, columnDetail);
     }
 
     public Integer getLength(final String columnName) {
-        return lengths.get(columnName);
+        return nameColumnDetails.get(columnName).getStringLength();
+    }
+
+    public ColumnDetail getColumnDetail(final String columnName) {
+        return nameColumnDetails.get(columnName);
     }
 }

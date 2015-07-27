@@ -4,9 +4,13 @@ import com.github.kuros.random.jpa.metamodel.AttributeProvider;
 import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
 import com.github.kuros.random.jpa.provider.SQLCharacterLengthProvider;
 import com.github.kuros.random.jpa.provider.model.ColumnCharacterLength;
+import com.github.kuros.random.jpa.provider.model.ColumnDetail;
+import com.github.kuros.random.jpa.util.NumberUtil;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import java.math.RoundingMode;
+import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,6 +58,8 @@ public abstract class AbstractCharacterLengthProvider implements SQLCharacterLen
             final String attributeName = entityTableMapping.getAttributeName((String) row[1]);
             final Integer length = (Integer) row[2];
 
+            final ColumnDetail columnDetail = new ColumnDetail(length);
+
             final String entityName = entityTableMapping.getEntityName();
             ColumnCharacterLength columnCharacterLength = lengths.get(entityName);
             if (columnCharacterLength == null) {
@@ -61,25 +67,44 @@ public abstract class AbstractCharacterLengthProvider implements SQLCharacterLen
                 lengths.put(entityName, columnCharacterLength);
             }
 
-            columnCharacterLength.add(attributeName, length);
+            columnCharacterLength.add(attributeName, columnDetail);
         }
 
         return lengths;
     }
 
-    public Integer getMaxLength(final String entityName, final String attributeName) {
-        final ColumnCharacterLength columnCharacterLength = columnLengthsByTable.get(entityName);
-        return columnCharacterLength != null ? columnCharacterLength.getLength(attributeName) : null;
-    }
-
     public Object applyLengthConstraint(final String entityName, final String attributeName, final Object value) {
-        final Integer maxLength = getMaxLength(entityName, attributeName);
-        if (maxLength != null && value != null && value instanceof String) {
-            final String s = value.toString();
-            final int length = s.length() < maxLength ? s.length() : maxLength;
-            return s.substring(0, length);
+        final ColumnCharacterLength columnCharacterLength = columnLengthsByTable.get(entityName);
+        if (columnCharacterLength == null
+                || value == null
+                || columnCharacterLength.getColumnDetail(attributeName) == null) {
+            return value;
         }
-        return value;
+
+        final ColumnDetail columnDetail = columnCharacterLength.getColumnDetail(attributeName);
+        Object returnValue = value;
+
+        if (columnDetail.getStringLength() != null && value instanceof String) {
+            final String s = value.toString();
+            final int length = s.length() < columnDetail.getStringLength() ? s.length() : columnDetail.getStringLength();
+            returnValue = s.substring(0, length);
+        }
+
+        if (value instanceof Number) {
+            final NumberFormat numberFormat = NumberFormat.getNumberInstance();
+            if (columnDetail.getPrecision() != null) {
+                numberFormat.setMaximumIntegerDigits(columnDetail.getPrecision());
+            }
+
+            if (columnDetail.getScale() != null) {
+                numberFormat.setMaximumFractionDigits(columnDetail.getScale());
+            }
+
+            numberFormat.setRoundingMode(RoundingMode.HALF_UP);
+
+            returnValue = NumberUtil.parseNumber(value.getClass(), numberFormat.format(value));
+        }
+        return returnValue;
     }
 
     protected abstract String getQuery();

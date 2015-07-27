@@ -1,12 +1,9 @@
-package com.github.kuros.random.jpa.provider.mssql;
+package com.github.kuros.random.jpa.provider.oracle;
 
 import com.github.kuros.random.jpa.metamodel.AttributeProvider;
 import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
 import com.github.kuros.random.jpa.provider.SQLCharacterLengthProvider;
-import com.github.kuros.random.jpa.provider.oracle.OracleCharacterLengthProvider;
 import com.github.kuros.random.jpa.testUtil.entity.Department;
-import com.github.kuros.random.jpa.testUtil.entity.Employee;
-import com.github.kuros.random.jpa.testUtil.entity.Person;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -14,11 +11,11 @@ import org.mockito.MockitoAnnotations;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
@@ -39,7 +36,7 @@ import static org.mockito.Mockito.when;
  *    You should have received a copy of the GNU Lesser General Public License
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class MSSQLCharacterLengthProviderTest {
+public class OracleCharacterLengthProviderTest {
 
     @Mock
     private EntityManager entityManager;
@@ -54,43 +51,36 @@ public class MSSQLCharacterLengthProviderTest {
         MockitoAnnotations.initMocks(this);
         mockEntityManager();
         mockAttributeProvider();
-        sqlCharacterLengthProvider = new MSSQLCharacterLengthProvider(entityManager, attributeProvider);
+        sqlCharacterLengthProvider = new OracleCharacterLengthProvider(entityManager, attributeProvider);
     }
 
     @Test
     public void testApplyLengthConstraint() throws Exception {
         assertEquals("abcde", sqlCharacterLengthProvider.applyLengthConstraint(Department.class.getName(), "departmentName", "abcdefghijkl"));
-        assertEquals(123456, sqlCharacterLengthProvider.applyLengthConstraint(Department.class.getName(), "departmentId", 123456789));
+        assertEquals(789, sqlCharacterLengthProvider.applyLengthConstraint(Department.class.getName(), "departmentId", 123456789));
+        assertEquals(345.68, sqlCharacterLengthProvider.applyLengthConstraint(Department.class.getName(), "departmentAmount", 12345.6789));
     }
 
     private void mockAttributeProvider() {
-        final EntityTableMapping personTableMapping = new EntityTableMapping(Person.class);
-
-        personTableMapping.addAttributeColumnMapping("firstName", "first_name");
-        personTableMapping.addAttributeColumnMapping("lastName", "last_name");
-        when(attributeProvider.get(eq("person"))).thenReturn(personTableMapping);
-
         final EntityTableMapping departmentTableMapping = new EntityTableMapping(Department.class);
         departmentTableMapping.addAttributeColumnMapping("departmentId", "department_id");
         departmentTableMapping.addAttributeColumnMapping("departmentName", "department_name");
+        departmentTableMapping.addAttributeColumnMapping("departmentAmount", "department_amount");
         when(attributeProvider.get(eq("department"))).thenReturn(departmentTableMapping);
     }
 
     private void mockEntityManager() {
-        final Object[] row1 = {"person", "first_name", 10};
-        final Object[] row2 = {"person", "last_name", 20};
-        final Object[] row3 = {"department", "department_name", 5};
-        final Object[] row4 = {"employee", "employee_name", 10};
-        final Object[] row5 = {"department", "department_id", null, 3, null};
+        final Object[] row1 = {"department", "department_name", BigDecimal.valueOf(5), null, null};
+        final Object[] row2 = {"department", "department_id", null, 3, null};
+        final Object[] row3 = {"department", "department_amount", null, 3, BigDecimal.valueOf(2)};
 
         final List<Object[]> resultList = new ArrayList<Object[]>();
         resultList.add(row1);
         resultList.add(row2);
         resultList.add(row3);
-        resultList.add(row4);
-        resultList.add(row5);
 
         when(entityManager.createNativeQuery(anyString())).thenReturn(query);
         when(query.getResultList()).thenReturn(resultList);
     }
+
 }
