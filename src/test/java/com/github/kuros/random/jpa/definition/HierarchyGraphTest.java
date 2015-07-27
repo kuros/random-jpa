@@ -1,14 +1,12 @@
 package com.github.kuros.random.jpa.definition;
 
-import com.github.kuros.random.jpa.definition.HierarchyGraph;
-import com.github.kuros.random.jpa.definition.TableNode;
 import com.github.kuros.random.jpa.mapper.Relation;
+import com.github.kuros.random.jpa.metamodel.model.FieldWrapper;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -45,7 +43,7 @@ public class HierarchyGraphTest {
 
         final HierarchyGraph hierarchyGraph = HierarchyGraph.newInstance();
 
-        final Relation relation = Relation.newInstance(from, to);
+        final Relation relation = Relation.newInstance(new FieldWrapper(from), new FieldWrapper(to));
         hierarchyGraph.addRelation(relation);
         final Set<Class<?>> parent = hierarchyGraph.getParents(testClass1);
         Assert.assertEquals(1, parent.size());
@@ -54,8 +52,8 @@ public class HierarchyGraphTest {
         final TableNode tableNode = hierarchyGraph.getTableNode(TestClass.class);
         final List<Relation> relations = tableNode.getRelations();
         Assert.assertEquals(1, relations.size());
-        Assert.assertEquals(from, relations.get(0).getFrom());
-        Assert.assertEquals(to, relations.get(0).getTo());
+        Assert.assertEquals(from, relations.get(0).getFrom().getField());
+        Assert.assertEquals(to, relations.get(0).getTo().getField());
 
 
         final TableNode actual = hierarchyGraph.getTableNode(TestClass2.class);
@@ -80,8 +78,8 @@ public class HierarchyGraphTest {
         final Field to2 = testClass2.getDeclaredField("attr2");
 
         final HierarchyGraph hierarchyGraph = HierarchyGraph.newInstance();
-        hierarchyGraph.addRelation(Relation.newInstance(from1, to1));
-        hierarchyGraph.addRelation(Relation.newInstance(from2, to2));
+        hierarchyGraph.addRelation(Relation.newInstance(new FieldWrapper(from1), new FieldWrapper(to1)));
+        hierarchyGraph.addRelation(Relation.newInstance(new FieldWrapper(from2), new FieldWrapper(to2)));
 
         final Set<Class<?>> children = hierarchyGraph.getParents(testClass1);
 
@@ -96,11 +94,11 @@ public class HierarchyGraphTest {
         fieldNames.add("attr1");
         fieldNames.add("attr2");
 
-        Assert.assertEquals("attr1", relations.get(0).getFrom().getName());
-        Assert.assertEquals("attr1", relations.get(0).getTo().getName());
+        Assert.assertEquals("attr1", relations.get(0).getFrom().getField().getName());
+        Assert.assertEquals("attr1", relations.get(0).getTo().getField().getName());
 
-        Assert.assertEquals("attr2", relations.get(1).getFrom().getName());
-        Assert.assertEquals("attr2", relations.get(1).getTo().getName());
+        Assert.assertEquals("attr2", relations.get(1).getFrom().getField().getName());
+        Assert.assertEquals("attr2", relations.get(1).getTo().getField().getName());
     }
 
     /**
@@ -122,8 +120,8 @@ public class HierarchyGraphTest {
         final Field to2 = testClass3.getDeclaredField("attr3");
 
         final HierarchyGraph hierarchyGraph = HierarchyGraph.newInstance();
-        hierarchyGraph.addRelation(Relation.newInstance(from1, to1));
-        hierarchyGraph.addRelation(Relation.newInstance(from2, to2));
+        hierarchyGraph.addRelation(Relation.newInstance(new FieldWrapper(from1), new FieldWrapper(to1)));
+        hierarchyGraph.addRelation(Relation.newInstance(new FieldWrapper(from2), new FieldWrapper(to2)));
 
 
         final Set<Class<?>> parents = hierarchyGraph.getParents(testClass1);
@@ -146,7 +144,7 @@ public class HierarchyGraphTest {
 
         final HierarchyGraph hierarchyGraph = HierarchyGraph.newInstance();
 
-        final Relation relation = Relation.newInstance(from, to);
+        final Relation relation = Relation.newInstance(new FieldWrapper(from), new FieldWrapper(to));
         hierarchyGraph.addRelation(relation);
 
         final Set<Class<?>> keySet = hierarchyGraph.getKeySet();
@@ -165,7 +163,7 @@ public class HierarchyGraphTest {
 
         final HierarchyGraph hierarchyGraph = HierarchyGraph.newInstance();
 
-        final Relation relation = Relation.newInstance(from, to);
+        final Relation relation = Relation.newInstance(new FieldWrapper(from), new FieldWrapper(to));
         hierarchyGraph.addRelation(relation);
 
         final Set<Class<?>> keySet = hierarchyGraph.getParents(TestClass.class);
@@ -183,7 +181,7 @@ public class HierarchyGraphTest {
 
         final HierarchyGraph hierarchyGraph = HierarchyGraph.newInstance();
 
-        final Relation relation = Relation.newInstance(from, to);
+        final Relation relation = Relation.newInstance(new FieldWrapper(from), new FieldWrapper(to));
         hierarchyGraph.addRelation(relation);
 
         Assert.assertNotNull(hierarchyGraph.getParentRelations());
@@ -191,10 +189,10 @@ public class HierarchyGraphTest {
         final Set<Relation> keySet = hierarchyGraph.getAttributeRelations(TestClass.class);
         Assert.assertEquals(1, keySet.size());
 
-        List<Relation> relations = new ArrayList<Relation>();
+        final List<Relation> relations = new ArrayList<Relation>();
         relations.addAll(keySet);
-        Assert.assertEquals(from, relations.get(0).getFrom());
-        Assert.assertEquals(to, relations.get(0).getTo());
+        Assert.assertEquals(from, relations.get(0).getFrom().getField());
+        Assert.assertEquals(to, relations.get(0).getTo().getField());
     }
 
     private class TestClass {

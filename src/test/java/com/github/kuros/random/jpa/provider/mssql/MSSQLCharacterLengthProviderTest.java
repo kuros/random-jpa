@@ -3,9 +3,7 @@ package com.github.kuros.random.jpa.provider.mssql;
 import com.github.kuros.random.jpa.metamodel.AttributeProvider;
 import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
 import com.github.kuros.random.jpa.provider.SQLCharacterLengthProvider;
-import com.github.kuros.random.jpa.provider.oracle.OracleCharacterLengthProvider;
 import com.github.kuros.random.jpa.testUtil.entity.Department;
-import com.github.kuros.random.jpa.testUtil.entity.Employee;
 import com.github.kuros.random.jpa.testUtil.entity.Person;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
@@ -60,7 +57,7 @@ public class MSSQLCharacterLengthProviderTest {
     @Test
     public void testApplyLengthConstraint() throws Exception {
         assertEquals("abcde", sqlCharacterLengthProvider.applyLengthConstraint(Department.class.getName(), "departmentName", "abcdefghijkl"));
-        assertEquals(123456, sqlCharacterLengthProvider.applyLengthConstraint(Department.class.getName(), "departmentId", 123456789));
+        assertEquals("feature yet not implemented for mssql", 123456789, sqlCharacterLengthProvider.applyLengthConstraint(Department.class.getName(), "departmentId", 123456789));
     }
 
     private void mockAttributeProvider() {

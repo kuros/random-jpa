@@ -77,11 +77,11 @@ public class RelationCreatorTest {
                 .with(relationshipProvider)
                 .generate();
         assertEquals(2, generate.size());
-        assertEquals(getDeclaredField(TestClass.class, "attr1"), generate.get(0).getFrom());
-        assertEquals(getDeclaredField(TestClass2.class, "attr1"), generate.get(0).getTo());
+        assertEquals(getDeclaredField(TestClass.class, "attr1"), generate.get(0).getFrom().getField());
+        assertEquals(getDeclaredField(TestClass2.class, "attr1"), generate.get(0).getTo().getField());
 
-        assertEquals(getDeclaredField(TestClass.class, "attr2"), generate.get(1).getFrom());
-        assertEquals(getDeclaredField(TestClass2.class, "attr2"), generate.get(1).getTo());
+        assertEquals(getDeclaredField(TestClass.class, "attr2"), generate.get(1).getFrom().getField());
+        assertEquals(getDeclaredField(TestClass2.class, "attr2"), generate.get(1).getTo().getField());
     }
 
     @Test
@@ -115,16 +115,16 @@ public class RelationCreatorTest {
     private Map<String, List<FieldWrapper>> getFieldsByTableName() throws NoSuchFieldException {
         final Map<String, List<FieldWrapper>> fieldsByTableName = new HashMap<String, List<FieldWrapper>>();
 
-        final FieldWrapper attr1 = new FieldWrapper(getDeclaredField(TestClass.class, "attr1"), null);
-        final FieldWrapper attr2 = new FieldWrapper(getDeclaredField(TestClass.class, "attr2"), "attr_2");
+        final FieldWrapper attr1 = new FieldWrapper(TestClass.class, getDeclaredField(TestClass.class, "attr1"), null);
+        final FieldWrapper attr2 = new FieldWrapper(TestClass.class, getDeclaredField(TestClass.class, "attr2"), "attr_2");
         final List<FieldWrapper> testClassFieldWrappers = new ArrayList<FieldWrapper>();
         testClassFieldWrappers.add(attr1);
         testClassFieldWrappers.add(attr2);
         fieldsByTableName.put("test_class_table_name", testClassFieldWrappers);
 
 
-        final FieldWrapper attr3 = new FieldWrapper(getDeclaredField(TestClass2.class, "attr1"), null);
-        final FieldWrapper attr4 = new FieldWrapper(getDeclaredField(TestClass2.class, "attr2"), null);
+        final FieldWrapper attr3 = new FieldWrapper(TestClass2.class, getDeclaredField(TestClass2.class, "attr1"), null);
+        final FieldWrapper attr4 = new FieldWrapper(TestClass2.class, getDeclaredField(TestClass2.class, "attr2"), null);
         final List<FieldWrapper> testClass2FieldWrappers = new ArrayList<FieldWrapper>();
         testClass2FieldWrappers.add(attr3);
         testClass2FieldWrappers.add(attr4);

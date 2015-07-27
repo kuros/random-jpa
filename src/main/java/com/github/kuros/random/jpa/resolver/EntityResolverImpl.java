@@ -8,6 +8,7 @@ import com.github.kuros.random.jpa.log.Logger;
 import com.github.kuros.random.jpa.mapper.Relation;
 import com.github.kuros.random.jpa.metamodel.AttributeProvider;
 import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
+import com.github.kuros.random.jpa.metamodel.model.FieldWrapper;
 import com.github.kuros.random.jpa.types.AttributeValue;
 import com.github.kuros.random.jpa.types.Entity;
 import com.github.kuros.random.jpa.types.Plan;
@@ -116,9 +117,9 @@ public final class EntityResolverImpl implements EntityResolver {
         final Multimap<Class, FieldValue> multimap = ArrayListMultimap.newArrayListMultimap();
 
         for (Relation relation : relations) {
-            final Field from = relation.getFrom();
-            final FieldValue fieldValue = new FieldValue(relation.getTo(), getFieldValue(object, from));
-            multimap.put(relation.getTo().getDeclaringClass(), fieldValue);
+            final FieldWrapper from = relation.getFrom();
+            final FieldValue fieldValue = new FieldValue(relation.getTo().getField(), getFieldValue(object, from.getField()));
+            multimap.put(relation.getTo().getInitializationClass(), fieldValue);
         }
 
         for (Class aClass : multimap.getKeySet()) {

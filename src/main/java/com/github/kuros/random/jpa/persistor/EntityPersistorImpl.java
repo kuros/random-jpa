@@ -10,8 +10,8 @@ import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
 import com.github.kuros.random.jpa.persistor.model.ResultMap;
 import com.github.kuros.random.jpa.persistor.model.ResultMapImpl;
 import com.github.kuros.random.jpa.provider.MultiplePrimaryKeyProvider;
-import com.github.kuros.random.jpa.provider.factory.MultiplePrimaryKeyProviderFactory;
 import com.github.kuros.random.jpa.provider.UniqueConstraintProvider;
+import com.github.kuros.random.jpa.provider.factory.MultiplePrimaryKeyProviderFactory;
 import com.github.kuros.random.jpa.provider.factory.UniqueConstraintProviderFactory;
 import com.github.kuros.random.jpa.random.Randomize;
 import com.github.kuros.random.jpa.types.CreationOrder;
@@ -104,6 +104,7 @@ public final class EntityPersistorImpl implements Persistor {
         final Object elementById = findElementById(random);
         if (elementById != null) {
             persistedObject = elementById;
+            LOGGER.debug("Reusing data for: " + persistedObject.getClass() + " " + Util.printValues(persistedObject));
         } else {
             final Object foundRow = findRowByUniqueIdentities(random);
             persistedObject = foundRow != null ? foundRow : persistAndReturnPersistedObject(random);
@@ -170,7 +171,7 @@ public final class EntityPersistorImpl implements Persistor {
         for (int i = 0; i < attributes.size(); i++) {
             final String attribute = attributes.get(i);
             try {
-                final Field declaredField = tableClass.getDeclaredField(attribute);
+                final Field declaredField = Util.getField(tableClass, attribute);
                 declaredField.setAccessible(true);
                 predicates[i] = criteriaBuilder.equal(from.get(attribute), declaredField.get(random));
             } catch (final Exception e) {
@@ -183,39 +184,14 @@ public final class EntityPersistorImpl implements Persistor {
         final TypedQuery typedQuery = entityManager.createQuery(q);
         final List resultList = typedQuery.getResultList();
 
-        if (resultList.size() > 0) {
-            LOGGER.debug("Reusing data for: " + tableClass + " " + Util.printValues(random));
-        }
-
         return resultList.size() == 0 ? null : resultList.get(0);
     }
 
     private Object findElementById(final Object persistedObject) {
         final Class<?> tableClass = persistedObject.getClass();
-        final Object id = getId(persistedObject);
-        return id == null ? null : entityManager.find(tableClass, id);
-    }
-
-    private Object getId(final Object persistedObject) {
-        final Class<?> tableClass = persistedObject.getClass();
         final EntityTableMapping entityTableMapping = attributeProvider.get(tableClass);
-        final Field[] declaredFields = tableClass.getDeclaredFields();
-        Field field = null;
-        for (Field declaredField : declaredFields) {
-            if (entityTableMapping.getAttributeIds().contains(declaredField.getName())) {
-                field = declaredField;
-                field.setAccessible(true);
-                break;
-            }
-        }
 
-        Object id = null;
-        try {
-            id = field != null ? field.get(persistedObject) : null;
-        } catch (final IllegalAccessException e) {
-            //do nothing
-        }
-        return id;
+        return findByQuery(persistedObject, entityTableMapping.getAttributeIds());
     }
 
     private Object createRandomObject(final Node node, final CreationOrder creationOrder, final ResultMapImpl resultMap) {
@@ -235,9 +211,9 @@ public final class EntityPersistorImpl implements Persistor {
 
     private void createRelation(final ResultMapImpl resultMap, final Relation relation, final Object object) {
         try {
-            if (!randomize.isValueProvided(relation.getFrom())) {
-                final Object value = getFieldValue(resultMap, relation.getTo());
-                setFieldValue(object, relation.getFrom(), value);
+            if (!randomize.isValueProvided(relation.getFrom().getField())) {
+                final Object value = getFieldValue(resultMap, relation.getTo().getField());
+                setFieldValue(object, relation.getFrom().getField(), value);
             }
         } catch (final Exception e) {
             //do nothing

@@ -41,14 +41,14 @@ public class HierarchyGraph {
 
     public void addRelation(final Relation relation) {
 
-        final Class<?> fromClass = relation.getFrom().getDeclaringClass();
+        final Class<?> fromClass = relation.getFrom().getInitializationClass();
         TableNode tableNode = parentRelations.get(fromClass);
         if (tableNode == null) {
             tableNode = TableNode.newInstance();
         }
 
         tableNode.addRelation(relation);
-        final Class<?> toClass = relation.getTo().getDeclaringClass();
+        final Class<?> toClass = relation.getTo().getInitializationClass();
         tableNode.addParent(toClass);
         parentRelations.put(fromClass, tableNode);
 

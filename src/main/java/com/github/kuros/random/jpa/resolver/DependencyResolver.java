@@ -3,6 +3,7 @@ package com.github.kuros.random.jpa.resolver;
 import com.github.kuros.random.jpa.link.Dependencies;
 import com.github.kuros.random.jpa.link.Link;
 import com.github.kuros.random.jpa.mapper.Relation;
+import com.github.kuros.random.jpa.metamodel.model.FieldWrapper;
 import com.github.kuros.random.jpa.util.AttributeHelper;
 
 import javax.persistence.metamodel.Attribute;
@@ -37,7 +38,7 @@ public class DependencyResolver {
                 try {
                     final Field from = getFieldValue(link.getFrom());
                     final Field to = getFieldValue(link.getTo());
-                    relations.add(Relation.newInstance(from, to));
+                    relations.add(Relation.newInstance(new FieldWrapper(from), new FieldWrapper(to)));
                 } catch (final NoSuchFieldException e) {
                     //do nothing
                 }

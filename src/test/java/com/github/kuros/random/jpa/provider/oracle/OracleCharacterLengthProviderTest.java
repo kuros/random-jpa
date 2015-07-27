@@ -71,8 +71,8 @@ public class OracleCharacterLengthProviderTest {
 
     private void mockEntityManager() {
         final Object[] row1 = {"department", "department_name", BigDecimal.valueOf(5), null, null};
-        final Object[] row2 = {"department", "department_id", null, 3, null};
-        final Object[] row3 = {"department", "department_amount", null, 3, BigDecimal.valueOf(2)};
+        final Object[] row2 = {"department", "department_id", null, BigDecimal.valueOf(3), null};
+        final Object[] row3 = {"department", "department_amount", null, BigDecimal.valueOf(3), BigDecimal.valueOf(2)};
 
         final List<Object[]> resultList = new ArrayList<Object[]>();
         resultList.add(row1);

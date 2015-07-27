@@ -71,7 +71,7 @@ public class Util {
         for (int i = 0; i < attributeIds.size(); i++) {
             try {
                 final String attribute = attributeIds.get(i);
-                final Field declaredField = type.getDeclaredField(attribute);
+                final Field declaredField = getField(type, attribute);
                 declaredField.setAccessible(true);
                 final Object value = declaredField.get(object);
                 builder.append(declaredField.getName())
@@ -88,5 +88,16 @@ public class Util {
         builder.append("]");
 
         return builder.toString();
+    }
+
+    public static Field getField(final Class<?> tableClass, final String attribute) throws NoSuchFieldException {
+        try {
+            return tableClass.getDeclaredField(attribute);
+        } catch (final NoSuchFieldException e) {
+            if (tableClass.getSuperclass() != Object.class) {
+                return getField(tableClass.getSuperclass(), attribute);
+            }
+            throw e;
+        }
     }
 }

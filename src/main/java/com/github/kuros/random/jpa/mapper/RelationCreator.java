@@ -3,11 +3,10 @@ package com.github.kuros.random.jpa.mapper;
 import com.github.kuros.random.jpa.link.Dependencies;
 import com.github.kuros.random.jpa.metamodel.MetaModelProvider;
 import com.github.kuros.random.jpa.metamodel.model.FieldWrapper;
-import com.github.kuros.random.jpa.provider.model.ForeignKeyRelation;
 import com.github.kuros.random.jpa.provider.RelationshipProvider;
+import com.github.kuros.random.jpa.provider.model.ForeignKeyRelation;
 import com.github.kuros.random.jpa.resolver.DependencyResolver;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -57,8 +56,8 @@ public final class RelationCreator {
         final ArrayList<Relation> relations = new ArrayList<Relation>();
 
         for (ForeignKeyRelation foreignKeyRelation : foreignKeyRelations) {
-            final Field from = getFieldValue(foreignKeyRelation);
-            final Field to = getReferencedFieldValue(foreignKeyRelation);
+            final FieldWrapper from = getFieldWrapper(foreignKeyRelation);
+            final FieldWrapper to = getReferencedFieldValue(foreignKeyRelation);
 
             if (from != null && to != null) {
                 final Relation relation = Relation.newInstance(from, to);
@@ -70,20 +69,20 @@ public final class RelationCreator {
         return relations;
     }
 
-    private Field getReferencedFieldValue(final ForeignKeyRelation foreignKeyRelation) {
-        return getFieldValue(foreignKeyRelation.getReferencedTable(), foreignKeyRelation.getReferencedAttribute());
+    private FieldWrapper getReferencedFieldValue(final ForeignKeyRelation foreignKeyRelation) {
+        return getFieldWrapper(foreignKeyRelation.getReferencedTable(), foreignKeyRelation.getReferencedAttribute());
     }
 
-    private Field getFieldValue(final ForeignKeyRelation foreignKeyRelation) {
-        return getFieldValue(foreignKeyRelation.getTable(), foreignKeyRelation.getAttribute());
+    private FieldWrapper getFieldWrapper(final ForeignKeyRelation foreignKeyRelation) {
+        return getFieldWrapper(foreignKeyRelation.getTable(), foreignKeyRelation.getAttribute());
     }
 
-    private Field getFieldValue(final String table, final String attribute) {
+    private FieldWrapper getFieldWrapper(final String table, final String attribute) {
         final List<FieldWrapper> fieldWrappers = fieldsByTableName.get(table);
         if (fieldWrappers != null) {
             for (FieldWrapper fieldWrapper : fieldWrappers) {
                 if (isFieldFound(attribute, fieldWrapper)) {
-                    return fieldWrapper.getField();
+                    return fieldWrapper;
                 }
             }
         }

@@ -1,8 +1,7 @@
 package com.github.kuros.random.jpa.mapper;
 
 import com.github.kuros.random.jpa.annotation.VisibleForTesting;
-
-import java.lang.reflect.Field;
+import com.github.kuros.random.jpa.metamodel.model.FieldWrapper;
 
 /*
  * Copyright (c) 2015 Kumar Rohit
@@ -22,24 +21,24 @@ import java.lang.reflect.Field;
  */
 public class Relation {
 
-    private final Field from;
-    private final Field to;
+    private final FieldWrapper from;
+    private final FieldWrapper to;
 
     @VisibleForTesting
-    Relation(final Field from, final Field to) {
+    Relation(final FieldWrapper from, final FieldWrapper to) {
         this.from = from;
         this.to = to;
     }
 
-    public static Relation newInstance(final Field from, final Field to) {
+    public static Relation newInstance(final FieldWrapper from, final FieldWrapper to) {
         return new Relation(from, to);
     }
 
-    public Field getFrom() {
+    public FieldWrapper getFrom() {
         return from;
     }
 
-    public Field getTo() {
+    public FieldWrapper getTo() {
         return to;
     }
 

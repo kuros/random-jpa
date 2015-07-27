@@ -2,6 +2,7 @@ package com.github.kuros.random.jpa.definition;
 
 import com.github.kuros.random.jpa.exception.RandomJPAException;
 import com.github.kuros.random.jpa.mapper.Relation;
+import com.github.kuros.random.jpa.metamodel.model.FieldWrapper;
 import org.junit.Test;
 
 import java.lang.reflect.Field;
@@ -30,8 +31,8 @@ public class CyclicValidatorTest {
         final Field table1 = TestClass.class.getDeclaredField("attr1");
 
         final HierarchyGraph hierarchyGraph = HierarchyGraph.newInstance();
-        hierarchyGraph.addRelation(Relation.newInstance(table1, table1));
-        hierarchyGraph.addRelation(Relation.newInstance(table1, table1));
+        hierarchyGraph.addRelation(Relation.newInstance(new FieldWrapper(table1), new FieldWrapper(table1)));
+        hierarchyGraph.addRelation(Relation.newInstance(new FieldWrapper(table1), new FieldWrapper(table1)));
 
         final CyclicValidator cyclicValidator = new CyclicValidator(hierarchyGraph);
         cyclicValidator.validate();
@@ -44,8 +45,8 @@ public class CyclicValidatorTest {
         final Field table2 = TestClass2.class.getDeclaredField("attr1");
 
         final HierarchyGraph hierarchyGraph = HierarchyGraph.newInstance();
-        hierarchyGraph.addRelation(Relation.newInstance(table1, table2));
-        hierarchyGraph.addRelation(Relation.newInstance(table2, table1));
+        hierarchyGraph.addRelation(Relation.newInstance(new FieldWrapper(table1), new FieldWrapper(table2)));
+        hierarchyGraph.addRelation(Relation.newInstance(new FieldWrapper(table2), new FieldWrapper(table1)));
 
         final CyclicValidator cyclicValidator = new CyclicValidator(hierarchyGraph);
         cyclicValidator.validate();
@@ -59,9 +60,9 @@ public class CyclicValidatorTest {
         final Field table3 = TestClass3.class.getDeclaredField("attr3");
 
         final HierarchyGraph hierarchyGraph = HierarchyGraph.newInstance();
-        hierarchyGraph.addRelation(Relation.newInstance(table1, table2));
-        hierarchyGraph.addRelation(Relation.newInstance(table2, table3));
-        hierarchyGraph.addRelation(Relation.newInstance(table3, table1));
+        hierarchyGraph.addRelation(Relation.newInstance(new FieldWrapper(table1), new FieldWrapper(table2)));
+        hierarchyGraph.addRelation(Relation.newInstance(new FieldWrapper(table2), new FieldWrapper(table3)));
+        hierarchyGraph.addRelation(Relation.newInstance(new FieldWrapper(table3), new FieldWrapper(table1)));
 
         final CyclicValidator cyclicValidator = new CyclicValidator(hierarchyGraph);
         cyclicValidator.validate();
@@ -74,9 +75,9 @@ public class CyclicValidatorTest {
         final Field table3 = TestClass3.class.getDeclaredField("attr3");
 
         final HierarchyGraph hierarchyGraph = HierarchyGraph.newInstance();
-        hierarchyGraph.addRelation(Relation.newInstance(table1, table2));
-        hierarchyGraph.addRelation(Relation.newInstance(table2, table3));
-        hierarchyGraph.addRelation(Relation.newInstance(table1, table3));
+        hierarchyGraph.addRelation(Relation.newInstance(new FieldWrapper(table1), new FieldWrapper(table2)));
+        hierarchyGraph.addRelation(Relation.newInstance(new FieldWrapper(table2), new FieldWrapper(table3)));
+        hierarchyGraph.addRelation(Relation.newInstance(new FieldWrapper(table1), new FieldWrapper(table3)));
 
         final CyclicValidator cyclicValidator = new CyclicValidator(hierarchyGraph);
         cyclicValidator.validate();
