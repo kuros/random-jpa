@@ -1,9 +1,9 @@
-# Random-JPA
+# Random-JPA [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.kuros/random-jpa/badge.svg?style=flat)](http://search.maven.org/#search|ga|1|random-jpa)
 It has been always been a challenge to create a test data. This project aims at providing easier mechanism to create test data.
 
 Maven Group Plugin | Latest Version
 ------------------ | ---------------
-com.github.kuros.random-jpa | 0.1.7
+com.github.kuros.random-jpa | [v0.1.8](https://github.com/kuros/random-jpa/releases/tag/v0.1.8)
 
 ## Feature
 1. Uses table's foreign key relations to maintain creation order dynamically
@@ -14,7 +14,8 @@ com.github.kuros.random-jpa | 0.1.7
 
 ## Supported Database
 1. Microsoft SQL Server
-2. NONE (You can still use functionality, but the dependency has to provided/maintained manually).
+2. Oracle
+3. NONE (You can still use functionality, but the dependency has to provided/maintained manually).
 
 ## Supported JPA Implementation
 1. Hibernate (Version - 4.3.7.Final)
