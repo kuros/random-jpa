@@ -12,7 +12,7 @@ import com.github.kuros.random.jpa.metamodel.model.FieldWrapper;
 import com.github.kuros.random.jpa.types.AttributeValue;
 import com.github.kuros.random.jpa.types.Entity;
 import com.github.kuros.random.jpa.types.Plan;
-import com.github.kuros.random.jpa.util.ArrayListMultimap;
+import com.github.kuros.random.jpa.util.ArraylistMultimap;
 import com.github.kuros.random.jpa.util.AttributeHelper;
 import com.github.kuros.random.jpa.util.Multimap;
 import com.github.kuros.random.jpa.util.NumberUtil;
@@ -114,7 +114,7 @@ public final class EntityResolverImpl implements EntityResolver {
             return;
         }
 
-        final Multimap<Class, FieldValue> multimap = ArrayListMultimap.newArrayListMultimap();
+        final Multimap<Class, FieldValue> multimap = ArraylistMultimap.newArrayListMultimap();
 
         for (Relation relation : relations) {
             final FieldWrapper from = relation.getFrom();

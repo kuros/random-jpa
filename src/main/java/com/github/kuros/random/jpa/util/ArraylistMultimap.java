@@ -22,15 +22,15 @@ import java.util.Set;
  *    You should have received a copy of the GNU Lesser General Public License
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-public final class ArrayListMultimap<T, V> implements Multimap<T, V> {
+public final class ArraylistMultimap<T, V> implements Multimap<T, V> {
     private Map<T, List<V>> map;
 
-    private ArrayListMultimap() {
+    private ArraylistMultimap() {
         this.map = new HashMap<T, List<V>>();
     }
 
-    public static <T, V> ArrayListMultimap<T, V> newArrayListMultimap() {
-        return new ArrayListMultimap<T, V>();
+    public static <T, V> ArraylistMultimap<T, V> newArrayListMultimap() {
+        return new ArraylistMultimap<T, V>();
     }
 
     public void put(final T t, final V v) {
@@ -50,4 +50,5 @@ public final class ArrayListMultimap<T, V> implements Multimap<T, V> {
     public Set<T> getKeySet() {
         return map.keySet();
     }
+    
 }
