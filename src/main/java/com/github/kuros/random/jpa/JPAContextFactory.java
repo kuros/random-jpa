@@ -2,21 +2,25 @@ package com.github.kuros.random.jpa;
 
 import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.cache.PreconditionCache;
+import com.github.kuros.random.jpa.cache.TriggerCache;
 import com.github.kuros.random.jpa.definition.CyclicValidator;
 import com.github.kuros.random.jpa.definition.HierarchyGenerator;
 import com.github.kuros.random.jpa.definition.HierarchyGeneratorImpl;
-import com.github.kuros.random.jpa.mapper.RelationCreator;
+import com.github.kuros.random.jpa.definition.HierarchyGraph;
+import com.github.kuros.random.jpa.exception.RandomJPAException;
 import com.github.kuros.random.jpa.link.Before;
 import com.github.kuros.random.jpa.link.Dependencies;
 import com.github.kuros.random.jpa.link.Preconditions;
-import com.github.kuros.random.jpa.definition.HierarchyGraph;
 import com.github.kuros.random.jpa.mapper.Relation;
+import com.github.kuros.random.jpa.mapper.RelationCreator;
 import com.github.kuros.random.jpa.metamodel.MetaModelProvider;
 import com.github.kuros.random.jpa.metamodel.MetaModelProviderImpl;
 import com.github.kuros.random.jpa.provider.factory.RelationshipProviderFactory;
 import com.github.kuros.random.jpa.random.generator.Generator;
+import com.github.kuros.random.jpa.types.Trigger;
 
 import javax.persistence.EntityManager;
+import java.util.ArrayList;
 import java.util.List;
 
 /*
@@ -42,6 +46,7 @@ public final class JPAContextFactory {
     private Dependencies dependencies;
     private Generator generator;
     private Preconditions preconditions;
+    private List<Trigger<?>> triggers;
 
     public static JPAContextFactory newInstance(final Database database, final EntityManager entityManager) {
         return new JPAContextFactory(database, entityManager);
@@ -52,10 +57,12 @@ public final class JPAContextFactory {
         this.entityManager = entityManager;
         this.preconditions = new Preconditions();
         this.generator = Generator.newInstance();
+        this.dependencies = Dependencies.newInstance();
+        this.triggers = new ArrayList<Trigger<?>>();
     }
 
     public JPAContextFactory with(final Dependencies customDependencies) {
-        this.dependencies = customDependencies;
+        this.dependencies.withLink(customDependencies.getLinks());
         return this;
     }
 
@@ -73,9 +80,25 @@ public final class JPAContextFactory {
         return this;
     }
 
+    public JPAContextFactory withTriggers(final Trigger<?>... triggerTables) {
+
+        for (Trigger<?> triggerTable : triggerTables) {
+
+            if (triggerTable.getLinks().isEmpty()) {
+                throw new RandomJPAException("Trigger Not initialised with links: "
+                        + triggerTable.getTriggerClass());
+            }
+
+            triggers.add(triggerTable);
+            dependencies.withLink(triggerTable.getLinks());
+        }
+        return this;
+    }
+
     public JPAContext create() {
         Cache.init(database, entityManager);
         PreconditionCache.init(preconditions);
+        TriggerCache.init(triggers);
 
         final MetaModelProvider metaModelProvider = new MetaModelProviderImpl(entityManager);
         final List<Relation> relations = RelationCreator

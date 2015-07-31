@@ -23,7 +23,6 @@ import java.util.List;
  */
 public class FunctionProcessor {
 
-
     @SuppressWarnings("unchecked")
     public static <T> T findOrSave(final T object) {
         final List<Function> functions = getFunctions();
@@ -46,6 +45,7 @@ public class FunctionProcessor {
 
     private static List<Function> getFunctions() {
         final List<Function> functions = new ArrayList<Function>();
+        functions.add(new TriggerFunction());
         functions.add(new FindById());
         functions.add(new FindByUniqueIdentities());
         functions.add(new PersistFunction());
