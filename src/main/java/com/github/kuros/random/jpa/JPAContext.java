@@ -74,7 +74,7 @@ public final class JPAContext {
 
     public ResultMap persist(final CreationPlan creationPlan) {
         final CreationPlanImpl creationPlanImpl = (CreationPlanImpl) creationPlan;
-        final Persistor persistor = EntityPersistorImpl.newInstance(entityManager, creationPlanImpl.getRandomize());
+        final Persistor persistor = EntityPersistorImpl.newInstance(creationPlanImpl.getRandomize());
         return persistor.persist(creationPlan);
     }
 
