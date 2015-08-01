@@ -190,4 +190,4 @@ it will print the hierarchy with the index number of the object followed by the 
         └── com.github.kuros.entity.Employee|1 [employeeId: 2]
 ```
 
-_Random object creation provided by OpenPojo (http://openpojo.com)_
+_Logging functionality provided by OpenPojo (http://openpojo.com)_
