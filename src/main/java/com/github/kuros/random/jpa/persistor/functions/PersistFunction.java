@@ -27,11 +27,9 @@ public class PersistFunction<T> implements Function<T> {
 
     private static final Logger LOGGER = LogFactory.getLogger(PersistFunction.class);
     private EntityManager entityManager;
-    private Function<T> findById;
 
     public PersistFunction() {
         entityManager = Cache.getInstance().getEntityManager();
-        findById = new FindById<T>();
     }
 
     public T apply(final T object) {
@@ -43,6 +41,6 @@ public class PersistFunction<T> implements Function<T> {
             LOGGER.error("Failed to persist: " + tableClass.getName());
             throw new RandomJPAException(e);
         }
-        return findById.apply(object);
+        return object;
     }
 }
