@@ -3,6 +3,7 @@ package com.github.kuros.random.jpa.resolver;
 import com.github.kuros.random.jpa.cache.PreconditionCache;
 import com.github.kuros.random.jpa.definition.HierarchyGraph;
 import com.github.kuros.random.jpa.exception.RandomJPAException;
+import com.github.kuros.random.jpa.link.Preconditions;
 import com.github.kuros.random.jpa.types.CreationOrder;
 import com.github.kuros.random.jpa.types.Entity;
 import com.github.kuros.random.jpa.types.Plan;
@@ -52,16 +53,36 @@ public final class CreationOrderResolverImpl implements CreationOrderResolver {
             addCreationCount(creationOrder, entity);
             try {
                 generateCreationOrder(creationOrder, type);
-                applyPrecondition(creationOrder);
+                applyFactoryLevelPrecondition(creationOrder);
             } catch (final ClassNotFoundException e) {
                 throw new RandomJPAException("Class Not Found", e);
             }
         }
 
+        applyPlanLevelPrecondition(plan, creationOrder);
+
         return creationOrder;
     }
 
-    private void applyPrecondition(final CreationOrder creationOrder) throws ClassNotFoundException {
+    private void applyPlanLevelPrecondition(final Plan planModel, final CreationOrder creationOrder) {
+        final Preconditions preconditions = planModel.getPreconditions();
+        final Set<Class<?>> identifiers = preconditions.getIdentifiers();
+
+        for (Class<?> identifier : identifiers) {
+            if (!creationOrder.contains(identifier)) {
+                continue;
+            }
+
+            final Plan preConditionPlan = preconditions.getPlan(identifier);
+            try {
+                adjustEntityInCreationOrder(creationOrder, preConditionPlan);
+            } catch (final ClassNotFoundException e) {
+                throw new RandomJPAException(e);
+            }
+        }
+    }
+
+    private void applyFactoryLevelPrecondition(final CreationOrder creationOrder) throws ClassNotFoundException {
 
         final Set<Class<?>> identifiers = PreconditionCache.getInstance().getIdentifiers();
         for (Class<?> identifier : identifiers) {
@@ -71,32 +92,39 @@ public final class CreationOrderResolverImpl implements CreationOrderResolver {
             }
 
             final Plan preConditionPlan = PreconditionCache.getInstance().getPlan(identifier);
-            for (Entity entity : preConditionPlan.getEntities()) {
+            adjustEntityInCreationOrder(creationOrder, preConditionPlan);
+        }
+    }
 
-                final CreationOrder tempCreationOrder = CreationOrder.newInstance(hierarchyGraph);
-                generateCreationOrder(tempCreationOrder, entity.getType());
-                final List<Class<?>> newOrder = tempCreationOrder.getOrder();
-                final List<Class<?>> createdOrder = creationOrder.getOrder();
-                final int minIndex = getMinIndex(createdOrder, newOrder);
+    private void adjustEntityInCreationOrder(final CreationOrder creationOrder, final Plan preConditionPlan) throws ClassNotFoundException {
+        for (Entity entity : preConditionPlan.getEntities()) {
 
-                Class<?> location = null;
-                int i = minIndex;
-                while (i > 0) {
-                    final Class<?> aClass = createdOrder.get(--i);
-                    if (!newOrder.contains(aClass)) {
-                        location = aClass;
-                        break;
-                    }
+            final CreationOrder tempCreationOrder = CreationOrder.newInstance(hierarchyGraph);
+            generateCreationOrder(tempCreationOrder, entity.getType());
+            final List<Class<?>> newOrder = tempCreationOrder.getOrder();
+            final List<Class<?>> createdOrder = creationOrder.getOrder();
+            final int minIndex = getMinIndex(createdOrder, newOrder);
+
+            Class<?> location = null;
+            int i = minIndex;
+            while (i > 0) {
+                final Class<?> aClass = createdOrder.get(--i);
+                if (!newOrder.contains(aClass)) {
+                    location = aClass;
+                    break;
                 }
-
-                createdOrder.removeAll(newOrder);
-
-                i = minIndex;
-                if (location != null) {
-                    i = createdOrder.indexOf(location);
-                }
-                createdOrder.addAll(i + 1, newOrder);
             }
+
+            createdOrder.removeAll(newOrder);
+
+            i = minIndex;
+            if (location != null) {
+                i = createdOrder.indexOf(location);
+                createdOrder.addAll(i + 1, newOrder);
+            } else {
+                createdOrder.addAll(i, newOrder);
+            }
+
         }
     }
 

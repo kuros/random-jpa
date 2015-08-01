@@ -21,6 +21,7 @@ import com.github.kuros.random.jpa.types.Plan;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class Preconditions {
     private final Map<Class<?>, Plan> preConditionMap;
@@ -33,7 +34,12 @@ public class Preconditions {
         preConditionMap.put(type, plan);
     }
 
-    public Map<Class<?>, Plan> getPreConditionMap() {
-        return preConditionMap;
+    public Plan getPlan(final Class<?> type) {
+        final Plan plan = preConditionMap.get(type);
+        return plan != null ? plan : Plan.create();
+    }
+
+    public Set<Class<?>> getIdentifiers() {
+        return preConditionMap.keySet();
     }
 }

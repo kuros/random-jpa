@@ -4,7 +4,6 @@ import com.github.kuros.random.jpa.exception.RandomJPAException;
 import com.github.kuros.random.jpa.link.Preconditions;
 import com.github.kuros.random.jpa.types.Plan;
 
-import java.util.Map;
 import java.util.Set;
 
 /*
@@ -26,16 +25,14 @@ import java.util.Set;
 public final class PreconditionCache {
 
     private static PreconditionCache cache;
-    private final Map<Class<?>, Plan> preConditionMap;
+    private final Preconditions preconditions;
 
     private PreconditionCache(final Preconditions preconditions) {
-        this.preConditionMap = preconditions.getPreConditionMap();
+        this.preconditions = preconditions;
     }
 
     public static void init(final Preconditions preconditions) {
-        if (cache == null) {
-            cache = new PreconditionCache(preconditions);
-        }
+        cache = new PreconditionCache(preconditions);
     }
 
     public static PreconditionCache getInstance() {
@@ -47,11 +44,10 @@ public final class PreconditionCache {
     }
 
     public Plan getPlan(final Class<?> type) {
-        final Plan plan = preConditionMap.get(type);
-        return plan != null ? plan : Plan.create();
+        return preconditions.getPlan(type);
     }
 
     public Set<Class<?>> getIdentifiers() {
-        return preConditionMap.keySet();
+        return preconditions.getIdentifiers();
     }
 }

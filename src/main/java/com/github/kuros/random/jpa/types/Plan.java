@@ -1,5 +1,8 @@
 package com.github.kuros.random.jpa.types;
 
+import com.github.kuros.random.jpa.link.Before;
+import com.github.kuros.random.jpa.link.Preconditions;
+
 import javax.persistence.metamodel.Attribute;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,10 +28,12 @@ public final class Plan {
 
     private List<Entity> entities;
     private List<Attribute<?, ?>> nullValueAttributes;
+    private Preconditions preconditions;
 
     private Plan() {
         this.entities = new ArrayList<Entity>();
         this.nullValueAttributes = new ArrayList<Attribute<?, ?>>();
+        this.preconditions = new Preconditions();
     }
 
     public static Plan create() {
@@ -45,11 +50,23 @@ public final class Plan {
         return this;
     }
 
+    public Plan withPreconditons(final Before... befores) {
+        for (Before before : befores) {
+            preconditions.add(before.getType(), before.getPlan());
+        }
+
+        return this;
+    }
+
     public List<Entity> getEntities() {
         return entities;
     }
 
     public List<Attribute<?, ?>> getNullValueAttributes() {
         return nullValueAttributes;
+    }
+
+    public Preconditions getPreconditions() {
+        return preconditions;
     }
 }
