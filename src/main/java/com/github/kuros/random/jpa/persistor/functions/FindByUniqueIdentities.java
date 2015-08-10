@@ -31,10 +31,12 @@ public class FindByUniqueIdentities<T> implements Function<T> {
     private static final Logger LOGGER = LogFactory.getLogger(PersistFunction.class);
     private final UniqueConstraintProvider uniqueConstraintProvider;
     private final MultiplePrimaryKeyProvider multiplePrimaryKeyProvider;
+    private final Finder finder;
 
     public FindByUniqueIdentities() {
         this.uniqueConstraintProvider = UniqueConstraintProviderFactory.getUniqueConstraintProvider();
         this.multiplePrimaryKeyProvider = MultiplePrimaryKeyProviderFactory.getMultiplePrimaryKeyProvider();
+        this.finder = new Finder();
     }
 
     public T apply(final T typeObject) {
@@ -42,16 +44,15 @@ public class FindByUniqueIdentities<T> implements Function<T> {
         final List<String> uniqueCombinationAttributes = uniqueConstraintProvider.getUniqueCombinationAttributes(tableClass);
         final List<String> multiplePrimaryKeyAttributes = multiplePrimaryKeyProvider.getMultiplePrimaryKeyAttributes(tableClass);
 
-        final Finder finder = new Finder();
-        if (uniqueCombinationAttributes != null) {
-            final T found = finder.findByAttributes(typeObject, uniqueCombinationAttributes);
-            if (found != null) {
-                return found;
-            }
-        } else if (multiplePrimaryKeyAttributes != null) {
-            return finder.findByAttributes(typeObject, multiplePrimaryKeyAttributes);
+        final T t = find(typeObject, uniqueCombinationAttributes);
+        if (t != null) {
+            return t;
+        } else {
+            return find(typeObject, multiplePrimaryKeyAttributes);
         }
+    }
 
-        return null;
+    private T find(final T typeObject, final List<String> attributes) {
+        return attributes != null ? finder.findByAttributes(typeObject, attributes) : null;
     }
 }

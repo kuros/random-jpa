@@ -23,10 +23,11 @@ import java.text.ParseException;
  */
 public class NumberUtil {
 
-    public static Object castNumber(final Class<?> type, final Object value) {
+    @SuppressWarnings("unchecked")
+    public static <T> T castNumber(final Class<T> type, final Object value) {
         Object returnValue = value;
         if (value == null || type.equals(value.getClass())) {
-            return returnValue;
+            return (T) returnValue;
         }
 
         if (value instanceof Number) {
@@ -46,10 +47,10 @@ public class NumberUtil {
             }
         }
 
-        return returnValue;
+        return (T) returnValue;
     }
 
-    public static Object parseNumber(final Class<?> type, final String value) {
+    public static <T> T parseNumber(final Class<T> type, final String value) {
         final NumberFormat numberFormat = NumberFormat.getNumberInstance();
         try {
             final Number parse = numberFormat.parse(value);
