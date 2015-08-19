@@ -1,7 +1,7 @@
 package com.github.kuros.random.jpa.util;
 
+import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.exception.RandomJPAException;
-import com.github.kuros.random.jpa.metamodel.AttributeProvider;
 import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
 
 import java.lang.reflect.Field;
@@ -56,13 +56,13 @@ public class Util {
         return builder.toString();
     }
 
-    public static String printEntityId(final Object object) {
+    public static String printEntityId(final Cache cache, final Object object) {
         if (object == null) {
             return "";
         }
 
         final Class<?> type = object.getClass();
-        final EntityTableMapping entityTableMapping = AttributeProvider.getInstance().get(type);
+        final EntityTableMapping entityTableMapping = cache.getAttributeProvider().get(type);
         final List<String> attributeIds = entityTableMapping.getAttributeIds();
 
         final StringBuilder builder = new StringBuilder();

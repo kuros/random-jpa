@@ -1,5 +1,6 @@
 package com.github.kuros.random.jpa.metamodel;
 
+import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
 import com.github.kuros.random.jpa.metamodel.model.FieldWrapper;
 
@@ -33,9 +34,9 @@ public class MetaModelProviderImpl implements MetaModelProvider {
     private EntityManager entityManager;
     private AttributeProvider attributeProvider;
 
-    public MetaModelProviderImpl(final EntityManager entityManager) {
-        this.entityManager = entityManager;
-        attributeProvider = AttributeProvider.getInstance();
+    public MetaModelProviderImpl(final Cache cache) {
+        this.entityManager = cache.getEntityManager();
+        attributeProvider = cache.getAttributeProvider();
     }
 
     public Map<String, List<FieldWrapper>> getFieldsByTableName() {

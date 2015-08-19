@@ -1,5 +1,6 @@
 package com.github.kuros.random.jpa.persistor.functions;
 
+import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.exception.RandomJPAException;
 
 import java.util.ArrayList;
@@ -21,10 +22,16 @@ import java.util.List;
  *    You should have received a copy of the GNU Lesser General Public License
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class FunctionProcessor {
+public class FunctionProcessor<T> {
+
+    private Cache cache;
+
+    public FunctionProcessor(final Cache cache) {
+        this.cache = cache;
+    }
 
     @SuppressWarnings("unchecked")
-    public static <T> T findOrSave(final T object) {
+    public T findOrSave(final T object) {
         final List<Function> functions = getFunctions();
 
         T persistedObject = null;
@@ -43,12 +50,12 @@ public class FunctionProcessor {
         return persistedObject;
     }
 
-    private static List<Function> getFunctions() {
+    private List<Function> getFunctions() {
         final List<Function> functions = new ArrayList<Function>();
-        functions.add(new TriggerFunction());
-        functions.add(new FindById());
-        functions.add(new FindByUniqueIdentities());
-        functions.add(new PersistFunction());
+        functions.add(new TriggerFunction(cache));
+        functions.add(new FindById(cache));
+        functions.add(new FindByUniqueIdentities(cache));
+        functions.add(new PersistFunction(cache));
 
         return functions;
     }

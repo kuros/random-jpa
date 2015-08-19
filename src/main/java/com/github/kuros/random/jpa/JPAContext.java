@@ -1,9 +1,11 @@
 package com.github.kuros.random.jpa;
 
+import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.definition.HierarchyGraph;
 import com.github.kuros.random.jpa.persistor.EntityPersistorImpl;
 import com.github.kuros.random.jpa.persistor.Persistor;
 import com.github.kuros.random.jpa.persistor.model.ResultMap;
+import com.github.kuros.random.jpa.persistor.model.ResultMapImpl;
 import com.github.kuros.random.jpa.random.RandomizeImpl;
 import com.github.kuros.random.jpa.random.generator.Generator;
 import com.github.kuros.random.jpa.random.generator.RandomGenerator;
@@ -17,8 +19,6 @@ import com.github.kuros.random.jpa.types.CreationPlan;
 import com.github.kuros.random.jpa.types.CreationPlanImpl;
 import com.github.kuros.random.jpa.types.Plan;
 import com.github.kuros.random.jpa.util.AttributeHelper;
-
-import javax.persistence.EntityManager;
 
 /*
  * Copyright (c) 2015 Kumar Rohit
@@ -38,19 +38,19 @@ import javax.persistence.EntityManager;
  */
 public final class JPAContext {
 
-    private final EntityManager entityManager;
     private HierarchyGraph hierarchyGraph;
     private RandomGenerator generator;
+    private Cache cache;
 
-    static JPAContext newInstance(final EntityManager entityManager,
+    static JPAContext newInstance(final Cache cache,
                                   final Generator generator, final HierarchyGraph hierarchyGraph) {
-        return new JPAContext( entityManager, generator, hierarchyGraph);
+        return new JPAContext( cache, generator, hierarchyGraph);
     }
 
-    private JPAContext(final EntityManager entityManager, final Generator generator, final HierarchyGraph hierarchyGraph) {
-        this.entityManager = entityManager;
+    private JPAContext(final Cache cache, final Generator generator, final HierarchyGraph hierarchyGraph) {
+        this.cache = cache;
         this.hierarchyGraph = hierarchyGraph;
-        this.generator = RandomGenerator.newInstance(generator);
+        this.generator = RandomGenerator.newInstance(cache, generator);
     }
 
     public CreationPlan create(final Plan plan) {
@@ -65,8 +65,8 @@ public final class JPAContext {
     }
 
     private RandomizeImpl getRandomizer(final Plan plan) {
-        final RandomizeImpl randomize = RandomizeImpl.newInstance(generator);
-        final EntityResolver entityResolver = EntityResolverImpl.newInstance(hierarchyGraph, plan);
+        final RandomizeImpl randomize = RandomizeImpl.newInstance(cache, generator);
+        final EntityResolver entityResolver = EntityResolverImpl.newInstance(cache, hierarchyGraph, plan);
         randomize.addFieldValue(entityResolver.getFieldValueMap());
         randomize.setNullValueFields(AttributeHelper.getFields(plan.getNullValueAttributes()));
         return randomize;
@@ -74,8 +74,8 @@ public final class JPAContext {
 
     public ResultMap persist(final CreationPlan creationPlan) {
         final CreationPlanImpl creationPlanImpl = (CreationPlanImpl) creationPlan;
-        final Persistor persistor = EntityPersistorImpl.newInstance(creationPlanImpl.getRandomize());
-        return persistor.persist(creationPlan);
+        final Persistor persistor = EntityPersistorImpl.newInstance(cache, creationPlanImpl.getRandomize());
+        return ResultMapImpl.newInstance(persistor.persist(creationPlan));
     }
 
     public ResultMap createAndPersist(final Plan plan) {

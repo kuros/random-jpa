@@ -1,6 +1,6 @@
 package com.github.kuros.random.jpa.persistor;
 
-import com.github.kuros.random.jpa.persistor.model.ResultMap;
+import com.github.kuros.random.jpa.persistor.model.ResultNodeTree;
 import com.github.kuros.random.jpa.types.CreationPlan;
 
 /*
@@ -21,5 +21,5 @@ import com.github.kuros.random.jpa.types.CreationPlan;
  */
 public interface Persistor {
 
-    ResultMap persist(CreationPlan creationPlan);
+    ResultNodeTree persist(CreationPlan creationPlan);
 }

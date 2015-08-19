@@ -1,7 +1,6 @@
 package com.github.kuros.random.jpa.provider.mssql;
 
 import com.github.kuros.random.jpa.annotation.VisibleForTesting;
-import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.metamodel.AttributeProvider;
 import com.github.kuros.random.jpa.provider.UniqueConstraintProvider;
 import com.github.kuros.random.jpa.provider.base.AbstractUniqueConstraintProvider;
@@ -26,7 +25,6 @@ import javax.persistence.EntityManager;
  */
 public class MSSQLUniqueConstraintProvider extends AbstractUniqueConstraintProvider {
 
-    private static UniqueConstraintProvider uniqueConstraintProvider;
     private static final String QUERY = "select t.name as TABLE_NAME , c.name as COLUMN_NAME" +
             " from sys.indexes i, sys.tables t, sys.index_columns ic, sys.columns c " +
             " where i.object_id = t.object_id " +
@@ -38,22 +36,13 @@ public class MSSQLUniqueConstraintProvider extends AbstractUniqueConstraintProvi
             " and ic.column_id = c.column_id " +
             " order by t.name ";
 
-
-    private MSSQLUniqueConstraintProvider() {
-        this(Cache.getInstance().getEntityManager(), AttributeProvider.getInstance());
-    }
-
     @VisibleForTesting
     MSSQLUniqueConstraintProvider(final EntityManager entityManager, final AttributeProvider attributeProvider) {
         super(attributeProvider, entityManager);
     }
 
-    public static UniqueConstraintProvider getInstance() {
-        if (uniqueConstraintProvider == null) {
-            uniqueConstraintProvider = new MSSQLUniqueConstraintProvider();
-        }
-
-        return uniqueConstraintProvider;
+    public static UniqueConstraintProvider getInstance(final EntityManager entityManager, final AttributeProvider attributeProvider) {
+        return new MSSQLUniqueConstraintProvider(entityManager, attributeProvider);
     }
 
     @Override

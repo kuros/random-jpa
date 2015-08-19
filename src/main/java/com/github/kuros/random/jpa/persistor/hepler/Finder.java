@@ -33,8 +33,8 @@ public class Finder {
 
     private EntityManager entityManager;
 
-    public Finder() {
-        this.entityManager = Cache.getInstance().getEntityManager();
+    public Finder(final Cache cache) {
+        this.entityManager = cache.getEntityManager();
     }
 
     @SuppressWarnings("unchecked")

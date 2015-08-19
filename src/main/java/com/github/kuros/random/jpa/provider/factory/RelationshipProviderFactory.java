@@ -2,8 +2,8 @@ package com.github.kuros.random.jpa.provider.factory;
 
 import com.github.kuros.random.jpa.Database;
 import com.github.kuros.random.jpa.provider.RelationshipProvider;
-import com.github.kuros.random.jpa.provider.mssql.MSSQLRelationshipProvider;
 import com.github.kuros.random.jpa.provider.model.ForeignKeyRelation;
+import com.github.kuros.random.jpa.provider.mssql.MSSQLRelationshipProvider;
 import com.github.kuros.random.jpa.provider.oracle.OracleRelationshipProvider;
 
 import javax.persistence.EntityManager;
@@ -46,6 +46,8 @@ public class RelationshipProviderFactory {
 
         return relationshipProvider;
     }
+
+
 
     public static class EmptyRelationshipProvider implements RelationshipProvider {
 

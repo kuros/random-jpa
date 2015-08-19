@@ -1,5 +1,6 @@
 package com.github.kuros.random.jpa.metamodel;
 
+import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.metamodel.model.FieldWrapper;
 import com.github.kuros.random.jpa.testUtil.MockEntityManagerProvider;
 import org.junit.Before;
@@ -38,7 +39,8 @@ public class MetaModelProviderImplTest {
     public void setUp() throws Exception {
         entityManagerProvider = MockEntityManagerProvider.createMockEntityManager();
         entityManager = entityManagerProvider.getEntityManager();
-        metaModelProvider = new MetaModelProviderImpl(entityManager);
+        final Cache cache = null;
+        metaModelProvider = new MetaModelProviderImpl(cache);
     }
 
     @Test @Ignore

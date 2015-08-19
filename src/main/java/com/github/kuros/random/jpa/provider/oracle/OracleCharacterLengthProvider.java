@@ -1,7 +1,6 @@
 package com.github.kuros.random.jpa.provider.oracle;
 
 import com.github.kuros.random.jpa.annotation.VisibleForTesting;
-import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.metamodel.AttributeProvider;
 import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
 import com.github.kuros.random.jpa.provider.base.AbstractCharacterLengthProvider;
@@ -37,20 +36,13 @@ public final class OracleCharacterLengthProvider extends AbstractCharacterLength
             " dt.table_name, dt.column_name, dt.char_col_decl_length, dt.DATA_PRECISION, dt.DATA_SCALE" +
             " FROM user_tab_columns dt";
 
-    private static OracleCharacterLengthProvider instance;
-
     @VisibleForTesting
     OracleCharacterLengthProvider(final EntityManager entityManager, final AttributeProvider attributeProvider) {
-
         super(attributeProvider, entityManager);
     }
 
-    public static OracleCharacterLengthProvider getInstance() {
-        if (instance == null) {
-            instance = new OracleCharacterLengthProvider(Cache.getInstance().getEntityManager(),
-                    AttributeProvider.getInstance());
-        }
-        return instance;
+    public static OracleCharacterLengthProvider getInstance(final EntityManager entityManager, final AttributeProvider attributeProvider) {
+        return new OracleCharacterLengthProvider(entityManager, attributeProvider);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.github.kuros.random.jpa.persistor.functions;
 
+import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.cache.TriggerCache;
 import com.github.kuros.random.jpa.exception.RandomJPAException;
 import com.github.kuros.random.jpa.link.Link;
@@ -31,8 +32,8 @@ public class TriggerFunction<T> implements Function<T> {
 
     private final Finder finder;
 
-    public TriggerFunction() {
-        this.finder = new Finder();
+    public TriggerFunction(final Cache cache) {
+        this.finder = new Finder(cache);
     }
 
     public T apply(final T object) {

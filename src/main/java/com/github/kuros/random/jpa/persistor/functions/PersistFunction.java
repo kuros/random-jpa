@@ -28,8 +28,8 @@ public class PersistFunction<T> implements Function<T> {
     private static final Logger LOGGER = LogFactory.getLogger(PersistFunction.class);
     private EntityManager entityManager;
 
-    public PersistFunction() {
-        entityManager = Cache.getInstance().getEntityManager();
+    public PersistFunction(final Cache cache) {
+        entityManager = cache.getEntityManager();
     }
 
     public T apply(final T object) {

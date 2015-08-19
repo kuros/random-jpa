@@ -1,7 +1,6 @@
 package com.github.kuros.random.jpa.provider.mssql;
 
 import com.github.kuros.random.jpa.annotation.VisibleForTesting;
-import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.metamodel.AttributeProvider;
 import com.github.kuros.random.jpa.provider.MultiplePrimaryKeyProvider;
 import com.github.kuros.random.jpa.provider.base.AbstractMultiplePrimaryKeyProvider;
@@ -26,7 +25,6 @@ import javax.persistence.EntityManager;
  */
 public class MSSQLMultiplePrimaryKeyProvider extends AbstractMultiplePrimaryKeyProvider {
 
-    private static MultiplePrimaryKeyProvider multiplePrimaryKeyProvider;
     private static final String QUERY = "select t.name as TABLE_NAME , c.name as COLUMN_NAME" +
             " from sys.indexes i, sys.tables t, sys.index_columns ic, sys.columns c " +
             " where i.object_id = t.object_id " +
@@ -38,10 +36,6 @@ public class MSSQLMultiplePrimaryKeyProvider extends AbstractMultiplePrimaryKeyP
             " and ic.column_id = c.column_id " +
             " order by t.name ";
 
-    private MSSQLMultiplePrimaryKeyProvider() {
-        this(Cache.getInstance().getEntityManager(), AttributeProvider.getInstance());
-    }
-
     @VisibleForTesting
     MSSQLMultiplePrimaryKeyProvider(final EntityManager entityManager, final AttributeProvider attributeProvider) {
         super(entityManager, attributeProvider);
@@ -52,12 +46,7 @@ public class MSSQLMultiplePrimaryKeyProvider extends AbstractMultiplePrimaryKeyP
         return QUERY;
     }
 
-    public static MultiplePrimaryKeyProvider getInstance() {
-        if (multiplePrimaryKeyProvider == null) {
-            multiplePrimaryKeyProvider = new MSSQLMultiplePrimaryKeyProvider();
-        }
-
-        return multiplePrimaryKeyProvider;
+    public static MultiplePrimaryKeyProvider getInstance(final EntityManager entityManager, final AttributeProvider attributeProvider) {
+        return new MSSQLMultiplePrimaryKeyProvider(entityManager, attributeProvider);
     }
-
 }

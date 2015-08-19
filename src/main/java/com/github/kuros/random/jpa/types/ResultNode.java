@@ -1,5 +1,6 @@
 package com.github.kuros.random.jpa.types;
 
+import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.util.Util;
 
 import java.util.ArrayList;
@@ -71,21 +72,21 @@ public final class ResultNode<T> {
         childNodes.add(node);
     }
 
-    public String print() {
+    public String print(final Cache cache) {
         final StringBuilder stringBuilder = new StringBuilder();
-        print(stringBuilder, "", true);
+        print(cache, stringBuilder, "", true);
         return stringBuilder.toString();
     }
 
-    private void print(final StringBuilder stringBuilder, final String prefix, final boolean isTail) {
+    private void print(final Cache cache, final StringBuilder stringBuilder, final String prefix, final boolean isTail) {
 
-        final String detail = type == null ? "*ROOT*" : type.getName() + "|" + index + " " + Util.printEntityId(value);
+        final String detail = type == null ? "*ROOT*" : type.getName() + "|" + index + " " + Util.printEntityId(cache, value);
         stringBuilder.append("\n").append(prefix).append(isTail ? "└── " : "├── ").append(detail);
         for (int i = 0; i < childNodes.size() - 1; i++) {
-            childNodes.get(i).print(stringBuilder, prefix + (isTail ? "    " : "│   "), false);
+            childNodes.get(i).print(cache, stringBuilder, prefix + (isTail ? "    " : "│   "), false);
         }
         if (childNodes.size() > 0) {
-            childNodes.get(childNodes.size() - 1).print(stringBuilder, prefix + (isTail ? "    " : "│   "), true);
+            childNodes.get(childNodes.size() - 1).print(cache, stringBuilder, prefix + (isTail ? "    " : "│   "), true);
         }
     }
 }

@@ -1,7 +1,6 @@
 package com.github.kuros.random.jpa.provider.oracle;
 
 import com.github.kuros.random.jpa.annotation.VisibleForTesting;
-import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.metamodel.AttributeProvider;
 import com.github.kuros.random.jpa.provider.UniqueConstraintProvider;
 import com.github.kuros.random.jpa.provider.base.AbstractUniqueConstraintProvider;
@@ -26,29 +25,19 @@ import javax.persistence.EntityManager;
  */
 public class OracleUniqueConstraintProvider extends AbstractUniqueConstraintProvider {
 
-    private static UniqueConstraintProvider uniqueConstraintProvider;
     private static final String QUERY = "select ac.TABLE_NAME, acc.COLUMN_NAME" +
             " from ALL_CONSTRAINTS ac, ALL_CONS_COLUMNS acc" +
             " WHERE ac.CONSTRAINT_NAME=acc.CONSTRAINT_NAME" +
             "   and ac.CONSTRAINT_TYPE = 'U'\n" +
             "   and ac.owner = (select user from dual)";
 
-
-    private OracleUniqueConstraintProvider() {
-        this(Cache.getInstance().getEntityManager(), AttributeProvider.getInstance());
-    }
-
     @VisibleForTesting
     OracleUniqueConstraintProvider(final EntityManager entityManager, final AttributeProvider attributeProvider) {
         super(attributeProvider, entityManager);
     }
 
-    public static UniqueConstraintProvider getInstance() {
-        if (uniqueConstraintProvider == null) {
-            uniqueConstraintProvider = new OracleUniqueConstraintProvider();
-        }
-
-        return uniqueConstraintProvider;
+    public static UniqueConstraintProvider getInstance(final EntityManager entityManager, final AttributeProvider attributeProvider) {
+        return new OracleUniqueConstraintProvider(entityManager, attributeProvider);
     }
 
     @Override

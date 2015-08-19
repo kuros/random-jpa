@@ -1,5 +1,6 @@
 package com.github.kuros.random.jpa.random;
 
+import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.testUtil.entity.Employee;
 import com.github.kuros.random.jpa.random.generator.Generator;
 import com.github.kuros.random.jpa.random.generator.RandomGenerator;
@@ -27,8 +28,11 @@ import static org.junit.Assert.assertNotNull;
 public class RandomizeImplTest {
     @Test @Ignore
     public void shouldRandmoizeEmployeeClass() throws InstantiationException, IllegalAccessException {
-        final RandomGenerator randomFactory = RandomGenerator.newInstance(Generator.newInstance());
-        final Randomize randomize = RandomizeImpl.newInstance(randomFactory);
+
+        final Cache cache = null;
+        final RandomGenerator randomFactory = RandomGenerator.newInstance(cache, Generator.newInstance());
+
+        final Randomize randomize = RandomizeImpl.newInstance(cache, randomFactory);
         final Employee randomEmployee = randomize.createRandom(Employee.class);
 
         assertNotNull(randomEmployee);

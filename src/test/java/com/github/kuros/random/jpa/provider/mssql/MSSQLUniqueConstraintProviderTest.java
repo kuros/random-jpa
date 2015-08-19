@@ -1,7 +1,5 @@
 package com.github.kuros.random.jpa.provider.mssql;
 
-import com.github.kuros.random.jpa.Database;
-import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.metamodel.AttributeProvider;
 import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
 import com.github.kuros.random.jpa.provider.UniqueConstraintProvider;
@@ -54,7 +52,6 @@ public class MSSQLUniqueConstraintProviderTest {
         MockitoAnnotations.initMocks(this);
         mockEntityManager();
         mockAttributeProvider();
-        Cache.init(Database.MS_SQL_SERVER, entityManager);
         uniqueConstraintProvider = new MSSQLUniqueConstraintProvider(entityManager, attributeProvider);
     }
 

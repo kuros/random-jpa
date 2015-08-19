@@ -1,9 +1,12 @@
 package com.github.kuros.random.jpa.provider.factory;
 
 import com.github.kuros.random.jpa.Database;
+import com.github.kuros.random.jpa.metamodel.AttributeProvider;
 import com.github.kuros.random.jpa.provider.SQLCharacterLengthProvider;
 import com.github.kuros.random.jpa.provider.mssql.MSSQLCharacterLengthProvider;
 import com.github.kuros.random.jpa.provider.oracle.OracleCharacterLengthProvider;
+
+import javax.persistence.EntityManager;
 
 /*
  * Copyright (c) 2015 Kumar Rohit
@@ -23,14 +26,14 @@ import com.github.kuros.random.jpa.provider.oracle.OracleCharacterLengthProvider
  */
 public class SQLCharacterLengthProviderFactory {
 
-    public static SQLCharacterLengthProvider getSqlCharacterLengthProvider(final Database database) {
+    public static SQLCharacterLengthProvider getSqlCharacterLengthProvider(final Database database, final EntityManager entityManager, final AttributeProvider attributeProvider) {
         SQLCharacterLengthProvider sqlCharacterLengthProvider;
         switch (database) {
             case MS_SQL_SERVER:
-                sqlCharacterLengthProvider = MSSQLCharacterLengthProvider.getInstance();
+                sqlCharacterLengthProvider = MSSQLCharacterLengthProvider.getInstance(entityManager, attributeProvider);
                 break;
             case ORACLE:
-                sqlCharacterLengthProvider = OracleCharacterLengthProvider.getInstance();
+                sqlCharacterLengthProvider = OracleCharacterLengthProvider.getInstance(entityManager, attributeProvider);
                 break;
             default:
                 sqlCharacterLengthProvider = new DefaultSQLCharacterLengthProvider();
@@ -39,6 +42,8 @@ public class SQLCharacterLengthProviderFactory {
 
         return sqlCharacterLengthProvider;
     }
+
+
 
     public static class DefaultSQLCharacterLengthProvider implements SQLCharacterLengthProvider {
         public Integer getMaxLength(final String entityName, final String attributeName) {

@@ -1,10 +1,12 @@
 package com.github.kuros.random.jpa.provider.factory;
 
-import com.github.kuros.random.jpa.cache.Cache;
+import com.github.kuros.random.jpa.Database;
+import com.github.kuros.random.jpa.metamodel.AttributeProvider;
 import com.github.kuros.random.jpa.provider.UniqueConstraintProvider;
 import com.github.kuros.random.jpa.provider.mssql.MSSQLUniqueConstraintProvider;
 import com.github.kuros.random.jpa.provider.oracle.OracleUniqueConstraintProvider;
 
+import javax.persistence.EntityManager;
 import java.util.List;
 
 /*
@@ -25,14 +27,14 @@ import java.util.List;
  */
 public class UniqueConstraintProviderFactory {
 
-    public static UniqueConstraintProvider getUniqueConstraintProvider() {
+    public static UniqueConstraintProvider getUniqueConstraintProvider(final Database database, final EntityManager entityManager, final AttributeProvider attributeProvider) {
         final UniqueConstraintProvider uniqueConstraintProvider;
-        switch (Cache.getInstance().getDatabase()) {
+        switch (database) {
             case MS_SQL_SERVER:
-                uniqueConstraintProvider = MSSQLUniqueConstraintProvider.getInstance();
+                uniqueConstraintProvider = MSSQLUniqueConstraintProvider.getInstance(entityManager, attributeProvider);
                 break;
             case ORACLE:
-                uniqueConstraintProvider = OracleUniqueConstraintProvider.getInstance();
+                uniqueConstraintProvider = OracleUniqueConstraintProvider.getInstance(entityManager, attributeProvider);
                 break;
             default:
                 uniqueConstraintProvider = new DefaultUniqueConstraintProvider();
@@ -40,6 +42,8 @@ public class UniqueConstraintProviderFactory {
 
         return uniqueConstraintProvider;
     }
+
+
 
     private static class DefaultUniqueConstraintProvider implements UniqueConstraintProvider {
         public List<String> getUniqueCombinationAttributes(final Class<?> entityName) {

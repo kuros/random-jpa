@@ -1,41 +1,26 @@
 package com.github.kuros.random.jpa.persistor.model;
 
 import com.github.kuros.random.jpa.types.Printer;
-import com.github.kuros.random.jpa.types.ResultNode;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/*
- * Copyright (c) 2015 Kumar Rohit
- *
- *    This program is free software: you can redistribute it and/or modify
- *    it under the terms of the GNU Lesser General Public License as published by
- *    the Free Software Foundation, either version 3 of the License or any
- *    later version.
- *
- *    This program is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *    GNU Lesser General Public License for more details.
- *
- *    You should have received a copy of the GNU Lesser General Public License
- *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+/**
+ * Created by kumarro on 19/08/15.
  */
 public final class ResultMapImpl implements ResultMap {
 
-    private final ResultNode root;
     private Map<Class<?>, List<Object>> resultMap;
+    private String constructionTree;
 
-    private ResultMapImpl(final ResultNode root) {
-        this.resultMap = new HashMap<Class<?>, List<Object>>();
-        this.root = root;
+    private ResultMapImpl(final Map<Class<?>, List<Object>> resultMap, final String constructionTree) {
+        this.resultMap = resultMap;
+        this.constructionTree = constructionTree;
     }
 
-    public static ResultMapImpl newInstance(final ResultNode root) {
-        return new ResultMapImpl(root);
+    public static ResultMapImpl newInstance(final ResultNodeTree nodeTree) {
+        return new ResultMapImpl(nodeTree.getCreatedEntities(), nodeTree.getConstructionTree());
     }
 
     public void put(final Class<?> type, final Object object) {
@@ -70,6 +55,6 @@ public final class ResultMapImpl implements ResultMap {
     }
 
     public void print(final Printer printer) {
-        printer.print(root.print());
+        printer.print(constructionTree);
     }
 }

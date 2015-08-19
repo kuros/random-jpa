@@ -1,5 +1,6 @@
 package com.github.kuros.random.jpa.random;
 
+import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.exception.RandomJPAException;
 import com.github.kuros.random.jpa.metamodel.AttributeProvider;
 import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
@@ -35,15 +36,15 @@ public final class RandomizeImpl implements Randomize {
     private Map<Field, Object> fieldValueMap;
     private List<Field> nullValueFields;
 
-    private RandomizeImpl(final RandomGenerator randomGenerator) {
-        this.attributeProvider = AttributeProvider.getInstance();
+    private RandomizeImpl(final Cache cache, final RandomGenerator randomGenerator) {
+        this.attributeProvider = cache.getAttributeProvider();
         this.randomGenerator = randomGenerator;
         this.fieldValueMap = new HashMap<Field, Object>();
         this.nullValueFields = new ArrayList<Field>();
     }
 
-    public static RandomizeImpl newInstance(final RandomGenerator randomGenerator) {
-        return new RandomizeImpl(randomGenerator);
+    public static RandomizeImpl newInstance(final Cache cache, final RandomGenerator randomGenerator) {
+        return new RandomizeImpl(cache, randomGenerator);
     }
 
     public <T> T createRandom(final Class<T> type) {

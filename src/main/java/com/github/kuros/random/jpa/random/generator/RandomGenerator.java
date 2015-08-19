@@ -2,7 +2,6 @@ package com.github.kuros.random.jpa.random.generator;
 
 import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.provider.SQLCharacterLengthProvider;
-import com.github.kuros.random.jpa.provider.factory.SQLCharacterLengthProviderFactory;
 import com.github.kuros.random.jpa.util.AttributeHelper;
 
 import javax.persistence.metamodel.Attribute;
@@ -34,12 +33,11 @@ public final class RandomGenerator {
     private RandomFactory randomFactory;
     private SQLCharacterLengthProvider sqlCharacterLengthProvider;
 
-    private RandomGenerator(final Generator generator) {
+    private RandomGenerator(final Cache cache, final Generator generator) {
         this.generator = generator;
         attributeGeneratorMap = new HashMap<Field, RandomAttributeGenerator>();
         randomFactory = new RandomFactory();
-        sqlCharacterLengthProvider = SQLCharacterLengthProviderFactory
-                .getSqlCharacterLengthProvider(Cache.getInstance().getDatabase());
+        sqlCharacterLengthProvider = cache.getSqlCharacterLengthProvider();
         init();
     }
 
@@ -55,12 +53,12 @@ public final class RandomGenerator {
         }
     }
 
-    public static RandomGenerator newInstance(final Generator generator) {
-        return new RandomGenerator(generator);
+    public static RandomGenerator newInstance(final Cache cache, final Generator generator) {
+        return new RandomGenerator(cache, generator);
     }
 
-    public static RandomGenerator newInstance() {
-        return new RandomGenerator(Generator.newInstance());
+    public static RandomGenerator newInstance(final Cache cache) {
+        return new RandomGenerator(cache, Generator.newInstance());
     }
 
     public Object generateRandom(final Field field) {

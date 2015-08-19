@@ -1,10 +1,10 @@
 package com.github.kuros.random.jpa.persistor;
 
+import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.definition.TableNode;
 import com.github.kuros.random.jpa.mapper.Relation;
 import com.github.kuros.random.jpa.persistor.functions.FunctionProcessor;
-import com.github.kuros.random.jpa.persistor.model.ResultMap;
-import com.github.kuros.random.jpa.persistor.model.ResultMapImpl;
+import com.github.kuros.random.jpa.persistor.model.ResultNodeTree;
 import com.github.kuros.random.jpa.random.Randomize;
 import com.github.kuros.random.jpa.types.CreationOrder;
 import com.github.kuros.random.jpa.types.CreationPlan;
@@ -34,37 +34,41 @@ import java.util.Map;
  */
 public final class EntityPersistorImpl implements Persistor {
 
+    private final Cache cache;
     private final Randomize randomize;
+    private final FunctionProcessor functionProcessor;
 
-    private EntityPersistorImpl(final Randomize randomize) {
+    private EntityPersistorImpl(final Cache cache, final Randomize randomize) {
+        this.cache = cache;
+        this.functionProcessor = new FunctionProcessor(cache);
         this.randomize = randomize;
     }
 
-    public static Persistor newInstance(final Randomize randomize) {
-        return new EntityPersistorImpl(randomize);
+    public static Persistor newInstance(final Cache cache, final Randomize randomize) {
+        return new EntityPersistorImpl(cache, randomize);
     }
 
     @SuppressWarnings("unchecked")
-    public ResultMap persist(final CreationPlan creationPlan) {
+    public ResultNodeTree persist(final CreationPlan creationPlan) {
         final ResultNode root = ResultNode.newInstance();
-        final ResultMapImpl resultMap = ResultMapImpl.newInstance(root);
+        final ResultNodeTree resultNodeTree = ResultNodeTree.newInstance(cache, root);
 
 
         final Node creationPlanRoot = creationPlan.getRoot();
         final List<Node> childNodes = creationPlanRoot.getChildNodes();
         for (Node node : childNodes) {
             if (node.getValue() != null) {
-                final ResultNode childNode = ResultNode.newInstance(node.getType(), getIndex(resultMap, node.getType()));
+                final ResultNode childNode = ResultNode.newInstance(node.getType(), getIndex(resultNodeTree, node.getType()));
                 root.addChildNode(childNode);
-                persist(childNode, creationPlan.getCreationOrder(), resultMap, node);
+                persist(childNode, creationPlan.getCreationOrder(), resultNodeTree, node);
             }
         }
 
-        return resultMap;
+        return resultNodeTree;
     }
 
-    private int getIndex(final ResultMapImpl resultMap, final Class type) {
-        final List<Object> objects = resultMap.getCreatedEntities().get(type);
+    private int getIndex(final ResultNodeTree resultNodeTree, final Class type) {
+        final List<Object> objects = resultNodeTree.getCreatedEntities().get(type);
         return isEmpty(objects) ? 0 : objects.size();
     }
 
@@ -73,25 +77,26 @@ public final class EntityPersistorImpl implements Persistor {
     }
 
     @SuppressWarnings("unchecked")
-    private void persist(final ResultNode resultNode, final CreationOrder creationOrder, final ResultMapImpl resultMap, final Node node) {
-        final Object random = createRandomObject(node, creationOrder, resultMap);
-        final Object persistedObject = FunctionProcessor.findOrSave(random);
+    private void persist(final ResultNode resultNode, final CreationOrder creationOrder, final ResultNodeTree resultNodeTree, final Node node) {
+        final Object random = createRandomObject(node, creationOrder, resultNodeTree);
+
+        final Object persistedObject = functionProcessor.findOrSave(random);
 
         resultNode.setValue(persistedObject);
-        resultMap.put(node.getType(), persistedObject);
+        resultNodeTree.put(node.getType(), persistedObject);
 
         final List<Node> childNodes = node.getChildNodes();
         for (Node childNode : childNodes) {
             if (childNode.getValue() != null) {
-                final ResultNode resultChildNode = ResultNode.newInstance(childNode.getType(), getIndex(resultMap, childNode.getType()));
+                final ResultNode resultChildNode = ResultNode.newInstance(childNode.getType(), getIndex(resultNodeTree, childNode.getType()));
                 resultNode.addChildNode(resultChildNode);
-                persist(resultChildNode, creationOrder, resultMap, childNode);
+                persist(resultChildNode, creationOrder, resultNodeTree, childNode);
             }
         }
 
     }
 
-    private Object createRandomObject(final Node node, final CreationOrder creationOrder, final ResultMapImpl resultMap) {
+    private Object createRandomObject(final Node node, final CreationOrder creationOrder, final ResultNodeTree resultNodeTree) {
         final Object random = node.getValue();
 
         final TableNode tableNode = creationOrder.getTableNode(node.getType());
@@ -99,17 +104,17 @@ public final class EntityPersistorImpl implements Persistor {
             final List<Relation> relations = tableNode.getRelations();
 
             for (Relation relation : relations) {
-                createRelation(resultMap, relation, random);
+                createRelation(resultNodeTree, relation, random);
             }
         }
 
         return randomize.populateRandomFields(random);
     }
 
-    private void createRelation(final ResultMapImpl resultMap, final Relation relation, final Object object) {
+    private void createRelation(final ResultNodeTree resultNodeTree, final Relation relation, final Object object) {
         try {
             if (!randomize.isValueProvided(relation.getFrom().getField())) {
-                final Object value = getFieldValue(resultMap, relation.getTo().getField());
+                final Object value = getFieldValue(resultNodeTree, relation.getTo().getField());
                 setFieldValue(object, relation.getFrom().getField(), value);
             }
         } catch (final Exception e) {
@@ -129,8 +134,8 @@ public final class EntityPersistorImpl implements Persistor {
         }
     }
 
-    private Object getFieldValue(final ResultMapImpl resultMap, final Field field) {
-        final Map<Class<?>, List<Object>> createdEntities = resultMap.getCreatedEntities();
+    private Object getFieldValue(final ResultNodeTree resultNodeTree, final Field field) {
+        final Map<Class<?>, List<Object>> createdEntities = resultNodeTree.getCreatedEntities();
         final List<Object> objects = createdEntities.get(field.getDeclaringClass());
         final Object object = objects.get(objects.size() - 1);
         Object value = null;

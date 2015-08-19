@@ -1,7 +1,6 @@
 package com.github.kuros.random.jpa.provider.mssql;
 
 import com.github.kuros.random.jpa.annotation.VisibleForTesting;
-import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.metamodel.AttributeProvider;
 import com.github.kuros.random.jpa.provider.base.AbstractCharacterLengthProvider;
 
@@ -33,23 +32,20 @@ public final class MSSQLCharacterLengthProvider extends AbstractCharacterLengthP
             "    ON isc.table_name = ist.table_name\n" +
             "WHERE Table_Type = 'BASE TABLE' and CHARACTER_MAXIMUM_LENGTH > 0";
 
-    private static MSSQLCharacterLengthProvider instance;
-
     @VisibleForTesting
     MSSQLCharacterLengthProvider(final EntityManager entityManager, final AttributeProvider attributeProvider) {
         super(attributeProvider, entityManager);
     }
 
-    public static MSSQLCharacterLengthProvider getInstance() {
-        if (instance == null) {
-            instance = new MSSQLCharacterLengthProvider(Cache.getInstance().getEntityManager(),
-                    AttributeProvider.getInstance());
-        }
-        return instance;
+    public static MSSQLCharacterLengthProvider getInstance(final EntityManager entityManager, final AttributeProvider attributeProvider) {
+        return new MSSQLCharacterLengthProvider(entityManager,
+                attributeProvider);
     }
 
     @Override
     public String getQuery() {
         return QUERY;
     }
+
+
 }

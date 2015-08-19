@@ -15,7 +15,6 @@ import com.github.kuros.random.jpa.mapper.Relation;
 import com.github.kuros.random.jpa.mapper.RelationCreator;
 import com.github.kuros.random.jpa.metamodel.MetaModelProvider;
 import com.github.kuros.random.jpa.metamodel.MetaModelProviderImpl;
-import com.github.kuros.random.jpa.provider.factory.RelationshipProviderFactory;
 import com.github.kuros.random.jpa.random.generator.Generator;
 import com.github.kuros.random.jpa.types.Trigger;
 
@@ -96,20 +95,20 @@ public final class JPAContextFactory {
     }
 
     public JPAContext create() {
-        Cache.init(database, entityManager);
+        final Cache cache = Cache.create(database, entityManager);
         PreconditionCache.init(preconditions);
         TriggerCache.init(triggers);
 
-        final MetaModelProvider metaModelProvider = new MetaModelProviderImpl(entityManager);
+        final MetaModelProvider metaModelProvider = new MetaModelProviderImpl(cache);
         final List<Relation> relations = RelationCreator
                 .from(metaModelProvider)
                 .with(dependencies)
-                .with(RelationshipProviderFactory.getRelationshipProvider(database, entityManager))
+                .with(cache.getRelationshipProvider())
                 .generate();
 
         final HierarchyGraph hierarchyGraph = createHierarchyGraph(relations);
         detectCyclicDependency(hierarchyGraph);
-        return JPAContext.newInstance(entityManager, generator, hierarchyGraph);
+        return JPAContext.newInstance(cache, generator, hierarchyGraph);
     }
 
     private HierarchyGraph createHierarchyGraph(final List<Relation> relations) {

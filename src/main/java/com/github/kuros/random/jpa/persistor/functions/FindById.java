@@ -1,5 +1,6 @@
 package com.github.kuros.random.jpa.persistor.functions;
 
+import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.exception.RandomJPAException;
 import com.github.kuros.random.jpa.metamodel.AttributeProvider;
 import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
@@ -29,6 +30,7 @@ import java.util.List;
  */
 public class FindById<T> implements Function<T> {
 
+    private final Cache cache;
     private final AttributeProvider attributeProvider;
     private static final List<Class> PRIMITIVE_ID_CLASSES = new ArrayList<Class>();
 
@@ -40,8 +42,9 @@ public class FindById<T> implements Function<T> {
         PRIMITIVE_ID_CLASSES.add(Short.TYPE);
     }
 
-    public FindById() {
-        this.attributeProvider = AttributeProvider.getInstance();
+    public FindById(final Cache cache) {
+        this.cache = cache;
+        this.attributeProvider = cache.getAttributeProvider();
     }
 
     public T apply(final T type) {
@@ -64,7 +67,7 @@ public class FindById<T> implements Function<T> {
             }
         }
 
-        final Finder finder = new Finder();
+        final Finder finder = new Finder(cache);
         return finder.findByAttributes(type, attributeIds);
     }
 

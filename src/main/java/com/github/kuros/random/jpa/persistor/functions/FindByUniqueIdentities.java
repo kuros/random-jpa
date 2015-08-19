@@ -1,12 +1,11 @@
 package com.github.kuros.random.jpa.persistor.functions;
 
+import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.log.LogFactory;
 import com.github.kuros.random.jpa.log.Logger;
 import com.github.kuros.random.jpa.persistor.hepler.Finder;
 import com.github.kuros.random.jpa.provider.MultiplePrimaryKeyProvider;
 import com.github.kuros.random.jpa.provider.UniqueConstraintProvider;
-import com.github.kuros.random.jpa.provider.factory.MultiplePrimaryKeyProviderFactory;
-import com.github.kuros.random.jpa.provider.factory.UniqueConstraintProviderFactory;
 
 import java.util.List;
 
@@ -33,10 +32,10 @@ public class FindByUniqueIdentities<T> implements Function<T> {
     private final MultiplePrimaryKeyProvider multiplePrimaryKeyProvider;
     private final Finder finder;
 
-    public FindByUniqueIdentities() {
-        this.uniqueConstraintProvider = UniqueConstraintProviderFactory.getUniqueConstraintProvider();
-        this.multiplePrimaryKeyProvider = MultiplePrimaryKeyProviderFactory.getMultiplePrimaryKeyProvider();
-        this.finder = new Finder();
+    public FindByUniqueIdentities(final Cache cache) {
+        this.uniqueConstraintProvider = cache.getUniqueConstraintProvider();
+        this.multiplePrimaryKeyProvider = cache.getMultiplePrimaryKeyProvider();
+        this.finder = new Finder(cache);
     }
 
     public T apply(final T typeObject) {
