@@ -30,15 +30,17 @@ import java.util.List;
  */
 public class TriggerFunction<T> implements Function<T> {
 
+    private final Cache cache;
     private final Finder finder;
 
     public TriggerFunction(final Cache cache) {
+        this.cache = cache;
         this.finder = new Finder(cache);
     }
 
     public T apply(final T object) {
         final Class<?> type = object.getClass();
-        final TriggerCache triggerCache = TriggerCache.getInstance();
+        final TriggerCache triggerCache = cache.getTriggerCache();
 
         if (triggerCache.contains(type)) {
             final Trigger<?> trigger = triggerCache.getTrigger(type);

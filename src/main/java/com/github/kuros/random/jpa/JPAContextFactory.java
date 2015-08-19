@@ -96,8 +96,8 @@ public final class JPAContextFactory {
     public JPAContext create() {
         final Cache cache = Cache
                 .create(database, entityManager)
-                .with(preconditions);
-        TriggerCache.init(triggers);
+                .with(preconditions)
+                .with(TriggerCache.getInstance(triggers));
 
         final MetaModelProvider metaModelProvider = new MetaModelProviderImpl(cache);
         final List<Relation> relations = RelationCreator

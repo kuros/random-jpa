@@ -1,6 +1,5 @@
 package com.github.kuros.random.jpa.cache;
 
-import com.github.kuros.random.jpa.exception.RandomJPAException;
 import com.github.kuros.random.jpa.types.Trigger;
 
 import java.util.HashMap;
@@ -24,7 +23,6 @@ import java.util.Map;
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 public final class TriggerCache {
-    private static TriggerCache cache;
     private Map<Class<?>, Trigger<?>> triggerMap;
 
     private TriggerCache(final List<Trigger<?>> triggers) {
@@ -34,16 +32,8 @@ public final class TriggerCache {
         }
     }
 
-    public static void init(final List<Trigger<?>> triggers) {
-        cache = new TriggerCache(triggers);
-    }
-
-    public static TriggerCache getInstance() {
-        if (cache == null) {
-            throw new RandomJPAException("Cache should be initialized");
-        }
-
-        return cache;
+    public static TriggerCache getInstance(final List<Trigger<?>> triggers) {
+        return new TriggerCache(triggers);
     }
 
     public boolean contains(final Class<?> type) {

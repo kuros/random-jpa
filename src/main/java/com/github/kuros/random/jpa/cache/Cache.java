@@ -35,6 +35,7 @@ public final class Cache {
     private EntityManager entityManager;
     private Database database;
     private Preconditions precondition;
+    private TriggerCache triggerCache;
     private AttributeProvider attributeProvider;
     private MultiplePrimaryKeyProvider multiplePrimaryKeyProvider;
     private RelationshipProvider relationshipProvider;
@@ -51,41 +52,22 @@ public final class Cache {
         this.uniqueConstraintProvider = initUniqueConstraintProvider();
     }
 
+    public static Cache create(final Database database, final EntityManager entityManager) {
+        return new Cache(database, entityManager);
+    }
+
     public Cache with(final Preconditions preconditions) {
         this.precondition = preconditions;
         return this;
     }
 
-    private UniqueConstraintProvider initUniqueConstraintProvider() {
-        return UniqueConstraintProviderFactory.getUniqueConstraintProvider(database, entityManager, attributeProvider);
-    }
-
-    private SQLCharacterLengthProvider initSqlCharacterLengthProvider() {
-        return SQLCharacterLengthProviderFactory.getSqlCharacterLengthProvider(database, entityManager, attributeProvider);
-    }
-
-    private RelationshipProvider initRelationshipProvider() {
-        return RelationshipProviderFactory.getRelationshipProvider(database, entityManager);
-    }
-
-    private MultiplePrimaryKeyProvider initMultiplePrimaryKeyProvider() {
-        return MultiplePrimaryKeyProviderFactory.getMultiplePrimaryKeyProvider(database, entityManager, attributeProvider);
-    }
-
-    private AttributeProvider initAttributeProvider() {
-        return AttributeProvider.getInstance(entityManager);
-    }
-
-    public static Cache create(final Database database, final EntityManager entityManager) {
-        return new Cache(database, entityManager);
+    public Cache with(final TriggerCache cache) {
+        this.triggerCache = cache;
+        return this;
     }
 
     public EntityManager getEntityManager() {
         return entityManager;
-    }
-
-    public Database getDatabase() {
-        return database;
     }
 
     public AttributeProvider getAttributeProvider() {
@@ -110,5 +92,29 @@ public final class Cache {
 
     public Preconditions getPrecondition() {
         return precondition;
+    }
+
+    public TriggerCache getTriggerCache() {
+        return triggerCache;
+    }
+
+    private UniqueConstraintProvider initUniqueConstraintProvider() {
+        return UniqueConstraintProviderFactory.getUniqueConstraintProvider(database, entityManager, attributeProvider);
+    }
+
+    private SQLCharacterLengthProvider initSqlCharacterLengthProvider() {
+        return SQLCharacterLengthProviderFactory.getSqlCharacterLengthProvider(database, entityManager, attributeProvider);
+    }
+
+    private RelationshipProvider initRelationshipProvider() {
+        return RelationshipProviderFactory.getRelationshipProvider(database, entityManager);
+    }
+
+    private MultiplePrimaryKeyProvider initMultiplePrimaryKeyProvider() {
+        return MultiplePrimaryKeyProviderFactory.getMultiplePrimaryKeyProvider(database, entityManager, attributeProvider);
+    }
+
+    private AttributeProvider initAttributeProvider() {
+        return AttributeProvider.getInstance(entityManager);
     }
 }
