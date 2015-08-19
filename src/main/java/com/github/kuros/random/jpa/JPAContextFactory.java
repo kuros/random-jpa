@@ -1,7 +1,6 @@
 package com.github.kuros.random.jpa;
 
 import com.github.kuros.random.jpa.cache.Cache;
-import com.github.kuros.random.jpa.cache.PreconditionCache;
 import com.github.kuros.random.jpa.cache.TriggerCache;
 import com.github.kuros.random.jpa.definition.CyclicValidator;
 import com.github.kuros.random.jpa.definition.HierarchyGenerator;
@@ -95,8 +94,9 @@ public final class JPAContextFactory {
     }
 
     public JPAContext create() {
-        final Cache cache = Cache.create(database, entityManager);
-        PreconditionCache.init(preconditions);
+        final Cache cache = Cache
+                .create(database, entityManager)
+                .with(preconditions);
         TriggerCache.init(triggers);
 
         final MetaModelProvider metaModelProvider = new MetaModelProviderImpl(cache);

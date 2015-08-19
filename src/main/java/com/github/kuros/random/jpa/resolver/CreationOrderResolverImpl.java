@@ -1,6 +1,6 @@
 package com.github.kuros.random.jpa.resolver;
 
-import com.github.kuros.random.jpa.cache.PreconditionCache;
+import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.definition.HierarchyGraph;
 import com.github.kuros.random.jpa.exception.RandomJPAException;
 import com.github.kuros.random.jpa.link.Preconditions;
@@ -32,17 +32,19 @@ import java.util.Stack;
  */
 public final class CreationOrderResolverImpl implements CreationOrderResolver {
 
-    private HierarchyGraph hierarchyGraph;
-    private Plan plan;
+    private final Cache cache;
+    private final HierarchyGraph hierarchyGraph;
+    private final Plan plan;
 
 
-    private CreationOrderResolverImpl(final HierarchyGraph hierarchyGraph, final Plan plan) {
+    private CreationOrderResolverImpl(final Cache cache, final HierarchyGraph hierarchyGraph, final Plan plan) {
+        this.cache = cache;
         this.hierarchyGraph = hierarchyGraph;
         this.plan = plan;
     }
 
-    public static CreationOrderResolver newInstance(final HierarchyGraph hierarchyGraph, final Plan plan) {
-        return new CreationOrderResolverImpl(hierarchyGraph, plan);
+    public static CreationOrderResolver newInstance(final Cache cache, final HierarchyGraph hierarchyGraph, final Plan plan) {
+        return new CreationOrderResolverImpl(cache, hierarchyGraph, plan);
     }
 
     public CreationOrder getCreationOrder() {
@@ -84,14 +86,14 @@ public final class CreationOrderResolverImpl implements CreationOrderResolver {
 
     private void applyFactoryLevelPrecondition(final CreationOrder creationOrder) throws ClassNotFoundException {
 
-        final Set<Class<?>> identifiers = PreconditionCache.getInstance().getIdentifiers();
+        final Set<Class<?>> identifiers = cache.getPrecondition().getIdentifiers();
         for (Class<?> identifier : identifiers) {
 
             if (!creationOrder.contains(identifier)) {
                 continue;
             }
 
-            final Plan preConditionPlan = PreconditionCache.getInstance().getPlan(identifier);
+            final Plan preConditionPlan = cache.getPrecondition().getPlan(identifier);
             adjustEntityInCreationOrder(creationOrder, preConditionPlan);
         }
     }

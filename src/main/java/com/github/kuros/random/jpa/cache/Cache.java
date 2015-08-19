@@ -1,6 +1,7 @@
 package com.github.kuros.random.jpa.cache;
 
 import com.github.kuros.random.jpa.Database;
+import com.github.kuros.random.jpa.link.Preconditions;
 import com.github.kuros.random.jpa.metamodel.AttributeProvider;
 import com.github.kuros.random.jpa.provider.MultiplePrimaryKeyProvider;
 import com.github.kuros.random.jpa.provider.RelationshipProvider;
@@ -33,6 +34,7 @@ public final class Cache {
 
     private EntityManager entityManager;
     private Database database;
+    private Preconditions precondition;
     private AttributeProvider attributeProvider;
     private MultiplePrimaryKeyProvider multiplePrimaryKeyProvider;
     private RelationshipProvider relationshipProvider;
@@ -47,6 +49,11 @@ public final class Cache {
         this.relationshipProvider = initRelationshipProvider();
         this.sqlCharacterLengthProvider = initSqlCharacterLengthProvider();
         this.uniqueConstraintProvider = initUniqueConstraintProvider();
+    }
+
+    public Cache with(final Preconditions preconditions) {
+        this.precondition = preconditions;
+        return this;
     }
 
     private UniqueConstraintProvider initUniqueConstraintProvider() {
@@ -99,5 +106,9 @@ public final class Cache {
 
     public UniqueConstraintProvider getUniqueConstraintProvider() {
         return uniqueConstraintProvider;
+    }
+
+    public Preconditions getPrecondition() {
+        return precondition;
     }
 }

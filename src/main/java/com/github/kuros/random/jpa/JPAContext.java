@@ -56,7 +56,7 @@ public final class JPAContext {
     public CreationPlan create(final Plan plan) {
 
         final RandomizeImpl randomize = getRandomizer(plan);
-        final CreationOrderResolver creationOrderResolver = CreationOrderResolverImpl.newInstance(hierarchyGraph, plan);
+        final CreationOrderResolver creationOrderResolver = CreationOrderResolverImpl.newInstance(cache, hierarchyGraph, plan);
         final CreationOrder creationOrder = creationOrderResolver.getCreationOrder();
 
         final CreationPlanResolver creationPlanResolver = CreationPlanResolver.newInstance(creationOrder, randomize);
