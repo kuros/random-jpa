@@ -105,6 +105,8 @@ public class RandomFactory {
             } else if (Float.TYPE == type) {
                 obj = (float) 0.0;
             }
+        } else {
+            obj = generateRandom(type);
         }
         return obj;
     }

@@ -195,6 +195,21 @@ public class SimpleRandomGeneratorTest {
                 })
                 .create();
     }
+
+    @Test
+    public void shouldCreateRandomObjectWithConstructorInvocation() throws Exception {
+        final SimpleRandomGenerator simpleRandomGenerator = SimpleRandomGeneratorFactory.newInstance().create();
+
+        final TestConstructorClass random = simpleRandomGenerator.getRandom(TestConstructorClass.class);
+        assertNotNull(random);
+        assertNotNull(random.i);
+        assertNotNull(random.l);
+        assertNotNull(random.date);
+        assertNotNull(random.time);
+        assertNotNull(random.class1);
+
+    }
+
     private class TestClass1 {
         private Integer i;
         private String s;
@@ -227,5 +242,21 @@ public class SimpleRandomGeneratorTest {
         private List<TestClass1> list;
         private Set<Integer> set;
         private Map<Integer, String> map;
+    }
+
+    private abstract class TestConstructorClass {
+        private final int i = 0;
+        private Long l;
+        private Date date;
+        private long time;
+        private TestClass1 class1;
+
+        public TestConstructorClass(final int i, final Long l, final Date date, final TestClass1 class1) {
+//            this.i = i;
+            this.l = l;
+            this.date = date;
+            this.time = date.getTime();
+            this.class1 = class1;
+        }
     }
 }
