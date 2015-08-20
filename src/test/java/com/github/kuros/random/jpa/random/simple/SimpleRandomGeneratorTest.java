@@ -244,7 +244,7 @@ public class SimpleRandomGeneratorTest {
         private Map<Integer, String> map;
     }
 
-    private abstract class TestConstructorClass {
+    private class TestConstructorClass {
         private final int i = 0;
         private Long l;
         private Date date;

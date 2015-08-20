@@ -65,8 +65,9 @@ public class RandomFactory {
             return enumConstants[RANDOM.nextInt(enumConstants.length)];
         }
 
+        T t;
         try {
-            return type.newInstance();
+            t = type.newInstance();
         } catch (final Exception e) {
             try {
                 final Constructor<?>[] constructors = type.getDeclaredConstructors();
@@ -76,39 +77,15 @@ public class RandomFactory {
                 final Class<?>[] parameterTypes = constructor.getParameterTypes();
                 final Object[] initArgs = new Object[parameterTypes.length];
                 for (int i = 0; i < parameterTypes.length; i++) {
-                    initArgs[i] = getNullValue(parameterTypes[i]);
+                    initArgs[i] = generateRandom(parameterTypes[i]);
                 }
-                return (T) constructor.newInstance(initArgs);
+                t = (T) constructor.newInstance(initArgs);
             } catch (final Exception e1) {
-                return null;
+                t = null;
             }
         }
-    }
 
-    private Object getNullValue(final Class<?> type) {
-        Object obj = null;
-        if (type.isPrimitive()) {
-            if (Boolean.TYPE == type) {
-                obj = false;
-            } else if (Character.TYPE == type) {
-                obj = '0';
-            } else if (Byte.TYPE == type) {
-                obj = (byte) 0;
-            } else if (Short.TYPE == type) {
-                obj = (short) 0;
-            } else if (Integer.TYPE == type) {
-                obj = 0;
-            } else if (Long.TYPE == type) {
-                obj = (long) 0;
-            } else if (Double.TYPE == type) {
-                obj = 0.0;
-            } else if (Float.TYPE == type) {
-                obj = (float) 0.0;
-            }
-        } else {
-            obj = generateRandom(type);
-        }
-        return obj;
+        return t;
     }
 
     private void init() {
