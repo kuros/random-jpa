@@ -43,7 +43,7 @@ public final class StringGenerator implements RandomClassGenerator {
 
         String random = "";
 
-        for (int i = 0; i < RANDOM.nextInt(MAX_STRING_LENGTH + 1); i++) {
+        for (int i = 0; i < 10 + RANDOM.nextInt(MAX_STRING_LENGTH); i++) {
             random += characterGenerator.doGenerate(Character.class);
         }
         return random;
