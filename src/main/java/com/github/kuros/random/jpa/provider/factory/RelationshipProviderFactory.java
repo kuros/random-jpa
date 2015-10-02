@@ -4,6 +4,7 @@ import com.github.kuros.random.jpa.Database;
 import com.github.kuros.random.jpa.provider.RelationshipProvider;
 import com.github.kuros.random.jpa.provider.model.ForeignKeyRelation;
 import com.github.kuros.random.jpa.provider.mssql.MSSQLRelationshipProvider;
+import com.github.kuros.random.jpa.provider.mysql.MySqlRelationshipProvider;
 import com.github.kuros.random.jpa.provider.oracle.OracleRelationshipProvider;
 
 import javax.persistence.EntityManager;
@@ -33,6 +34,9 @@ public class RelationshipProviderFactory {
         switch (database) {
             case MS_SQL_SERVER:
                 relationshipProvider = MSSQLRelationshipProvider.newInstance(entityManager);
+                break;
+            case MY_SQL:
+                relationshipProvider = MySqlRelationshipProvider.newInstance(entityManager);
                 break;
             case ORACLE:
                 relationshipProvider = OracleRelationshipProvider.newInstance(entityManager);

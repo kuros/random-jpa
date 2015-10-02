@@ -18,6 +18,7 @@ package com.github.kuros.random.jpa;
  */
 public enum Database {
     MS_SQL_SERVER,
+    MY_SQL,
     ORACLE,
     NONE
 }

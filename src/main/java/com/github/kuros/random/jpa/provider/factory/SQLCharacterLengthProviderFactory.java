@@ -4,6 +4,7 @@ import com.github.kuros.random.jpa.Database;
 import com.github.kuros.random.jpa.metamodel.AttributeProvider;
 import com.github.kuros.random.jpa.provider.SQLCharacterLengthProvider;
 import com.github.kuros.random.jpa.provider.mssql.MSSQLCharacterLengthProvider;
+import com.github.kuros.random.jpa.provider.mysql.MySqlCharacterLengthProvider;
 import com.github.kuros.random.jpa.provider.oracle.OracleCharacterLengthProvider;
 
 import javax.persistence.EntityManager;
@@ -31,6 +32,9 @@ public class SQLCharacterLengthProviderFactory {
         switch (database) {
             case MS_SQL_SERVER:
                 sqlCharacterLengthProvider = MSSQLCharacterLengthProvider.getInstance(entityManager, attributeProvider);
+                break;
+            case MY_SQL:
+                sqlCharacterLengthProvider = MySqlCharacterLengthProvider.getInstance(entityManager, attributeProvider);
                 break;
             case ORACLE:
                 sqlCharacterLengthProvider = OracleCharacterLengthProvider.getInstance(entityManager, attributeProvider);

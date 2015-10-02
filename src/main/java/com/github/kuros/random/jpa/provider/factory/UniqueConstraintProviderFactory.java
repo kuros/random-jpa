@@ -4,6 +4,7 @@ import com.github.kuros.random.jpa.Database;
 import com.github.kuros.random.jpa.metamodel.AttributeProvider;
 import com.github.kuros.random.jpa.provider.UniqueConstraintProvider;
 import com.github.kuros.random.jpa.provider.mssql.MSSQLUniqueConstraintProvider;
+import com.github.kuros.random.jpa.provider.mysql.MySqlUniqueConstraintProvider;
 import com.github.kuros.random.jpa.provider.oracle.OracleUniqueConstraintProvider;
 
 import javax.persistence.EntityManager;
@@ -32,6 +33,9 @@ public class UniqueConstraintProviderFactory {
         switch (database) {
             case MS_SQL_SERVER:
                 uniqueConstraintProvider = MSSQLUniqueConstraintProvider.getInstance(entityManager, attributeProvider);
+                break;
+            case MY_SQL:
+                uniqueConstraintProvider = MySqlUniqueConstraintProvider.getInstance(entityManager, attributeProvider);
                 break;
             case ORACLE:
                 uniqueConstraintProvider = OracleUniqueConstraintProvider.getInstance(entityManager, attributeProvider);

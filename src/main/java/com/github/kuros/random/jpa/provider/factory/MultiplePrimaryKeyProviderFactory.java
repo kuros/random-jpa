@@ -4,6 +4,7 @@ import com.github.kuros.random.jpa.Database;
 import com.github.kuros.random.jpa.metamodel.AttributeProvider;
 import com.github.kuros.random.jpa.provider.MultiplePrimaryKeyProvider;
 import com.github.kuros.random.jpa.provider.mssql.MSSQLMultiplePrimaryKeyProvider;
+import com.github.kuros.random.jpa.provider.mysql.MySqlMultiplePrimaryKeyProvider;
 import com.github.kuros.random.jpa.provider.oracle.OracleMultiplePrimaryKeyProvider;
 
 import javax.persistence.EntityManager;
@@ -32,6 +33,9 @@ public class MultiplePrimaryKeyProviderFactory {
         switch (database) {
             case MS_SQL_SERVER:
                 multiplePrimaryKeyProvider = MSSQLMultiplePrimaryKeyProvider.getInstance(entityManager, attributeProvider);
+                break;
+            case MY_SQL:
+                multiplePrimaryKeyProvider = MySqlMultiplePrimaryKeyProvider.getInstance(entityManager, attributeProvider);
                 break;
             case ORACLE:
                 multiplePrimaryKeyProvider = OracleMultiplePrimaryKeyProvider.getInstance(entityManager, attributeProvider);
