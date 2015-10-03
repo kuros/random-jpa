@@ -9,7 +9,7 @@ import com.github.kuros.random.jpa.provider.model.ColumnDetail;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,9 +66,9 @@ public final class MySqlCharacterLengthProvider extends AbstractCharacterLengthP
             }
 
             final String attributeName = entityTableMapping.getAttributeName((String) row[1]);
-            final BigDecimal length = (BigDecimal) row[2];
-            final BigDecimal precision = (BigDecimal) row[3];
-            final BigDecimal scale = (BigDecimal) row[4];
+            final BigInteger length = (BigInteger) row[2];
+            final BigInteger precision = (BigInteger) row[3];
+            final BigInteger scale = (BigInteger) row[4];
 
             final String entityName = entityTableMapping.getEntityName();
             ColumnCharacterLength columnCharacterLength = lengths.get(entityName);
@@ -83,7 +83,7 @@ public final class MySqlCharacterLengthProvider extends AbstractCharacterLengthP
         return lengths;
     }
 
-    private Integer getValue(final BigDecimal bigDecimal) {
+    private Integer getValue(final Number bigDecimal) {
         return bigDecimal == null ? null : bigDecimal.intValue();
     }
 }
