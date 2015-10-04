@@ -29,7 +29,7 @@
 
     <groupId>com.github.kuros</groupId>
     <artifactId>random-jpa</artifactId>
-    <version>0.2.2-SNAPSHOT</version>
+    <version>0.2.3-SNAPSHOT</version>
     <name>${project.artifactId}</name>
 
     <description>This project was born out of a need to create test data for complex database hierarchy.
@@ -193,7 +193,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.1</version>
+                        <version>1.6</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
