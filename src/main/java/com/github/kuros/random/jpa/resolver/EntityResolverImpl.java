@@ -203,7 +203,7 @@ public final class EntityResolverImpl implements EntityResolver {
         private Field field;
         private Object value;
 
-        public FieldValue(final Field field, final Object value) {
+        FieldValue(final Field field, final Object value) {
             this.field = field;
             this.value = value;
         }

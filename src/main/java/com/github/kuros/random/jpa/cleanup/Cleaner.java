@@ -1,4 +1,4 @@
-package com.github.kuros.random.jpa.log;
+package com.github.kuros.random.jpa.cleanup;
 
 /*
  * Copyright (c) 2015 Kumar Rohit
@@ -15,24 +15,9 @@ package com.github.kuros.random.jpa.log;
  *
  *    You should have received a copy of the GNU Lesser General Public License
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- *    Logging functionality provided by OpenPojo (http://openpojo.com)
  */
-public class Logger {
-    private final com.openpojo.log.Logger logger;
-    public Logger(final com.openpojo.log.Logger logger) {
-        this.logger = logger;
-    }
+public interface Cleaner {
 
-    public void info(final String message, final Object... args) {
-        logger.info(message, args);
-    }
+    <T, V> void delete(Class<T> type, V... ids);
 
-    public void debug(final String message, final Object... args) {
-        logger.debug(message, args);
-    }
-
-    public void error(final String message, final Object... args) {
-        logger.error(message, args);
-    }
 }

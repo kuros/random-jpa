@@ -11,7 +11,9 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /*
  * Copyright (c) 2015 Kumar Rohit
@@ -66,5 +68,31 @@ public class Finder {
         final List resultList = typedQuery.getResultList();
 
         return resultList.size() == 0 ? null : (T) resultList.get(0);
+    }
+
+    @SuppressWarnings("unchecked")
+    public  <T> List<T> findByAttributes(final Class<T> type, final Map<String, Object> attributeValues) {
+        final CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        final CriteriaQuery q = criteriaBuilder.createQuery(type);
+
+        final Root<?> from = q.from(type);
+
+        q.select(from);
+
+        final Predicate[] predicates = new Predicate[attributeValues.keySet().size()];
+
+        final List<Predicate> predicateList = new ArrayList<Predicate>();
+        for (String s : attributeValues.keySet()) {
+            predicateList.add(criteriaBuilder.equal(from.get(s), attributeValues.get(s)));
+        }
+
+        q.where(predicateList.toArray(predicates));
+
+        q.where(predicates);
+
+        final TypedQuery typedQuery = entityManager.createQuery(q);
+        final List resultList = typedQuery.getResultList();
+
+        return resultList;
     }
 }
