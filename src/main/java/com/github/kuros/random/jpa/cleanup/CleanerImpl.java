@@ -2,6 +2,7 @@ package com.github.kuros.random.jpa.cleanup;
 
 import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.definition.ChildGraph;
+import com.github.kuros.random.jpa.definition.HierarchyGraph;
 import com.github.kuros.random.jpa.exception.RandomJPAException;
 import com.github.kuros.random.jpa.log.LogFactory;
 import com.github.kuros.random.jpa.log.Logger;
@@ -37,20 +38,25 @@ import java.util.Set;
  */
 public final class CleanerImpl implements Cleaner {
 
+    public static final String DELETE_FROM = "DELETE FROM ";
     private EntityManager entityManager;
+    private HierarchyGraph hierarchyGraph;
     private ChildGraph childGraph;
     private Finder finder;
+    private Set<Class<?>> skipTruncation;
 
     private static final Logger LOGGER = LogFactory.getLogger(CleanerImpl.class);
 
-    private CleanerImpl(final Cache cache, final ChildGraph childGraph) {
+    private CleanerImpl(final Cache cache, final ChildGraph childGraph, final HierarchyGraph hierarchyGraph) {
         this.entityManager = cache.getEntityManager();
         this.childGraph = childGraph;
         this.finder = new Finder(cache);
+        this.skipTruncation = cache.getSkipTruncation();
+        this.hierarchyGraph = hierarchyGraph;
     }
 
-    public static Cleaner newInstance(final Cache cache, final ChildGraph childGraph) {
-        return new CleanerImpl(cache, childGraph);
+    public static Cleaner newInstance(final Cache cache, final ChildGraph childGraph, final HierarchyGraph hierarchyGraph) {
+        return new CleanerImpl(cache, childGraph, hierarchyGraph);
     }
 
     public <T, V> void delete(final Class<T> type, final V... ids) {
@@ -63,6 +69,55 @@ public final class CleanerImpl implements Cleaner {
             }
 
             deleteChilds(byId);
+        }
+    }
+
+    public void truncateAll() {
+        final Set<Class<?>> skip = getSkippedClasses();
+
+
+        final Set<Class<?>> classes = childGraph.keySet();
+        for (Class<?> aClass : classes) {
+            truncate(skip , aClass);
+        }
+    }
+
+    public void truncate(final Class<?> type) {
+        truncate(getSkippedClasses(), type);
+    }
+
+
+    private void truncate(final Set<Class<?>> skip, final Class<?> type) {
+
+        final Set<Class<?>> childs = childGraph.getChilds(type);
+        for (Class<?> child : childs) {
+            truncate(skip, child);
+        }
+
+        if (!skip.contains(type)) {
+            final int rowsDeleted = entityManager.createQuery(DELETE_FROM + type.getSimpleName()).executeUpdate();
+            skip.add(type);
+
+            LOGGER.debug("Class: " + type + " No. of rows deleted: " + rowsDeleted);
+        }
+
+    }
+
+    private Set<Class<?>> getSkippedClasses() {
+        final Set<Class<?>> skip = new HashSet<Class<?>>();
+        for (Class<?> aClass : skipTruncation) {
+            addAllParents(skip, aClass);
+        }
+
+        skip.addAll(skipTruncation);
+        return skip;
+    }
+
+    private void addAllParents(final Set<Class<?>> holder, final Class<?> type) {
+        final Set<Class<?>> parents = hierarchyGraph.getParents(type);
+        holder.addAll(parents);
+        for (Class<?> parent : parents) {
+            addAllParents(holder, parent);
         }
     }
 

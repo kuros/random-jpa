@@ -2,6 +2,7 @@ package com.github.kuros.random.jpa;
 
 import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.cache.TriggerCache;
+import com.github.kuros.random.jpa.definition.ChildGraph;
 import com.github.kuros.random.jpa.definition.CyclicValidator;
 import com.github.kuros.random.jpa.definition.HierarchyGenerator;
 import com.github.kuros.random.jpa.definition.HierarchyGeneratorImpl;
@@ -19,7 +20,10 @@ import com.github.kuros.random.jpa.types.Trigger;
 
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /*
  * Copyright (c) 2015 Kumar Rohit
@@ -45,6 +49,7 @@ public final class JPAContextFactory {
     private Generator generator;
     private Preconditions preconditions;
     private List<Trigger<?>> triggers;
+    private Set<Class<?>> skipTruncation;
 
     public static JPAContextFactory newInstance(final Database database, final EntityManager entityManager) {
         return new JPAContextFactory(database, entityManager);
@@ -57,6 +62,7 @@ public final class JPAContextFactory {
         this.generator = Generator.newInstance();
         this.dependencies = Dependencies.newInstance();
         this.triggers = new ArrayList<Trigger<?>>();
+        this.skipTruncation = new HashSet<Class<?>>();
     }
 
     public JPAContextFactory with(final Dependencies customDependencies) {
@@ -93,11 +99,17 @@ public final class JPAContextFactory {
         return this;
     }
 
+    public JPAContextFactory withSkipTruncation(final Class<?> classes) {
+        Collections.addAll(this.skipTruncation, classes);
+        return this;
+    }
+
     public JPAContext create() {
         final Cache cache = Cache
                 .create(database, entityManager)
                 .with(preconditions)
-                .with(TriggerCache.getInstance(triggers));
+                .with(TriggerCache.getInstance(triggers))
+                .withSkipTruncations(skipTruncation);
 
         final MetaModelProvider metaModelProvider = new MetaModelProviderImpl(cache);
         final List<Relation> relations = RelationCreator
@@ -108,6 +120,8 @@ public final class JPAContextFactory {
 
         final HierarchyGraph hierarchyGraph = createHierarchyGraph(relations);
         detectCyclicDependency(hierarchyGraph);
+
+        cache.with(ChildGraph.newInstance(hierarchyGraph));
         return JPAContext.newInstance(cache, generator, hierarchyGraph);
     }
 

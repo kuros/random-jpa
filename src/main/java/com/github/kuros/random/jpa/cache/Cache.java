@@ -1,6 +1,7 @@
 package com.github.kuros.random.jpa.cache;
 
 import com.github.kuros.random.jpa.Database;
+import com.github.kuros.random.jpa.definition.ChildGraph;
 import com.github.kuros.random.jpa.link.Preconditions;
 import com.github.kuros.random.jpa.metamodel.AttributeProvider;
 import com.github.kuros.random.jpa.provider.MultiplePrimaryKeyProvider;
@@ -13,6 +14,8 @@ import com.github.kuros.random.jpa.provider.factory.SQLCharacterLengthProviderFa
 import com.github.kuros.random.jpa.provider.factory.UniqueConstraintProviderFactory;
 
 import javax.persistence.EntityManager;
+import java.util.HashSet;
+import java.util.Set;
 
 /*
  * Copyright (c) 2015 Kumar Rohit
@@ -41,6 +44,8 @@ public final class Cache {
     private RelationshipProvider relationshipProvider;
     private SQLCharacterLengthProvider sqlCharacterLengthProvider;
     private UniqueConstraintProvider uniqueConstraintProvider;
+    private Set<Class<?>> skipTruncation;
+    private ChildGraph childGraph;
 
     private Cache(final Database database, final EntityManager entityManager) {
         this.database = database;
@@ -50,6 +55,7 @@ public final class Cache {
         this.relationshipProvider = initRelationshipProvider();
         this.sqlCharacterLengthProvider = initSqlCharacterLengthProvider();
         this.uniqueConstraintProvider = initUniqueConstraintProvider();
+        this.skipTruncation = new HashSet<Class<?>>();
     }
 
     public static Cache create(final Database database, final EntityManager entityManager) {
@@ -63,6 +69,16 @@ public final class Cache {
 
     public Cache with(final TriggerCache cache) {
         this.triggerCache = cache;
+        return this;
+    }
+
+    public Cache with(final ChildGraph childGraphValue) {
+        this.childGraph = childGraphValue;
+        return this;
+    }
+
+    public Cache withSkipTruncations(final Set<Class<?>> skipTruncationValue) {
+        this.skipTruncation = skipTruncationValue;
         return this;
     }
 
@@ -116,5 +132,13 @@ public final class Cache {
 
     private AttributeProvider initAttributeProvider() {
         return AttributeProvider.getInstance(entityManager);
+    }
+
+    public ChildGraph getChildGraph() {
+        return childGraph;
+    }
+
+    public Set<Class<?>> getSkipTruncation() {
+        return skipTruncation;
     }
 }

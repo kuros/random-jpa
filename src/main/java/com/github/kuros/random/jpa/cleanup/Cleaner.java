@@ -20,4 +20,7 @@ public interface Cleaner {
 
     <T, V> void delete(Class<T> type, V... ids);
 
+    void truncate(final Class<?> type);
+
+    void truncateAll();
 }

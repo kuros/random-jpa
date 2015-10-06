@@ -75,4 +75,8 @@ public final class ChildGraph {
         final Set<Relation> childRelations = childNode.getChildRelations(type);
         return childRelations == null ? new HashSet<Relation>() : childRelations;
     }
+
+    public Set<Class<?>> keySet() {
+        return childNodes.keySet();
+    }
 }

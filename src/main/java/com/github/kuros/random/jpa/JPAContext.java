@@ -3,7 +3,6 @@ package com.github.kuros.random.jpa;
 import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.cleanup.Cleaner;
 import com.github.kuros.random.jpa.cleanup.CleanerImpl;
-import com.github.kuros.random.jpa.definition.ChildGraph;
 import com.github.kuros.random.jpa.definition.HierarchyGraph;
 import com.github.kuros.random.jpa.persistor.EntityPersistorImpl;
 import com.github.kuros.random.jpa.persistor.Persistor;
@@ -85,13 +84,21 @@ public final class JPAContext {
         return persist(create(plan));
     }
 
-    public <T, V> void clean(final Class<T> type, final V... ids) {
-        final ChildGraph childGraph = ChildGraph.newInstance(hierarchyGraph);
-        final Cleaner cleaner = CleanerImpl.newInstance(cache, childGraph);
+    public <T, V> void remove(final Class<T> type, final V... ids) {
+        final Cleaner cleaner = CleanerImpl.newInstance(cache, cache.getChildGraph(), hierarchyGraph);
 
         for (V id : ids) {
             cleaner.delete(type, id);
         }
     }
 
+    public void remove(final Class<?> type) {
+        final Cleaner cleaner = CleanerImpl.newInstance(cache, cache.getChildGraph(), hierarchyGraph);
+        cleaner.truncate(type);
+    }
+
+    public void removeAll() {
+        final Cleaner cleaner = CleanerImpl.newInstance(cache, cache.getChildGraph(), hierarchyGraph);
+        cleaner.truncateAll();
+    }
 }
