@@ -1,5 +1,7 @@
 package com.github.kuros.random.jpa.random.generator;
 
+import com.github.kuros.random.jpa.log.LogFactory;
+import com.github.kuros.random.jpa.log.Logger;
 import com.github.kuros.random.jpa.random.generator.types.BigDecimalGenerator;
 import com.github.kuros.random.jpa.random.generator.types.BigIntegerGenerator;
 import com.github.kuros.random.jpa.random.generator.types.BlobGenerator;
@@ -16,6 +18,8 @@ import com.github.kuros.random.jpa.random.generator.types.ShortGenerator;
 import com.github.kuros.random.jpa.random.generator.types.StringGenerator;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -37,8 +41,17 @@ import java.util.Random;
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 public class RandomFactory {
+    private static final Logger LOGGER = LogFactory.getLogger(RandomFactory.class);
     private Map<Class<?>, RandomClassGenerator> randomClassGeneratorMap;
     private static final Random RANDOM = new Random();
+    private static boolean defaultBoolean;
+    private static byte defaultByte;
+    private static short defaultShort;
+    private static int defaultInt;
+    private static long defaultLong;
+    private static float defaultFloat;
+    private static double defaultDouble;
+    private static char defaultChar;
 
     public RandomFactory() {
         randomClassGeneratorMap = new HashMap<Class<?>, RandomClassGenerator>();
@@ -70,9 +83,7 @@ public class RandomFactory {
             t = type.newInstance();
         } catch (final Exception e) {
             try {
-                final Constructor<?>[] constructors = type.getDeclaredConstructors();
-                final int index = constructors.length > 0 ? RANDOM.nextInt(constructors.length) : 0;
-                final Constructor<?> constructor = constructors[index];
+                final Constructor<?> constructor = getConstructor(type);
                 constructor.setAccessible(true);
                 final Class<?>[] parameterTypes = constructor.getParameterTypes();
                 final Object[] initArgs = new Object[parameterTypes.length];
@@ -80,12 +91,69 @@ public class RandomFactory {
                     initArgs[i] = generateRandom(parameterTypes[i]);
                 }
                 t = (T) constructor.newInstance(initArgs);
+                setNullValues(t);
             } catch (final Exception e1) {
                 t = null;
             }
         }
 
         return t;
+    }
+
+    private <T> void setNullValues(final T t) {
+        final Class<?> type = t.getClass();
+        final Field[] declaredFields = type.getDeclaredFields();
+
+        for (Field declaredField : declaredFields) {
+            setFieldRandomValue(declaredField, t, getNullValue(declaredField.getType()));
+        }
+    }
+
+    private <T> void setFieldRandomValue(final Field field, final T randomObject, final Object value) {
+        try {
+            final int mod = field.getModifiers();
+            if ((mod & Modifier.FINAL) == 0 && (mod & Modifier.STATIC) == 0) {
+                field.setAccessible(true);
+                field.set(randomObject, value);
+            }
+        } catch (final IllegalAccessException e) {
+            LOGGER.debug("Unable to access field: " + field);
+        }
+    }
+
+    private <T> Constructor<?> getConstructor(final Class<T> type) {
+        final Constructor<?>[] constructors = type.getDeclaredConstructors();
+        Constructor value = constructors[0];
+        for (Constructor<?> constructor : constructors) {
+            if (constructor.getParameterTypes().length < value.getParameterTypes().length) {
+                value = constructor;
+            }
+        }
+        return value;
+    }
+
+    private Object getNullValue(final Class<?> type) {
+        Object obj = null;
+        if (type.isPrimitive()) {
+            if (Boolean.TYPE == type) {
+                obj = defaultBoolean;
+            } else if (Character.TYPE == type) {
+                obj = defaultChar;
+            } else if (Byte.TYPE == type) {
+                obj = defaultByte;
+            } else if (Short.TYPE == type) {
+                obj = defaultShort;
+            } else if (Integer.TYPE == type) {
+                obj = defaultInt;
+            } else if (Long.TYPE == type) {
+                obj = defaultLong;
+            } else if (Double.TYPE == type) {
+                obj = defaultDouble;
+            } else if (Float.TYPE == type) {
+                obj = defaultFloat;
+            }
+        }
+        return obj;
     }
 
     private void init() {

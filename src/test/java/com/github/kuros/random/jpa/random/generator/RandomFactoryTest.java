@@ -41,25 +41,34 @@ public class RandomFactoryTest {
         assertNotNull(randomFactory.generateRandom(BigInteger.class));
         assertNotNull(randomFactory.generateRandom(Blob.class));
         assertNotNull(randomFactory.generateRandom(Boolean.class));
+        assertNotNull(randomFactory.generateRandom(Boolean.TYPE));
         assertNotNull(randomFactory.generateRandom(Byte.class));
+        assertNotNull(randomFactory.generateRandom(Byte.TYPE));
         assertNotNull(randomFactory.generateRandom(Character.class));
+        assertNotNull(randomFactory.generateRandom(Character.TYPE));
         assertNotNull(randomFactory.generateRandom(Clob.class));
         assertNotNull(randomFactory.generateRandom(Date.class));
         assertNotNull(randomFactory.generateRandom(Calendar.class));
         assertNotNull(randomFactory.generateRandom(Time.class));
         assertNotNull(randomFactory.generateRandom(Timestamp.class));
         assertNotNull(randomFactory.generateRandom(Double.class));
+        assertNotNull(randomFactory.generateRandom(Double.TYPE));
         assertNotNull(randomFactory.generateRandom(Float.class));
+        assertNotNull(randomFactory.generateRandom(Float.TYPE));
         assertNotNull(randomFactory.generateRandom(Integer.class));
+        assertNotNull(randomFactory.generateRandom(Integer.TYPE));
         assertNotNull(randomFactory.generateRandom(Long.class));
+        assertNotNull(randomFactory.generateRandom(Long.TYPE));
         assertNotNull(randomFactory.generateRandom(Number.class));
         assertNotNull(randomFactory.generateRandom(Short.class));
+        assertNotNull(randomFactory.generateRandom(Short.TYPE));
         assertNotNull(randomFactory.generateRandom(String.class));
 
         assertNotNull(randomFactory.generateRandom(Person.class));
         assertNotNull(randomFactory.generateRandom(PrivateConstructorClass.class));
         assertNotNull(randomFactory.generateRandom(TestEnum.class));
         assertNotNull(randomFactory.generateRandom(PrivateConstructorWithStaticMethodClass.class));
+        assertNotNull(randomFactory.generateRandom(ClassAsParameter.class));
 
 
     }
@@ -71,7 +80,7 @@ public class RandomFactoryTest {
         private PrivateConstructorClass() {
         }
 
-        public PrivateConstructorClass(final int i) {
+        PrivateConstructorClass(final int i) {
             this.i = i;
         }
     }
@@ -91,6 +100,14 @@ public class RandomFactoryTest {
         public PrivateConstructorWithStaticMethodClass setS(final String s1) {
             this.s = s1;
             return this;
+        }
+    }
+
+    private final static class ClassAsParameter {
+        private PrivateConstructorWithStaticMethodClass methodClass;
+
+        ClassAsParameter(final PrivateConstructorWithStaticMethodClass methodClass) {
+            this.methodClass = methodClass;
         }
     }
 
