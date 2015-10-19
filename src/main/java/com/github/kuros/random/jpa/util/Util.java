@@ -40,14 +40,15 @@ public class Util {
                 final Field declaredField = declaredFields[i];
                 declaredField.setAccessible(true);
                 final Object value = declaredField.get(object);
+                final String s = String.valueOf(value);
                 builder.append(declaredField.getName())
                         .append(": ")
-                        .append(value);
+                        .append(s);
                 if (i != declaredFields.length - 1) {
                     builder.append(", ");
                 }
-            } catch (final IllegalAccessException e) {
-                throw new RandomJPAException(e);
+            } catch (final Exception e) {
+                // Skip
             }
         }
 

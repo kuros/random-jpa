@@ -38,12 +38,15 @@ import java.util.Set;
  */
 public final class CleanerImpl implements Cleaner {
 
+    public static final int BATCH_SIZE = 10;
     public static final String DELETE_FROM = "DELETE FROM ";
     private EntityManager entityManager;
     private HierarchyGraph hierarchyGraph;
     private ChildGraph childGraph;
     private Finder finder;
     private Set<Class<?>> skipTruncation;
+    private int batchCounter;
+    private Cache cache;
 
     private static final Logger LOGGER = LogFactory.getLogger(CleanerImpl.class);
 
@@ -53,7 +56,10 @@ public final class CleanerImpl implements Cleaner {
         this.finder = new Finder(cache);
         this.skipTruncation = cache.getSkipTruncation();
         this.hierarchyGraph = hierarchyGraph;
+        this.batchCounter = 0;
+        this.cache = cache;
     }
+
 
     public static Cleaner newInstance(final Cache cache, final ChildGraph childGraph, final HierarchyGraph hierarchyGraph) {
         return new CleanerImpl(cache, childGraph, hierarchyGraph);
@@ -183,10 +189,14 @@ public final class CleanerImpl implements Cleaner {
 
     public <T> void delete(final T t) {
         try {
+            batchCounter++;
+            LOGGER.debug("Deleting Entity: " + t.getClass() + Util.printEntityId(cache, t));
             entityManager.remove(t);
-            LOGGER.debug("Deleted Entity: " + t.getClass() + Util.printValues(t));
+            if (batchCounter % BATCH_SIZE == 0) {
+                entityManager.flush();
+            }
         } catch (final Exception e) {
-            LOGGER.error("Unable to delete: " + t.getClass() + Util.printValues(t));
+            LOGGER.error("Unable to delete: " + t.getClass() + Util.printEntityId(cache, t));
         }
     }
 
