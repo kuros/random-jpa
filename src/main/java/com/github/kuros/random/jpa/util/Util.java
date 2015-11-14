@@ -1,7 +1,6 @@
 package com.github.kuros.random.jpa.util;
 
 import com.github.kuros.random.jpa.cache.Cache;
-import com.github.kuros.random.jpa.exception.RandomJPAException;
 import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
 
 import java.lang.reflect.Field;
@@ -62,33 +61,36 @@ public class Util {
             return "";
         }
 
-        final Class<?> type = object.getClass();
-        final EntityTableMapping entityTableMapping = cache.getAttributeProvider().get(type);
-        final List<String> attributeIds = entityTableMapping.getAttributeIds();
+        try {
+            final Class<?> type = object.getClass();
+            final EntityTableMapping entityTableMapping = cache.getAttributeProvider().get(type);
+            final List<String> attributeIds = entityTableMapping.getAttributeIds();
 
-        final StringBuilder builder = new StringBuilder();
-        builder.append("[");
+            final StringBuilder builder = new StringBuilder();
+            builder.append("[");
 
-        for (int i = 0; i < attributeIds.size(); i++) {
-            try {
-                final String attribute = attributeIds.get(i);
-                final Field declaredField = getField(type, attribute);
-                declaredField.setAccessible(true);
-                final Object value = declaredField.get(object);
-                builder.append(declaredField.getName())
-                        .append(": ")
-                        .append(value);
-                if (i != attributeIds.size() - 1) {
-                    builder.append(", ");
+            for (int i = 0; i < attributeIds.size(); i++) {
+                try {
+                    final String attribute = attributeIds.get(i);
+                    final Field declaredField = getField(type, attribute);
+                    declaredField.setAccessible(true);
+                    final Object value = declaredField.get(object);
+                    builder.append(declaredField.getName())
+                            .append(": ")
+                            .append(value);
+                    if (i != attributeIds.size() - 1) {
+                        builder.append(", ");
+                    }
+                } catch (final Exception e) {
                 }
-            } catch (final Exception e) {
-                throw new RandomJPAException(e);
             }
+
+            builder.append("]");
+
+            return builder.toString();
+        } catch (final Exception e) {
+            return "";
         }
-
-        builder.append("]");
-
-        return builder.toString();
     }
 
     public static Field getField(final Class<?> tableClass, final String attribute) throws NoSuchFieldException {
