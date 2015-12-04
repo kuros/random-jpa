@@ -8,6 +8,7 @@ import com.github.kuros.random.jpa.persistor.EntityPersistorImpl;
 import com.github.kuros.random.jpa.persistor.Persistor;
 import com.github.kuros.random.jpa.persistor.model.ResultMap;
 import com.github.kuros.random.jpa.persistor.model.ResultMapImpl;
+import com.github.kuros.random.jpa.random.Randomize;
 import com.github.kuros.random.jpa.random.RandomizeImpl;
 import com.github.kuros.random.jpa.random.generator.Generator;
 import com.github.kuros.random.jpa.random.generator.RandomGenerator;
@@ -57,7 +58,7 @@ public final class JPAContext {
 
     public CreationPlan create(final Plan plan) {
 
-        final RandomizeImpl randomize = getRandomizer(plan);
+        final Randomize randomize = getRandomizer(plan);
         final CreationOrderResolver creationOrderResolver = CreationOrderResolverImpl.newInstance(cache, hierarchyGraph, plan);
         final CreationOrder creationOrder = creationOrderResolver.getCreationOrder();
 
@@ -66,7 +67,7 @@ public final class JPAContext {
         return creationPlanResolver.create();
     }
 
-    private RandomizeImpl getRandomizer(final Plan plan) {
+    private Randomize getRandomizer(final Plan plan) {
         final RandomizeImpl randomize = RandomizeImpl.newInstance(cache, generator);
         final EntityResolver entityResolver = EntityResolverImpl.newInstance(cache, hierarchyGraph, plan);
         randomize.addFieldValue(entityResolver.getFieldValueMap());
@@ -74,6 +75,7 @@ public final class JPAContext {
         return randomize;
     }
 
+    @Deprecated
     public ResultMap persist(final CreationPlan creationPlan) {
         final CreationPlanImpl creationPlanImpl = (CreationPlanImpl) creationPlan;
         final Persistor persistor = EntityPersistorImpl.newInstance(cache, creationPlanImpl.getRandomize());
