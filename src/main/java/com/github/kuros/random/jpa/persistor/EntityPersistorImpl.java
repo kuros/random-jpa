@@ -6,7 +6,6 @@ import com.github.kuros.random.jpa.mapper.Relation;
 import com.github.kuros.random.jpa.persistor.functions.FunctionProcessor;
 import com.github.kuros.random.jpa.persistor.model.ResultNodeTree;
 import com.github.kuros.random.jpa.random.Randomize;
-import com.github.kuros.random.jpa.types.CreationOrder;
 import com.github.kuros.random.jpa.types.CreationPlan;
 import com.github.kuros.random.jpa.types.Node;
 import com.github.kuros.random.jpa.types.ResultNode;
@@ -56,14 +55,7 @@ public final class EntityPersistorImpl implements Persistor {
 
         final Node creationPlanRoot = creationPlan.getRoot();
         final List<Node> childNodes = creationPlanRoot.getChildNodes();
-        for (Node node : childNodes) {
-            if (node.getValue() != null) {
-                final ResultNode childNode = ResultNode.newInstance(node.getType(), getIndex(resultNodeTree, node.getType()));
-                root.addChildNode(childNode);
-                persist(childNode, creationPlan.getCreationOrder(), resultNodeTree, node);
-            }
-        }
-
+        persist(root, resultNodeTree, childNodes);
         return resultNodeTree;
     }
 
@@ -77,8 +69,8 @@ public final class EntityPersistorImpl implements Persistor {
     }
 
     @SuppressWarnings("unchecked")
-    private void persist(final ResultNode resultNode, final CreationOrder creationOrder, final ResultNodeTree resultNodeTree, final Node node) {
-        final Object random = createRandomObject(node, creationOrder, resultNodeTree);
+    private void persist(final ResultNode resultNode, final ResultNodeTree resultNodeTree, final Node node) {
+        final Object random = createRandomObject(node, resultNodeTree);
 
         final Object persistedObject = functionProcessor.findOrSave(random);
 
@@ -86,20 +78,24 @@ public final class EntityPersistorImpl implements Persistor {
         resultNodeTree.put(node.getType(), persistedObject);
 
         final List<Node> childNodes = node.getChildNodes();
+        persist(resultNode, resultNodeTree, childNodes);
+
+    }
+
+    private void persist(final ResultNode resultNode, final ResultNodeTree resultNodeTree, final List<Node> childNodes) {
         for (Node childNode : childNodes) {
             if (childNode.getValue() != null) {
                 final ResultNode resultChildNode = ResultNode.newInstance(childNode.getType(), getIndex(resultNodeTree, childNode.getType()));
                 resultNode.addChildNode(resultChildNode);
-                persist(resultChildNode, creationOrder, resultNodeTree, childNode);
+                persist(resultChildNode, resultNodeTree, childNode);
             }
         }
-
     }
 
-    private Object createRandomObject(final Node node, final CreationOrder creationOrder, final ResultNodeTree resultNodeTree) {
+    private Object createRandomObject(final Node node, final ResultNodeTree resultNodeTree) {
         final Object random = node.getValue();
 
-        final TableNode tableNode = creationOrder.getTableNode(node.getType());
+        final TableNode tableNode = getTableNode(node.getType());
         if (tableNode != null) {
             final List<Relation> relations = tableNode.getRelations();
 
@@ -109,6 +105,10 @@ public final class EntityPersistorImpl implements Persistor {
         }
 
         return randomize.populateRandomFields(random);
+    }
+
+    private TableNode getTableNode(final Class<?> type) {
+        return cache.getHierarchyGraph().getParentRelations().get(type);
     }
 
     private void createRelation(final ResultNodeTree resultNodeTree, final Relation relation, final Object object) {

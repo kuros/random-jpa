@@ -50,19 +50,19 @@ public final class CleanerImpl implements Cleaner {
 
     private static final Logger LOGGER = LogFactory.getLogger(CleanerImpl.class);
 
-    private CleanerImpl(final Cache cache, final ChildGraph childGraph, final HierarchyGraph hierarchyGraph) {
+    private CleanerImpl(final Cache cache) {
         this.entityManager = cache.getEntityManager();
-        this.childGraph = childGraph;
+        this.childGraph = ChildGraph.newInstance(cache.getHierarchyGraph());
         this.finder = new Finder(cache);
         this.skipTruncation = cache.getSkipTruncation();
-        this.hierarchyGraph = hierarchyGraph;
+        this.hierarchyGraph = cache.getHierarchyGraph();
         this.batchCounter = 0;
         this.cache = cache;
     }
 
 
-    public static Cleaner newInstance(final Cache cache, final ChildGraph childGraph, final HierarchyGraph hierarchyGraph) {
-        return new CleanerImpl(cache, childGraph, hierarchyGraph);
+    public static Cleaner newInstance(final Cache cache) {
+        return new CleanerImpl(cache);
     }
 
     public <T, V> void delete(final Class<T> type, final V... ids) {

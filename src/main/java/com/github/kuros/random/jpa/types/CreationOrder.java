@@ -1,8 +1,5 @@
 package com.github.kuros.random.jpa.types;
 
-import com.github.kuros.random.jpa.definition.HierarchyGraph;
-import com.github.kuros.random.jpa.definition.TableNode;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,18 +22,16 @@ import java.util.Map;
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 public final class CreationOrder {
-    private final HierarchyGraph hierarchyGraph;
     private List<Class<?>> order;
     private Map<Class<?>, Integer> creationCount;
 
-    private CreationOrder(final HierarchyGraph hierarchyGraph) {
+    private CreationOrder() {
         this.order = new ArrayList<Class<?>>();
-        this.hierarchyGraph = hierarchyGraph;
-        creationCount = new HashMap<Class<?>, Integer>();
+        this.creationCount = new HashMap<Class<?>, Integer>();
     }
 
-    public static CreationOrder newInstance(final HierarchyGraph hierarchyGraph) {
-        return new CreationOrder(hierarchyGraph);
+    public static CreationOrder newInstance() {
+        return new CreationOrder();
     }
 
     public void add(final Class<?> type) {
@@ -57,9 +52,5 @@ public final class CreationOrder {
 
     public boolean contains(final Class<?> type) {
         return order.contains(type);
-    }
-
-    public TableNode getTableNode(final Class<?> type) {
-        return hierarchyGraph.getParentRelations().get(type);
     }
 }

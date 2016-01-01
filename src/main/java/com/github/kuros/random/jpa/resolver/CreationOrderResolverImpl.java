@@ -36,18 +36,18 @@ public final class CreationOrderResolverImpl implements CreationOrderResolver {
     private final HierarchyGraph hierarchyGraph;
     private final Preconditions planLevelPreconditions;
 
-    private CreationOrderResolverImpl(final Cache cache, final HierarchyGraph hierarchyGraph, final Preconditions planLevelPreconditions) {
+    private CreationOrderResolverImpl(final Cache cache, final Preconditions planLevelPreconditions) {
         this.cache = cache;
-        this.hierarchyGraph = hierarchyGraph;
+        this.hierarchyGraph = cache.getHierarchyGraph();
         this.planLevelPreconditions = planLevelPreconditions;
     }
 
-    public static CreationOrderResolver newInstance(final Cache cache, final HierarchyGraph hierarchyGraph, final Preconditions planLevelPreconditions) {
-        return new CreationOrderResolverImpl(cache, hierarchyGraph, planLevelPreconditions);
+    public static CreationOrderResolver newInstance(final Cache cache, final Preconditions planLevelPreconditions) {
+        return new CreationOrderResolverImpl(cache, planLevelPreconditions);
     }
 
     public CreationOrder getCreationOrder(final List<Entity> entities) {
-        final CreationOrder creationOrder = CreationOrder.newInstance(hierarchyGraph);
+        final CreationOrder creationOrder = CreationOrder.newInstance();
         for (Entity entity : entities) {
             final Class type = entity.getType();
             addCreationCount(creationOrder, entity);
@@ -98,7 +98,7 @@ public final class CreationOrderResolverImpl implements CreationOrderResolver {
     private void adjustEntityInCreationOrder(final CreationOrder creationOrder, final Plan preConditionPlan) throws ClassNotFoundException {
         for (Entity entity : preConditionPlan.getEntities()) {
 
-            final CreationOrder tempCreationOrder = CreationOrder.newInstance(hierarchyGraph);
+            final CreationOrder tempCreationOrder = CreationOrder.newInstance();
             generateCreationOrder(tempCreationOrder, entity.getType());
             final List<Class<?>> newOrder = tempCreationOrder.getOrder();
             final List<Class<?>> createdOrder = creationOrder.getOrder();

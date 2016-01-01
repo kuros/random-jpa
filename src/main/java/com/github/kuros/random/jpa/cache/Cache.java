@@ -1,7 +1,7 @@
 package com.github.kuros.random.jpa.cache;
 
 import com.github.kuros.random.jpa.Database;
-import com.github.kuros.random.jpa.definition.ChildGraph;
+import com.github.kuros.random.jpa.definition.HierarchyGraph;
 import com.github.kuros.random.jpa.link.Preconditions;
 import com.github.kuros.random.jpa.metamodel.AttributeProvider;
 import com.github.kuros.random.jpa.provider.MultiplePrimaryKeyProvider;
@@ -45,7 +45,7 @@ public final class Cache {
     private SQLCharacterLengthProvider sqlCharacterLengthProvider;
     private UniqueConstraintProvider uniqueConstraintProvider;
     private Set<Class<?>> skipTruncation;
-    private ChildGraph childGraph;
+    private HierarchyGraph hierarchyGraph;
 
     private Cache(final Database database, final EntityManager entityManager) {
         this.database = database;
@@ -72,8 +72,8 @@ public final class Cache {
         return this;
     }
 
-    public Cache with(final ChildGraph childGraphValue) {
-        this.childGraph = childGraphValue;
+    public Cache with(final HierarchyGraph hierarchyGraphValue) {
+        this.hierarchyGraph = hierarchyGraph;
         return this;
     }
 
@@ -134,11 +134,11 @@ public final class Cache {
         return AttributeProvider.getInstance(entityManager);
     }
 
-    public ChildGraph getChildGraph() {
-        return childGraph;
-    }
-
     public Set<Class<?>> getSkipTruncation() {
         return skipTruncation;
+    }
+
+    public HierarchyGraph getHierarchyGraph() {
+        return hierarchyGraph;
     }
 }

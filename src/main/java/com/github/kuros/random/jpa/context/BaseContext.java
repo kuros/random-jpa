@@ -4,7 +4,6 @@ import com.github.kuros.random.jpa.JPAContext;
 import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.cleanup.Cleaner;
 import com.github.kuros.random.jpa.cleanup.CleanerImpl;
-import com.github.kuros.random.jpa.definition.HierarchyGraph;
 import com.github.kuros.random.jpa.persistor.EntityPersistorImpl;
 import com.github.kuros.random.jpa.persistor.Persistor;
 import com.github.kuros.random.jpa.persistor.model.ResultMap;
@@ -37,19 +36,17 @@ import com.github.kuros.random.jpa.util.AttributeHelper;
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 public abstract class BaseContext implements JPAContext {
-    private HierarchyGraph hierarchyGraph;
     private RandomGenerator generator;
     private Cache cache;
 
-    public BaseContext(final Cache cache, final Generator generator, final HierarchyGraph hierarchyGraph) {
+    public BaseContext(final Cache cache, final Generator generator) {
         this.generator = RandomGenerator.newInstance(cache, generator);
         this.cache = cache;
-        this.hierarchyGraph = hierarchyGraph;
     }
 
     protected Randomize getRandomizer(final Plan plan) {
         final RandomizeImpl randomize = RandomizeImpl.newInstance(cache, generator);
-        final EntityResolver entityResolver = EntityResolverImpl.newInstance(cache, hierarchyGraph, plan);
+        final EntityResolver entityResolver = EntityResolverImpl.newInstance(cache, plan);
         randomize.addFieldValue(entityResolver.getFieldValueMap());
         randomize.setNullValueFields(AttributeHelper.getFields(plan.getNullValueAttributes()));
         return randomize;
@@ -66,7 +63,7 @@ public abstract class BaseContext implements JPAContext {
     }
 
     public <T, V> void remove(final Class<T> type, final V... ids) {
-        final Cleaner cleaner = CleanerImpl.newInstance(cache, cache.getChildGraph(), hierarchyGraph);
+        final Cleaner cleaner = CleanerImpl.newInstance(cache);
 
         for (V id : ids) {
             cleaner.delete(type, id);
@@ -74,17 +71,13 @@ public abstract class BaseContext implements JPAContext {
     }
 
     public void remove(final Class<?> type) {
-        final Cleaner cleaner = CleanerImpl.newInstance(cache, cache.getChildGraph(), hierarchyGraph);
+        final Cleaner cleaner = CleanerImpl.newInstance(cache);
         cleaner.truncate(type);
     }
 
     public void removeAll() {
-        final Cleaner cleaner = CleanerImpl.newInstance(cache, cache.getChildGraph(), hierarchyGraph);
+        final Cleaner cleaner = CleanerImpl.newInstance(cache);
         cleaner.truncateAll();
-    }
-
-    protected HierarchyGraph getHierarchyGraph() {
-        return hierarchyGraph;
     }
 
     protected RandomGenerator getGenerator() {

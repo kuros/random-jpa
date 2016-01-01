@@ -56,16 +56,16 @@ public final class EntityResolverImpl implements EntityResolver {
     private final Plan entityList;
     private AttributeProvider attributeProvider;
 
-    private EntityResolverImpl(final Cache cache, final HierarchyGraph hierarchyGraph, final Plan plan) {
+    private EntityResolverImpl(final Cache cache, final Plan plan) {
         this.entityList = plan;
         this.entityManager = cache.getEntityManager();
-        this.hierarchyGraph = hierarchyGraph;
+        this.hierarchyGraph = cache.getHierarchyGraph();
         this.attributeProvider = cache.getAttributeProvider();
     }
 
 
-    public static EntityResolverImpl newInstance(final Cache cache, final HierarchyGraph hierarchyGraph, final Plan plan) {
-        return new EntityResolverImpl(cache, hierarchyGraph, plan);
+    public static EntityResolverImpl newInstance(final Cache cache, final Plan plan) {
+        return new EntityResolverImpl(cache, plan);
     }
 
     @SuppressWarnings("unchecked")

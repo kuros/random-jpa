@@ -3,7 +3,6 @@ package com.github.kuros.random.jpa;
 import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.cache.TriggerCache;
 import com.github.kuros.random.jpa.context.JPAContextV1;
-import com.github.kuros.random.jpa.definition.ChildGraph;
 import com.github.kuros.random.jpa.definition.CyclicValidator;
 import com.github.kuros.random.jpa.definition.HierarchyGenerator;
 import com.github.kuros.random.jpa.definition.HierarchyGeneratorImpl;
@@ -122,8 +121,8 @@ public final class JPAContextFactory {
         final HierarchyGraph hierarchyGraph = createHierarchyGraph(relations);
         detectCyclicDependency(hierarchyGraph);
 
-        cache.with(ChildGraph.newInstance(hierarchyGraph));
-        return JPAContextV1.newInstance(cache, generator, hierarchyGraph);
+        cache.with(hierarchyGraph);
+        return JPAContextV1.newInstance(cache, generator);
     }
 
     private HierarchyGraph createHierarchyGraph(final List<Relation> relations) {
