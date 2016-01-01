@@ -1,5 +1,6 @@
-package com.github.kuros.random.jpa;
+package com.github.kuros.random.jpa.context;
 
+import com.github.kuros.random.jpa.JPAContext;
 import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.cleanup.Cleaner;
 import com.github.kuros.random.jpa.cleanup.CleanerImpl;
@@ -12,12 +13,8 @@ import com.github.kuros.random.jpa.random.Randomize;
 import com.github.kuros.random.jpa.random.RandomizeImpl;
 import com.github.kuros.random.jpa.random.generator.Generator;
 import com.github.kuros.random.jpa.random.generator.RandomGenerator;
-import com.github.kuros.random.jpa.resolver.CreationOrderResolver;
-import com.github.kuros.random.jpa.resolver.CreationOrderResolverImpl;
-import com.github.kuros.random.jpa.resolver.CreationPlanResolver;
 import com.github.kuros.random.jpa.resolver.EntityResolver;
 import com.github.kuros.random.jpa.resolver.EntityResolverImpl;
-import com.github.kuros.random.jpa.types.CreationOrder;
 import com.github.kuros.random.jpa.types.CreationPlan;
 import com.github.kuros.random.jpa.types.CreationPlanImpl;
 import com.github.kuros.random.jpa.types.Plan;
@@ -39,35 +36,18 @@ import com.github.kuros.random.jpa.util.AttributeHelper;
  *    You should have received a copy of the GNU Lesser General Public License
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-public final class JPAContextV1 implements JPAContext {
-
+public abstract class BaseContext implements JPAContext {
     private HierarchyGraph hierarchyGraph;
     private RandomGenerator generator;
     private Cache cache;
 
-    static JPAContext newInstance(final Cache cache,
-                                  final Generator generator, final HierarchyGraph hierarchyGraph) {
-        return new JPAContextV1( cache, generator, hierarchyGraph);
-    }
-
-    private JPAContextV1(final Cache cache, final Generator generator, final HierarchyGraph hierarchyGraph) {
+    public BaseContext(final Cache cache, final Generator generator, final HierarchyGraph hierarchyGraph) {
+        this.generator = RandomGenerator.newInstance(cache, generator);
         this.cache = cache;
         this.hierarchyGraph = hierarchyGraph;
-        this.generator = RandomGenerator.newInstance(cache, generator);
     }
 
-    public CreationPlan create(final Plan plan) {
-
-        final Randomize randomize = getRandomizer(plan);
-        final CreationOrderResolver creationOrderResolver = CreationOrderResolverImpl.newInstance(cache, hierarchyGraph, plan);
-        final CreationOrder creationOrder = creationOrderResolver.getCreationOrder();
-
-        final CreationPlanResolver creationPlanResolver = CreationPlanResolver.newInstance(creationOrder, randomize);
-
-        return creationPlanResolver.create();
-    }
-
-    private Randomize getRandomizer(final Plan plan) {
+    protected Randomize getRandomizer(final Plan plan) {
         final RandomizeImpl randomize = RandomizeImpl.newInstance(cache, generator);
         final EntityResolver entityResolver = EntityResolverImpl.newInstance(cache, hierarchyGraph, plan);
         randomize.addFieldValue(entityResolver.getFieldValueMap());
@@ -101,5 +81,17 @@ public final class JPAContextV1 implements JPAContext {
     public void removeAll() {
         final Cleaner cleaner = CleanerImpl.newInstance(cache, cache.getChildGraph(), hierarchyGraph);
         cleaner.truncateAll();
+    }
+
+    protected HierarchyGraph getHierarchyGraph() {
+        return hierarchyGraph;
+    }
+
+    protected RandomGenerator getGenerator() {
+        return generator;
+    }
+
+    protected Cache getCache() {
+        return cache;
     }
 }

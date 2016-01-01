@@ -2,6 +2,7 @@ package com.github.kuros.random.jpa;
 
 import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.cache.TriggerCache;
+import com.github.kuros.random.jpa.context.JPAContextV1;
 import com.github.kuros.random.jpa.definition.ChildGraph;
 import com.github.kuros.random.jpa.definition.CyclicValidator;
 import com.github.kuros.random.jpa.definition.HierarchyGenerator;
