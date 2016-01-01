@@ -40,8 +40,8 @@ public final class JPAContextV1 extends BaseContext {
 
     public CreationPlan create(final Plan plan) {
 
-        final CreationOrderResolver creationOrderResolver = CreationOrderResolverImpl.newInstance(getCache(), getHierarchyGraph(), plan);
-        final CreationOrder creationOrder = creationOrderResolver.getCreationOrder();
+        final CreationOrderResolver creationOrderResolver = CreationOrderResolverImpl.newInstance(getCache(), getHierarchyGraph(), plan.getPreconditions());
+        final CreationOrder creationOrder = creationOrderResolver.getCreationOrder(plan.getEntities());
 
         final CreationPlanResolver creationPlanResolver = CreationPlanResolver.newInstance(creationOrder, getRandomizer(plan));
 

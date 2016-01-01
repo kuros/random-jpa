@@ -34,22 +34,20 @@ public final class CreationOrderResolverImpl implements CreationOrderResolver {
 
     private final Cache cache;
     private final HierarchyGraph hierarchyGraph;
-    private final Plan plan;
+    private final Preconditions planLevelPreconditions;
 
-
-    private CreationOrderResolverImpl(final Cache cache, final HierarchyGraph hierarchyGraph, final Plan plan) {
+    private CreationOrderResolverImpl(final Cache cache, final HierarchyGraph hierarchyGraph, final Preconditions planLevelPreconditions) {
         this.cache = cache;
         this.hierarchyGraph = hierarchyGraph;
-        this.plan = plan;
+        this.planLevelPreconditions = planLevelPreconditions;
     }
 
-    public static CreationOrderResolver newInstance(final Cache cache, final HierarchyGraph hierarchyGraph, final Plan plan) {
-        return new CreationOrderResolverImpl(cache, hierarchyGraph, plan);
+    public static CreationOrderResolver newInstance(final Cache cache, final HierarchyGraph hierarchyGraph, final Preconditions planLevelPreconditions) {
+        return new CreationOrderResolverImpl(cache, hierarchyGraph, planLevelPreconditions);
     }
 
-    public CreationOrder getCreationOrder() {
+    public CreationOrder getCreationOrder(final List<Entity> entities) {
         final CreationOrder creationOrder = CreationOrder.newInstance(hierarchyGraph);
-        final List<Entity> entities = plan.getEntities();
         for (Entity entity : entities) {
             final Class type = entity.getType();
             addCreationCount(creationOrder, entity);
@@ -61,21 +59,20 @@ public final class CreationOrderResolverImpl implements CreationOrderResolver {
             }
         }
 
-        applyPlanLevelPrecondition(plan, creationOrder);
+        applyPlanLevelPrecondition(creationOrder);
 
         return creationOrder;
     }
 
-    private void applyPlanLevelPrecondition(final Plan planModel, final CreationOrder creationOrder) {
-        final Preconditions preconditions = planModel.getPreconditions();
-        final Set<Class<?>> identifiers = preconditions.getIdentifiers();
+    private void applyPlanLevelPrecondition(final CreationOrder creationOrder) {
+        final Set<Class<?>> identifiers = planLevelPreconditions.getIdentifiers();
 
         for (Class<?> identifier : identifiers) {
             if (!creationOrder.contains(identifier)) {
                 continue;
             }
 
-            final Plan preConditionPlan = preconditions.getPlan(identifier);
+            final Plan preConditionPlan = planLevelPreconditions.getPlan(identifier);
             try {
                 adjustEntityInCreationOrder(creationOrder, preConditionPlan);
             } catch (final ClassNotFoundException e) {

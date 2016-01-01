@@ -1,6 +1,9 @@
 package com.github.kuros.random.jpa.resolver;
 
 import com.github.kuros.random.jpa.types.CreationOrder;
+import com.github.kuros.random.jpa.types.Entity;
+
+import java.util.List;
 
 /*
  * Copyright (c) 2015 Kumar Rohit
@@ -19,5 +22,5 @@ import com.github.kuros.random.jpa.types.CreationOrder;
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 public interface CreationOrderResolver {
-    CreationOrder getCreationOrder();
+    CreationOrder getCreationOrder(final List<Entity> entities);
 }
