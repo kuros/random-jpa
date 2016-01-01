@@ -75,7 +75,6 @@ public final class JPAContext {
         return randomize;
     }
 
-    @Deprecated
     public ResultMap persist(final CreationPlan creationPlan) {
         final CreationPlanImpl creationPlanImpl = (CreationPlanImpl) creationPlan;
         final Persistor persistor = EntityPersistorImpl.newInstance(cache, creationPlanImpl.getRandomize());
