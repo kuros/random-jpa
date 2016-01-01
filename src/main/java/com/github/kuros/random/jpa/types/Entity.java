@@ -1,5 +1,7 @@
 package com.github.kuros.random.jpa.types;
 
+import com.github.kuros.random.jpa.exception.RandomJPAException;
+
 import javax.persistence.metamodel.Attribute;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,9 +33,16 @@ public final class Entity<T> {
     }
 
     private Entity(final Class<T> type, final int count) {
+        validate(count);
         this.type = type;
         this.attributeValues = new ArrayList<AttributeValue>();
         this.count = count;
+    }
+
+    private void validate(final int entityCount) {
+        if (entityCount < 1) {
+            throw new RandomJPAException("Illegal Argument: count should be greater than 0");
+        }
     }
 
     public static <T> Entity<T> of(final Class<T> type) {
