@@ -29,14 +29,12 @@ import java.util.Map;
 public final class CreationPlanResolver {
 
     private CreationOrder creationOrder;
-    private List<Class<?>> order;
     private Map<Class<?>, Integer> creationCount;
     private CreationPlan creationPlan;
     private Randomize randomize;
 
     private CreationPlanResolver(final CreationOrder creationOrder, final Randomize randomize) {
         this.creationOrder = creationOrder;
-        this.order = creationOrder.getOrder();
         this.creationCount = creationOrder.getCreationCount();
         this.randomize = randomize;
     }
@@ -48,13 +46,13 @@ public final class CreationPlanResolver {
     public CreationPlan create() {
         creationPlan = new CreationPlanImpl(creationOrder, randomize);
 
-        add(creationPlan.getRoot(), 0);
+        add(creationOrder.getOrder(), creationPlan.getRoot(), 0);
 
         return creationPlan;
     }
 
     @SuppressWarnings("unchecked")
-    private void add(final Node node, final int index) {
+    private void add(final List<Class<?>> order, final Node node, final int index) {
         if (index >= order.size()) {
             return;
         }
@@ -70,7 +68,7 @@ public final class CreationPlanResolver {
             childNode.setValue(randomObject);
             node.addChildNode(childNode);
             addToCreatedNode(type, childNode);
-            add(childNode, index + 1);
+            add(order, childNode, index + 1);
         }
     }
 
