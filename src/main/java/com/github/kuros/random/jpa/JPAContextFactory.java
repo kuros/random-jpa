@@ -122,7 +122,7 @@ public final class JPAContextFactory {
         detectCyclicDependency(hierarchyGraph);
 
         cache.with(ChildGraph.newInstance(hierarchyGraph));
-        return JPAContext.newInstance(cache, generator, hierarchyGraph);
+        return JPAContextV1.newInstance(cache, generator, hierarchyGraph);
     }
 
     private HierarchyGraph createHierarchyGraph(final List<Relation> relations) {
