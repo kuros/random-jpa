@@ -40,6 +40,15 @@ public final class Plan {
         return new Plan();
     }
 
+    public static Plan of(final Entity<?>... entities) {
+        final Plan plan = new Plan();
+        for (Entity<?> entity : entities) {
+            plan.add(entity);
+        }
+
+        return plan;
+    }
+
     public <T> Plan add(final Entity<T> entity) {
         entities.add(entity);
         return this;
