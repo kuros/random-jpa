@@ -44,7 +44,7 @@ public final class CreationPlanResolver {
     }
 
     public CreationPlan create() {
-        creationPlan = new CreationPlanImpl(creationOrder, randomize);
+        creationPlan = new CreationPlanImpl(randomize);
 
         add(creationOrder.getOrder(), creationPlan.getRoot(), 0);
 

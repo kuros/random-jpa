@@ -32,7 +32,5 @@ public interface CreationPlan {
 
     void print(Printer printer);
 
-    CreationOrder getCreationOrder();
-
     <T> void deleteItem(Class<T> type, int index);
 }
