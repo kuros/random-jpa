@@ -105,6 +105,11 @@ public final class JPAContextFactory {
     }
 
     public JPAContext create() {
+        final Cache cache = getCache();
+        return JPAContextV1.newInstance(cache, generator);
+    }
+
+    private Cache getCache() {
         final Cache cache = Cache
                 .create(database, entityManager)
                 .with(preconditions)
@@ -122,7 +127,7 @@ public final class JPAContextFactory {
         detectCyclicDependency(hierarchyGraph);
 
         cache.with(hierarchyGraph);
-        return JPAContextV1.newInstance(cache, generator);
+        return cache;
     }
 
     private HierarchyGraph createHierarchyGraph(final List<Relation> relations) {

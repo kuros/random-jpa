@@ -27,6 +27,10 @@ public final class ChildGraph {
 
     private Map<Class<?>, ChildNode> childNodes;
 
+    private ChildGraph() {
+        childNodes = new HashMap<Class<?>, ChildNode>();
+    }
+
     private ChildGraph(final HierarchyGraph hierarchyGraph) {
         childNodes = new HashMap<Class<?>, ChildNode>();
 
@@ -36,28 +40,35 @@ public final class ChildGraph {
             final Set<Class<?>> parents = hierarchyGraph.getParents(child);
             final Set<Relation> attributeRelations = hierarchyGraph.getAttributeRelations(child);
             for (Class<?> parent : parents) {
-                addRelation(parent, child, attributeRelations);
+                addRelation(getChildNode(parent, 0), child, attributeRelations);
             }
         }
+    }
+
+    public static ChildGraph newInstance() {
+        return new ChildGraph();
     }
 
     public static ChildGraph newInstance(final HierarchyGraph hierarchyGraph) {
         return new ChildGraph(hierarchyGraph);
     }
 
-    public void addRelation(final Class<?> parent, final Class<?> child, final Set<Relation> attributeRelations) {
-        ChildNode childNode = childNodes.get(parent);
-        if (childNode == null) {
-            childNode = ChildNode.newInstance();
-            childNodes.put(parent, childNode);
-        }
-
+    public void addRelation(final ChildNode childNode, final Class<?> child, final Set<Relation> attributeRelations) {
         childNode.addChild(child);
         if (attributeRelations != null) {
             for (Relation attributeRelation : attributeRelations) {
                 childNode.addRelation(attributeRelation);
             }
         }
+    }
+
+    public ChildNode getChildNode(final Class<?> parent, final int level) {
+        ChildNode childNode = childNodes.get(parent);
+        if (childNode == null) {
+            childNode = ChildNode.newInstance(level);
+            childNodes.put(parent, childNode);
+        }
+        return childNode;
     }
 
     public Set<Class<?>> getChilds(final Class<?> type) {
