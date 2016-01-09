@@ -1,4 +1,4 @@
-package com.github.kuros.random.jpa.resolver;
+package com.github.kuros.random.jpa.v1.resolver;
 
 import com.github.kuros.random.jpa.random.Randomize;
 import com.github.kuros.random.jpa.types.CreationOrder;

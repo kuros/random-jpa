@@ -5,7 +5,7 @@ import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.random.generator.Generator;
 import com.github.kuros.random.jpa.resolver.CreationOrderResolver;
 import com.github.kuros.random.jpa.resolver.CreationOrderResolverImpl;
-import com.github.kuros.random.jpa.resolver.CreationPlanResolver;
+import com.github.kuros.random.jpa.v1.resolver.CreationPlanResolver;
 import com.github.kuros.random.jpa.types.CreationOrder;
 import com.github.kuros.random.jpa.types.CreationPlan;
 import com.github.kuros.random.jpa.types.Plan;
