@@ -54,17 +54,24 @@ public final class CreationGraph {
 
         final Set<Relation> attributeRelations = hierarchyGraph.getAttributeRelations(type);
         for (Class<?> parent : parents) {
-            final ChildNode childNode = childGraph.getChildNode(parent, level + 1);
+            final ChildNode childNode = childGraph.getOrCreateChildNode(parent, level + 1);
             childGraph.addRelation(childNode, type, attributeRelations);
             generateParentHierarchy(parent, level);
         }
     }
 
-    public Set<Class<?>> getParentNodes() {
+    public int getGenerationCount(final Class<?> type) {
+        return creationCount.get(type);
+    }
+    public Set<Class<?>> getParentClasses() {
         return parentNodes;
     }
 
     public Set<Class<?>> getManagedClasses() {
         return managedClasses;
+    }
+
+    public ChildNode geChildNode(final Class<?> type) {
+        return childGraph.getChildNode(type);
     }
 }

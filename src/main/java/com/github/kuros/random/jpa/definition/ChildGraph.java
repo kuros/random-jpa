@@ -40,7 +40,7 @@ public final class ChildGraph {
             final Set<Class<?>> parents = hierarchyGraph.getParents(child);
             final Set<Relation> attributeRelations = hierarchyGraph.getAttributeRelations(child);
             for (Class<?> parent : parents) {
-                addRelation(getChildNode(parent, 0), child, attributeRelations);
+                addRelation(getOrCreateChildNode(parent, 0), child, attributeRelations);
             }
         }
     }
@@ -62,10 +62,10 @@ public final class ChildGraph {
         }
     }
 
-    public ChildNode getChildNode(final Class<?> parent, final int level) {
+    public ChildNode getOrCreateChildNode(final Class<?> parent, final int level) {
         ChildNode childNode = childNodes.get(parent);
         if (childNode == null) {
-            childNode = ChildNode.newInstance(level);
+            childNode = ChildNode.newInstance(parent, level);
             childNodes.put(parent, childNode);
         }
         return childNode;
@@ -74,6 +74,10 @@ public final class ChildGraph {
     public Set<Class<?>> getChilds(final Class<?> type) {
         final ChildNode childNode = childNodes.get(type);
         return childNode == null ? new HashSet<Class<?>>() : childNode.getChildClasses();
+    }
+
+    public ChildNode getChildNode(final Class<?> type) {
+        return childNodes.get(type);
     }
 
     public Set<Relation> getChildRelations(final Class<?> type) {
