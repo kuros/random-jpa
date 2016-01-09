@@ -41,7 +41,9 @@ public final class CreationGraph {
             final Class<?> type = entity.getType();
             creationCount.put(type, entity.getCount());
 
-            generateParentHierarchy(type, level);
+            if (!managedClasses.contains(type)) {
+                generateParentHierarchy(type, level);
+            }
         }
     }
 
@@ -65,10 +67,6 @@ public final class CreationGraph {
     }
     public Set<Class<?>> getParentClasses() {
         return parentNodes;
-    }
-
-    public Set<Class<?>> getManagedClasses() {
-        return managedClasses;
     }
 
     public ChildNode geChildNode(final Class<?> type) {
