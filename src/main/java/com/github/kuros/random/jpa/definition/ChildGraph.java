@@ -76,7 +76,7 @@ public final class ChildGraph {
         return childNode == null ? new HashSet<Class<?>>() : childNode.getChildClasses();
     }
 
-    public ChildNode getChildNode(final Class<?> type) {
+    public ChildNode getNode(final Class<?> type) {
         return childNodes.get(type);
     }
 

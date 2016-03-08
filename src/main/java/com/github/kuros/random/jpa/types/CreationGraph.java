@@ -5,6 +5,7 @@ import com.github.kuros.random.jpa.definition.ChildNode;
 import com.github.kuros.random.jpa.definition.HierarchyGraph;
 import com.github.kuros.random.jpa.mapper.Relation;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -52,6 +53,7 @@ public final class CreationGraph {
         final Set<Class<?>> parents = hierarchyGraph.getParents(type);
         if (parents.isEmpty()) {
             parentNodes.add(type);
+            return;
         }
 
         final Set<Relation> attributeRelations = hierarchyGraph.getAttributeRelations(type);
@@ -65,11 +67,23 @@ public final class CreationGraph {
     public int getGenerationCount(final Class<?> type) {
         return creationCount.get(type);
     }
+
     public Set<Class<?>> getParentClasses() {
         return parentNodes;
     }
 
-    public ChildNode geChildNode(final Class<?> type) {
-        return childGraph.getChildNode(type);
+    public List<ChildNode> getParentNodes() {
+        final List<ChildNode> parents = new ArrayList<ChildNode>();
+
+        for (Class<?> parentNode : parentNodes) {
+            final ChildNode node = childGraph.getNode(parentNode);
+            parents.add(node);
+        }
+
+        return parents;
+    }
+
+    public ChildNode getNode(final Class<?> type) {
+        return childGraph.getNode(type);
     }
 }

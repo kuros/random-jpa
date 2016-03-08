@@ -76,7 +76,7 @@ public final class ChildNode {
         return childRelations.get(type);
     }
 
-    public int getLevel() {
+    public Integer getLevel() {
         return level;
     }
 }
