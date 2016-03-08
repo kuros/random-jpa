@@ -73,7 +73,7 @@ public final class Cache {
     }
 
     public Cache with(final HierarchyGraph hierarchyGraphValue) {
-        this.hierarchyGraph = hierarchyGraph;
+        this.hierarchyGraph = hierarchyGraphValue;
         return this;
     }
 

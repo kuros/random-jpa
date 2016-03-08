@@ -2,8 +2,10 @@ package com.github.kuros.random.jpa.types;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /*
  * Copyright (c) 2015 Kumar Rohit
@@ -22,20 +24,23 @@ import java.util.Map;
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 public final class CreationOrder {
-    private List<Class<?>> order;
+    private Set<Class<?>> managedClasses;
+    private List<ClassDepth<?>> order;
     private Map<Class<?>, Integer> creationCount;
 
     private CreationOrder() {
-        this.order = new ArrayList<Class<?>>();
+        this.order = new ArrayList<ClassDepth<?>>();
         this.creationCount = new HashMap<Class<?>, Integer>();
+        this.managedClasses = new HashSet<Class<?>>();
     }
 
     public static CreationOrder newInstance() {
         return new CreationOrder();
     }
 
-    public void add(final Class<?> type) {
+    public void add(final ClassDepth<?> type) {
         order.add(type);
+        managedClasses.add(type.getType());
     }
 
     public void addCreationCount(final Class<?> type, final int count) {
@@ -46,11 +51,15 @@ public final class CreationOrder {
         return creationCount;
     }
 
-    public List<Class<?>> getOrder() {
+    public List<ClassDepth<?>> getOrder() {
         return order;
     }
 
-    public boolean contains(final Class<?> type) {
+    public boolean contains(final ClassDepth<?> type) {
         return order.contains(type);
+    }
+
+    public boolean containsClass(final Class<?> type) {
+        return managedClasses.contains(type);
     }
 }

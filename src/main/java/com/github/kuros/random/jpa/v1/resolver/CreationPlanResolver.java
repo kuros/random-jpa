@@ -1,6 +1,7 @@
 package com.github.kuros.random.jpa.v1.resolver;
 
 import com.github.kuros.random.jpa.random.Randomize;
+import com.github.kuros.random.jpa.types.ClassDepth;
 import com.github.kuros.random.jpa.types.CreationOrder;
 import com.github.kuros.random.jpa.types.CreationPlan;
 import com.github.kuros.random.jpa.types.CreationPlanImpl;
@@ -46,23 +47,25 @@ public final class CreationPlanResolver {
     public CreationPlan create() {
         creationPlan = new CreationPlanImpl(randomize);
 
-        add(creationOrder.getOrder(), creationPlan.getRoot(), 0);
+        final List<ClassDepth<?>> order = creationOrder.getOrder();
+        add(order, creationPlan.getRoot(), 0);
 
         return creationPlan;
     }
 
     @SuppressWarnings("unchecked")
-    private void add(final List<Class<?>> order, final Node node, final int index) {
+    private void add(final List<ClassDepth<?>> order, final Node node, final int index) {
         if (index >= order.size()) {
             return;
         }
 
-        final Class<?> type = order.get(index);
+        final ClassDepth<?> classDepth = order.get(index);
+        final Class<?> type = classDepth.getType();
         Integer count = creationCount.get(type);
         count = count == null ? 1 : count;
 
         for (int i = 0; i < count; i++) {
-            final Node childNode = Node.newInstance(type, getCreatedIndex(type));
+            final Node childNode = Node.newInstance(type, classDepth.getDepth(), getCreatedIndex(type));
 
             final Object randomObject = createRandomObject(childNode);
             childNode.setValue(randomObject);

@@ -4,10 +4,12 @@ import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.definition.HierarchyGraph;
 import com.github.kuros.random.jpa.exception.RandomJPAException;
 import com.github.kuros.random.jpa.link.Preconditions;
+import com.github.kuros.random.jpa.types.ClassDepth;
 import com.github.kuros.random.jpa.types.CreationOrder;
 import com.github.kuros.random.jpa.types.Entity;
 import com.github.kuros.random.jpa.types.Plan;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Queue;
@@ -68,7 +70,7 @@ public final class CreationOrderResolverImpl implements CreationOrderResolver {
         final Set<Class<?>> identifiers = planLevelPreconditions.getIdentifiers();
 
         for (Class<?> identifier : identifiers) {
-            if (!creationOrder.contains(identifier)) {
+            if (!creationOrder.containsClass(identifier)) {
                 continue;
             }
 
@@ -86,7 +88,7 @@ public final class CreationOrderResolverImpl implements CreationOrderResolver {
         final Set<Class<?>> identifiers = cache.getPrecondition().getIdentifiers();
         for (Class<?> identifier : identifiers) {
 
-            if (!creationOrder.contains(identifier)) {
+            if (!creationOrder.containsClass(identifier)) {
                 continue;
             }
 
@@ -100,14 +102,14 @@ public final class CreationOrderResolverImpl implements CreationOrderResolver {
 
             final CreationOrder tempCreationOrder = CreationOrder.newInstance();
             generateCreationOrder(tempCreationOrder, entity.getType());
-            final List<Class<?>> newOrder = tempCreationOrder.getOrder();
-            final List<Class<?>> createdOrder = creationOrder.getOrder();
+            final List<ClassDepth<?>> newOrder = tempCreationOrder.getOrder();
+            final List<ClassDepth<?>> createdOrder = creationOrder.getOrder();
             final int minIndex = getMinIndex(createdOrder, newOrder);
 
-            Class<?> location = null;
+            ClassDepth<?> location = null;
             int i = minIndex;
             while (i > 0) {
-                final Class<?> aClass = createdOrder.get(--i);
+                final ClassDepth<?> aClass = createdOrder.get(--i);
                 if (!newOrder.contains(aClass)) {
                     location = aClass;
                     break;
@@ -133,21 +135,28 @@ public final class CreationOrderResolverImpl implements CreationOrderResolver {
 
     private void generateCreationOrder(final CreationOrder creationOrder, final Class<?> type) throws ClassNotFoundException {
 
-        final Queue<String> queue = new PriorityQueue<String>();
-        queue.offer(type.getName());
-        final Stack<Class<?>> stack = new Stack<Class<?>>();
-        stack.push(type);
+        final ClassDepth classDepth = ClassDepth.newInstance(type, 0);
+        final Queue<ClassDepth<?>> queue = new PriorityQueue<ClassDepth<?>>(new Comparator<ClassDepth<?>>() {
+            public int compare(final ClassDepth<?> o1, final ClassDepth<?> o2) {
+                return Integer.valueOf(o1.getDepth()).compareTo(o2.getDepth());
+            }
+        });
+        queue.offer(classDepth);
+
+        final Stack<ClassDepth<?>> stack = new Stack<ClassDepth<?>>();
+        stack.push(classDepth);
 
         while (!queue.isEmpty()) {
-            final Class<?> polledClass = Class.forName(queue.poll());
-            final Set<Class<?>> parents = hierarchyGraph.getParents(polledClass);
+            final ClassDepth<?> polledClass = queue.poll();
+            final Set<Class<?>> parents = hierarchyGraph.getParents(polledClass.getType());
             Integer index = null;
             for (Class<?> parent : parents) {
-                if (!stack.contains(parent)) {
-                    queue.offer(parent.getName());
+                if (notContains(stack, parent)) {
+                    queue.offer(ClassDepth.newInstance(parent, polledClass.getDepth() + 1));
                 } else {
-                    if (index == null || index > stack.indexOf(parent)) {
-                        index = stack.indexOf(parent);
+                    final int stackIndex = getIndex(stack, parent);
+                    if (index == null || index > stackIndex) {
+                        index = stackIndex;
                     }
                 }
             }
@@ -160,17 +169,36 @@ public final class CreationOrderResolverImpl implements CreationOrderResolver {
         }
 
         while (!stack.isEmpty()) {
-            final Class<?> pop = stack.pop();
+            final ClassDepth<?> pop = stack.pop();
             if (!creationOrder.contains(pop)) {
                 creationOrder.add(pop);
             }
         }
     }
 
-    private int getMinIndex(final List<Class<?>> from, final List<Class<?>> order) {
+    private int getIndex(final Stack<ClassDepth<?>> stack, final Class<?> parent) {
+        for (int i = 0; i < stack.size(); i++) {
+            final ClassDepth<?> classDepth = stack.get(i);
+            if (classDepth.getType() == parent) {
+                return i;
+            }
+        }
+        return 0;
+    }
+
+    private boolean notContains(final Stack<ClassDepth<?>> stack, final Class<?> parent) {
+        for (ClassDepth<?> classDepth : stack) {
+            if (classDepth.getType() == parent) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private int getMinIndex(final List<ClassDepth<?>> from, final List<ClassDepth<?>> order) {
         int index = from.size();
 
-        for (Class<?> type : order) {
+        for (ClassDepth<?> type : order) {
             final int i = from.indexOf(type);
             if (index > i && i != -1) {
                 index = i;
