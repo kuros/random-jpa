@@ -23,6 +23,10 @@ public final class ClassDepth<T> {
         return depth;
     }
 
+    public void setDepth(final int depth) {
+        this.depth = depth;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;

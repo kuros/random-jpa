@@ -9,6 +9,7 @@ import com.github.kuros.random.jpa.types.CreationOrder;
 import com.github.kuros.random.jpa.types.Entity;
 import com.github.kuros.random.jpa.types.Plan;
 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.PriorityQueue;
@@ -55,6 +56,7 @@ public final class CreationOrderResolverImpl implements CreationOrderResolver {
             addCreationCount(creationOrder, entity);
             try {
                 generateCreationOrder(creationOrder, type);
+                sortCreationOrderBasedOnDepth(creationOrder);
                 applyFactoryLevelPrecondition(creationOrder);
             } catch (final ClassNotFoundException e) {
                 throw new RandomJPAException("Class Not Found", e);
@@ -64,6 +66,14 @@ public final class CreationOrderResolverImpl implements CreationOrderResolver {
         applyPlanLevelPrecondition(creationOrder);
 
         return creationOrder;
+    }
+
+    private void sortCreationOrderBasedOnDepth(final CreationOrder creationOrder) {
+        Collections.sort(creationOrder.getOrder(), new Comparator<ClassDepth<?>>() {
+            public int compare(final ClassDepth<?> o1, final ClassDepth<?> o2) {
+                return -1 * Integer.valueOf(o1.getDepth()).compareTo(o2.getDepth());
+            }
+        });
     }
 
     private void applyPlanLevelPrecondition(final CreationOrder creationOrder) {
@@ -158,6 +168,12 @@ public final class CreationOrderResolverImpl implements CreationOrderResolver {
                     if (index == null || index > stackIndex) {
                         index = stackIndex;
                     }
+
+                    final ClassDepth<?> depth = stack.get(stackIndex);
+                    if (depth.getDepth() <= polledClass.getDepth()) {
+                        depth.setDepth(polledClass.getDepth() + 1);
+                    }
+
                 }
             }
 
@@ -172,6 +188,17 @@ public final class CreationOrderResolverImpl implements CreationOrderResolver {
             final ClassDepth<?> pop = stack.pop();
             if (!creationOrder.contains(pop)) {
                 creationOrder.add(pop);
+            } else {
+                final List<ClassDepth<?>> order = creationOrder.getOrder();
+
+                final int indexOf = order.indexOf(pop);
+                final ClassDepth<?> obj = order.get(indexOf);
+                if (obj.getDepth() < pop.getDepth()) {
+                    int diff = pop.getDepth() - obj.getDepth();
+                    for (ClassDepth<?> depth : order) {
+                        depth.setDepth(depth.getDepth() + diff);
+                    }
+                }
             }
         }
     }
