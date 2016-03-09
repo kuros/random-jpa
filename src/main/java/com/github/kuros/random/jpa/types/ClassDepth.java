@@ -42,4 +42,12 @@ public final class ClassDepth<T> {
     public int hashCode() {
         return type.hashCode();
     }
+
+    @Override
+    public String toString() {
+        return "ClassDepth{" +
+                "type=" + type +
+                ", depth=" + depth +
+                '}';
+    }
 }

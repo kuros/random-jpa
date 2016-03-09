@@ -22,5 +22,5 @@ import java.util.List;
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 public interface CreationOrderResolver {
-    CreationOrder getCreationOrder(final List<Entity> entities);
+    CreationOrder getCreationOrder(final Entity... entities);
 }

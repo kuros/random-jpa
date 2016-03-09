@@ -8,6 +8,8 @@ import com.github.kuros.random.jpa.types.CreationPlanImpl;
 import com.github.kuros.random.jpa.types.Node;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,26 +31,36 @@ import java.util.Map;
  */
 public final class CreationPlanResolver {
 
-    private CreationOrder creationOrder;
+    private List<CreationOrder> creationOrders;
     private Map<Class<?>, Integer> creationCount;
     private CreationPlan creationPlan;
     private Randomize randomize;
 
-    private CreationPlanResolver(final CreationOrder creationOrder, final Randomize randomize) {
-        this.creationOrder = creationOrder;
-        this.creationCount = creationOrder.getCreationCount();
+    private CreationPlanResolver(final Randomize randomize, final CreationOrder... creationOrders) {
+        this.creationOrders = Arrays.asList(creationOrders);
+        this.creationCount = new HashMap<Class<?>, Integer>();
         this.randomize = randomize;
+
+        initCreationCount();
     }
 
-    public static CreationPlanResolver newInstance(final CreationOrder creationOrder, final Randomize randomize) {
-        return new CreationPlanResolver(creationOrder, randomize);
+    private void initCreationCount() {
+        for (CreationOrder order : creationOrders) {
+            creationCount.putAll(order.getCreationCount());
+        }
+    }
+
+    public static CreationPlanResolver newInstance(final Randomize randomize, final CreationOrder... creationOrders) {
+        return new CreationPlanResolver(randomize, creationOrders);
     }
 
     public CreationPlan create() {
         creationPlan = new CreationPlanImpl(randomize);
 
-        final List<ClassDepth<?>> order = creationOrder.getOrder();
-        add(order, creationPlan.getRoot(), 0);
+        for (CreationOrder creationOrder : creationOrders) {
+            final List<ClassDepth<?>> order = creationOrder.getOrder();
+            add(order, creationPlan.getRoot(), 0);
+        }
 
         return creationPlan;
     }

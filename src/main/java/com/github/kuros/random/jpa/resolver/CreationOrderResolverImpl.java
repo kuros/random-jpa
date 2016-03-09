@@ -9,6 +9,7 @@ import com.github.kuros.random.jpa.types.CreationOrder;
 import com.github.kuros.random.jpa.types.Entity;
 import com.github.kuros.random.jpa.types.Plan;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -49,7 +50,7 @@ public final class CreationOrderResolverImpl implements CreationOrderResolver {
         return new CreationOrderResolverImpl(cache, planLevelPreconditions);
     }
 
-    public CreationOrder getCreationOrder(final List<Entity> entities) {
+    public CreationOrder getCreationOrder(final Entity... entities) {
         final CreationOrder creationOrder = CreationOrder.newInstance();
         for (Entity entity : entities) {
             final Class type = entity.getType();
@@ -168,14 +169,12 @@ public final class CreationOrderResolverImpl implements CreationOrderResolver {
                     if (index == null || index > stackIndex) {
                         index = stackIndex;
                     }
-
-                    final ClassDepth<?> depth = stack.get(stackIndex);
-                    if (depth.getDepth() <= polledClass.getDepth()) {
-                        depth.setDepth(polledClass.getDepth() + 1);
-                    }
-
                 }
+
+                setDepthIfApplicable(queue, polledClass, parent);
+                setDepthIfApplicable(stack, polledClass, parent);
             }
+
 
             if (index != null) {
                 stack.add(index, polledClass);
@@ -199,6 +198,14 @@ public final class CreationOrderResolverImpl implements CreationOrderResolver {
                         depth.setDepth(depth.getDepth() + diff);
                     }
                 }
+            }
+        }
+    }
+
+    private void setDepthIfApplicable(final Collection<ClassDepth<?>> collection, final ClassDepth<?> polledClass, final Class<?> parent) {
+        for (ClassDepth<?> depth : collection) {
+            if (depth.getType() == parent && depth.getDepth() <= polledClass.getDepth()) {
+                depth.setDepth(polledClass.getDepth() + 1);
             }
         }
     }
