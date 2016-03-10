@@ -47,6 +47,11 @@ public final class CreationOrder {
         creationCount.put(type, count);
     }
 
+    public void addCreationCount(final Map<Class<?>, Integer> creationCountValue) {
+
+        creationCount.putAll(creationCountValue);
+    }
+
     public Map<Class<?>, Integer> getCreationCount() {
         return creationCount;
     }
@@ -61,5 +66,19 @@ public final class CreationOrder {
 
     public boolean containsClass(final Class<?> type) {
         return managedClasses.contains(type);
+    }
+
+    public void setOrder(final List<ClassDepth<?>> order) {
+        this.order = order;
+        this.managedClasses = getClasses(order);
+    }
+
+    private Set<Class<?>> getClasses(final List<ClassDepth<?>> order) {
+        final Set<Class<?>> newManagedClasses = new HashSet<Class<?>>();
+        for (ClassDepth<?> classDepth : order) {
+            newManagedClasses.add(classDepth.getType());
+        }
+
+        return newManagedClasses;
     }
 }

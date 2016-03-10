@@ -79,7 +79,7 @@ public final class Node<T> {
 
     private void print(final StringBuilder stringBuilder, final String prefix, final boolean isTail) {
 
-        final String detail = type == null ? "*ROOT*" : "(d=" + depth + ") " + type.getName() + "|" + index;
+        final String detail = type == null ? "*ROOT*" : "(h=" + depth + ") " + type.getName() + "|" + index;
         stringBuilder.append("\n").append(prefix).append(isTail ? "└── " : "├── ").append(detail);
         for (int i = 0; i < childNodes.size() - 1; i++) {
             childNodes.get(i).print(stringBuilder, prefix + (isTail ? "    " : "│   "), false);
