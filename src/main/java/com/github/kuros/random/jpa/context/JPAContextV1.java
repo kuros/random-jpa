@@ -5,10 +5,13 @@ import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.random.generator.Generator;
 import com.github.kuros.random.jpa.resolver.CreationOrderResolver;
 import com.github.kuros.random.jpa.resolver.CreationOrderResolverImpl;
-import com.github.kuros.random.jpa.resolver.CreationPlanResolver;
 import com.github.kuros.random.jpa.types.CreationOrder;
 import com.github.kuros.random.jpa.types.CreationPlan;
+import com.github.kuros.random.jpa.types.Entity;
 import com.github.kuros.random.jpa.types.Plan;
+import com.github.kuros.random.jpa.v1.resolver.CreationPlanResolver;
+
+import java.util.List;
 
 /*
  * Copyright (c) 2015 Kumar Rohit
@@ -40,9 +43,11 @@ public final class JPAContextV1 extends BaseContext {
     public CreationPlan create(final Plan plan) {
 
         final CreationOrderResolver creationOrderResolver = CreationOrderResolverImpl.newInstance(getCache(), plan.getPreconditions());
-        final CreationOrder creationOrder = creationOrderResolver.getCreationOrder(plan.getEntities());
+        final List<Entity> entities = plan.getEntities();
+        final Entity[] entityArray = new Entity[entities.size()];
+        final CreationOrder creationOrder = creationOrderResolver.getCreationOrder(entities.toArray(entityArray));
 
-        final CreationPlanResolver creationPlanResolver = CreationPlanResolver.newInstance(creationOrder, getRandomizer(plan));
+        final CreationPlanResolver creationPlanResolver = CreationPlanResolver.newInstance(getRandomizer(plan), creationOrder);
 
         return creationPlanResolver.create();
     }

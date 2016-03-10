@@ -25,20 +25,22 @@ public final class Node<T> {
     private final int index;
     private T value;
     private List<Node> childNodes;
+    private final int depth;
 
-    private Node(final Class<T> type, final int index) {
+    private Node(final Class<T> type, final int depth, final int index) {
         this.type = type;
+        this.depth = depth;
         this.index = index;
         this.childNodes = new ArrayList<Node>();
     }
 
-    public static <T> Node<T> newInstance(final Class<T> type, final int index) {
-        return new Node<T>(type, index);
+    public static <T> Node<T> newInstance(final Class<T> type, final int depth, final int index) {
+        return new Node<T>(type, depth, index);
     }
 
     @SuppressWarnings("unchecked")
     public static Node newInstance() {
-        return new Node(null, 0);
+        return new Node(null, 0, 0);
     }
 
     public Class<T> getType() {
@@ -77,7 +79,7 @@ public final class Node<T> {
 
     private void print(final StringBuilder stringBuilder, final String prefix, final boolean isTail) {
 
-        final String detail = type == null ? "*ROOT*" : type.getName() + "|" + index;
+        final String detail = type == null ? "*ROOT*" : "(h=" + depth + ") " + type.getName() + "|" + index;
         stringBuilder.append("\n").append(prefix).append(isTail ? "└── " : "├── ").append(detail);
         for (int i = 0; i < childNodes.size() - 1; i++) {
             childNodes.get(i).print(stringBuilder, prefix + (isTail ? "    " : "│   "), false);

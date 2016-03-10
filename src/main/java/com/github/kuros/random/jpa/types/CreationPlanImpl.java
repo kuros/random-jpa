@@ -25,14 +25,12 @@ import java.util.Map;
  */
 public class CreationPlanImpl implements CreationPlan {
     private Randomize randomize;
-    private CreationOrder creationOrder;
     private Map<Class<?>, List<Node>> createdNodeMap;
     private Node root;
 
-    public CreationPlanImpl(final CreationOrder creationOrder, final Randomize randomize) {
+    public CreationPlanImpl(final Randomize randomize) {
         this.createdNodeMap = new HashMap<Class<?>, List<Node>>();
         this.root = Node.newInstance();
-        this.creationOrder = creationOrder;
         this.randomize = randomize;
     }
 
@@ -56,10 +54,6 @@ public class CreationPlanImpl implements CreationPlan {
 
     public void print(final Printer printer) {
         printer.print(root.print());
-    }
-
-    public CreationOrder getCreationOrder() {
-        return creationOrder;
     }
 
     @SuppressWarnings("unchecked")

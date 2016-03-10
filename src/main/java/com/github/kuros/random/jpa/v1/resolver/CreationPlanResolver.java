@@ -1,12 +1,15 @@
-package com.github.kuros.random.jpa.resolver;
+package com.github.kuros.random.jpa.v1.resolver;
 
 import com.github.kuros.random.jpa.random.Randomize;
+import com.github.kuros.random.jpa.types.ClassDepth;
 import com.github.kuros.random.jpa.types.CreationOrder;
 import com.github.kuros.random.jpa.types.CreationPlan;
 import com.github.kuros.random.jpa.types.CreationPlanImpl;
 import com.github.kuros.random.jpa.types.Node;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,41 +31,53 @@ import java.util.Map;
  */
 public final class CreationPlanResolver {
 
-    private CreationOrder creationOrder;
+    private List<CreationOrder> creationOrders;
     private Map<Class<?>, Integer> creationCount;
     private CreationPlan creationPlan;
     private Randomize randomize;
 
-    private CreationPlanResolver(final CreationOrder creationOrder, final Randomize randomize) {
-        this.creationOrder = creationOrder;
-        this.creationCount = creationOrder.getCreationCount();
+    private CreationPlanResolver(final Randomize randomize, final CreationOrder... creationOrders) {
+        this.creationOrders = Arrays.asList(creationOrders);
+        this.creationCount = new HashMap<Class<?>, Integer>();
         this.randomize = randomize;
+
+        initCreationCount();
     }
 
-    public static CreationPlanResolver newInstance(final CreationOrder creationOrder, final Randomize randomize) {
-        return new CreationPlanResolver(creationOrder, randomize);
+    private void initCreationCount() {
+        for (CreationOrder order : creationOrders) {
+            creationCount.putAll(order.getCreationCount());
+        }
+    }
+
+    public static CreationPlanResolver newInstance(final Randomize randomize, final CreationOrder... creationOrders) {
+        return new CreationPlanResolver(randomize, creationOrders);
     }
 
     public CreationPlan create() {
-        creationPlan = new CreationPlanImpl(creationOrder, randomize);
+        creationPlan = new CreationPlanImpl(randomize);
 
-        add(creationOrder.getOrder(), creationPlan.getRoot(), 0);
+        for (CreationOrder creationOrder : creationOrders) {
+            final List<ClassDepth<?>> order = creationOrder.getOrder();
+            add(order, creationPlan.getRoot(), 0);
+        }
 
         return creationPlan;
     }
 
     @SuppressWarnings("unchecked")
-    private void add(final List<Class<?>> order, final Node node, final int index) {
+    private void add(final List<ClassDepth<?>> order, final Node node, final int index) {
         if (index >= order.size()) {
             return;
         }
 
-        final Class<?> type = order.get(index);
+        final ClassDepth<?> classDepth = order.get(index);
+        final Class<?> type = classDepth.getType();
         Integer count = creationCount.get(type);
         count = count == null ? 1 : count;
 
         for (int i = 0; i < count; i++) {
-            final Node childNode = Node.newInstance(type, getCreatedIndex(type));
+            final Node childNode = Node.newInstance(type, classDepth.getDepth(), getCreatedIndex(type));
 
             final Object randomObject = createRandomObject(childNode);
             childNode.setValue(randomObject);
