@@ -1,6 +1,7 @@
 package com.github.kuros.random.jpa.types;
 
 import com.github.kuros.random.jpa.exception.RandomJPAException;
+import com.github.kuros.random.jpa.link.Link;
 
 import javax.persistence.metamodel.Attribute;
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ public final class Entity<T> {
 
     private Class<T> type;
     private List<AttributeValue> attributeValues;
+    private List<Link> softLinks;
     private int count;
 
     private Entity(final Class<T> type) {
@@ -37,6 +39,7 @@ public final class Entity<T> {
         this.type = type;
         this.attributeValues = new ArrayList<AttributeValue>();
         this.count = count;
+        this.softLinks = new ArrayList<Link>();
     }
 
     private void validate(final int entityCount) {
@@ -58,6 +61,11 @@ public final class Entity<T> {
         return this;
     }
 
+    public <V> Entity<T> withSoftLink(final Attribute<T, V> attribute, final Attribute<?, V> linksTo) {
+        softLinks.add(Link.newLink(linksTo, attribute));
+        return this;
+    }
+
     public Class<T> getType() {
         return type;
     }
@@ -68,5 +76,9 @@ public final class Entity<T> {
 
     public int getCount() {
         return count;
+    }
+
+    public List<Link> getSoftLinks() {
+        return softLinks;
     }
 }

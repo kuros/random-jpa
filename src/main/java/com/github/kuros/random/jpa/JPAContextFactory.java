@@ -105,6 +105,7 @@ public final class JPAContextFactory {
         return this;
     }
 
+    @Deprecated
     public JPAContext create() {
         final Cache cache = getCache();
         return JPAContextV1.newInstance(cache, generator);

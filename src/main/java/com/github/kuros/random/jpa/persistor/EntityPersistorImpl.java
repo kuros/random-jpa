@@ -1,6 +1,7 @@
 package com.github.kuros.random.jpa.persistor;
 
 import com.github.kuros.random.jpa.cache.Cache;
+import com.github.kuros.random.jpa.definition.HierarchyGraph;
 import com.github.kuros.random.jpa.definition.TableNode;
 import com.github.kuros.random.jpa.mapper.Relation;
 import com.github.kuros.random.jpa.persistor.functions.FunctionProcessor;
@@ -36,15 +37,17 @@ public final class EntityPersistorImpl implements Persistor {
     private final Cache cache;
     private final Randomize randomize;
     private final FunctionProcessor functionProcessor;
+    private final HierarchyGraph hierarchyGraph;
 
-    private EntityPersistorImpl(final Cache cache, final Randomize randomize) {
+    private EntityPersistorImpl(final Cache cache, final HierarchyGraph hierarchyGraph, final Randomize randomize) {
         this.cache = cache;
         this.functionProcessor = new FunctionProcessor(cache);
         this.randomize = randomize;
+        this.hierarchyGraph = hierarchyGraph;
     }
 
-    public static Persistor newInstance(final Cache cache, final Randomize randomize) {
-        return new EntityPersistorImpl(cache, randomize);
+    public static Persistor newInstance(final Cache cache, final HierarchyGraph hierarchyGraph, final Randomize randomize) {
+        return new EntityPersistorImpl(cache, hierarchyGraph, randomize);
     }
 
     @SuppressWarnings("unchecked")
@@ -108,7 +111,7 @@ public final class EntityPersistorImpl implements Persistor {
     }
 
     private TableNode getTableNode(final Class<?> type) {
-        return cache.getHierarchyGraph().getParentRelations().get(type);
+        return hierarchyGraph.getParentRelations().get(type);
     }
 
     private void createRelation(final ResultNodeTree resultNodeTree, final Relation relation, final Object object) {

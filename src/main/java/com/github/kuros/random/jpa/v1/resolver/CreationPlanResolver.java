@@ -1,5 +1,6 @@
 package com.github.kuros.random.jpa.v1.resolver;
 
+import com.github.kuros.random.jpa.definition.HierarchyGraph;
 import com.github.kuros.random.jpa.random.Randomize;
 import com.github.kuros.random.jpa.types.ClassDepth;
 import com.github.kuros.random.jpa.types.CreationOrder;
@@ -31,6 +32,7 @@ import java.util.Map;
  */
 public final class CreationPlanResolver {
 
+    private HierarchyGraph hierarchyGraph;
     private List<CreationOrder> creationOrders;
     private Map<Class<?>, Integer> creationCount;
     private CreationPlan creationPlan;
@@ -54,8 +56,13 @@ public final class CreationPlanResolver {
         return new CreationPlanResolver(randomize, creationOrders);
     }
 
+    public CreationPlanResolver with(final HierarchyGraph hierarchyGraph) {
+        this.hierarchyGraph = hierarchyGraph;
+        return this;
+    }
+
     public CreationPlan create() {
-        creationPlan = new CreationPlanImpl(randomize);
+        creationPlan = new CreationPlanImpl(hierarchyGraph, randomize);
 
         for (CreationOrder creationOrder : creationOrders) {
             final List<ClassDepth<?>> order = creationOrder.getOrder();

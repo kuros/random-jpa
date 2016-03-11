@@ -40,14 +40,14 @@ public final class CreationOrderResolverImpl implements CreationOrderResolver {
     private final HierarchyGraph hierarchyGraph;
     private final Preconditions planLevelPreconditions;
 
-    private CreationOrderResolverImpl(final Cache cache, final Preconditions planLevelPreconditions) {
+    private CreationOrderResolverImpl(final Cache cache, final HierarchyGraph hierarchyGraph, final Preconditions planLevelPreconditions) {
         this.cache = cache;
-        this.hierarchyGraph = cache.getHierarchyGraph();
+        this.hierarchyGraph = hierarchyGraph;
         this.planLevelPreconditions = planLevelPreconditions;
     }
 
-    public static CreationOrderResolver newInstance(final Cache cache, final Preconditions planLevelPreconditions) {
-        return new CreationOrderResolverImpl(cache, planLevelPreconditions);
+    public static CreationOrderResolver newInstance(final Cache cache, final HierarchyGraph hierarchyGraph, final Preconditions planLevelPreconditions) {
+        return new CreationOrderResolverImpl(cache, hierarchyGraph, planLevelPreconditions);
     }
 
     public CreationOrder getCreationOrder(final Entity... entities) {

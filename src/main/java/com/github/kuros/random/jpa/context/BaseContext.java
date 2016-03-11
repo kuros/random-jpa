@@ -4,6 +4,7 @@ import com.github.kuros.random.jpa.JPAContext;
 import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.cleanup.Cleaner;
 import com.github.kuros.random.jpa.cleanup.CleanerImpl;
+import com.github.kuros.random.jpa.definition.HierarchyGraph;
 import com.github.kuros.random.jpa.persistor.EntityPersistorImpl;
 import com.github.kuros.random.jpa.persistor.Persistor;
 import com.github.kuros.random.jpa.persistor.model.ResultMap;
@@ -44,9 +45,9 @@ public abstract class BaseContext implements JPAContext {
         this.cache = cache;
     }
 
-    protected Randomize getRandomizer(final Plan plan) {
+    protected Randomize getRandomizer(final HierarchyGraph hierarchyGraph, final Plan plan) {
         final RandomizeImpl randomize = RandomizeImpl.newInstance(cache, generator);
-        final EntityResolver entityResolver = EntityResolverImpl.newInstance(cache, plan);
+        final EntityResolver entityResolver = EntityResolverImpl.newInstance(cache, hierarchyGraph, plan);
         randomize.addFieldValue(entityResolver.getFieldValueMap());
         randomize.setNullValueFields(AttributeHelper.getFields(plan.getNullValueAttributes()));
         return randomize;
@@ -54,7 +55,7 @@ public abstract class BaseContext implements JPAContext {
 
     public ResultMap persist(final CreationPlan creationPlan) {
         final CreationPlanImpl creationPlanImpl = (CreationPlanImpl) creationPlan;
-        final Persistor persistor = EntityPersistorImpl.newInstance(cache, creationPlanImpl.getRandomize());
+        final Persistor persistor = EntityPersistorImpl.newInstance(cache, creationPlanImpl.getHierarchyGraph(), creationPlanImpl.getRandomize());
         return ResultMapImpl.newInstance(persistor.persist(creationPlan));
     }
 
@@ -64,10 +65,7 @@ public abstract class BaseContext implements JPAContext {
 
     public <T, V> void remove(final Class<T> type, final V... ids) {
         final Cleaner cleaner = CleanerImpl.newInstance(cache);
-
-        for (V id : ids) {
-            cleaner.delete(type, id);
-        }
+        cleaner.delete(type, ids);
     }
 
     public void remove(final Class<?> type) {

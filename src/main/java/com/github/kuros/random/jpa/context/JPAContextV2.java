@@ -2,6 +2,8 @@ package com.github.kuros.random.jpa.context;
 
 import com.github.kuros.random.jpa.JPAContext;
 import com.github.kuros.random.jpa.cache.Cache;
+import com.github.kuros.random.jpa.definition.HierarchyGraph;
+import com.github.kuros.random.jpa.definition.MinimumHierarchyGenerator;
 import com.github.kuros.random.jpa.random.generator.Generator;
 import com.github.kuros.random.jpa.resolver.CreationOrderResolver;
 import com.github.kuros.random.jpa.resolver.CreationOrderResolverImpl;
@@ -35,7 +37,7 @@ import java.util.Map;
 public final class JPAContextV2 extends BaseContext {
 
     public static JPAContext newInstance(final Cache cache,
-                                  final Generator generator) {
+                                         final Generator generator) {
         return new JPAContextV2(cache, generator);
     }
 
@@ -45,8 +47,11 @@ public final class JPAContextV2 extends BaseContext {
 
     public CreationPlan create(final Plan plan) {
 
-        final CreationOrderResolver creationOrderResolver = CreationOrderResolverImpl.newInstance(getCache(), plan.getPreconditions());
         final List<Entity> entities = plan.getEntities();
+        final HierarchyGraph hierarchyGraph = MinimumHierarchyGenerator.generate(getCache().getHierarchyGraph(), entities);
+
+        final CreationOrderResolver creationOrderResolver = CreationOrderResolverImpl.newInstance(getCache(), hierarchyGraph, plan.getPreconditions());
+
 
         final Map<Class<?>, CreationOrder> creationOrderMap = new HashMap<Class<?>, CreationOrder>();
 
@@ -65,9 +70,9 @@ public final class JPAContextV2 extends BaseContext {
 
         }
 
-        final CreationPlanResolver creationPlanResolver = CreationPlanResolver.newInstance(getRandomizer(plan), toArray(creationOrderMap.values()));
-
-        return creationPlanResolver.create();
+        final CreationPlanResolver creationPlanResolver = CreationPlanResolver.newInstance(
+                getRandomizer(hierarchyGraph, plan), toArray(creationOrderMap.values()));
+        return creationPlanResolver.with(hierarchyGraph).create();
     }
 
     private CreationOrder[] toArray(final Collection<CreationOrder> values) {
