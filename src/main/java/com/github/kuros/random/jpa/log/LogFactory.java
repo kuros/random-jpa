@@ -1,6 +1,8 @@
 package com.github.kuros.random.jpa.log;
 
-import com.openpojo.log.LoggerFactory;
+import com.github.kuros.random.jpa.exception.RandomJPAException;
+
+import java.lang.reflect.Constructor;
 
 /*
  * Copyright (c) 2015 Kumar Rohit
@@ -22,8 +24,43 @@ import com.openpojo.log.LoggerFactory;
  */
 public class LogFactory {
 
+    private static final String[] PROVIDED_LOGGERS = {
+            "com.github.kuros.random.jpa.log.providers.Slf4JProvider",
+            "com.github.kuros.random.jpa.log.providers.Log4JProvider",
+            "com.github.kuros.random.jpa.log.providers.DefaultProvider"};
+    private static Class<?> activeLogger;
+
     public static Logger getLogger(final Class<?> clazz) {
-        final com.openpojo.log.Logger logger = LoggerFactory.getLogger(clazz);
-        return new Logger(logger);
+
+        try {
+            return instantiateLogger(activeLogger, clazz);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        throw new RandomJPAException("Unable to instantiate Logger");
+    }
+
+    static {
+        activeLogger = getLoggerClass();
+    }
+
+    private static Class<?> getLoggerClass() {
+        for (String providedLogger : PROVIDED_LOGGERS) {
+            try {
+                final Class<?> aClass = Class.forName(providedLogger);
+                instantiateLogger(aClass, LogFactory.class);
+                return aClass;
+            } catch (final Exception e) {
+                //Do nothing
+            }
+        }
+
+        throw new RandomJPAException("Unable to find suitable Logger");
+    }
+
+    private static Logger instantiateLogger(final Class<?> loggerClass, final Class<?> clazz) throws NoSuchMethodException, InstantiationException, IllegalAccessException, java.lang.reflect.InvocationTargetException {
+        final Constructor<?> declaredConstructor = loggerClass.getDeclaredConstructor(Class.class);
+        declaredConstructor.setAccessible(true);
+        return (Logger) declaredConstructor.newInstance(clazz);
     }
 }

@@ -18,21 +18,15 @@ package com.github.kuros.random.jpa.log;
  *
  *    Logging functionality provided by OpenPojo (http://openpojo.com)
  */
-public class Logger {
-    private final com.openpojo.log.Logger logger;
-    public Logger(final com.openpojo.log.Logger logger) {
-        this.logger = logger;
-    }
+public interface Logger {
 
-    public void info(final String message, final Object... args) {
-        logger.info(message, args);
-    }
+    void info(final String message, final Object... args);
+    void info(final String message, final Throwable throwable);
 
-    public void debug(final String message, final Object... args) {
-        logger.debug(message, args);
-    }
+    void debug(final String message, final Object... args);
+    void debug(final String message, final Throwable throwable);
 
-    public void error(final String message, final Object... args) {
-        logger.error(message, args);
-    }
+    void error(final String message, final Object... args);
+    void error(final String message, final Throwable throwable);
+
 }
