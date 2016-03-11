@@ -4,6 +4,7 @@ import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
 
 import java.lang.reflect.Field;
+import java.text.MessageFormat;
 import java.util.List;
 
 /*
@@ -82,6 +83,7 @@ public class Util {
                         builder.append(", ");
                     }
                 } catch (final Exception e) {
+                    //do nothing
                 }
             }
 
@@ -102,5 +104,9 @@ public class Util {
             }
             throw e;
         }
+    }
+
+    public static String formatMessage(final String message, final Object[] args) {
+        return new MessageFormat(message).format(args);
     }
 }

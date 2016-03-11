@@ -84,9 +84,18 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.googlecode.openpojo</groupId>
-            <artifactId>openpojo</artifactId>
-            <version>${openpojo.version}</version>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.6.1</version>
+            <scope>provided</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.16</version>
+            <scope>provided</scope>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.hibernate.javax.persistence</groupId>

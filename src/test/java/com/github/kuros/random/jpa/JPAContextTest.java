@@ -2,8 +2,6 @@ package com.github.kuros.random.jpa;
 
 import com.github.kuros.random.jpa.testUtil.MockEntityManagerProvider;
 import com.github.kuros.random.jpa.testUtil.MockRelationshipProvider;
-import com.github.kuros.random.jpa.testUtil.entity.Person;
-import com.openpojo.random.RandomFactory;
 import org.junit.Test;
 
 import javax.persistence.EntityManager;
@@ -34,10 +32,5 @@ public class JPAContextTest {
 
 //        JPAContext jpaContext = JPAContext.create(entityManager);
 //        jpaContext.create();
-
-        final Person randomValue = RandomFactory.getRandomValue(Person.class);
-        System.out.println(randomValue);
-        System.out.println(randomValue.getFirstName());
-        System.out.println(randomValue.getLastName());
     }
 }
