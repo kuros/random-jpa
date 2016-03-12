@@ -110,14 +110,6 @@ public final class JPAContextV2 extends BaseContext {
             }
         }
 
-//        for (Class<?> aClass : creationOrderMap.keySet()) {
-//            if (creationOrder.containsClass(aClass)) {
-//                final CreationOrder managedCreationOrder = creationOrderMap.get(aClass);
-//                managedCreationOrder.setOrder(creationOrder.getOrder());
-//                managedCreationOrder.addCreationCount(creationOrder.getCreationCount());
-//                return true;
-//            }
-//        }
         return false;
     }
 
