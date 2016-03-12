@@ -59,12 +59,22 @@ public final class Plan {
         return this;
     }
 
+    @Deprecated
     public Plan withPreconditons(final Before... befores) {
         for (Before before : befores) {
-            preconditions.add(before.getType(), before.getPlan());
+            preconditions.add(before.getType(), createPlan(before.getToClasses()));
         }
 
         return this;
+    }
+
+    private Plan createPlan(final List<Class<?>> collection) {
+        Plan plan = Plan.of();
+        for (Class<?> aClass : collection) {
+            plan.add(Entity.of(aClass));
+        }
+
+        return plan;
     }
 
     public List<Entity> getEntities() {

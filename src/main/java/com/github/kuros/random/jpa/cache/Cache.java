@@ -12,6 +12,7 @@ import com.github.kuros.random.jpa.provider.factory.MultiplePrimaryKeyProviderFa
 import com.github.kuros.random.jpa.provider.factory.RelationshipProviderFactory;
 import com.github.kuros.random.jpa.provider.factory.SQLCharacterLengthProviderFactory;
 import com.github.kuros.random.jpa.provider.factory.UniqueConstraintProviderFactory;
+import com.github.kuros.random.jpa.types.Version;
 
 import javax.persistence.EntityManager;
 import java.util.HashSet;
@@ -37,7 +38,7 @@ public final class Cache {
 
     private EntityManager entityManager;
     private Database database;
-    private Preconditions precondition;
+    private Version version;
     private TriggerCache triggerCache;
     private AttributeProvider attributeProvider;
     private MultiplePrimaryKeyProvider multiplePrimaryKeyProvider;
@@ -47,7 +48,8 @@ public final class Cache {
     private Set<Class<?>> skipTruncation;
     private HierarchyGraph hierarchyGraph;
 
-    private Cache(final Database database, final EntityManager entityManager) {
+    private Cache(final Version version, final Database database, final EntityManager entityManager) {
+        this.version = version;
         this.database = database;
         this.entityManager = entityManager;
         this.attributeProvider = initAttributeProvider();
@@ -58,13 +60,8 @@ public final class Cache {
         this.skipTruncation = new HashSet<Class<?>>();
     }
 
-    public static Cache create(final Database database, final EntityManager entityManager) {
-        return new Cache(database, entityManager);
-    }
-
-    public Cache with(final Preconditions preconditions) {
-        this.precondition = preconditions;
-        return this;
+    public static Cache create(final Version version, final Database database, final EntityManager entityManager) {
+        return new Cache(version, database, entityManager);
     }
 
     public Cache with(final TriggerCache cache) {
@@ -80,6 +77,10 @@ public final class Cache {
     public Cache withSkipTruncations(final Set<Class<?>> skipTruncationValue) {
         this.skipTruncation = skipTruncationValue;
         return this;
+    }
+
+    public Version getVersion() {
+        return version;
     }
 
     public EntityManager getEntityManager() {
@@ -104,10 +105,6 @@ public final class Cache {
 
     public UniqueConstraintProvider getUniqueConstraintProvider() {
         return uniqueConstraintProvider;
-    }
-
-    public Preconditions getPrecondition() {
-        return precondition;
     }
 
     public TriggerCache getTriggerCache() {

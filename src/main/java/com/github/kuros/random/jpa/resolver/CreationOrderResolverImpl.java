@@ -8,6 +8,7 @@ import com.github.kuros.random.jpa.types.ClassDepth;
 import com.github.kuros.random.jpa.types.CreationOrder;
 import com.github.kuros.random.jpa.types.Entity;
 import com.github.kuros.random.jpa.types.Plan;
+import com.github.kuros.random.jpa.types.Version;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -57,14 +58,16 @@ public final class CreationOrderResolverImpl implements CreationOrderResolver {
             addCreationCount(creationOrder, entity);
             try {
                 generateCreationOrder(creationOrder, type);
-                sortCreationOrderBasedOnDepth(creationOrder);
-                applyFactoryLevelPrecondition(creationOrder);
             } catch (final ClassNotFoundException e) {
                 throw new RandomJPAException("Class Not Found", e);
             }
         }
 
-        applyPlanLevelPrecondition(creationOrder);
+        sortCreationOrderBasedOnDepth(creationOrder);
+
+        if (Version.V1.isSupported(cache.getVersion())) {
+            applyPlanLevelPrecondition(creationOrder);
+        }
 
         return creationOrder;
     }
@@ -91,20 +94,6 @@ public final class CreationOrderResolverImpl implements CreationOrderResolver {
             } catch (final ClassNotFoundException e) {
                 throw new RandomJPAException(e);
             }
-        }
-    }
-
-    private void applyFactoryLevelPrecondition(final CreationOrder creationOrder) throws ClassNotFoundException {
-
-        final Set<Class<?>> identifiers = cache.getPrecondition().getIdentifiers();
-        for (Class<?> identifier : identifiers) {
-
-            if (!creationOrder.containsClass(identifier)) {
-                continue;
-            }
-
-            final Plan preConditionPlan = cache.getPrecondition().getPlan(identifier);
-            adjustEntityInCreationOrder(creationOrder, preConditionPlan);
         }
     }
 
@@ -193,10 +182,7 @@ public final class CreationOrderResolverImpl implements CreationOrderResolver {
                 final int indexOf = order.indexOf(pop);
                 final ClassDepth<?> obj = order.get(indexOf);
                 if (obj.getDepth() < pop.getDepth()) {
-                    int diff = pop.getDepth() - obj.getDepth();
-                    for (ClassDepth<?> depth : order) {
-                        depth.setDepth(depth.getDepth() + diff);
-                    }
+                    obj.setDepth(pop.getDepth());
                 }
             }
         }

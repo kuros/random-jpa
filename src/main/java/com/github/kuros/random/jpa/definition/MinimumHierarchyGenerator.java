@@ -43,6 +43,7 @@ public class MinimumHierarchyGenerator {
             final Set<Class<?>> parentClasses = tableNode.getParentClasses();
 
             for (Class<?> parentClass : parentClasses) {
+                hierarchyGraph.addNode(type, parentClass);
                 addParentToHierarchy(parentGraph, hierarchyGraph, parentClass);
             }
         }
