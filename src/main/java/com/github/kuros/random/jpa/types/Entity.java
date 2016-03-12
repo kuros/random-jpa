@@ -5,6 +5,7 @@ import com.github.kuros.random.jpa.link.Link;
 
 import javax.persistence.metamodel.Attribute;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /*
@@ -29,6 +30,7 @@ public final class Entity<T> {
     private List<AttributeValue> attributeValues;
     private List<Link> softLinks;
     private int count;
+    private List<Class<?>> beforeClasses;
 
     private Entity(final Class<T> type) {
         this(type, 1);
@@ -40,6 +42,7 @@ public final class Entity<T> {
         this.attributeValues = new ArrayList<AttributeValue>();
         this.count = count;
         this.softLinks = new ArrayList<Link>();
+        this.beforeClasses = new ArrayList<Class<?>>();
     }
 
     private void validate(final int entityCount) {
@@ -66,6 +69,11 @@ public final class Entity<T> {
         return this;
     }
 
+    public Entity<T> createAfter(final Class<?>... classes){
+        beforeClasses.addAll(Arrays.asList(classes));
+        return this;
+    }
+
     public Class<T> getType() {
         return type;
     }
@@ -80,5 +88,9 @@ public final class Entity<T> {
 
     public List<Link> getSoftLinks() {
         return softLinks;
+    }
+
+    public List<Class<?>> getBeforeClasses() {
+        return beforeClasses;
     }
 }

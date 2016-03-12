@@ -21,7 +21,14 @@ public class MinimumHierarchyGenerator {
             for (Relation relation : softRelations) {
                 hierarchyGraph.addRelation(relation);
             }
+
+            final List<Class<?>> beforeClasses = entity.getBeforeClasses();
+            for (Class<?> parentClass : beforeClasses) {
+                hierarchyGraph.addNode(entity.getType(), parentClass);
+            }
         }
+
+        new CyclicValidator(hierarchyGraph).validate();
 
         return hierarchyGraph;
     }
@@ -29,13 +36,15 @@ public class MinimumHierarchyGenerator {
     private static void addParentToHierarchy(final HierarchyGraph parentGraph, final HierarchyGraph hierarchyGraph, final Class<?> type) {
         final TableNode tableNode = parentGraph.getTableNode(type);
 
-        for (Relation relation : tableNode.getRelations()) {
-            hierarchyGraph.addRelation(relation);
-        }
-        final Set<Class<?>> parentClasses = tableNode.getParentClasses();
+        if (tableNode != null) {
+            for (Relation relation : tableNode.getRelations()) {
+                hierarchyGraph.addRelation(relation);
+            }
+            final Set<Class<?>> parentClasses = tableNode.getParentClasses();
 
-        for (Class<?> parentClass : parentClasses) {
-            addParentToHierarchy(parentGraph, hierarchyGraph, parentClass);
+            for (Class<?> parentClass : parentClasses) {
+                addParentToHierarchy(parentGraph, hierarchyGraph, parentClass);
+            }
         }
     }
 

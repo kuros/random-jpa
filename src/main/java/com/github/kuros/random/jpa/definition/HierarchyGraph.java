@@ -42,10 +42,7 @@ public class HierarchyGraph {
     public void addRelation(final Relation relation) {
 
         final Class<?> fromClass = relation.getFrom().getInitializationClass();
-        TableNode tableNode = parentRelations.get(fromClass);
-        if (tableNode == null) {
-            tableNode = TableNode.newInstance();
-        }
+        TableNode tableNode = getOrCreateTableNode(fromClass);
 
         tableNode.addRelation(relation);
         final Class<?> toClass = relation.getTo().getInitializationClass();
@@ -58,6 +55,27 @@ public class HierarchyGraph {
 
         populateAttributeRelations(fromClass, relation);
     }
+
+    public void addNode(final Class<?> fromClass, final Class<?> toClass) {
+        final TableNode tableNode = getOrCreateTableNode(fromClass);
+        tableNode.addParent(toClass);
+
+        parentRelations.put(fromClass, tableNode);
+
+        if (!parentRelations.containsKey(toClass)) {
+            parentRelations.put(toClass, TableNode.newInstance());
+        }
+    }
+
+    private TableNode getOrCreateTableNode(final Class<?> fromClass) {
+        TableNode tableNode = parentRelations.get(fromClass);
+        if (tableNode == null) {
+            tableNode = TableNode.newInstance();
+        }
+        return tableNode;
+    }
+
+
 
     private void populateAttributeRelations(final Class<?> fromClass, final Relation relation) {
         Set<Relation> relations = attributeRelations.get(fromClass);
