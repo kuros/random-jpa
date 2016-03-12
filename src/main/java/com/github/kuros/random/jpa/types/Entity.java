@@ -62,7 +62,7 @@ public final class Entity<T> {
     }
 
     public <V> Entity<T> withSoftLink(final Attribute<T, V> attribute, final Attribute<?, V> linksTo) {
-        softLinks.add(Link.newLink(linksTo, attribute));
+        softLinks.add(Link.newLink(attribute, linksTo));
         return this;
     }
 

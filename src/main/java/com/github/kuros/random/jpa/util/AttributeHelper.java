@@ -26,6 +26,8 @@ import java.util.List;
  */
 public class AttributeHelper {
 
+    public static final String ATTRIBUTE_CANNOT_BE_NULL = "Attribute cannot be null, Please verify if Entity/Attribute declared properly";
+
     public static Class<?> getDeclaringClass(final Attribute<?, ?> attribute) {
         return attribute.getDeclaringType().getJavaType();
     }
@@ -36,7 +38,7 @@ public class AttributeHelper {
 
     public static Class<?> getAttributeClass(final Attribute<?, ?> attribute) {
         if (attribute == null) {
-            throw new NullPointerException("Attribute cannot be null");
+            throw new NullPointerException(ATTRIBUTE_CANNOT_BE_NULL);
         }
         if (attribute instanceof PluralAttribute) {
             return ((PluralAttribute)attribute).getBindableJavaType();
@@ -47,7 +49,7 @@ public class AttributeHelper {
     public static Field getField(final Attribute<? , ?> attribute) throws NoSuchFieldException {
 
         if (attribute == null) {
-            throw new NullPointerException("Attribute cannot be null");
+            throw new NullPointerException(ATTRIBUTE_CANNOT_BE_NULL);
         }
 
         return attribute.getJavaMember().getDeclaringClass().getDeclaredField(getName(attribute));
