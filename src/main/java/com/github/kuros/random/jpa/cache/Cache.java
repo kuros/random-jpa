@@ -2,7 +2,6 @@ package com.github.kuros.random.jpa.cache;
 
 import com.github.kuros.random.jpa.Database;
 import com.github.kuros.random.jpa.definition.HierarchyGraph;
-import com.github.kuros.random.jpa.link.Preconditions;
 import com.github.kuros.random.jpa.metamodel.AttributeProvider;
 import com.github.kuros.random.jpa.provider.MultiplePrimaryKeyProvider;
 import com.github.kuros.random.jpa.provider.RelationshipProvider;
@@ -34,7 +33,7 @@ import java.util.Set;
  *    You should have received a copy of the GNU Lesser General Public License
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-public final class Cache {
+public class Cache {
 
     private EntityManager entityManager;
     private Database database;
