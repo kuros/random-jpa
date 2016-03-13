@@ -16,7 +16,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DependecyHelper {
+public class DependencyHelper {
 
     public static List<Relation> getDependency() {
 
