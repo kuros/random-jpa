@@ -55,7 +55,7 @@ public final class JPAContextV2 extends BaseContext {
         final List<Entity> entities = plan.getEntities();
         final HierarchyGraph hierarchyGraph = MinimumHierarchyGenerator.generate(getCache().getHierarchyGraph(), entities);
 
-        final CreationOrderResolver creationOrderResolver = CreationOrderResolverImpl.newInstance(getCache(), hierarchyGraph, plan.getPreconditions());
+        final CreationOrderResolver creationOrderResolver = CreationOrderResolverImpl.newInstance(getCache(), hierarchyGraph);
 
 
         final Map<Class<?>, CreationOrder> creationOrderMap = new HashMap<Class<?>, CreationOrder>();

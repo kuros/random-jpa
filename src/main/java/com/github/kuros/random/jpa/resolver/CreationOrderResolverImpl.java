@@ -47,8 +47,13 @@ public final class CreationOrderResolverImpl implements CreationOrderResolver {
         this.planLevelPreconditions = planLevelPreconditions;
     }
 
+    @Deprecated
     public static CreationOrderResolver newInstance(final Cache cache, final HierarchyGraph hierarchyGraph, final Preconditions planLevelPreconditions) {
         return new CreationOrderResolverImpl(cache, hierarchyGraph, planLevelPreconditions);
+    }
+
+    public static CreationOrderResolver newInstance(final Cache cache, final HierarchyGraph hierarchyGraph) {
+        return new CreationOrderResolverImpl(cache, hierarchyGraph, null);
     }
 
     public CreationOrder getCreationOrder(final Entity... entities) {
