@@ -141,7 +141,7 @@ public final class JPAContextV2 extends BaseContext {
 
     private Set<ClassDepth<?>> getTopLevelNodes(final CreationOrder creationOrder) {
         final List<ClassDepth<?>> order = creationOrder.getOrder();
-        Set<ClassDepth<?>> classDepths = new HashSet<ClassDepth<?>>();
+        final Set<ClassDepth<?>> classDepths = new HashSet<ClassDepth<?>>();
         if (!order.isEmpty()) {
             final int depth = order.get(0).getDepth();
 
