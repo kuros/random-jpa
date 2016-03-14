@@ -3,6 +3,10 @@ package com.github.kuros.random.jpa.link;
 import com.github.kuros.random.jpa.types.Entity;
 import com.github.kuros.random.jpa.types.Plan;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /*
  * Copyright (c) 2015 Kumar Rohit
  *
@@ -22,11 +26,12 @@ import com.github.kuros.random.jpa.types.Plan;
 public final class Before {
 
     private Class<?> type;
-    private Plan plan;
+
+    private List<Class<?>> toClasses;
 
     private Before(final Class<?> type) {
         this.type = type;
-        this.plan = Plan.create();
+        this.toClasses = new ArrayList<Class<?>>();
     }
 
     public static Before of(final Class<?> type) {
@@ -34,10 +39,7 @@ public final class Before {
     }
 
     public Before create(final Class<?>... types) {
-        for (Class<?> aClass : types) {
-            plan.add(Entity.of(aClass));
-        }
-
+        toClasses.addAll(Arrays.asList(types));
         return this;
     }
 
@@ -45,7 +47,7 @@ public final class Before {
         return type;
     }
 
-    public Plan getPlan() {
-        return plan;
+    public List<Class<?>> getToClasses() {
+        return toClasses;
     }
 }

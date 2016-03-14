@@ -1,9 +1,11 @@
 package com.github.kuros.random.jpa.types;
 
 import com.github.kuros.random.jpa.exception.RandomJPAException;
+import com.github.kuros.random.jpa.link.Link;
 
 import javax.persistence.metamodel.Attribute;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /*
@@ -26,7 +28,9 @@ public final class Entity<T> {
 
     private Class<T> type;
     private List<AttributeValue> attributeValues;
+    private List<Link> softLinks;
     private int count;
+    private List<Class<?>> beforeClasses;
 
     private Entity(final Class<T> type) {
         this(type, 1);
@@ -37,6 +41,8 @@ public final class Entity<T> {
         this.type = type;
         this.attributeValues = new ArrayList<AttributeValue>();
         this.count = count;
+        this.softLinks = new ArrayList<Link>();
+        this.beforeClasses = new ArrayList<Class<?>>();
     }
 
     private void validate(final int entityCount) {
@@ -58,6 +64,16 @@ public final class Entity<T> {
         return this;
     }
 
+    public <V> Entity<T> withSoftLink(final Attribute<T, V> attribute, final Attribute<?, V> linksTo) {
+        softLinks.add(Link.newLink(attribute, linksTo));
+        return this;
+    }
+
+    public Entity<T> createAfter(final Class<?>... classes){
+        beforeClasses.addAll(Arrays.asList(classes));
+        return this;
+    }
+
     public Class<T> getType() {
         return type;
     }
@@ -68,5 +84,13 @@ public final class Entity<T> {
 
     public int getCount() {
         return count;
+    }
+
+    public List<Link> getSoftLinks() {
+        return softLinks;
+    }
+
+    public List<Class<?>> getBeforeClasses() {
+        return beforeClasses;
     }
 }

@@ -11,16 +11,17 @@ import com.github.kuros.random.jpa.definition.HierarchyGraph;
 import com.github.kuros.random.jpa.exception.RandomJPAException;
 import com.github.kuros.random.jpa.link.Before;
 import com.github.kuros.random.jpa.link.Dependencies;
-import com.github.kuros.random.jpa.link.Preconditions;
 import com.github.kuros.random.jpa.mapper.Relation;
 import com.github.kuros.random.jpa.mapper.RelationCreator;
 import com.github.kuros.random.jpa.metamodel.MetaModelProvider;
 import com.github.kuros.random.jpa.metamodel.MetaModelProviderImpl;
 import com.github.kuros.random.jpa.random.generator.Generator;
 import com.github.kuros.random.jpa.types.Trigger;
+import com.github.kuros.random.jpa.types.Version;
 
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -48,7 +49,7 @@ public final class JPAContextFactory {
     private EntityManager entityManager;
     private Dependencies dependencies;
     private Generator generator;
-    private Preconditions preconditions;
+    private List<Before> preconditions;
     private List<Trigger<?>> triggers;
     private Set<Class<?>> skipTruncation;
 
@@ -59,7 +60,7 @@ public final class JPAContextFactory {
     private JPAContextFactory(final Database database, final EntityManager entityManager) {
         this.database = database;
         this.entityManager = entityManager;
-        this.preconditions = new Preconditions();
+        this.preconditions = new ArrayList<Before>();
         this.generator = Generator.newInstance();
         this.dependencies = Dependencies.newInstance();
         this.triggers = new ArrayList<Trigger<?>>();
@@ -78,10 +79,7 @@ public final class JPAContextFactory {
 
 
     public JPAContextFactory withPreconditions(final Before... befores) {
-        for (Before before : befores) {
-            preconditions.add(before.getType(), before.getPlan());
-        }
-
+        preconditions.addAll(Arrays.asList(befores));
         return this;
     }
 
@@ -105,20 +103,20 @@ public final class JPAContextFactory {
         return this;
     }
 
+    @Deprecated
     public JPAContext create() {
-        final Cache cache = getCache();
+        final Cache cache = getCache(Version.V1);
         return JPAContextV1.newInstance(cache, generator);
     }
 
     public JPAContext generate() {
-        final Cache cache = getCache();
+        final Cache cache = getCache(Version.V2);
         return JPAContextV2.newInstance(cache, generator);
     }
 
-    private Cache getCache() {
+    private Cache getCache(final Version version) {
         final Cache cache = Cache
-                .create(database, entityManager)
-                .with(preconditions)
+                .create(version, database, entityManager)
                 .with(TriggerCache.getInstance(triggers))
                 .withSkipTruncations(skipTruncation);
 
@@ -130,10 +128,19 @@ public final class JPAContextFactory {
                 .generate();
 
         final HierarchyGraph hierarchyGraph = createHierarchyGraph(relations);
+        addPreconditions(hierarchyGraph);
         detectCyclicDependency(hierarchyGraph);
 
         cache.with(hierarchyGraph);
         return cache;
+    }
+
+    private void addPreconditions(final HierarchyGraph hierarchyGraph) {
+        for (Before precondition : preconditions) {
+            for (Class<?> aClass : precondition.getToClasses()) {
+                hierarchyGraph.addNode(precondition.getType(), aClass);
+            }
+        }
     }
 
     private HierarchyGraph createHierarchyGraph(final List<Relation> relations) {

@@ -64,10 +64,6 @@ public final class ChildNode {
         return this;
     }
 
-    public Class<?> getParent() {
-        return parent;
-    }
-
     public Set<Class<?>> getChildClasses() {
         return childClasses;
     }
@@ -76,7 +72,4 @@ public final class ChildNode {
         return childRelations.get(type);
     }
 
-    public Integer getLevel() {
-        return level;
-    }
 }

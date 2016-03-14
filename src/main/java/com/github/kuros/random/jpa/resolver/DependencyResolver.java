@@ -30,18 +30,25 @@ import java.util.List;
 public class DependencyResolver {
 
     public static List<Relation> resolveDependency(final Dependencies dependencies) {
-        final List<Relation> relations = new ArrayList<Relation>();
 
         if (dependencies != null) {
             final List<Link> links = dependencies.getLinks();
-            for (Link link : links) {
-                try {
-                    final Field from = getFieldValue(link.getFrom());
-                    final Field to = getFieldValue(link.getTo());
-                    relations.add(Relation.newInstance(new FieldWrapper(from), new FieldWrapper(to)));
-                } catch (final NoSuchFieldException e) {
-                    //do nothing
-                }
+            return generateRelations(links);
+        }
+
+        return new ArrayList<Relation>();
+    }
+
+    public static List<Relation> generateRelations(final List<Link> links) {
+        final List<Relation> relations = new ArrayList<Relation>();
+
+        for (Link link : links) {
+            try {
+                final Field from = getFieldValue(link.getFrom());
+                final Field to = getFieldValue(link.getTo());
+                relations.add(Relation.newInstance(new FieldWrapper(from), new FieldWrapper(to)));
+            } catch (final NoSuchFieldException e) {
+                //do nothing
             }
         }
 

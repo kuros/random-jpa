@@ -1,5 +1,6 @@
 package com.github.kuros.random.jpa.types;
 
+import com.github.kuros.random.jpa.definition.HierarchyGraph;
 import com.github.kuros.random.jpa.random.Randomize;
 
 import java.util.ArrayList;
@@ -27,11 +28,13 @@ public class CreationPlanImpl implements CreationPlan {
     private Randomize randomize;
     private Map<Class<?>, List<Node>> createdNodeMap;
     private Node root;
+    private final HierarchyGraph hierarchyGraph;
 
-    public CreationPlanImpl(final Randomize randomize) {
+    public CreationPlanImpl(final HierarchyGraph hierarchyGraph, final Randomize randomize) {
         this.createdNodeMap = new HashMap<Class<?>, List<Node>>();
         this.root = Node.newInstance();
         this.randomize = randomize;
+        this.hierarchyGraph = hierarchyGraph;
     }
 
     public Map<Class<?>, List<Node>> getCreatedNodeMap() {
@@ -65,5 +68,9 @@ public class CreationPlanImpl implements CreationPlan {
 
     public Randomize getRandomize() {
         return randomize;
+    }
+
+    public HierarchyGraph getHierarchyGraph() {
+        return hierarchyGraph;
     }
 }

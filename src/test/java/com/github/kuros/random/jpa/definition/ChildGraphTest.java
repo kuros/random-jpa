@@ -1,0 +1,80 @@
+package com.github.kuros.random.jpa.definition;
+
+import com.github.kuros.random.jpa.mapper.Relation;
+import com.github.kuros.random.jpa.testUtil.hierarchyGraph.DependencyHelper;
+import com.github.kuros.random.jpa.testUtil.hierarchyGraph.MockedHierarchyGraph;
+import com.github.kuros.random.jpa.testUtil.hierarchyGraph.entity.A;
+import com.github.kuros.random.jpa.testUtil.hierarchyGraph.entity.B;
+import com.github.kuros.random.jpa.testUtil.hierarchyGraph.entity.C;
+import com.github.kuros.random.jpa.testUtil.hierarchyGraph.entity.D;
+import com.github.kuros.random.jpa.testUtil.hierarchyGraph.entity.E;
+import com.github.kuros.random.jpa.testUtil.hierarchyGraph.entity.P;
+import com.github.kuros.random.jpa.testUtil.hierarchyGraph.entity.X;
+import com.github.kuros.random.jpa.testUtil.hierarchyGraph.entity.Y;
+import com.github.kuros.random.jpa.testUtil.hierarchyGraph.entity.Z;
+import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import static org.junit.Assert.*;
+
+public class ChildGraphTest {
+
+    @Test
+    public void shouldGenerateChildGraph() throws Exception {
+
+        final HierarchyGraph hierarchyGraph = MockedHierarchyGraph.getHierarchyGraph();
+
+        final ChildGraph childGraph = ChildGraph.newInstance(hierarchyGraph);
+
+        assertEquals(7, childGraph.keySet().size());
+        assertEquals(0, childGraph.getChilds(E.class).size());
+        assertEquals(0, childGraph.getChilds(Z.class).size());
+
+        assertEquals(2, childGraph.getChilds(A.class).size());
+        assertTrue(childGraph.getChilds(A.class).contains(C.class));
+        assertTrue(childGraph.getChilds(A.class).contains(D.class));
+
+        assertEquals(2, childGraph.getChilds(B.class).size());
+        assertTrue(childGraph.getChilds(B.class).contains(C.class));
+        assertTrue(childGraph.getChilds(B.class).contains(E.class));
+
+        assertEquals(1, childGraph.getChilds(C.class).size());
+        assertTrue(childGraph.getChilds(C.class).contains(D.class));
+
+        assertEquals(1, childGraph.getChilds(D.class).size());
+        assertTrue(childGraph.getChilds(D.class).contains(E.class));
+
+
+        assertEquals(1, childGraph.getChilds(X.class).size());
+        assertTrue(childGraph.getChilds(X.class).contains(Z.class));
+
+
+        assertEquals(1, childGraph.getChilds(Y.class).size());
+        assertTrue(childGraph.getChilds(Y.class).contains(Z.class));
+    }
+
+    @Test
+    public void shouldReturnRelationWithChilds() throws Exception {
+        final HierarchyGraph hierarchyGraph = MockedHierarchyGraph.getHierarchyGraph();
+
+        final ChildGraph childGraph = ChildGraph.newInstance(hierarchyGraph);
+
+        final Set<Relation> childRelations = childGraph.getChildRelations(X.class);
+
+        assertEquals(1, childRelations.size());
+        final List<Relation> relations = new ArrayList<Relation>(childRelations);
+        final Relation relation = relations.get(0);
+        assertEquals("id" , relation.getFrom().getFieldName());
+        assertEquals("xId" , relation.getTo().getFieldName());
+    }
+
+    @Test
+    public void shouldReturnNullIfChildNodeNotFound() throws Exception {
+        final ChildGraph childGraph = ChildGraph.newInstance();
+        assertNull(childGraph.getNode(X.class));
+
+    }
+}
