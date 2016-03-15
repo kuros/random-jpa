@@ -3,7 +3,7 @@ It has been always been a challenge to create a test data. This project aims at 
 
 Maven Group Plugin | Latest Version
 ------------------ | ---------------
-com.github.kuros.random-jpa | [v0.2.5](https://github.com/kuros/random-jpa/releases)
+com.github.kuros.random-jpa | [v0.3.0](https://github.com/kuros/random-jpa/releases)
 
 ## Feature
 1. Uses table's foreign key relations to maintain creation order dynamically
@@ -27,7 +27,7 @@ In order to use.
 JPAContextFactory accepts two parameters Database and EntityManager. I am using MS_SQL_SERVER for demo.
 ```java
 JPAContext jpaContext = JPAContextFactory.newInstance(Database.MS_SQL_SERVER, entityManager)
-    .create();
+    .generate();
 ```
 #### Initialization with Dependencies
 Let us say that you want have a custom dependency between Person and Employee tables but you do not have any foreign key relationship between them.
@@ -39,7 +39,7 @@ dependencies.withLink(Link.newLink(Person_.id, Employee_.personId))
 
 JPAContext jpaContext = JPAContextFactory.newInstance(Database.MS_SQL_SERVER, entityManager)
     .with(dependencies)
-    .create();
+    .generate();
 ```
 
 #### Creating RandomGenerators
@@ -104,7 +104,7 @@ generator.addAttributeGenerator(new RandomAttributeGenerator() {
 ```java
 final JPAContext jpaContext = JPAContextFactory.newInstance(Database.MS_SQL_SERVER, entityManager)
                 .with(generator)
-                .create();
+                .generate();
 ```
 
 ### Adding Preconditions
@@ -117,7 +117,7 @@ final JPAContext jpaContext = JPAContextFactory.newInstance(Database.MS_SQL_SERV
                                             .create(Entity.of(Department.class), Entity.of(XXX.class)),
                                    Before.of(Person.class)
                                             .create(Entity.of(Y.class), Entity.of(Z.class)))
-                .create();
+                .generate();
 
 ```
 
@@ -190,5 +190,3 @@ it will print the hierarchy with the index number of the object followed by the 
         ├── com.github.kuros.entity.Employee|0 [employeeId: 1]
         └── com.github.kuros.entity.Employee|1 [employeeId: 2]
 ```
-
-_Logging functionality provided by OpenPojo (http://openpojo.com)_
