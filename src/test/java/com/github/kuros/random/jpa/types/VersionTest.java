@@ -8,8 +8,9 @@ import static org.junit.Assert.assertTrue;
 public class VersionTest {
 
     @Test
-    public void shouldReturnSupportedTrueForLowerVersion() throws Exception {
-        assertTrue(Version.V1.isSupported(Version.V2));
+    public void shouldReturnSupportedFalseForVersionMisMatch() throws Exception {
+        assertFalse(Version.V1.isSupported(Version.V2));
+        assertFalse(Version.V2.isSupported(Version.V1));
     }
 
     @Test
@@ -18,7 +19,7 @@ public class VersionTest {
     }
 
     @Test
-    public void shouldReturnSupportedFalseForHigherVersion() throws Exception {
-        assertFalse(Version.V2.isSupported(Version.V1));
+    public void shouldReturnSupportedTrueForMultipleVersionInput() throws Exception {
+        assertTrue(Version.V2.isSupported(Version.V1, Version.V2));
     }
 }

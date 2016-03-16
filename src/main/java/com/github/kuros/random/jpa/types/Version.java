@@ -14,7 +14,12 @@ public enum Version {
         return series;
     }
 
-    public boolean isSupported(final Version currentVersion) {
-        return currentVersion.getSeries() >= getSeries();
+    public boolean isSupported(final Version... versions) {
+        for (Version version : versions) {
+            if (version.getSeries() == getSeries()) {
+                return true;
+            }
+        }
+        return false;
     }
 }

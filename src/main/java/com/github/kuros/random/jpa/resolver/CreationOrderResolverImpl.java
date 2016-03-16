@@ -68,11 +68,11 @@ public final class CreationOrderResolverImpl implements CreationOrderResolver {
             }
         }
 
-        if (Version.V2.isSupported(cache.getVersion())) {
+        if (cache.getVersion().isSupported(Version.V2)) {
             sortCreationOrderBasedOnDepth(creationOrder);
         }
 
-        if (Version.V1.isSupported(cache.getVersion())) {
+        if (cache.getVersion().isSupported(Version.V1)) {
             applyPlanLevelPrecondition(creationOrder);
         }
 
