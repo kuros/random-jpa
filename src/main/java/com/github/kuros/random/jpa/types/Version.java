@@ -1,7 +1,5 @@
 package com.github.kuros.random.jpa.types;
 
-import java.util.List;
-
 public enum Version {
     V1(1),
     V2(2);
@@ -17,6 +15,6 @@ public enum Version {
     }
 
     public boolean isSupported(final Version currentVersion) {
-        return currentVersion.getSeries() <= getSeries();
+        return currentVersion.getSeries() >= getSeries();
     }
 }

@@ -68,7 +68,9 @@ public final class CreationOrderResolverImpl implements CreationOrderResolver {
             }
         }
 
-        sortCreationOrderBasedOnDepth(creationOrder);
+        if (Version.V2.isSupported(cache.getVersion())) {
+            sortCreationOrderBasedOnDepth(creationOrder);
+        }
 
         if (Version.V1.isSupported(cache.getVersion())) {
             applyPlanLevelPrecondition(creationOrder);
