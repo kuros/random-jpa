@@ -167,8 +167,8 @@ public final class CreationOrderResolverImpl implements CreationOrderResolver {
                     }
                 }
 
-                setDepthIfApplicable(queue, polledClass, parent);
-                setDepthIfApplicable(stack, polledClass, parent);
+                setDepthIfApplicable(queue, polledClass.getDepth(), parent);
+                setDepthIfApplicable(stack, polledClass.getDepth(), parent);
             }
 
 
@@ -195,10 +195,14 @@ public final class CreationOrderResolverImpl implements CreationOrderResolver {
         }
     }
 
-    private void setDepthIfApplicable(final Collection<ClassDepth<?>> collection, final ClassDepth<?> polledClass, final Class<?> parent) {
-        for (ClassDepth<?> depth : collection) {
-            if (depth.getType() == parent && depth.getDepth() <= polledClass.getDepth()) {
-                depth.setDepth(polledClass.getDepth() + 1);
+    private void setDepthIfApplicable(final Collection<ClassDepth<?>> collection, final int depth, final Class<?> parent) {
+        for (ClassDepth<?> classDepth : collection) {
+            if (classDepth.getType() == parent && classDepth.getDepth() <= depth) {
+                classDepth.setDepth(depth + 1);
+                final Set<Class<?>> parents = hierarchyGraph.getParents(parent);
+                for (Class<?> aClass : parents) {
+                    setDepthIfApplicable(collection, depth + 1, aClass);
+                }
             }
         }
     }

@@ -117,7 +117,7 @@ public final class JPAContextV2 extends BaseContext {
         final List<ClassDepth<?>> leftOrder = left.getOrder();
         for (ClassDepth<?> rightOrderClass : right.getOrder()) {
             if (!leftOrder.contains(rightOrderClass)) {
-                leftOrder.add(rightOrderClass);
+                left.add(rightOrderClass);
             } else {
                 final int index = leftOrder.indexOf(rightOrderClass);
                 final ClassDepth<?> leftClassDepth = leftOrder.get(index);
