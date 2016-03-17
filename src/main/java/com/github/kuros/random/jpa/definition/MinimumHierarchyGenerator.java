@@ -21,9 +21,14 @@ public class MinimumHierarchyGenerator {
                 hierarchyGraph.addRelation(relation);
             }
 
-            final List<Class<?>> beforeClasses = entity.getBeforeClasses();
-            for (Class<?> parentClass : beforeClasses) {
+            final List<Class<?>> afterClasses = entity.getAfterClasses();
+            for (Class<?> parentClass : afterClasses) {
                 hierarchyGraph.addNode(entity.getType(), parentClass);
+            }
+
+            final List<Class<?>> beforeClasses = entity.getBeforeClasses();
+            for (Class<?> beforeClass : beforeClasses) {
+                hierarchyGraph.addNode(beforeClass, entity.getType());
             }
         }
 

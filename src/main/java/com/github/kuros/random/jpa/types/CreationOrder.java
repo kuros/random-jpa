@@ -73,9 +73,9 @@ public final class CreationOrder {
         this.managedClasses = getClasses(order);
     }
 
-    private Set<Class<?>> getClasses(final List<ClassDepth<?>> order) {
+    private Set<Class<?>> getClasses(final List<ClassDepth<?>> orderValue) {
         final Set<Class<?>> newManagedClasses = new HashSet<Class<?>>();
-        for (ClassDepth<?> classDepth : order) {
+        for (ClassDepth<?> classDepth : orderValue) {
             newManagedClasses.add(classDepth.getType());
         }
 

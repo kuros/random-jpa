@@ -65,6 +65,23 @@ public class MinimumHierarchyGeneratorTest {
 
     }
 
+    @Test
+    public void shouldNotGenerateAssociatedClassWithSingleDepthAndCreateBeforeFeatureIfNotRequired() throws Exception {
+        final HierarchyGraph hierarchyGraph = MockedHierarchyGraph.getHierarchyGraph();
+
+        final List<Entity> entities = new ArrayList<Entity>();
+        entities.add(Entity.of(A.class).createBefore(P.class));
+        final HierarchyGraph generatedHierarchyGraph = MinimumHierarchyGenerator.generate(hierarchyGraph, entities);
+
+        assertEquals(2, generatedHierarchyGraph.getKeySet().size());
+        assertTrue(generatedHierarchyGraph.getKeySet().contains(A.class));
+        assertTrue(generatedHierarchyGraph.getKeySet().contains(P.class));
+
+        assertEquals(0, generatedHierarchyGraph.getParents(A.class).size());
+        assertEquals(1, generatedHierarchyGraph.getParents(P.class).size());
+        assertTrue("Parent contains A", generatedHierarchyGraph.getParents(P.class).remove(A.class));
+    }
+
     @Test(expected = RandomJPAException.class)
     public void shouldThrowExceptionWhenCyclicDependencyFound() throws Exception {
         final HierarchyGraph hierarchyGraph = MockedHierarchyGraph.getHierarchyGraph();

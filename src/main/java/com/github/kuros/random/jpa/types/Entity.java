@@ -30,6 +30,7 @@ public final class Entity<T> {
     private List<AttributeValue> attributeValues;
     private List<Link> softLinks;
     private int count;
+    private List<Class<?>> afterClasses;
     private List<Class<?>> beforeClasses;
 
     private Entity(final Class<T> type) {
@@ -42,6 +43,7 @@ public final class Entity<T> {
         this.attributeValues = new ArrayList<AttributeValue>();
         this.count = count;
         this.softLinks = new ArrayList<Link>();
+        this.afterClasses = new ArrayList<Class<?>>();
         this.beforeClasses = new ArrayList<Class<?>>();
     }
 
@@ -69,7 +71,12 @@ public final class Entity<T> {
         return this;
     }
 
-    public Entity<T> createAfter(final Class<?>... classes){
+    public Entity<T> createAfter(final Class<?>... classes) {
+        afterClasses.addAll(Arrays.asList(classes));
+        return this;
+    }
+
+    public Entity<T> createBefore(final Class<?>... classes) {
         beforeClasses.addAll(Arrays.asList(classes));
         return this;
     }
@@ -88,6 +95,10 @@ public final class Entity<T> {
 
     public List<Link> getSoftLinks() {
         return softLinks;
+    }
+
+    public List<Class<?>> getAfterClasses() {
+        return afterClasses;
     }
 
     public List<Class<?>> getBeforeClasses() {

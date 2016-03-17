@@ -12,16 +12,14 @@ import com.github.kuros.random.jpa.types.CreationOrder;
 import com.github.kuros.random.jpa.types.CreationPlan;
 import com.github.kuros.random.jpa.types.Entity;
 import com.github.kuros.random.jpa.types.Plan;
+import com.github.kuros.random.jpa.util.MergeUtil;
 import com.github.kuros.random.jpa.v1.resolver.CreationPlanResolver;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /*
  * Copyright (c) 2015 Kumar Rohit
@@ -57,25 +55,14 @@ public final class JPAContextV2 extends BaseContext {
 
         final CreationOrderResolver creationOrderResolver = CreationOrderResolverImpl.newInstance(getCache(), hierarchyGraph);
 
-
-        final Map<Class<?>, CreationOrder> creationOrderMap = new HashMap<Class<?>, CreationOrder>();
-
+        final List<CreationOrder> creationOrders = new ArrayList<CreationOrder>();
         for (Entity entity : entities) {
-            final Class<?> key = findKey(creationOrderMap, entity.getType());
-            if (key == null) {
                 final CreationOrder creationOrder = creationOrderResolver.getCreationOrder(entity);
-
-                if (!isFoundAndReplaced(creationOrderMap, creationOrder)) {
-                    creationOrderMap.put(entity.getType(), creationOrder);
-                }
-            } else {
-                final CreationOrder creationOrder = creationOrderMap.get(key);
-                creationOrder.addCreationCount(entity.getType(), entity.getCount());
-            }
+                creationOrders.add(creationOrder);
 
         }
 
-        final Collection<CreationOrder> values = creationOrderMap.values();
+        final Collection<CreationOrder> values = MergeUtil.merge(creationOrders);
         sort(values);
         final CreationPlanResolver creationPlanResolver = CreationPlanResolver.newInstance(
                 getRandomizer(hierarchyGraph, plan), toArray(values));
@@ -96,75 +83,4 @@ public final class JPAContextV2 extends BaseContext {
         final CreationOrder[] array = new CreationOrder[values.size()];
         return values.toArray(array);
     }
-
-    private boolean isFoundAndReplaced(final Map<Class<?>, CreationOrder> creationOrderMap, final CreationOrder creationOrder) {
-
-        final Set<ClassDepth<?>> topLevelNodes = getTopLevelNodes(creationOrder);
-
-        for (CreationOrder order : creationOrderMap.values()) {
-            final Set<ClassDepth<?>> topLevelNodes2 = getTopLevelNodes(order);
-            if (validateLeftContainsRight(creationOrder.getOrder(), topLevelNodes2)
-                    || validateLeftContainsRight(order.getOrder(), topLevelNodes)) {
-                mergeRightToLeft(order, creationOrder);
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private void mergeRightToLeft(final CreationOrder left, final CreationOrder right) {
-        final List<ClassDepth<?>> leftOrder = left.getOrder();
-        for (ClassDepth<?> rightOrderClass : right.getOrder()) {
-            if (!leftOrder.contains(rightOrderClass)) {
-                left.add(rightOrderClass);
-            } else {
-                final int index = leftOrder.indexOf(rightOrderClass);
-                final ClassDepth<?> leftClassDepth = leftOrder.get(index);
-                if (leftClassDepth.getDepth() < rightOrderClass.getDepth()) {
-                    leftClassDepth.setDepth(rightOrderClass.getDepth());
-                }
-            }
-        }
-
-        left.addCreationCount(right.getCreationCount());
-    }
-
-    private boolean validateLeftContainsRight(final Collection<ClassDepth<?>> left, final Collection<ClassDepth<?>> right) {
-        for (ClassDepth<?> classDepth : right) {
-            if (left.contains(classDepth)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private Set<ClassDepth<?>> getTopLevelNodes(final CreationOrder creationOrder) {
-        final List<ClassDepth<?>> order = creationOrder.getOrder();
-        final Set<ClassDepth<?>> classDepths = new HashSet<ClassDepth<?>>();
-        if (!order.isEmpty()) {
-            final int depth = order.get(0).getDepth();
-
-            for (ClassDepth<?> classDepth : order) {
-                if (classDepth.getDepth() == depth) {
-                    classDepths.add(classDepth);
-                }
-            }
-        }
-
-        return classDepths;
-    }
-
-    private Class<?> findKey(final Map<Class<?>, CreationOrder> creationOrderMap, final Class type) {
-
-        for (Class<?> aClass : creationOrderMap.keySet()) {
-            final CreationOrder creationOrder = creationOrderMap.get(aClass);
-            if (creationOrder.containsClass(type)) {
-                return aClass;
-            }
-        }
-
-        return null;
-    }
-
 }
