@@ -12,7 +12,6 @@ public class MergeUtil {
 
     public static List<CreationOrder> merge(final List<CreationOrder> creationOrders) {
         final Map<OrderKey, CreationOrder> compactMap = new LinkedHashMap<OrderKey, CreationOrder>();
-        final Map<OrderKey, CreationOrder> map = new LinkedHashMap<OrderKey, CreationOrder>();
 
         for (CreationOrder creationOrder : creationOrders) {
 
@@ -20,7 +19,7 @@ public class MergeUtil {
 
             for (ClassDepth<?> classDepth : creationOrder.getOrder()) {
                 final OrderKey orderKey = new OrderKey(classDepth);
-                final CreationOrder innerOrder = map.get(orderKey);
+                final CreationOrder innerOrder = compactMap.get(orderKey);
                 if (innerOrder != null && !innerOrder.getOrder().isEmpty()) {
                     compactMap.remove(orderKey);
                     mergeRightToLeft(combinedOrder, innerOrder);
@@ -30,7 +29,6 @@ public class MergeUtil {
             if (!combinedOrder.getOrder().isEmpty()) {
                 final OrderKey key = new OrderKey(combinedOrder.getOrder());
                 compactMap.put(key, combinedOrder);
-                map.put(key, combinedOrder);
             }
         }
 
