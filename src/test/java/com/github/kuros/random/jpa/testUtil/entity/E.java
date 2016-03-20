@@ -1,4 +1,4 @@
-package com.github.kuros.random.jpa.testUtil.hierarchyGraph.entity;
+package com.github.kuros.random.jpa.testUtil.entity;
 
 /*
  * Copyright (c) 2015 Kumar Rohit
@@ -25,20 +25,52 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "Y")
-public class Y {
+@Table(name = "E")
+public class E {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private long id;
 
+    @Column(name = "b_id")
+    private long bId;
+
+    @Column(name = "d_id")
+    private long dId;
+
+    @Column(name = "p_id")
+    private long pId;
+
     public long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(final long id) {
         this.id = id;
     }
 
+    public long getbId() {
+        return bId;
+    }
+
+    public void setbId(final long bId) {
+        this.bId = bId;
+    }
+
+    public long getdId() {
+        return dId;
+    }
+
+    public void setdId(final long dId) {
+        this.dId = dId;
+    }
+
+    public long getpId() {
+        return pId;
+    }
+
+    public void setpId(final long pId) {
+        this.pId = pId;
+    }
 }

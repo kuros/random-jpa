@@ -1,24 +1,24 @@
 package com.github.kuros.random.jpa.definition;
 
 import com.github.kuros.random.jpa.mapper.Relation;
-import com.github.kuros.random.jpa.testUtil.hierarchyGraph.DependencyHelper;
+import com.github.kuros.random.jpa.testUtil.entity.A;
+import com.github.kuros.random.jpa.testUtil.entity.B;
+import com.github.kuros.random.jpa.testUtil.entity.C;
+import com.github.kuros.random.jpa.testUtil.entity.D;
+import com.github.kuros.random.jpa.testUtil.entity.E;
+import com.github.kuros.random.jpa.testUtil.entity.X;
+import com.github.kuros.random.jpa.testUtil.entity.Y;
+import com.github.kuros.random.jpa.testUtil.entity.Z;
 import com.github.kuros.random.jpa.testUtil.hierarchyGraph.MockedHierarchyGraph;
-import com.github.kuros.random.jpa.testUtil.hierarchyGraph.entity.A;
-import com.github.kuros.random.jpa.testUtil.hierarchyGraph.entity.B;
-import com.github.kuros.random.jpa.testUtil.hierarchyGraph.entity.C;
-import com.github.kuros.random.jpa.testUtil.hierarchyGraph.entity.D;
-import com.github.kuros.random.jpa.testUtil.hierarchyGraph.entity.E;
-import com.github.kuros.random.jpa.testUtil.hierarchyGraph.entity.P;
-import com.github.kuros.random.jpa.testUtil.hierarchyGraph.entity.X;
-import com.github.kuros.random.jpa.testUtil.hierarchyGraph.entity.Y;
-import com.github.kuros.random.jpa.testUtil.hierarchyGraph.entity.Z;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class ChildGraphTest {
 

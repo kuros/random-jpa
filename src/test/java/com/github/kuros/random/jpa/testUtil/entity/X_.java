@@ -1,4 +1,7 @@
-package com.github.kuros.random.jpa.testUtil.hierarchyGraph.entity;
+package com.github.kuros.random.jpa.testUtil.entity;
+
+import javax.persistence.metamodel.SingularAttribute;
+import javax.persistence.metamodel.StaticMetamodel;
 
 /*
  * Copyright (c) 2015 Kumar Rohit
@@ -16,29 +19,8 @@ package com.github.kuros.random.jpa.testUtil.hierarchyGraph.entity;
  *    You should have received a copy of the GNU Lesser General Public License
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+@StaticMetamodel(X.class)
+public class X_ {
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
-@Entity
-@Table(name = "A")
-public class A {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private long id;
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
+    public static volatile SingularAttribute<X, Long> id;
 }

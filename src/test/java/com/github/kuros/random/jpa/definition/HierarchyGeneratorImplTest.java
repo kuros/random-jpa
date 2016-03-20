@@ -1,30 +1,24 @@
 package com.github.kuros.random.jpa.definition;
 
 import com.github.kuros.random.jpa.mapper.Relation;
+import com.github.kuros.random.jpa.testUtil.entity.A;
+import com.github.kuros.random.jpa.testUtil.entity.B;
+import com.github.kuros.random.jpa.testUtil.entity.C;
+import com.github.kuros.random.jpa.testUtil.entity.D;
+import com.github.kuros.random.jpa.testUtil.entity.E;
+import com.github.kuros.random.jpa.testUtil.entity.P;
+import com.github.kuros.random.jpa.testUtil.entity.X;
+import com.github.kuros.random.jpa.testUtil.entity.Y;
+import com.github.kuros.random.jpa.testUtil.entity.Z;
 import com.github.kuros.random.jpa.testUtil.hierarchyGraph.DependencyHelper;
-import com.github.kuros.random.jpa.testUtil.hierarchyGraph.entity.A;
-import com.github.kuros.random.jpa.testUtil.hierarchyGraph.entity.B;
-import com.github.kuros.random.jpa.testUtil.hierarchyGraph.entity.C;
-import com.github.kuros.random.jpa.testUtil.hierarchyGraph.entity.D;
-import com.github.kuros.random.jpa.testUtil.hierarchyGraph.entity.E;
-import com.github.kuros.random.jpa.testUtil.hierarchyGraph.entity.P;
-import com.github.kuros.random.jpa.testUtil.hierarchyGraph.entity.X;
-import com.github.kuros.random.jpa.testUtil.hierarchyGraph.entity.Y;
-import com.github.kuros.random.jpa.testUtil.hierarchyGraph.entity.Z;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /*
  * Copyright (c) 2015 Kumar Rohit
@@ -43,9 +37,6 @@ import static org.mockito.Mockito.when;
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 public class HierarchyGeneratorImplTest {
-
-    private HierarchyGraph hierarchyGraph;
-
 
     @Before
     public void setUp() throws Exception {
@@ -81,10 +72,5 @@ public class HierarchyGeneratorImplTest {
         assertEquals(2, hierarchyGraph.getParents(Z.class).size());
         assertTrue(hierarchyGraph.getParents(Z.class).contains(X.class));
         assertTrue(hierarchyGraph.getParents(Z.class).contains(Y.class));
-    }
-
-    @Test
-    public void testGenerate() throws Exception {
-
     }
 }

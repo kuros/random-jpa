@@ -2,11 +2,11 @@ package com.github.kuros.random.jpa.definition;
 
 import com.github.kuros.random.jpa.exception.RandomJPAException;
 import com.github.kuros.random.jpa.testUtil.hierarchyGraph.MockedHierarchyGraph;
-import com.github.kuros.random.jpa.testUtil.hierarchyGraph.entity.A;
-import com.github.kuros.random.jpa.testUtil.hierarchyGraph.entity.P;
-import com.github.kuros.random.jpa.testUtil.hierarchyGraph.entity.X;
-import com.github.kuros.random.jpa.testUtil.hierarchyGraph.entity.Y;
-import com.github.kuros.random.jpa.testUtil.hierarchyGraph.entity.Z;
+import com.github.kuros.random.jpa.testUtil.entity.A;
+import com.github.kuros.random.jpa.testUtil.entity.P;
+import com.github.kuros.random.jpa.testUtil.entity.X;
+import com.github.kuros.random.jpa.testUtil.entity.Y;
+import com.github.kuros.random.jpa.testUtil.entity.Z;
 import com.github.kuros.random.jpa.types.Entity;
 import org.junit.Test;
 

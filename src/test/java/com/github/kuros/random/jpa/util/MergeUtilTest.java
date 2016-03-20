@@ -1,11 +1,11 @@
 package com.github.kuros.random.jpa.util;
 
-import com.github.kuros.random.jpa.testUtil.hierarchyGraph.entity.A;
-import com.github.kuros.random.jpa.testUtil.hierarchyGraph.entity.B;
-import com.github.kuros.random.jpa.testUtil.hierarchyGraph.entity.C;
-import com.github.kuros.random.jpa.testUtil.hierarchyGraph.entity.D;
-import com.github.kuros.random.jpa.testUtil.hierarchyGraph.entity.X;
-import com.github.kuros.random.jpa.testUtil.hierarchyGraph.entity.Y;
+import com.github.kuros.random.jpa.testUtil.entity.A;
+import com.github.kuros.random.jpa.testUtil.entity.B;
+import com.github.kuros.random.jpa.testUtil.entity.C;
+import com.github.kuros.random.jpa.testUtil.entity.D;
+import com.github.kuros.random.jpa.testUtil.entity.X;
+import com.github.kuros.random.jpa.testUtil.entity.Y;
 import com.github.kuros.random.jpa.types.ClassDepth;
 import com.github.kuros.random.jpa.types.CreationOrder;
 import org.junit.Test;

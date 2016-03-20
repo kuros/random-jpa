@@ -1,4 +1,4 @@
-package com.github.kuros.random.jpa.testUtil.hierarchyGraph.entity;
+package com.github.kuros.random.jpa.testUtil.entity;
 
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
@@ -19,10 +19,8 @@ import javax.persistence.metamodel.StaticMetamodel;
  *    You should have received a copy of the GNU Lesser General Public License
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-@StaticMetamodel(C.class)
-public class C_ {
+@StaticMetamodel(B.class)
+public class B_ {
 
-    public static volatile SingularAttribute<C, Long> id;
-    public static volatile SingularAttribute<C, Long> aId;
-    public static volatile SingularAttribute<C, Long> bId;
+    public static volatile SingularAttribute<B, Long> id;
 }
