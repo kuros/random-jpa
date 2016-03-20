@@ -2,15 +2,17 @@ package com.github.kuros.random.jpa.testUtil.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.Table;
 
-/**
- * Created by Kumar Rohit on 4/26/15.
- */
 @Entity
 @Table(name = "person")
 public class Person {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "person_id")
     private Long personId;
     private String firstName;

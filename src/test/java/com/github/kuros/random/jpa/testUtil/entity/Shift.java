@@ -2,15 +2,18 @@ package com.github.kuros.random.jpa.testUtil.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.Table;
 import java.util.Date;
 
-/**
- * Created by Kumar Rohit on 4/26/15.
- */
 @Entity
 @Table(name = "shift")
 public class Shift {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "shift_id")
     private Integer shiftId;
     private String name;
