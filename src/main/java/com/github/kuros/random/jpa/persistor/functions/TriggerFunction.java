@@ -28,12 +28,12 @@ import java.util.List;
  *    You should have received a copy of the GNU Lesser General Public License
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class TriggerFunction<T> implements Function<T> {
+class TriggerFunction<T> implements Function<T> {
 
     private final Cache cache;
-    private final Finder finder;
+    private Finder finder;
 
-    public TriggerFunction(final Cache cache) {
+    TriggerFunction(final Cache cache) {
         this.cache = cache;
         this.finder = new Finder(cache);
     }
@@ -68,5 +68,9 @@ public class TriggerFunction<T> implements Function<T> {
             attributeNames.add(name);
         }
         return attributeNames;
+    }
+
+    void setFinder(final Finder finder) {
+        this.finder = finder;
     }
 }
