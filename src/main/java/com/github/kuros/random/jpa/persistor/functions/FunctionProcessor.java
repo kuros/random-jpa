@@ -50,13 +50,12 @@ public class FunctionProcessor<T> {
         return persistedObject;
     }
 
-    private List<Function> getFunctions() {
+    List<Function> getFunctions() {
         final List<Function> functions = new ArrayList<Function>();
         functions.add(new TriggerFunction(cache));
-        functions.add(new FindById(cache));
         functions.add(new FindByUniqueIdentities(cache));
+        functions.add(new FindById(cache));
         functions.add(new PersistFunction(cache));
-
         return functions;
     }
 }
