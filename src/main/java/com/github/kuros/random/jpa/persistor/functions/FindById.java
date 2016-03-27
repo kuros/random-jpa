@@ -28,11 +28,12 @@ import java.util.List;
  *    You should have received a copy of the GNU Lesser General Public License
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class FindById<T> implements Function<T> {
+class FindById<T> implements Function<T> {
 
     private final Cache cache;
     private final AttributeProvider attributeProvider;
     private static final List<Class> PRIMITIVE_ID_CLASSES = new ArrayList<Class>();
+    private Finder finder;
 
     static {
         PRIMITIVE_ID_CLASSES.add(Double.TYPE);
@@ -42,9 +43,10 @@ public class FindById<T> implements Function<T> {
         PRIMITIVE_ID_CLASSES.add(Short.TYPE);
     }
 
-    public FindById(final Cache cache) {
+    FindById(final Cache cache) {
         this.cache = cache;
         this.attributeProvider = cache.getAttributeProvider();
+        this.finder = new Finder(cache);
     }
 
     public T apply(final T type) {
@@ -59,7 +61,7 @@ public class FindById<T> implements Function<T> {
                 final Object o = field.get(type);
                 if (o == null
                         || (PRIMITIVE_ID_CLASSES.contains(field.getType())
-                            && NumberUtil.castNumber(Integer.class, o) == 0)) {
+                            && NumberUtil.castNumber(Long.class, o) == 0)) {
                     return null;
                 }
             } catch (final Exception e) {
@@ -67,8 +69,10 @@ public class FindById<T> implements Function<T> {
             }
         }
 
-        final Finder finder = new Finder(cache);
         return finder.findByAttributes(type, attributeIds);
     }
 
+    void setFinder(final Finder finder) {
+        this.finder = finder;
+    }
 }
