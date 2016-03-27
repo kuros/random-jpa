@@ -1,7 +1,6 @@
 package com.github.kuros.random.jpa.persistor.functions;
 
 import com.github.kuros.random.jpa.cache.Cache;
-import com.github.kuros.random.jpa.exception.RandomJPAException;
 import com.github.kuros.random.jpa.log.LogFactory;
 import com.github.kuros.random.jpa.log.Logger;
 
@@ -23,24 +22,19 @@ import javax.persistence.EntityManager;
  *    You should have received a copy of the GNU Lesser General Public License
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class PersistFunction<T> implements Function<T> {
+class PersistFunction<T> implements Function<T> {
 
     private static final Logger LOGGER = LogFactory.getLogger(PersistFunction.class);
     private EntityManager entityManager;
 
-    public PersistFunction(final Cache cache) {
+    PersistFunction(final Cache cache) {
         entityManager = cache.getEntityManager();
     }
 
     public T apply(final T object) {
         final Class<?> tableClass = object.getClass();
-        try {
-            entityManager.persist(object);
-            LOGGER.debug("Persisted values for table: " + tableClass.getName());
-        } catch (final Exception e) {
-            LOGGER.error("Failed to persist: " + tableClass.getName());
-            throw new RandomJPAException(e);
-        }
+        entityManager.persist(object);
+        LOGGER.debug("Persisted values for table: " + tableClass.getName());
         return object;
     }
 }
