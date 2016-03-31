@@ -36,6 +36,10 @@ public class EntityManagerProvider {
         return entityManager.createQuery(query).getResultList();
     }
 
+    public static EntityManager getEntityManager() {
+        return ENTITY_MANAGER_FACTORY.createEntityManager();
+    }
+
     static {
         ENTITY_MANAGER_FACTORY = Persistence.createEntityManagerFactory("RandomJpaService");
     }
