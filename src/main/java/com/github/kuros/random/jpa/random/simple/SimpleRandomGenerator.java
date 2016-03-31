@@ -8,7 +8,9 @@ import com.github.kuros.random.jpa.random.generator.RandomFieldGenerator;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -34,6 +36,7 @@ public class SimpleRandomGenerator {
     private final RandomFactory randomFactory;
     private final Map<Class<?>, RandomFieldGenerator> randomFieldGeneratorMap;
     private final Random random;
+    private static final List<Class> SKIP_FIELD_GENERATION;
 
     SimpleRandomGenerator(final RandomFactory randomFactory,
                           final Map<Class<?>, RandomFieldGenerator> randomFieldGeneratorMap) {
@@ -46,7 +49,7 @@ public class SimpleRandomGenerator {
 
         final T randomObject = randomFactory.generateRandom(type);
 
-        if (!type.isEnum()) {
+        if (!SKIP_FIELD_GENERATION.contains(type) && !type.isEnum()) {
             if (randomNotRequired(randomObject)) {
                 return null;
             }
@@ -98,5 +101,10 @@ public class SimpleRandomGenerator {
         } catch (final IllegalAccessException e) {
             LOGGER.debug("Unable to access field: " + field);
         }
+    }
+
+    static {
+        SKIP_FIELD_GENERATION = new ArrayList<Class>();
+        SKIP_FIELD_GENERATION.add(String.class);
     }
 }
