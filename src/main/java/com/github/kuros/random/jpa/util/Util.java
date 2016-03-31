@@ -1,6 +1,7 @@
 package com.github.kuros.random.jpa.util;
 
 import com.github.kuros.random.jpa.cache.Cache;
+import com.github.kuros.random.jpa.exception.RandomJPAException;
 import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
 
 import java.lang.reflect.Field;
@@ -76,12 +77,13 @@ public class Util {
                     final Field declaredField = getField(type, attribute);
                     declaredField.setAccessible(true);
                     final Object value = declaredField.get(object);
+
+                    if (i != 0) {
+                        builder.append(", ");
+                    }
                     builder.append(declaredField.getName())
                             .append(": ")
                             .append(value);
-                    if (i != attributeIds.size() - 1) {
-                        builder.append(", ");
-                    }
                 } catch (final Exception e) {
                     //do nothing
                 }
@@ -106,7 +108,13 @@ public class Util {
         }
     }
 
-    public static String formatMessage(final String message, final Object[] args) {
+    public static String formatMessage(final String message, final Object... args) {
         return new MessageFormat(message).format(args);
+    }
+
+    public static void assertNotNull(final String message, final Object obj) {
+        if (obj == null) {
+            throw new RandomJPAException(message);
+        }
     }
 }
