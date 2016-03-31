@@ -1,14 +1,20 @@
 package com.github.kuros.random.jpa.log.providers;
 
+import com.github.kuros.random.jpa.annotation.VisibleForTesting;
 import com.github.kuros.random.jpa.log.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Slf4JProvider implements Logger {
+class Slf4JProvider implements Logger {
 
     private org.slf4j.Logger logger;
 
-    public Slf4JProvider(final Class<?> clazz) {
+    Slf4JProvider(final Class<?> clazz) {
         logger = LoggerFactory.getLogger(clazz);
+    }
+
+    @VisibleForTesting
+    Slf4JProvider(final org.slf4j.Logger logger) {
+        this.logger = logger;
     }
 
     public void info(final String message, final Object... args) {
