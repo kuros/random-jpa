@@ -57,4 +57,11 @@ public class EntityTypeHelperTest {
         final Field salary = EntityTypeHelper.getField(entityType, "salary1");
         assertNull(salary);
     }
+
+    @Test
+    public void shouldReturnClass() throws Exception {
+        assertEquals(Employee.class, EntityTypeHelper.getClass(entityType));
+
+
+    }
 }
