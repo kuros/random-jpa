@@ -45,6 +45,7 @@ public final class CleanerImpl implements Cleaner {
     private ChildGraph childGraph;
     private Finder finder;
     private Set<Class<?>> skipTruncation;
+    private Set<Class<?>> allClassesToSkip;
     private int batchCounter;
     private Cache cache;
 
@@ -58,6 +59,7 @@ public final class CleanerImpl implements Cleaner {
         this.hierarchyGraph = cache.getHierarchyGraph();
         this.batchCounter = 0;
         this.cache = cache;
+        this.allClassesToSkip = getSkippedClasses();
     }
 
 
@@ -79,7 +81,7 @@ public final class CleanerImpl implements Cleaner {
     }
 
     public void truncateAll() {
-        final Set<Class<?>> skip = getSkippedClasses();
+        final Set<Class<?>> skip = new HashSet<Class<?>>(allClassesToSkip);
 
 
         final Set<Class<?>> classes = childGraph.keySet();
@@ -89,7 +91,8 @@ public final class CleanerImpl implements Cleaner {
     }
 
     public void truncate(final Class<?> type) {
-        truncate(getSkippedClasses(), type);
+        final Set<Class<?>> skippedClasses = new HashSet<Class<?>>(allClassesToSkip);
+        truncate(skippedClasses, type);
     }
 
 
@@ -150,7 +153,9 @@ public final class CleanerImpl implements Cleaner {
             }
         }
 
-        delete(type);
+        if (!allClassesToSkip.contains(type.getClass())) {
+            delete(type);
+        }
     }
 
     private <T> Object getFieldValue(final T type, final FieldWrapper from) {
@@ -163,7 +168,7 @@ public final class CleanerImpl implements Cleaner {
         }
     }
 
-    public Map<Class<?>, Set<Relation>> getChildRelationMap(final Class<?> type) {
+    private Map<Class<?>, Set<Relation>> getChildRelationMap(final Class<?> type) {
 
         final Map<Class<?>, Set<Relation>> childRelationMap = new HashMap<Class<?>, Set<Relation>>();
         final Set<Relation> childRelations = childGraph.getChildRelations(type);
@@ -183,11 +188,11 @@ public final class CleanerImpl implements Cleaner {
     }
 
 
-    public <T> T findById(final Class<T> type, final Object value) {
+    private  <T> T findById(final Class<T> type, final Object value) {
         return entityManager.find(type, value);
     }
 
-    public <T> void delete(final T t) {
+    private  <T> void delete(final T t) {
         try {
             batchCounter++;
             LOGGER.debug("Deleting Entity: " + t.getClass() + Util.printEntityId(cache, t));

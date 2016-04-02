@@ -1,5 +1,8 @@
 package com.github.kuros.random.jpa.testUtil.entity;
 
+import javax.persistence.metamodel.SingularAttribute;
+import javax.persistence.metamodel.StaticMetamodel;
+
 /*
  * Copyright (c) 2015 Kumar Rohit
  *
@@ -16,39 +19,8 @@ package com.github.kuros.random.jpa.testUtil.entity;
  *    You should have received a copy of the GNU Lesser General Public License
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+@StaticMetamodel(F.class)
+public class F_ {
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
-@Entity
-@Table(name = "X")
-public class X {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
-
-    @Column(name = "a_Id")
-    private Long aId;
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
-    public Long getaId() {
-        return aId;
-    }
-
-    public void setaId(final Long aId) {
-        this.aId = aId;
-    }
+    public static volatile SingularAttribute<F, Long> id;
 }

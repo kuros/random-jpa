@@ -6,7 +6,7 @@ import com.github.kuros.random.jpa.testUtil.entity.B;
 import com.github.kuros.random.jpa.testUtil.entity.C;
 import com.github.kuros.random.jpa.testUtil.entity.D;
 import com.github.kuros.random.jpa.testUtil.entity.E;
-import com.github.kuros.random.jpa.testUtil.entity.P;
+import com.github.kuros.random.jpa.testUtil.entity.F;
 import com.github.kuros.random.jpa.testUtil.entity.X;
 import com.github.kuros.random.jpa.testUtil.entity.Y;
 import com.github.kuros.random.jpa.testUtil.entity.Z;
@@ -52,7 +52,7 @@ public class HierarchyGeneratorImplTest {
         assertEquals(9, hierarchyGraph.getKeySet().size());
         assertEquals(0, hierarchyGraph.getParents(A.class).size());
         assertEquals(0, hierarchyGraph.getParents(B.class).size());
-        assertEquals(0, hierarchyGraph.getParents(P.class).size());
+        assertEquals(0, hierarchyGraph.getParents(F.class).size());
         assertEquals(0, hierarchyGraph.getParents(X.class).size());
         assertEquals(0, hierarchyGraph.getParents(Y.class).size());
 
@@ -67,7 +67,7 @@ public class HierarchyGeneratorImplTest {
         assertEquals(3, hierarchyGraph.getParents(E.class).size());
         assertTrue(hierarchyGraph.getParents(E.class).contains(B.class));
         assertTrue(hierarchyGraph.getParents(E.class).contains(D.class));
-        assertTrue(hierarchyGraph.getParents(E.class).contains(P.class));
+        assertTrue(hierarchyGraph.getParents(E.class).contains(F.class));
 
         assertEquals(2, hierarchyGraph.getParents(Z.class).size());
         assertTrue(hierarchyGraph.getParents(Z.class).contains(X.class));

@@ -2,13 +2,13 @@ package com.github.kuros.random.jpa.resolver;
 
 import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.link.Preconditions;
+import com.github.kuros.random.jpa.testUtil.entity.F;
 import com.github.kuros.random.jpa.testUtil.hierarchyGraph.MockedHierarchyGraph;
 import com.github.kuros.random.jpa.testUtil.entity.A;
 import com.github.kuros.random.jpa.testUtil.entity.B;
 import com.github.kuros.random.jpa.testUtil.entity.C;
 import com.github.kuros.random.jpa.testUtil.entity.D;
 import com.github.kuros.random.jpa.testUtil.entity.E;
-import com.github.kuros.random.jpa.testUtil.entity.P;
 import com.github.kuros.random.jpa.testUtil.entity.X;
 import com.github.kuros.random.jpa.types.ClassDepth;
 import com.github.kuros.random.jpa.types.CreationOrder;
@@ -117,7 +117,7 @@ public class CreationOrderResolverImplTest {
         expected.put(B.class, 3);
         expected.put(C.class, 2);
         expected.put(D.class, 1);
-        expected.put(P.class, 1);
+        expected.put(F.class, 1);
         expected.put(E.class, 0);
         return expected;
     }

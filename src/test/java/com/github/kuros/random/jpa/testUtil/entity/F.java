@@ -25,30 +25,20 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "X")
-public class X {
+@Table(name = "F")
+public class F {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Long id;
-
-    @Column(name = "a_Id")
-    private Long aId;
+    private long id;
 
     public long getId() {
         return id;
     }
 
-    public void setId(final Long id) {
+    public void setId(final long id) {
         this.id = id;
     }
 
-    public Long getaId() {
-        return aId;
-    }
-
-    public void setaId(final Long aId) {
-        this.aId = aId;
-    }
 }

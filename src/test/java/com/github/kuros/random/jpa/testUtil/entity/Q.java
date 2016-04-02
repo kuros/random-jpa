@@ -25,18 +25,18 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "X")
-public class X {
+@Table(name = "Q")
+public class Q {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "a_Id")
-    private Long aId;
+    @Column(name = "p_id")
+    private Long pId;
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
@@ -44,11 +44,11 @@ public class X {
         this.id = id;
     }
 
-    public Long getaId() {
-        return aId;
+    public Long getpId() {
+        return pId;
     }
 
-    public void setaId(final Long aId) {
-        this.aId = aId;
+    public void setpId(final Long pId) {
+        this.pId = pId;
     }
 }

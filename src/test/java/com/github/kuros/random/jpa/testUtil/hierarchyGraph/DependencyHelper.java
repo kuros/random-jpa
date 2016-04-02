@@ -7,7 +7,10 @@ import com.github.kuros.random.jpa.testUtil.entity.B;
 import com.github.kuros.random.jpa.testUtil.entity.C;
 import com.github.kuros.random.jpa.testUtil.entity.D;
 import com.github.kuros.random.jpa.testUtil.entity.E;
+import com.github.kuros.random.jpa.testUtil.entity.F;
 import com.github.kuros.random.jpa.testUtil.entity.P;
+import com.github.kuros.random.jpa.testUtil.entity.Q;
+import com.github.kuros.random.jpa.testUtil.entity.R;
 import com.github.kuros.random.jpa.testUtil.entity.X;
 import com.github.kuros.random.jpa.testUtil.entity.Y;
 import com.github.kuros.random.jpa.testUtil.entity.Z;
@@ -30,10 +33,13 @@ public class DependencyHelper {
 
         relations.add(Relation.newInstance(getFieldWrapper(E.class, "dId"), getFieldWrapper(D.class, "id")));
         relations.add(Relation.newInstance(getFieldWrapper(E.class, "bId"), getFieldWrapper(B.class, "id")));
-        relations.add(Relation.newInstance(getFieldWrapper(E.class, "pId"), getFieldWrapper(P.class, "id")));
+        relations.add(Relation.newInstance(getFieldWrapper(E.class, "pId"), getFieldWrapper(F.class, "id")));
 
         relations.add(Relation.newInstance(getFieldWrapper(Z.class, "xId"), getFieldWrapper(X.class, "id")));
         relations.add(Relation.newInstance(getFieldWrapper(Z.class, "yId"), getFieldWrapper(Y.class, "id")));
+
+        relations.add(Relation.newInstance(getFieldWrapper(Q.class, "pId"), getFieldWrapper(P.class, "id")));
+        relations.add(Relation.newInstance(getFieldWrapper(R.class, "pId"), getFieldWrapper(P.class, "id")));
 
         return relations;
     }

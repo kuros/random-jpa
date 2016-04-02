@@ -1,9 +1,9 @@
 package com.github.kuros.random.jpa.definition;
 
 import com.github.kuros.random.jpa.exception.RandomJPAException;
+import com.github.kuros.random.jpa.testUtil.entity.F;
 import com.github.kuros.random.jpa.testUtil.hierarchyGraph.MockedHierarchyGraph;
 import com.github.kuros.random.jpa.testUtil.entity.A;
-import com.github.kuros.random.jpa.testUtil.entity.P;
 import com.github.kuros.random.jpa.testUtil.entity.X;
 import com.github.kuros.random.jpa.testUtil.entity.Y;
 import com.github.kuros.random.jpa.testUtil.entity.Z;
@@ -53,15 +53,15 @@ public class MinimumHierarchyGeneratorTest {
         final HierarchyGraph hierarchyGraph = MockedHierarchyGraph.getHierarchyGraph();
 
         final List<Entity> entities = new ArrayList<Entity>();
-        entities.add(Entity.of(A.class).createAfter(P.class));
+        entities.add(Entity.of(A.class).createAfter(F.class));
         final HierarchyGraph generatedHierarchyGraph = MinimumHierarchyGenerator.generate(hierarchyGraph, entities);
 
         assertEquals(2, generatedHierarchyGraph.getKeySet().size());
         assertTrue(generatedHierarchyGraph.getKeySet().contains(A.class));
-        assertTrue(generatedHierarchyGraph.getKeySet().contains(P.class));
+        assertTrue(generatedHierarchyGraph.getKeySet().contains(F.class));
 
         assertEquals(1, generatedHierarchyGraph.getParents(A.class).size());
-        assertTrue(generatedHierarchyGraph.getParents(A.class).contains(P.class));
+        assertTrue(generatedHierarchyGraph.getParents(A.class).contains(F.class));
 
     }
 
@@ -70,16 +70,16 @@ public class MinimumHierarchyGeneratorTest {
         final HierarchyGraph hierarchyGraph = MockedHierarchyGraph.getHierarchyGraph();
 
         final List<Entity> entities = new ArrayList<Entity>();
-        entities.add(Entity.of(A.class).createBefore(P.class));
+        entities.add(Entity.of(A.class).createBefore(F.class));
         final HierarchyGraph generatedHierarchyGraph = MinimumHierarchyGenerator.generate(hierarchyGraph, entities);
 
         assertEquals(2, generatedHierarchyGraph.getKeySet().size());
         assertTrue(generatedHierarchyGraph.getKeySet().contains(A.class));
-        assertTrue(generatedHierarchyGraph.getKeySet().contains(P.class));
+        assertTrue(generatedHierarchyGraph.getKeySet().contains(F.class));
 
         assertEquals(0, generatedHierarchyGraph.getParents(A.class).size());
-        assertEquals(1, generatedHierarchyGraph.getParents(P.class).size());
-        assertTrue("Parent contains A", generatedHierarchyGraph.getParents(P.class).remove(A.class));
+        assertEquals(1, generatedHierarchyGraph.getParents(F.class).size());
+        assertTrue("Parent contains A", generatedHierarchyGraph.getParents(F.class).remove(A.class));
     }
 
     @Test(expected = RandomJPAException.class)
@@ -87,8 +87,8 @@ public class MinimumHierarchyGeneratorTest {
         final HierarchyGraph hierarchyGraph = MockedHierarchyGraph.getHierarchyGraph();
 
         final List<Entity> entities = new ArrayList<Entity>();
-        entities.add(Entity.of(A.class).createAfter(P.class));
-        entities.add(Entity.of(P.class).createAfter(A.class));
+        entities.add(Entity.of(A.class).createAfter(F.class));
+        entities.add(Entity.of(F.class).createAfter(A.class));
         MinimumHierarchyGenerator.generate(hierarchyGraph, entities);
 
 

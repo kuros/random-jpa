@@ -31,7 +31,7 @@ public class Z {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private long id;
+    private Long id;
 
     @Column(name = "x_id")
     private Long xId;
@@ -39,11 +39,11 @@ public class Z {
     @Column(name = "y_id")
     private Long yId;
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(final long id) {
+    public void setId(final Long id) {
         this.id = id;
     }
 
