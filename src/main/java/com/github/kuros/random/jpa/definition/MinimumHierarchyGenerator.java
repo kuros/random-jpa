@@ -3,6 +3,7 @@ package com.github.kuros.random.jpa.definition;
 import com.github.kuros.random.jpa.mapper.Relation;
 import com.github.kuros.random.jpa.resolver.DependencyResolver;
 import com.github.kuros.random.jpa.types.Entity;
+import com.github.kuros.random.jpa.types.EntityHelper;
 
 import java.util.List;
 import java.util.Set;
@@ -14,21 +15,21 @@ public class MinimumHierarchyGenerator {
         final HierarchyGraph hierarchyGraph = HierarchyGraph.newInstance();
 
         for (Entity entity : entities) {
-            addParentToHierarchy(parentGraph, hierarchyGraph, entity.getType());
+            addParentToHierarchy(parentGraph, hierarchyGraph, EntityHelper.getType(entity));
 
-            final List<Relation> softRelations = DependencyResolver.generateRelations(entity.getSoftLinks());
+            final List<Relation> softRelations = DependencyResolver.generateRelations(EntityHelper.getSoftLinks(entity));
             for (Relation relation : softRelations) {
                 hierarchyGraph.addRelation(relation);
             }
 
-            final List<Class<?>> afterClasses = entity.getAfterClasses();
+            final List<Class<?>> afterClasses = EntityHelper.getAfterClasses(entity);
             for (Class<?> parentClass : afterClasses) {
-                hierarchyGraph.addNode(entity.getType(), parentClass);
+                hierarchyGraph.addNode(EntityHelper.getType(entity), parentClass);
             }
 
-            final List<Class<?>> beforeClasses = entity.getBeforeClasses();
+            final List<Class<?>> beforeClasses = EntityHelper.getBeforeClasses(entity);
             for (Class<?> beforeClass : beforeClasses) {
-                hierarchyGraph.addNode(beforeClass, entity.getType());
+                hierarchyGraph.addNode(beforeClass, EntityHelper.getType(entity));
             }
         }
 

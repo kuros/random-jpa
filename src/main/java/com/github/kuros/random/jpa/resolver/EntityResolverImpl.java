@@ -11,6 +11,7 @@ import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
 import com.github.kuros.random.jpa.metamodel.model.FieldWrapper;
 import com.github.kuros.random.jpa.types.AttributeValue;
 import com.github.kuros.random.jpa.types.Entity;
+import com.github.kuros.random.jpa.types.EntityHelper;
 import com.github.kuros.random.jpa.types.Plan;
 import com.github.kuros.random.jpa.util.ArrayListMultimap;
 import com.github.kuros.random.jpa.util.AttributeHelper;
@@ -74,7 +75,7 @@ public final class EntityResolverImpl implements EntityResolver {
         final List<Entity> entities = this.entityList.getEntities();
 
         for (Entity entity : entities) {
-            final List<AttributeValue> attributeValues = entity.getAttributeValues();
+            final List<AttributeValue> attributeValues = EntityHelper.getAttributeValues(entity);
             for (AttributeValue attributeValue : attributeValues) {
                 try {
                     final Field field = AttributeHelper.getField(attributeValue.getAttribute());

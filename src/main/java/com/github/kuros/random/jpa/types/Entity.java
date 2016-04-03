@@ -81,27 +81,27 @@ public final class Entity<T> {
         return this;
     }
 
-    public Class<T> getType() {
+    Class<T> getType() {
         return type;
     }
 
-    public List<AttributeValue> getAttributeValues() {
+    List<AttributeValue> getAttributeValues() {
         return attributeValues;
     }
 
-    public int getCount() {
+    int getCount() {
         return count;
     }
 
-    public List<Link> getSoftLinks() {
+    List<Link> getSoftLinks() {
         return softLinks;
     }
 
-    public List<Class<?>> getAfterClasses() {
+    List<Class<?>> getAfterClasses() {
         return afterClasses;
     }
 
-    public List<Class<?>> getBeforeClasses() {
+    List<Class<?>> getBeforeClasses() {
         return beforeClasses;
     }
 }

@@ -7,6 +7,7 @@ import com.github.kuros.random.jpa.link.Preconditions;
 import com.github.kuros.random.jpa.types.ClassDepth;
 import com.github.kuros.random.jpa.types.CreationOrder;
 import com.github.kuros.random.jpa.types.Entity;
+import com.github.kuros.random.jpa.types.EntityHelper;
 import com.github.kuros.random.jpa.types.Plan;
 import com.github.kuros.random.jpa.types.Version;
 
@@ -47,7 +48,6 @@ public final class CreationOrderResolverImpl implements CreationOrderResolver {
         this.planLevelPreconditions = planLevelPreconditions;
     }
 
-    @Deprecated
     public static CreationOrderResolver newInstance(final Cache cache, final HierarchyGraph hierarchyGraph, final Preconditions planLevelPreconditions) {
         return new CreationOrderResolverImpl(cache, hierarchyGraph, planLevelPreconditions);
     }
@@ -59,7 +59,7 @@ public final class CreationOrderResolverImpl implements CreationOrderResolver {
     public CreationOrder getCreationOrder(final Entity... entities) {
         final CreationOrder creationOrder = CreationOrder.newInstance();
         for (Entity entity : entities) {
-            final Class type = entity.getType();
+            final Class type = EntityHelper.getType(entity);
             addCreationCount(creationOrder, entity);
             try {
                 generateCreationOrder(creationOrder, type);
@@ -108,7 +108,7 @@ public final class CreationOrderResolverImpl implements CreationOrderResolver {
         for (Entity entity : preConditionPlan.getEntities()) {
 
             final CreationOrder tempCreationOrder = CreationOrder.newInstance();
-            generateCreationOrder(tempCreationOrder, entity.getType());
+            generateCreationOrder(tempCreationOrder, EntityHelper.getType(entity));
             final List<ClassDepth<?>> newOrder = tempCreationOrder.getOrder();
             final List<ClassDepth<?>> createdOrder = creationOrder.getOrder();
             final int minIndex = getMinIndex(createdOrder, newOrder);
@@ -137,7 +137,7 @@ public final class CreationOrderResolverImpl implements CreationOrderResolver {
     }
 
     private void addCreationCount(final CreationOrder creationOrder, final Entity entity) {
-        creationOrder.addCreationCount(entity.getType(), entity.getCount());
+        creationOrder.addCreationCount(EntityHelper.getType(entity), EntityHelper.getCount(entity));
     }
 
     private void generateCreationOrder(final CreationOrder creationOrder, final Class<?> type) throws ClassNotFoundException {
