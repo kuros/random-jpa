@@ -1,5 +1,6 @@
 package com.github.kuros.random.jpa.metamodel;
 
+import com.github.kuros.random.jpa.annotation.VisibleForTesting;
 import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
 import com.github.kuros.random.jpa.util.AttributeHelper;
 import org.hibernate.id.Assigned;
@@ -40,7 +41,7 @@ public class AttributeProvider {
         return new AttributeProvider(entityManager);
     }
 
-    AttributeProvider(final EntityManager entityManager) {
+    private AttributeProvider(final EntityManager entityManager) {
         this.entityManager = entityManager;
         init();
     }
@@ -82,7 +83,8 @@ public class AttributeProvider {
         }
     }
 
-    private String getTableName(final SingleTableEntityPersister singleTableEntityPersister) {
+    @VisibleForTesting
+    String getTableName(final SingleTableEntityPersister singleTableEntityPersister) {
 
         String tableName = singleTableEntityPersister.getTableName();
         if (tableName.contains(".")) {

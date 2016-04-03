@@ -1,10 +1,12 @@
 package com.github.kuros.random.jpa.metamodel;
 
+import com.github.kuros.random.jpa.Database;
 import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.metamodel.model.FieldWrapper;
-import com.github.kuros.random.jpa.testUtil.MockEntityManagerProvider;
+import com.github.kuros.random.jpa.testUtil.EntityManagerProvider;
+import com.github.kuros.random.jpa.testUtil.entity.R;
+import com.github.kuros.random.jpa.types.Version;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.persistence.EntityManager;
@@ -31,28 +33,29 @@ import static org.junit.Assert.assertEquals;
  */
 public class MetaModelProviderImplTest {
 
-    private MockEntityManagerProvider entityManagerProvider;
     private EntityManager entityManager;
     private MetaModelProvider metaModelProvider;
+    private Cache cache;
 
-    @Before @Ignore
+    @Before
     public void setUp() throws Exception {
-        entityManagerProvider = MockEntityManagerProvider.createMockEntityManager();
-        entityManager = entityManagerProvider.getEntityManager();
-        final Cache cache = null;
+        entityManager = EntityManagerProvider.getEntityManager();
+        cache = Cache.create(Version.V2, Database.NONE, entityManager);
         metaModelProvider = new MetaModelProviderImpl(cache);
     }
 
-    @Test @Ignore
+    @Test
     public void mapMetaModelsToTheirTableNames() {
         final Map<String, List<FieldWrapper>> result = metaModelProvider.getFieldsByTableName();
 
-        final List<FieldWrapper> fieldWrappers = result.get("Employee");
-        assertEquals(3, fieldWrappers.size());
-        validate("employee_id", fieldWrappers.get(0).getOverriddenFieldName());
-        validate("person_id", fieldWrappers.get(1).getOverriddenFieldName());
-        validate("salary", fieldWrappers.get(2).getFieldName());
-        validate("", fieldWrappers.get(2).getOverriddenFieldName());
+        final List<FieldWrapper> fieldWrappers = result.get("r");
+        assertEquals(2, fieldWrappers.size());
+        validate("id", fieldWrappers.get(0).getFieldName());
+        validate("id", fieldWrappers.get(0).getOverriddenFieldName());
+        validate("pId", fieldWrappers.get(1).getFieldName());
+        validate("p_id", fieldWrappers.get(1).getOverriddenFieldName());
+        assertEquals(R.class, fieldWrappers.get(0).getInitializationClass());
+        assertEquals(R.class, fieldWrappers.get(1).getInitializationClass());
     }
 
     private void validate(final String expected, final String actual) {

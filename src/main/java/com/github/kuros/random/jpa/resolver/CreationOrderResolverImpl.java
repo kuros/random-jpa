@@ -143,11 +143,12 @@ public final class CreationOrderResolverImpl implements CreationOrderResolver {
     private void generateCreationOrder(final CreationOrder creationOrder, final Class<?> type) throws ClassNotFoundException {
 
         final ClassDepth classDepth = ClassDepth.newInstance(type, 0);
-        final Queue<ClassDepth<?>> queue = new PriorityQueue<ClassDepth<?>>(new Comparator<ClassDepth<?>>() {
+        final Queue<ClassDepth<?>> queue = new PriorityQueue<ClassDepth<?>>(11, new Comparator<ClassDepth<?>>() {
             public int compare(final ClassDepth<?> o1, final ClassDepth<?> o2) {
                 return Integer.valueOf(o1.getDepth()).compareTo(o2.getDepth());
             }
         });
+
         queue.offer(classDepth);
 
         final Stack<ClassDepth<?>> stack = new Stack<ClassDepth<?>>();
