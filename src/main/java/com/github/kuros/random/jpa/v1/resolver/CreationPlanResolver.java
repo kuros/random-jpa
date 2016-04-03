@@ -56,8 +56,8 @@ public final class CreationPlanResolver {
         return new CreationPlanResolver(randomize, creationOrders);
     }
 
-    public CreationPlanResolver with(final HierarchyGraph hierarchyGraph) {
-        this.hierarchyGraph = hierarchyGraph;
+    public CreationPlanResolver with(final HierarchyGraph graph) {
+        this.hierarchyGraph = graph;
         return this;
     }
 

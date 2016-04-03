@@ -36,7 +36,7 @@ public class X {
     @Column(name = "a_Id")
     private Long aId;
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 

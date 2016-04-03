@@ -24,7 +24,7 @@ import java.util.Map;
  *    You should have received a copy of the GNU Lesser General Public License
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-public final class ResultNodeTree {
+public class ResultNodeTree {
 
     private final ResultNode root;
     private final Cache cache;

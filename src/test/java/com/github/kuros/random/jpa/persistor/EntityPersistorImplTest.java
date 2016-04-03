@@ -1,6 +1,34 @@
 package com.github.kuros.random.jpa.persistor;
 
+import com.github.kuros.random.jpa.Database;
+import com.github.kuros.random.jpa.cache.Cache;
+import com.github.kuros.random.jpa.cache.TriggerCache;
+import com.github.kuros.random.jpa.definition.HierarchyGraph;
+import com.github.kuros.random.jpa.persistor.model.ResultNodeTree;
+import com.github.kuros.random.jpa.random.Randomize;
+import com.github.kuros.random.jpa.random.RandomizeImpl;
+import com.github.kuros.random.jpa.random.generator.RandomGenerator;
+import com.github.kuros.random.jpa.testUtil.EntityManagerProvider;
+import com.github.kuros.random.jpa.testUtil.entity.X;
+import com.github.kuros.random.jpa.testUtil.entity.Y;
+import com.github.kuros.random.jpa.testUtil.entity.Z;
+import com.github.kuros.random.jpa.testUtil.hierarchyGraph.MockedHierarchyGraph;
+import com.github.kuros.random.jpa.types.ClassDepth;
+import com.github.kuros.random.jpa.types.CreationOrder;
+import com.github.kuros.random.jpa.types.CreationPlan;
+import com.github.kuros.random.jpa.types.Trigger;
+import com.github.kuros.random.jpa.types.Version;
+import com.github.kuros.random.jpa.v1.resolver.CreationPlanResolver;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+
+import javax.persistence.EntityManager;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /*
  * Copyright (c) 2015 Kumar Rohit
@@ -20,8 +48,101 @@ import org.junit.Test;
  */
 public class EntityPersistorImplTest {
 
-    //TODO - ADD test
+    private Cache cache;
+    private HierarchyGraph hierarchyGraph;
+    private EntityManager entityManager;
+    private Randomize randomize;
+    private Persistor unit;
+
+    @Before
+    public void setUp() throws Exception {
+        hierarchyGraph = MockedHierarchyGraph.getHierarchyGraph();
+        entityManager = EntityManagerProvider.getEntityManager();
+        cache = Cache.create(Version.V2, Database.NONE, entityManager);
+
+        final TriggerCache triggerCache = TriggerCache.getInstance(new ArrayList<Trigger<?>>());
+        cache.with(triggerCache);
+
+        cache.with(hierarchyGraph);
+
+        randomize = RandomizeImpl.newInstance(cache, RandomGenerator.newInstance(cache));
+
+        unit = EntityPersistorImpl.newInstance(cache, hierarchyGraph, randomize);
+    }
+
+
     @Test
-    public <T> void  should() {
+    public void  shouldPersistCreationPlan() {
+        final CreationPlan creationPlan = getCreationPlan();
+
+        final ResultNodeTree result = unit.persist(creationPlan);
+
+        assertNotNull(result);
+        final X x = result.get(X.class);
+        assertNotNull(x);
+
+        final Y y = result.get(Y.class);
+        assertNotNull(y);
+
+        final Z z = result.get(Z.class);
+        assertNotNull(z);
+
+        assertEquals(x.getId(), z.getxId());
+        assertEquals(y.getId(), z.getyId());
+    }
+
+    @Test
+    public void shouldPersistCreationPlanWithCount() {
+        final CreationPlan creationPlan = getCreationPlanWithCounts(1, 2, 2);
+
+        final ResultNodeTree result = unit.persist(creationPlan);
+
+        assertNotNull(result);
+        final List<X> xValues = result.getAll(X.class);
+        assertEquals(1, xValues.size());
+
+        final List<Y> yValues = result.getAll(Y.class);
+        assertEquals(2, yValues.size());
+
+        final List<Z> zValues = result.getAll(Z.class);
+        assertEquals(4, zValues.size());
+
+        for (Z zValue : zValues) {
+            assertEquals(xValues.get(0).getId(), zValue.getxId());
+        }
+
+        assertEquals(yValues.get(0).getId(), zValues.get(0).getyId());
+        assertEquals(yValues.get(0).getId(), zValues.get(1).getyId());
+        assertEquals(yValues.get(1).getId(), zValues.get(2).getyId());
+        assertEquals(yValues.get(1).getId(), zValues.get(3).getyId());
+    }
+
+    private CreationPlan getCreationPlanWithCounts(final int xCount, final int yCount, final int zCount) {
+        final CreationOrder creationOrder = getCreationOrder();
+        creationOrder.addCreationCount(X.class, xCount);
+        creationOrder.addCreationCount(Y.class, yCount);
+        creationOrder.addCreationCount(Z.class, zCount);
+        return CreationPlanResolver.newInstance(randomize, creationOrder).create();
+    }
+
+    private CreationPlan getCreationPlan() {
+        final CreationOrder creationOrder = getCreationOrder();
+
+        return CreationPlanResolver.newInstance(randomize, creationOrder).create();
+    }
+
+    private CreationOrder getCreationOrder() {
+        final CreationOrder creationOrder = CreationOrder.newInstance();
+        creationOrder.add(ClassDepth.newInstance(X.class, 0));
+        creationOrder.add(ClassDepth.newInstance(Y.class, 0));
+        creationOrder.add(ClassDepth.newInstance(Z.class, 1));
+        return creationOrder;
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        if (entityManager != null && entityManager.isOpen()) {
+            entityManager.close();
+        }
     }
 }
