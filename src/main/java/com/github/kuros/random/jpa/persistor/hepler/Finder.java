@@ -56,7 +56,11 @@ public class Finder {
             try {
                 final Field declaredField = Util.getField(tableClass, attribute);
                 declaredField.setAccessible(true);
-                predicates[i] = criteriaBuilder.equal(from.get(attribute), declaredField.get(typeObject));
+                final Object fieldValue = declaredField.get(typeObject);
+                if (fieldValue == null) {
+                    return null;
+                }
+                predicates[i] = criteriaBuilder.equal(from.get(attribute), fieldValue);
             } catch (final Exception e) {
                 throw new RandomJPAException(e);
             }
@@ -91,8 +95,7 @@ public class Finder {
         q.where(predicates);
 
         final TypedQuery typedQuery = entityManager.createQuery(q);
-        final List resultList = typedQuery.getResultList();
 
-        return resultList;
+        return typedQuery.getResultList();
     }
 }
