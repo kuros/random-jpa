@@ -28,7 +28,7 @@ import javax.persistence.EntityManager;
 public class SQLCharacterLengthProviderFactory {
 
     public static SQLCharacterLengthProvider getSqlCharacterLengthProvider(final Database database, final EntityManager entityManager, final AttributeProvider attributeProvider) {
-        SQLCharacterLengthProvider sqlCharacterLengthProvider;
+        final SQLCharacterLengthProvider sqlCharacterLengthProvider;
         switch (database) {
             case MS_SQL_SERVER:
                 sqlCharacterLengthProvider = MSSQLCharacterLengthProvider.getInstance(entityManager, attributeProvider);
@@ -49,13 +49,13 @@ public class SQLCharacterLengthProviderFactory {
 
 
 
-    public static class DefaultSQLCharacterLengthProvider implements SQLCharacterLengthProvider {
+    static class DefaultSQLCharacterLengthProvider implements SQLCharacterLengthProvider {
         public Integer getMaxLength(final String entityName, final String attributeName) {
-            return null;
+            return 10;
         }
 
         public Object applyLengthConstraint(final String entityName, final String attributeName, final Object value) {
-            return null;
+            return value;
         }
     }
 }

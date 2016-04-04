@@ -8,6 +8,7 @@ import com.github.kuros.random.jpa.provider.mysql.MySqlMultiplePrimaryKeyProvide
 import com.github.kuros.random.jpa.provider.oracle.OracleMultiplePrimaryKeyProvider;
 
 import javax.persistence.EntityManager;
+import java.util.ArrayList;
 import java.util.List;
 
 /*
@@ -50,7 +51,7 @@ public class MultiplePrimaryKeyProviderFactory {
     private static class DefaultUniqueConstraintProvider implements MultiplePrimaryKeyProvider {
 
         public List<String> getMultiplePrimaryKeyAttributes(final Class<?> entityName) {
-            return null;
+            return new ArrayList<String>();
         }
     }
 }

@@ -8,6 +8,7 @@ import com.github.kuros.random.jpa.provider.mysql.MySqlUniqueConstraintProvider;
 import com.github.kuros.random.jpa.provider.oracle.OracleUniqueConstraintProvider;
 
 import javax.persistence.EntityManager;
+import java.util.ArrayList;
 import java.util.List;
 
 /*
@@ -51,7 +52,7 @@ public class UniqueConstraintProviderFactory {
 
     private static class DefaultUniqueConstraintProvider implements UniqueConstraintProvider {
         public List<String> getUniqueCombinationAttributes(final Class<?> entityName) {
-            return null;
+            return new ArrayList<String>();
         }
     }
 }
