@@ -20,15 +20,19 @@ public class ColumnDetail {
     private Integer stringLength;
     private Integer precision;
     private Integer scale;
-
-    public ColumnDetail(final Integer stringLength) {
-        this.stringLength = stringLength;
-    }
+    private Class<?> mappedDataType;
 
     public ColumnDetail(final Integer stringLength, final Integer precision, final Integer scale) {
         this.stringLength = stringLength;
         this.precision = precision;
         this.scale = scale;
+    }
+
+    public ColumnDetail(final Integer stringLength, final Integer precision, final Integer scale, final Class<?> mappedDataType) {
+        this.stringLength = stringLength;
+        this.precision = precision;
+        this.scale = scale;
+        this.mappedDataType = mappedDataType;
     }
 
     public Integer getStringLength() {
@@ -41,5 +45,9 @@ public class ColumnDetail {
 
     public Integer getScale() {
         return scale;
+    }
+
+    public Class<?> getMappedDataType() {
+        return mappedDataType;
     }
 }

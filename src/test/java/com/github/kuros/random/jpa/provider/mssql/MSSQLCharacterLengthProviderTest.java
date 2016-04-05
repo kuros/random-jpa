@@ -57,7 +57,7 @@ public class MSSQLCharacterLengthProviderTest {
     @Test
     public void testApplyLengthConstraint() throws Exception {
         assertEquals("abcde", sqlCharacterLengthProvider.applyLengthConstraint(Department.class.getName(), "departmentName", "abcdefghijkl"));
-        assertEquals("feature yet not implemented for mssql", 123456789, sqlCharacterLengthProvider.applyLengthConstraint(Department.class.getName(), "departmentId", 123456789));
+        assertEquals("feature yet not implemented for mssql", 789, sqlCharacterLengthProvider.applyLengthConstraint(Department.class.getName(), "departmentId", 123456789));
     }
 
     private void mockAttributeProvider() {
@@ -74,11 +74,11 @@ public class MSSQLCharacterLengthProviderTest {
     }
 
     private void mockEntityManager() {
-        final Object[] row1 = {"person", "first_name", 10};
-        final Object[] row2 = {"person", "last_name", 20};
-        final Object[] row3 = {"department", "department_name", 5};
-        final Object[] row4 = {"employee", "employee_name", 10};
-        final Object[] row5 = {"department", "department_id", null, 3, null};
+        final Object[] row1 = {"person", "first_name", 10, null, null, "varchar"};
+        final Object[] row2 = {"person", "last_name", 20, null, null, "varchar"};
+        final Object[] row3 = {"department", "department_name", 5, null, null, "varchar"};
+        final Object[] row4 = {"employee", "employee_name", 10, null, null, "varchar"};
+        final Object[] row5 = {"department", "department_id", null, (byte)3, 2, "decimal"};
 
         final List<Object[]> resultList = new ArrayList<Object[]>();
         resultList.add(row1);

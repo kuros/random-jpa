@@ -1,18 +1,14 @@
 package com.github.kuros.random.jpa.provider.base;
 
 import com.github.kuros.random.jpa.metamodel.AttributeProvider;
-import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
 import com.github.kuros.random.jpa.provider.SQLCharacterLengthProvider;
 import com.github.kuros.random.jpa.provider.model.ColumnCharacterLength;
 import com.github.kuros.random.jpa.provider.model.ColumnDetail;
 import com.github.kuros.random.jpa.util.NumberUtil;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import java.math.RoundingMode;
 import java.text.NumberFormat;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /*
@@ -32,45 +28,15 @@ import java.util.Map;
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 public abstract class AbstractCharacterLengthProvider implements SQLCharacterLengthProvider {
+    protected static final Map<String, Class<?>> DATA_TYPE_MAP;
     private Map<String, ColumnCharacterLength> columnLengthsByTable;
-    protected EntityManager entityManager;
-    protected AttributeProvider attributeProvider;
+    private EntityManager entityManager;
+    private AttributeProvider attributeProvider;
 
     public AbstractCharacterLengthProvider(final AttributeProvider attributeProvider, final EntityManager entityManager) {
         this.attributeProvider = attributeProvider;
         this.entityManager = entityManager;
         this.columnLengthsByTable = init();
-    }
-
-    protected Map<String, ColumnCharacterLength> init() {
-        final Map<String, ColumnCharacterLength> lengths = new HashMap<String, ColumnCharacterLength>();
-        final Query query = entityManager.createNativeQuery(getQuery());
-        final List resultList = query.getResultList();
-        for (Object o : resultList) {
-            final Object[] row = (Object[]) o;
-
-            final EntityTableMapping entityTableMapping = attributeProvider.get((String) row[0]);
-
-            if (entityTableMapping == null) {
-                continue;
-            }
-
-            final String attributeName = entityTableMapping.getAttributeName((String) row[1]);
-            final Integer length = (Integer) row[2];
-
-            final ColumnDetail columnDetail = new ColumnDetail(length);
-
-            final String entityName = entityTableMapping.getEntityName();
-            ColumnCharacterLength columnCharacterLength = lengths.get(entityName);
-            if (columnCharacterLength == null) {
-                columnCharacterLength = ColumnCharacterLength.newInstance();
-                lengths.put(entityName, columnCharacterLength);
-            }
-
-            columnCharacterLength.add(attributeName, columnDetail);
-        }
-
-        return lengths;
     }
 
     public Object applyLengthConstraint(final String entityName, final String attributeName, final Object value) {
@@ -100,12 +66,31 @@ public abstract class AbstractCharacterLengthProvider implements SQLCharacterLen
                 numberFormat.setMaximumFractionDigits(columnDetail.getScale());
             }
 
-            numberFormat.setRoundingMode(RoundingMode.HALF_UP);
-
-            returnValue = NumberUtil.parseNumber(value.getClass(), numberFormat.format(value));
+            returnValue = NumberUtil.castNumber(value.getClass(),
+                    NumberUtil.parseNumber(columnDetail.getMappedDataType(), numberFormat.format(value)));
         }
         return returnValue;
     }
 
+    protected abstract Map<String, ColumnCharacterLength> init();
     protected abstract String getQuery();
+
+    protected EntityManager getEntityManager() {
+        return entityManager;
+    }
+
+    protected AttributeProvider getAttributeProvider() {
+        return attributeProvider;
+    }
+
+    static {
+        DATA_TYPE_MAP = new HashMap<String, Class<?>>();
+        DATA_TYPE_MAP.put("int", Integer.class);
+        DATA_TYPE_MAP.put("integer", Integer.class);
+        DATA_TYPE_MAP.put("bigint", Long.class);
+        DATA_TYPE_MAP.put("decimal", Double.class);
+        DATA_TYPE_MAP.put("float", Double.class);
+        DATA_TYPE_MAP.put("money", Double.class);
+        DATA_TYPE_MAP.put("real", Double.class);
+    }
 }

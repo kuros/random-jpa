@@ -33,7 +33,7 @@ import java.util.Map;
 public final class MySqlCharacterLengthProvider extends AbstractCharacterLengthProvider {
 
     private static final String QUERY = "select " +
-            "c.TABLE_NAME,c.COLUMN_NAME, c.CHARACTER_MAXIMUM_LENGTH, c.NUMERIC_PRECISION, c.NUMERIC_SCALE\n" +
+            "c.TABLE_NAME,c.COLUMN_NAME, c.CHARACTER_MAXIMUM_LENGTH, c.NUMERIC_PRECISION, c.NUMERIC_SCALE, c.DATA_TYPE\n" +
             "from information_schema.COLUMNS c\n" +
             "WHERE c.TABLE_SCHEMA = DATABASE()\n" +
             "ORDER BY c.TABLE_NAME;";
@@ -54,12 +54,12 @@ public final class MySqlCharacterLengthProvider extends AbstractCharacterLengthP
 
     protected Map<String, ColumnCharacterLength> init() {
         final Map<String, ColumnCharacterLength> lengths = new HashMap<String, ColumnCharacterLength>();
-        final Query query = entityManager.createNativeQuery(getQuery());
+        final Query query = getEntityManager().createNativeQuery(getQuery());
         final List resultList = query.getResultList();
         for (Object o : resultList) {
             final Object[] row = (Object[]) o;
 
-            final EntityTableMapping entityTableMapping = attributeProvider.get((String) row[0]);
+            final EntityTableMapping entityTableMapping = getAttributeProvider().get((String) row[0]);
 
             if (entityTableMapping == null) {
                 continue;
@@ -69,6 +69,7 @@ public final class MySqlCharacterLengthProvider extends AbstractCharacterLengthP
             final BigInteger length = (BigInteger) row[2];
             final BigInteger precision = (BigInteger) row[3];
             final BigInteger scale = (BigInteger) row[4];
+            final String dataType = (String) row[5];
 
             final String entityName = entityTableMapping.getEntityName();
             ColumnCharacterLength columnCharacterLength = lengths.get(entityName);
@@ -77,13 +78,13 @@ public final class MySqlCharacterLengthProvider extends AbstractCharacterLengthP
                 lengths.put(entityName, columnCharacterLength);
             }
 
-            columnCharacterLength.add(attributeName, new ColumnDetail(getValue(length), getValue(precision), getValue(scale)));
+            columnCharacterLength.add(attributeName, new ColumnDetail(getValue(length), getValue(precision), getValue(scale), DATA_TYPE_MAP.get(dataType.toLowerCase())));
         }
 
         return lengths;
     }
 
-    private Integer getValue(final Number bigDecimal) {
-        return bigDecimal == null ? null : bigDecimal.intValue();
+    private Integer getValue(final Number number) {
+        return number == null ? null : number.intValue();
     }
 }

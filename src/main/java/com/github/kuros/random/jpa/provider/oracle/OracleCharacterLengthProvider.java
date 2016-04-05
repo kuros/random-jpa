@@ -33,7 +33,7 @@ import java.util.Map;
 public final class OracleCharacterLengthProvider extends AbstractCharacterLengthProvider {
 
     private static final String QUERY = "SELECT" +
-            " dt.table_name, dt.column_name, dt.char_col_decl_length, dt.DATA_PRECISION, dt.DATA_SCALE" +
+            " dt.table_name, dt.column_name, dt.char_col_decl_length, dt.DATA_PRECISION, dt.DATA_SCALE, dt.DATA_TYPE" +
             " FROM user_tab_columns dt";
 
     @VisibleForTesting
@@ -52,12 +52,12 @@ public final class OracleCharacterLengthProvider extends AbstractCharacterLength
 
     protected Map<String, ColumnCharacterLength> init() {
         final Map<String, ColumnCharacterLength> lengths = new HashMap<String, ColumnCharacterLength>();
-        final Query query = entityManager.createNativeQuery(getQuery());
+        final Query query = getEntityManager().createNativeQuery(getQuery());
         final List resultList = query.getResultList();
         for (Object o : resultList) {
             final Object[] row = (Object[]) o;
 
-            final EntityTableMapping entityTableMapping = attributeProvider.get((String) row[0]);
+            final EntityTableMapping entityTableMapping = getAttributeProvider().get((String) row[0]);
 
             if (entityTableMapping == null) {
                 continue;
@@ -67,6 +67,7 @@ public final class OracleCharacterLengthProvider extends AbstractCharacterLength
             final BigDecimal length = (BigDecimal) row[2];
             final BigDecimal precision = (BigDecimal) row[3];
             final BigDecimal scale = (BigDecimal) row[4];
+            final String dataType = (String) row[5];
 
             final String entityName = entityTableMapping.getEntityName();
             ColumnCharacterLength columnCharacterLength = lengths.get(entityName);
@@ -75,7 +76,7 @@ public final class OracleCharacterLengthProvider extends AbstractCharacterLength
                 lengths.put(entityName, columnCharacterLength);
             }
 
-            columnCharacterLength.add(attributeName, new ColumnDetail(getValue(length), getValue(precision), getValue(scale)));
+            columnCharacterLength.add(attributeName, new ColumnDetail(getValue(length), getValue(precision), getValue(scale), DATA_TYPE_MAP.get(dataType.toLowerCase())));
         }
 
         return lengths;

@@ -2,8 +2,12 @@ package com.github.kuros.random.jpa.util;
 
 import com.github.kuros.random.jpa.exception.RandomJPAException;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.NumberFormat;
 import java.text.ParseException;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 /*
  * Copyright (c) 2015 Kumar Rohit
@@ -26,7 +30,7 @@ public class NumberUtil {
     @SuppressWarnings("unchecked")
     public static <T> T castNumber(final Class<T> type, final Object value) {
         Object returnValue = value;
-        if (value == null || type.equals(value.getClass())) {
+        if (value == null || type == null || type.equals(value.getClass())) {
             return (T) returnValue;
         }
 
@@ -44,13 +48,21 @@ public class NumberUtil {
                 returnValue = number.doubleValue();
             } else if (Byte.TYPE == type || Byte.class == type) {
                 returnValue = number.byteValue();
+            } else if (BigDecimal.class == type) {
+                returnValue = new BigDecimal(number.toString());
+            } else if (BigInteger.class == type) {
+                returnValue = new BigInteger(number.toString());
+            } else if (AtomicInteger.class == type) {
+                returnValue = new AtomicInteger(number.intValue());
+            } else if (AtomicLong.class == type) {
+                returnValue = new AtomicLong(number.longValue());
             }
         }
 
         return (T) returnValue;
     }
 
-    public static <T> T parseNumber(final Class<T> type, final String value) {
+    public static Object parseNumber(final Class<?> type, final String value) {
         final NumberFormat numberFormat = NumberFormat.getNumberInstance();
         try {
             final Number parse = numberFormat.parse(value);
