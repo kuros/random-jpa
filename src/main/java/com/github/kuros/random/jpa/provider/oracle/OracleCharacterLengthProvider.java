@@ -2,17 +2,9 @@ package com.github.kuros.random.jpa.provider.oracle;
 
 import com.github.kuros.random.jpa.annotation.VisibleForTesting;
 import com.github.kuros.random.jpa.metamodel.AttributeProvider;
-import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
 import com.github.kuros.random.jpa.provider.base.AbstractCharacterLengthProvider;
-import com.github.kuros.random.jpa.provider.model.ColumnCharacterLength;
-import com.github.kuros.random.jpa.provider.model.ColumnDetail;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /*
  * Copyright (c) 2015 Kumar Rohit
@@ -50,39 +42,4 @@ public final class OracleCharacterLengthProvider extends AbstractCharacterLength
         return QUERY;
     }
 
-    protected Map<String, ColumnCharacterLength> init() {
-        final Map<String, ColumnCharacterLength> lengths = new HashMap<String, ColumnCharacterLength>();
-        final Query query = getEntityManager().createNativeQuery(getQuery());
-        final List resultList = query.getResultList();
-        for (Object o : resultList) {
-            final Object[] row = (Object[]) o;
-
-            final EntityTableMapping entityTableMapping = getAttributeProvider().get((String) row[0]);
-
-            if (entityTableMapping == null) {
-                continue;
-            }
-
-            final String attributeName = entityTableMapping.getAttributeName((String) row[1]);
-            final BigDecimal length = (BigDecimal) row[2];
-            final BigDecimal precision = (BigDecimal) row[3];
-            final BigDecimal scale = (BigDecimal) row[4];
-            final String dataType = (String) row[5];
-
-            final String entityName = entityTableMapping.getEntityName();
-            ColumnCharacterLength columnCharacterLength = lengths.get(entityName);
-            if (columnCharacterLength == null) {
-                columnCharacterLength = ColumnCharacterLength.newInstance();
-                lengths.put(entityName, columnCharacterLength);
-            }
-
-            columnCharacterLength.add(attributeName, new ColumnDetail(getValue(length), getValue(precision), getValue(scale), DATA_TYPE_MAP.get(dataType.toLowerCase())));
-        }
-
-        return lengths;
-    }
-
-    private Integer getValue(final BigDecimal bigDecimal) {
-        return bigDecimal == null ? null : bigDecimal.intValue();
-    }
 }

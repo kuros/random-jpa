@@ -1,14 +1,17 @@
 package com.github.kuros.random.jpa.provider.base;
 
 import com.github.kuros.random.jpa.metamodel.AttributeProvider;
+import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
 import com.github.kuros.random.jpa.provider.SQLCharacterLengthProvider;
 import com.github.kuros.random.jpa.provider.model.ColumnCharacterLength;
 import com.github.kuros.random.jpa.provider.model.ColumnDetail;
 import com.github.kuros.random.jpa.util.NumberUtil;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import java.text.NumberFormat;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /*
@@ -28,7 +31,7 @@ import java.util.Map;
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 public abstract class AbstractCharacterLengthProvider implements SQLCharacterLengthProvider {
-    protected static final Map<String, Class<?>> DATA_TYPE_MAP;
+    private static final Map<String, Class<?>> DATA_TYPE_MAP;
     private Map<String, ColumnCharacterLength> columnLengthsByTable;
     private EntityManager entityManager;
     private AttributeProvider attributeProvider;
@@ -37,6 +40,44 @@ public abstract class AbstractCharacterLengthProvider implements SQLCharacterLen
         this.attributeProvider = attributeProvider;
         this.entityManager = entityManager;
         this.columnLengthsByTable = init();
+    }
+
+    private Map<String, ColumnCharacterLength> init() {
+        final Map<String, ColumnCharacterLength> lengths = new HashMap<String, ColumnCharacterLength>();
+        final Query query = entityManager.createNativeQuery(getQuery());
+        final List resultList = query.getResultList();
+        for (Object o : resultList) {
+            final Object[] row = (Object[]) o;
+
+            final EntityTableMapping entityTableMapping = attributeProvider.get((String) row[0]);
+
+            if (entityTableMapping == null) {
+                continue;
+            }
+
+            final String attributeName = entityTableMapping.getAttributeName((String) row[1]);
+            final Number length = (Number) row[2];
+            final Number precision = (Number) row[3];
+            final Number scale = (Number) row[4];
+            final String dataType = (String) row[5];
+
+            final ColumnDetail columnDetail = new ColumnDetail(
+                    getValue(length),
+                    getValue(precision),
+                    getValue(scale),
+                    DATA_TYPE_MAP.get(dataType.toLowerCase()));
+
+            final String entityName = entityTableMapping.getEntityName();
+            ColumnCharacterLength columnCharacterLength = lengths.get(entityName);
+            if (columnCharacterLength == null) {
+                columnCharacterLength = ColumnCharacterLength.newInstance();
+                lengths.put(entityName, columnCharacterLength);
+            }
+
+            columnCharacterLength.add(attributeName, columnDetail);
+        }
+
+        return lengths;
     }
 
     public Object applyLengthConstraint(final String entityName, final String attributeName, final Object value) {
@@ -72,15 +113,10 @@ public abstract class AbstractCharacterLengthProvider implements SQLCharacterLen
         return returnValue;
     }
 
-    protected abstract Map<String, ColumnCharacterLength> init();
     protected abstract String getQuery();
 
-    protected EntityManager getEntityManager() {
-        return entityManager;
-    }
-
-    protected AttributeProvider getAttributeProvider() {
-        return attributeProvider;
+    private Integer getValue(final Number number) {
+        return number == null ? null : number.intValue();
     }
 
     static {
