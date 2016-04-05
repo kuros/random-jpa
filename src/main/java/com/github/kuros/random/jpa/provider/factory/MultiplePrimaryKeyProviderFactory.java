@@ -42,13 +42,13 @@ public class MultiplePrimaryKeyProviderFactory {
                 multiplePrimaryKeyProvider = OracleMultiplePrimaryKeyProvider.getInstance(entityManager, attributeProvider);
                 break;
             default:
-                multiplePrimaryKeyProvider = new DefaultUniqueConstraintProvider();
+                multiplePrimaryKeyProvider = new DefaultMultiplePrimaryKeyProvider();
         }
 
         return multiplePrimaryKeyProvider;
     }
 
-    private static class DefaultUniqueConstraintProvider implements MultiplePrimaryKeyProvider {
+    static class DefaultMultiplePrimaryKeyProvider implements MultiplePrimaryKeyProvider {
 
         public List<String> getMultiplePrimaryKeyAttributes(final Class<?> entityName) {
             return new ArrayList<String>();

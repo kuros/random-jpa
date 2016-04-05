@@ -30,7 +30,7 @@ import java.util.List;
 public class RelationshipProviderFactory {
 
     public static RelationshipProvider getRelationshipProvider(final Database database, final EntityManager entityManager) {
-        RelationshipProvider relationshipProvider;
+        final RelationshipProvider relationshipProvider;
         switch (database) {
             case MS_SQL_SERVER:
                 relationshipProvider = MSSQLRelationshipProvider.newInstance(entityManager);
@@ -41,9 +41,6 @@ public class RelationshipProviderFactory {
             case ORACLE:
                 relationshipProvider = OracleRelationshipProvider.newInstance(entityManager);
                 break;
-            case NONE:
-                relationshipProvider = new EmptyRelationshipProvider();
-                break;
             default:
                 relationshipProvider = new EmptyRelationshipProvider();
         }
@@ -51,9 +48,7 @@ public class RelationshipProviderFactory {
         return relationshipProvider;
     }
 
-
-
-    public static class EmptyRelationshipProvider implements RelationshipProvider {
+    static class EmptyRelationshipProvider implements RelationshipProvider {
 
         public List<ForeignKeyRelation> getForeignKeyRelations() {
             return new ArrayList<ForeignKeyRelation>();

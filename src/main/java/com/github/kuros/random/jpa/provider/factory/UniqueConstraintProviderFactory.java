@@ -50,7 +50,7 @@ public class UniqueConstraintProviderFactory {
 
 
 
-    private static class DefaultUniqueConstraintProvider implements UniqueConstraintProvider {
+    static class DefaultUniqueConstraintProvider implements UniqueConstraintProvider {
         public List<String> getUniqueCombinationAttributes(final Class<?> entityName) {
             return new ArrayList<String>();
         }
