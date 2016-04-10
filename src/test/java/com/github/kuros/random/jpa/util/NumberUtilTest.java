@@ -3,6 +3,11 @@ package com.github.kuros.random.jpa.util;
 import com.github.kuros.random.jpa.exception.RandomJPAException;
 import org.junit.Test;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
@@ -74,6 +79,30 @@ public class NumberUtilTest {
     }
 
     @Test
+    public void shouldCastIntegerToBigDecimal() throws Exception {
+        final BigDecimal bigDecimal = NumberUtil.castNumber(BigDecimal.class, 1);
+        assertEquals(BigDecimal.valueOf(1), bigDecimal);
+    }
+
+    @Test
+    public void shouldCastIntegerToAtomicInteger() throws Exception {
+        final AtomicInteger atomicInteger = NumberUtil.castNumber(AtomicInteger.class, 1);
+        assertEquals(new AtomicInteger(1).get(), atomicInteger.get());
+    }
+
+    @Test
+    public void shouldCastIntegerToAtomicLong() throws Exception {
+        final AtomicLong atomicLong = NumberUtil.castNumber(AtomicLong.class, 1);
+        assertEquals(new AtomicLong(1).get(), atomicLong.get());
+    }
+
+    @Test
+    public void shouldCastIntegerToBigInteger() throws Exception {
+        final BigInteger bigInteger = NumberUtil.castNumber(BigInteger.class, 1);
+        assertEquals(BigInteger.valueOf(1), bigInteger);
+    }
+
+    @Test
     public void shouldParseStringToNumber() throws Exception {
         final String input = "1";
         assertEquals(Integer.valueOf(input), NumberUtil.parseNumber(Integer.class, input));
@@ -86,5 +115,33 @@ public class NumberUtilTest {
     public void shouldThrowExceptionIfNumberCannotBeParsed() throws Exception {
         final String input = "abc";
         NumberUtil.parseNumber(Integer.class, input);
+    }
+
+    @Test
+    public void shouldReturnDefaultValues() throws Exception {
+
+        assertEquals(false, NumberUtil.getDefaultValue(Boolean.TYPE));
+        assertNull(NumberUtil.getDefaultValue(Boolean.class));
+
+        assertEquals((byte)0, NumberUtil.getDefaultValue(Byte.TYPE));
+        assertNull(NumberUtil.getDefaultValue(Byte.class));
+
+        assertEquals((char)0, NumberUtil.getDefaultValue(Character.TYPE));
+        assertNull(NumberUtil.getDefaultValue(Character.class));
+
+        assertEquals(0.0d, (Double)NumberUtil.getDefaultValue(Double.TYPE), 0.000001);
+        assertNull(NumberUtil.getDefaultValue(Double.class));
+
+        assertEquals(0.0f, (Float) NumberUtil.getDefaultValue(Float.TYPE), 0.000001);
+        assertNull(NumberUtil.getDefaultValue(Float.class));
+
+        assertEquals(0, NumberUtil.getDefaultValue(Integer.TYPE));
+        assertNull(NumberUtil.getDefaultValue(Integer.class));
+
+        assertEquals(0L, NumberUtil.getDefaultValue(Long.TYPE));
+        assertNull(NumberUtil.getDefaultValue(Long.class));
+
+        assertEquals((short)0, NumberUtil.getDefaultValue(Short.TYPE));
+        assertNull(NumberUtil.getDefaultValue(Short.class));
     }
 }

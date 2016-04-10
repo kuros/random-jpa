@@ -27,6 +27,15 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class NumberUtil {
 
+    private static boolean defaultBoolean;
+    private static byte defaultByte;
+    private static short defaultShort;
+    private static int defaultInt;
+    private static long defaultLong;
+    private static float defaultFloat;
+    private static double defaultDouble;
+    private static char defaultChar;
+
     @SuppressWarnings("unchecked")
     public static <T> T castNumber(final Class<T> type, final Object value) {
         Object returnValue = value;
@@ -70,5 +79,29 @@ public class NumberUtil {
         } catch (final ParseException e) {
             throw new RandomJPAException(e);
         }
+    }
+
+    public static Object getDefaultValue(final Class<?> type) {
+        Object obj = null;
+        if (type.isPrimitive()) {
+            if (Boolean.TYPE == type) {
+                obj = defaultBoolean;
+            } else if (Character.TYPE == type) {
+                obj = defaultChar;
+            } else if (Byte.TYPE == type) {
+                obj = defaultByte;
+            } else if (Short.TYPE == type) {
+                obj = defaultShort;
+            } else if (Integer.TYPE == type) {
+                obj = defaultInt;
+            } else if (Long.TYPE == type) {
+                obj = defaultLong;
+            } else if (Double.TYPE == type) {
+                obj = defaultDouble;
+            } else if (Float.TYPE == type) {
+                obj = defaultFloat;
+            }
+        }
+        return obj;
     }
 }

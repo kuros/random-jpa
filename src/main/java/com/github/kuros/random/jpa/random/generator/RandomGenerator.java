@@ -26,7 +26,7 @@ import java.util.Map;
  *    You should have received a copy of the GNU Lesser General Public License
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-public final class RandomGenerator {
+public class RandomGenerator {
 
     private final Generator generator;
     private Map<Field, RandomAttributeGenerator> attributeGeneratorMap;

@@ -81,8 +81,10 @@ public final class EntityResolverImpl implements EntityResolver {
                     final Field field = AttributeHelper.getField(attributeValue.getAttribute());
                     fieldValue.put(field, attributeValue.getValue());
                     addParentDetailsForField(fieldValue, field);
-                } catch (final Exception e) {
-                    //do nothing
+                } catch (final IllegalAccessException e) {
+                    // Do Nothing
+                } catch (final NoSuchFieldException e) {
+                    // Do Nothing
                 }
             }
         }

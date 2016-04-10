@@ -11,9 +11,11 @@ import com.github.kuros.random.jpa.provider.factory.MultiplePrimaryKeyProviderFa
 import com.github.kuros.random.jpa.provider.factory.RelationshipProviderFactory;
 import com.github.kuros.random.jpa.provider.factory.SQLCharacterLengthProviderFactory;
 import com.github.kuros.random.jpa.provider.factory.UniqueConstraintProviderFactory;
+import com.github.kuros.random.jpa.types.Trigger;
 import com.github.kuros.random.jpa.types.Version;
 
 import javax.persistence.EntityManager;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -57,6 +59,7 @@ public class Cache {
         this.sqlCharacterLengthProvider = initSqlCharacterLengthProvider();
         this.uniqueConstraintProvider = initUniqueConstraintProvider();
         this.skipTruncation = new HashSet<Class<?>>();
+        this.triggerCache = TriggerCache.getInstance(new ArrayList<Trigger<?>>());
     }
 
     public static Cache create(final Version version, final Database database, final EntityManager entityManager) {

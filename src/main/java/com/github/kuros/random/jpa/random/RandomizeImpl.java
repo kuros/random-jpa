@@ -93,7 +93,8 @@ public final class RandomizeImpl implements Randomize {
     private <T> boolean isFieldEmpty(final Field declaredField, final T t) {
         try {
             declaredField.setAccessible(true);
-            return declaredField.get(t) == null;
+            final Object defaultValue = NumberUtil.getDefaultValue(declaredField.getType());
+            return defaultValue == null ? declaredField.get(t) == defaultValue : declaredField.get(t).equals(defaultValue);
         } catch (final IllegalAccessException e) {
             return false;
         }

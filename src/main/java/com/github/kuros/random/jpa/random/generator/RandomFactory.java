@@ -16,6 +16,7 @@ import com.github.kuros.random.jpa.random.generator.types.IntegerGenerator;
 import com.github.kuros.random.jpa.random.generator.types.LongGenerator;
 import com.github.kuros.random.jpa.random.generator.types.ShortGenerator;
 import com.github.kuros.random.jpa.random.generator.types.StringGenerator;
+import com.github.kuros.random.jpa.util.NumberUtil;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -44,14 +45,6 @@ public class RandomFactory {
     private static final Logger LOGGER = LogFactory.getLogger(RandomFactory.class);
     private Map<Class<?>, RandomClassGenerator> randomClassGeneratorMap;
     private static final Random RANDOM = new Random();
-    private static boolean defaultBoolean;
-    private static byte defaultByte;
-    private static short defaultShort;
-    private static int defaultInt;
-    private static long defaultLong;
-    private static float defaultFloat;
-    private static double defaultDouble;
-    private static char defaultChar;
 
     public RandomFactory() {
         randomClassGeneratorMap = new HashMap<Class<?>, RandomClassGenerator>();
@@ -105,7 +98,7 @@ public class RandomFactory {
         final Field[] declaredFields = type.getDeclaredFields();
 
         for (Field declaredField : declaredFields) {
-            setFieldRandomValue(declaredField, t, getNullValue(declaredField.getType()));
+            setFieldRandomValue(declaredField, t, NumberUtil.getDefaultValue(declaredField.getType()));
         }
     }
 
@@ -130,30 +123,6 @@ public class RandomFactory {
             }
         }
         return value;
-    }
-
-    private Object getNullValue(final Class<?> type) {
-        Object obj = null;
-        if (type.isPrimitive()) {
-            if (Boolean.TYPE == type) {
-                obj = defaultBoolean;
-            } else if (Character.TYPE == type) {
-                obj = defaultChar;
-            } else if (Byte.TYPE == type) {
-                obj = defaultByte;
-            } else if (Short.TYPE == type) {
-                obj = defaultShort;
-            } else if (Integer.TYPE == type) {
-                obj = defaultInt;
-            } else if (Long.TYPE == type) {
-                obj = defaultLong;
-            } else if (Double.TYPE == type) {
-                obj = defaultDouble;
-            } else if (Float.TYPE == type) {
-                obj = defaultFloat;
-            }
-        }
-        return obj;
     }
 
     private void init() {
