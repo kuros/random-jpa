@@ -69,7 +69,7 @@ public final class Plan {
     }
 
     private Plan createPlan(final List<Class<?>> collection) {
-        Plan plan = Plan.of();
+        final Plan plan = Plan.of();
         for (Class<?> aClass : collection) {
             plan.add(Entity.of(aClass));
         }

@@ -1,10 +1,28 @@
 package com.github.kuros.random.jpa;
 
-import com.github.kuros.random.jpa.testUtil.MockEntityManagerProvider;
-import com.github.kuros.random.jpa.testUtil.MockRelationshipProvider;
+import com.github.kuros.random.jpa.link.Dependencies;
+import com.github.kuros.random.jpa.persistor.model.ResultMap;
+import com.github.kuros.random.jpa.testUtil.EntityManagerProvider;
+import com.github.kuros.random.jpa.testUtil.entity.D;
+import com.github.kuros.random.jpa.testUtil.entity.D_;
+import com.github.kuros.random.jpa.testUtil.entity.X;
+import com.github.kuros.random.jpa.testUtil.entity.Y;
+import com.github.kuros.random.jpa.testUtil.entity.Z;
+import com.github.kuros.random.jpa.testUtil.entity.Z_;
+import com.github.kuros.random.jpa.testUtil.hierarchyGraph.DependencyHelper;
+import com.github.kuros.random.jpa.types.Entity;
+import com.github.kuros.random.jpa.types.Plan;
+import com.github.kuros.random.jpa.types.Printer;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import javax.persistence.EntityManager;
+
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /*
  * Copyright (c) 2015 Kumar Rohit
@@ -24,13 +42,259 @@ import javax.persistence.EntityManager;
  */
 public class JPAContextTest {
 
-    @Test
-    public void should() {
-        final MockEntityManagerProvider mockEntityManagerProvider = MockEntityManagerProvider.createMockEntityManager();
-        final EntityManager entityManager = mockEntityManagerProvider.getEntityManager();
-        MockRelationshipProvider.addMockRelationship(entityManager);
+    private EntityManager entityManager;
 
-//        JPAContext jpaContext = JPAContext.create(entityManager);
-//        jpaContext.create();
+    @Before
+    public void setUp() throws Exception {
+        entityManager = EntityManagerProvider.getEntityManager();
+    }
+
+    @Test
+    public void shouldCreateAndPersistHierarchyWithDeprecatedMethod() throws Exception {
+
+        final Dependencies dependencies = Dependencies.newInstance();
+        dependencies.withLink(DependencyHelper.getLinks());
+        final JPAContext jpaContext = JPAContextFactory
+                .newInstance(Database.NONE, entityManager)
+                .with(dependencies)
+                .create();
+
+        entityManager.getTransaction().begin();
+
+        final ResultMap resultMap = jpaContext
+                .createAndPersist(Plan.of(Entity.of(Z.class)));
+
+        entityManager.getTransaction().commit();
+        entityManager.close();
+
+        assertEquals(1, resultMap.getAll(Z.class).size());
+        assertEquals(1, resultMap.getAll(X.class).size());
+        assertEquals(1, resultMap.getAll(Y.class).size());
+
+        final Z z = resultMap.get(Z.class);
+        resultMap.print(new Printer() {
+            public void print(final String string) {
+                System.out.println(string);
+            }
+        });
+
+        assertEquals(z.getxId(), resultMap.get(X.class).getId());
+        assertEquals(z.getyId(), resultMap.get(Y.class).getId());
+    }
+
+    @Test
+    public void shouldCreateAndPersistHierarchy() throws Exception {
+
+        final Dependencies dependencies = Dependencies.newInstance();
+        dependencies.withLink(DependencyHelper.getLinks());
+        final JPAContext jpaContext = JPAContextFactory
+                .newInstance(Database.NONE, entityManager)
+                .with(dependencies)
+                .generate();
+
+        entityManager.getTransaction().begin();
+
+        final ResultMap resultMap = jpaContext
+                .createAndPersist(Plan.of(Entity.of(Z.class)));
+
+        entityManager.getTransaction().commit();
+        entityManager.close();
+
+        assertEquals(1, resultMap.getAll(Z.class).size());
+        assertEquals(1, resultMap.getAll(X.class).size());
+        assertEquals(1, resultMap.getAll(Y.class).size());
+
+        final Z z = resultMap.get(Z.class);
+        resultMap.print(new Printer() {
+            public void print(final String string) {
+                System.out.println(string);
+            }
+        });
+
+        assertEquals(z.getxId(), resultMap.get(X.class).getId());
+        assertEquals(z.getyId(), resultMap.get(Y.class).getId());
+    }
+
+    @Test
+    public void shouldCreateAndPersistHierarchyWithSoftLink() throws Exception {
+
+        final JPAContext jpaContext = JPAContextFactory
+                .newInstance(Database.NONE, entityManager)
+                .generate();
+
+        entityManager.getTransaction().begin();
+
+        final ResultMap resultMap = jpaContext
+                .createAndPersist(Plan.of(Entity.of(D.class).withSoftLink(D_.zId, Z_.id)));
+
+        entityManager.getTransaction().commit();
+        entityManager.close();
+
+        assertEquals(1, resultMap.getAll(Z.class).size());
+        assertEquals(1, resultMap.getAll(D.class).size());
+
+        final D d = resultMap.get(D.class);
+
+        assertEquals(d.getzId(), resultMap.get(Z.class).getId().intValue());
+    }
+
+    @Test
+    public void shouldCreateMultipleHierarchyAndPersistHierarchy() throws Exception {
+
+        final Dependencies dependencies = Dependencies.newInstance();
+        dependencies.withLink(DependencyHelper.getLinks());
+        final JPAContext jpaContext = JPAContextFactory
+                .newInstance(Database.NONE, entityManager)
+                .with(dependencies)
+                .generate();
+
+        entityManager.getTransaction().begin();
+
+        final ResultMap resultMap = jpaContext
+                .createAndPersist(Plan.of(Entity.of(Z.class, 2), Entity.of(X.class).createBefore(Y.class)));
+
+        entityManager.getTransaction().commit();
+        entityManager.close();
+
+        assertEquals(2, resultMap.getAll(Z.class).size());
+        assertEquals(1, resultMap.getAll(X.class).size());
+        assertEquals(1, resultMap.getAll(Y.class).size());
+
+        final Z z = resultMap.get(Z.class);
+
+        assertEquals(z.getxId(), resultMap.get(X.class).getId());
+        assertEquals(z.getyId(), resultMap.get(Y.class).getId());
+
+        final Z z2 = resultMap.get(Z.class, 1);
+
+        assertEquals(z2.getxId(), resultMap.get(X.class).getId());
+        assertEquals(z2.getyId(), resultMap.get(Y.class).getId());
+    }
+
+    @Test
+    public void shouldCreateMultipleHierarchyAsPerParentCountAndPersistHierarchy() throws Exception {
+
+        final Dependencies dependencies = Dependencies.newInstance();
+        dependencies.withLink(DependencyHelper.getLinks());
+        final JPAContext jpaContext = JPAContextFactory
+                .newInstance(Database.NONE, entityManager)
+                .with(dependencies)
+                .generate();
+
+        entityManager.getTransaction().begin();
+
+        final ResultMap resultMap = jpaContext
+                .createAndPersist(Plan.of(Entity.of(Z.class, 2),
+                        Entity.of(X.class).createBefore(Y.class),
+                        Entity.of(Y.class, 2)));
+
+        entityManager.getTransaction().commit();
+        entityManager.close();
+
+        assertEquals(4, resultMap.getAll(Z.class).size());
+        assertEquals(1, resultMap.getAll(X.class).size());
+        assertEquals(2, resultMap.getAll(Y.class).size());
+
+        final Z z = resultMap.get(Z.class);
+        assertEquals(z.getxId(), resultMap.get(X.class).getId());
+        assertEquals(z.getyId(), resultMap.get(Y.class, 0).getId());
+
+        final Z z2 = resultMap.get(Z.class, 1);
+        assertEquals(z2.getxId(), resultMap.get(X.class).getId());
+        assertEquals(z2.getyId(), resultMap.get(Y.class, 0).getId());
+
+        final Z z3 = resultMap.get(Z.class, 2);
+        assertEquals(z3.getxId(), resultMap.get(X.class).getId());
+        assertEquals(z3.getyId(), resultMap.get(Y.class, 1).getId());
+
+        final Z z4 = resultMap.get(Z.class, 3);
+        assertEquals(z4.getxId(), resultMap.get(X.class).getId());
+        assertEquals(z4.getyId(), resultMap.get(Y.class, 1).getId());
+    }
+
+    @Test
+    public void shouldRemoveEntityWithGivenId() throws Exception {
+
+        final X x = new X();
+        EntityManagerProvider.persist(x);
+
+        final String query = "FROM X where id=" + x.getId();
+        assertEquals(1, EntityManagerProvider.find(query).size());
+
+        final JPAContext jpaContext = JPAContextFactory
+                .newInstance(Database.NONE, entityManager)
+                .generate();
+
+        entityManager.getTransaction().begin();
+        jpaContext.remove(X.class, x.getId());
+        entityManager.getTransaction().commit();
+
+
+        final List<X> found = EntityManagerProvider.find(query);
+
+        assertEquals(0, found.size());
+
+    }
+
+    @Test
+    public void shouldRemoveAllEntityOfGivenType() throws Exception {
+
+        final X x = new X();
+        EntityManagerProvider.persist(x);
+
+        final String query = "FROM X";
+        assertTrue(EntityManagerProvider.find(query).size() > 0);
+
+        final JPAContext jpaContext = JPAContextFactory
+                .newInstance(Database.NONE, entityManager)
+                .generate();
+
+        entityManager.getTransaction().begin();
+        jpaContext.remove(X.class);
+        entityManager.getTransaction().commit();
+
+
+        final List<X> found = EntityManagerProvider.find(query);
+
+        assertEquals(0, found.size());
+
+    }
+
+    @Test
+    public void shouldRemoveAllEntity() throws Exception {
+
+        final X x = new X();
+        EntityManagerProvider.persist(x);
+
+        final Y y = new Y();
+        EntityManagerProvider.persist(y);
+
+        assertTrue(EntityManagerProvider.find("FROM X").size() > 0);
+        assertTrue(EntityManagerProvider.find("FROM Y").size() > 0);
+
+        final Dependencies dependencies = Dependencies.newInstance();
+        dependencies.withLink(DependencyHelper.getLinks());
+        final JPAContext jpaContext = JPAContextFactory
+                .newInstance(Database.NONE, entityManager)
+                .with(dependencies)
+                .generate();
+
+        entityManager.getTransaction().begin();
+        jpaContext.removeAll();
+        entityManager.getTransaction().commit();
+
+
+        assertEquals(0, EntityManagerProvider.find("FROM X").size());
+        assertEquals(0, EntityManagerProvider.find("FROM Y").size());
+
+    }
+
+
+    @After
+    public void tearDown() throws Exception {
+        if (entityManager != null && entityManager.isOpen()) {
+            entityManager.close();
+        }
+
     }
 }

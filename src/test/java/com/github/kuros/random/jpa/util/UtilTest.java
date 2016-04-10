@@ -90,7 +90,7 @@ public class UtilTest {
     public void shouldPrintIdsIfValidObjectButInvalidAttributes() throws Exception {
         final List<String> attributeIds = new ArrayList<String>();
         attributeIds.add("id");
-        attributeIds.add("pId");
+        attributeIds.add("fId");
         Mockito.when(entityTableMapping.getAttributeIds()).thenReturn(attributeIds);
         final Z z = RandomFixture.create(Z.class);
 

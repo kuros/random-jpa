@@ -47,10 +47,6 @@ public final class Node<T> {
         return type;
     }
 
-    public int getIndex() {
-        return index;
-    }
-
     public T getValue() {
         return value;
     }

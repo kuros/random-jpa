@@ -75,7 +75,9 @@ public class EntityPersistorImplTest {
     public void  shouldPersistCreationPlan() {
         final CreationPlan creationPlan = getCreationPlan();
 
+        entityManager.getTransaction().begin();
         final ResultNodeTree result = unit.persist(creationPlan);
+        entityManager.getTransaction().commit();
 
         assertNotNull(result);
         final X x = result.get(X.class);
@@ -95,7 +97,9 @@ public class EntityPersistorImplTest {
     public void shouldPersistCreationPlanWithCount() {
         final CreationPlan creationPlan = getCreationPlanWithCounts(1, 2, 2);
 
+        entityManager.getTransaction().begin();
         final ResultNodeTree result = unit.persist(creationPlan);
+        entityManager.getTransaction().commit();
 
         assertNotNull(result);
         final List<X> xValues = result.getAll(X.class);

@@ -1,19 +1,32 @@
 package com.github.kuros.random.jpa.testUtil.hierarchyGraph;
 
+import com.github.kuros.random.jpa.link.Link;
 import com.github.kuros.random.jpa.mapper.Relation;
 import com.github.kuros.random.jpa.metamodel.model.FieldWrapper;
 import com.github.kuros.random.jpa.testUtil.entity.A;
+import com.github.kuros.random.jpa.testUtil.entity.A_;
 import com.github.kuros.random.jpa.testUtil.entity.B;
+import com.github.kuros.random.jpa.testUtil.entity.B_;
 import com.github.kuros.random.jpa.testUtil.entity.C;
+import com.github.kuros.random.jpa.testUtil.entity.C_;
 import com.github.kuros.random.jpa.testUtil.entity.D;
+import com.github.kuros.random.jpa.testUtil.entity.D_;
 import com.github.kuros.random.jpa.testUtil.entity.E;
+import com.github.kuros.random.jpa.testUtil.entity.E_;
 import com.github.kuros.random.jpa.testUtil.entity.F;
+import com.github.kuros.random.jpa.testUtil.entity.F_;
 import com.github.kuros.random.jpa.testUtil.entity.P;
+import com.github.kuros.random.jpa.testUtil.entity.P_;
 import com.github.kuros.random.jpa.testUtil.entity.Q;
+import com.github.kuros.random.jpa.testUtil.entity.Q_;
 import com.github.kuros.random.jpa.testUtil.entity.R;
+import com.github.kuros.random.jpa.testUtil.entity.R_;
 import com.github.kuros.random.jpa.testUtil.entity.X;
+import com.github.kuros.random.jpa.testUtil.entity.X_;
 import com.github.kuros.random.jpa.testUtil.entity.Y;
+import com.github.kuros.random.jpa.testUtil.entity.Y_;
 import com.github.kuros.random.jpa.testUtil.entity.Z;
+import com.github.kuros.random.jpa.testUtil.entity.Z_;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -33,7 +46,7 @@ public class DependencyHelper {
 
         relations.add(Relation.newInstance(getFieldWrapper(E.class, "dId"), getFieldWrapper(D.class, "id")));
         relations.add(Relation.newInstance(getFieldWrapper(E.class, "bId"), getFieldWrapper(B.class, "id")));
-        relations.add(Relation.newInstance(getFieldWrapper(E.class, "pId"), getFieldWrapper(F.class, "id")));
+        relations.add(Relation.newInstance(getFieldWrapper(E.class, "fId"), getFieldWrapper(F.class, "id")));
 
         relations.add(Relation.newInstance(getFieldWrapper(Z.class, "xId"), getFieldWrapper(X.class, "id")));
         relations.add(Relation.newInstance(getFieldWrapper(Z.class, "yId"), getFieldWrapper(Y.class, "id")));
@@ -42,6 +55,28 @@ public class DependencyHelper {
         relations.add(Relation.newInstance(getFieldWrapper(R.class, "pId"), getFieldWrapper(P.class, "id")));
 
         return relations;
+    }
+
+    public static List<Link> getLinks() {
+        final List<Link> links = new ArrayList<Link>();
+
+        links.add(Link.newLink(C_.aId, A_.id));
+        links.add(Link.newLink(C_.bId, B_.id));
+
+        links.add(Link.newLink(D_.aId, A_.id));
+        links.add(Link.newLink(D_.cId, C_.id));
+
+        links.add(Link.newLink(E_.dId, D_.id));
+        links.add(Link.newLink(E_.bId, B_.id));
+        links.add(Link.newLink(E_.fId, F_.id));
+
+        links.add(Link.newLink(Z_.xId, X_.id));
+        links.add(Link.newLink(Z_.yId, Y_.id));
+
+        links.add(Link.newLink(Q_.pId, P_.id));
+        links.add(Link.newLink(R_.pId, P_.id));
+
+        return links;
     }
 
     private static FieldWrapper getFieldWrapper(final Class<?> aClass, final String aId) {

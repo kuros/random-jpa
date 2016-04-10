@@ -44,28 +44,8 @@ public final class ResultNode<T> {
         return new ResultNode(null, 0);
     }
 
-    public Class<T> getType() {
-        return type;
-    }
-
-    public int getIndex() {
-        return index;
-    }
-
-    public T getValue() {
-        return value;
-    }
-
     public void setValue(final T value) {
         this.value = value;
-    }
-
-    public void setChildNodes(final List<ResultNode> childNodes) {
-        this.childNodes = childNodes;
-    }
-
-    public List<ResultNode> getChildNodes() {
-        return childNodes;
     }
 
     public void addChildNode(final ResultNode node) {

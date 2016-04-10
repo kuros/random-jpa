@@ -41,6 +41,11 @@ public class Finder {
 
     @SuppressWarnings("unchecked")
     public  <T> T findByAttributes(final T typeObject, final List<String> attributes) {
+
+        if (isEmpty(typeObject, attributes)) {
+            return null;
+        }
+
         final Class<?> tableClass = typeObject.getClass();
         final CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         final CriteriaQuery q = criteriaBuilder.createQuery(tableClass);
@@ -74,8 +79,17 @@ public class Finder {
         return resultList.size() == 0 ? null : (T) resultList.get(0);
     }
 
+    private <T> boolean isEmpty(final T typeObject, final List<String> attributes) {
+        return typeObject == null || attributes == null || attributes.isEmpty();
+    }
+
     @SuppressWarnings("unchecked")
     public  <T> List<T> findByAttributes(final Class<T> type, final Map<String, Object> attributeValues) {
+
+        if (isEmpty(type, attributeValues)) {
+            return new ArrayList<T>();
+        }
+
         final CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         final CriteriaQuery q = criteriaBuilder.createQuery(type);
 
@@ -97,5 +111,9 @@ public class Finder {
         final TypedQuery typedQuery = entityManager.createQuery(q);
 
         return typedQuery.getResultList();
+    }
+
+    private <T> boolean isEmpty(final Class<T> type, final Map<String, Object> attributeValues) {
+        return type == null || attributeValues == null || attributeValues.isEmpty();
     }
 }

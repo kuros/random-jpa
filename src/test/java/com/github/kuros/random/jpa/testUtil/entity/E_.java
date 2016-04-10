@@ -25,5 +25,5 @@ public class E_ {
     public static volatile SingularAttribute<E, Long> id;
     public static volatile SingularAttribute<E, Long> bId;
     public static volatile SingularAttribute<E, Long> dId;
-    public static volatile SingularAttribute<E, Long> pId;
+    public static volatile SingularAttribute<E, Long> fId;
 }

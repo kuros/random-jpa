@@ -81,6 +81,19 @@ public class FinderTest {
     }
 
     @Test
+    public void shouldReturnNullIfInputIsEmpty() throws Exception {
+        final Q input = new Q();
+
+        final List<String> attributes = new ArrayList<String>();
+        assertNull(finder.findByAttributes(input, attributes));
+
+        attributes.add("id");
+        assertNull(finder.findByAttributes(null, attributes));
+
+        assertNull(finder.findByAttributes(input, null));
+    }
+
+    @Test
     public void shouldReturnNullIfAttributeValueIsNull() throws Exception {
         final Q input = new Q();
 
@@ -115,6 +128,20 @@ public class FinderTest {
         final List<Q> actual = finder.findByAttributes(Q.class, attributeValues);
 
         assertEquals(0, actual.size());
+    }
+
+    @Test
+    public void shouldReturnNullWithFindByAttributesByMapValueIsEmpty() throws Exception {
+        final P p = new P();
+        EntityManagerProvider.persist(p);
+        final Q expected = new Q();
+        expected.setpId(p.getId());
+        EntityManagerProvider.persist(expected);
+
+        final Map<String, Object> attributeValues = new HashMap<String, Object>();
+        assertEquals(0 , finder.findByAttributes(null, attributeValues).size());
+        assertEquals(0 , finder.findByAttributes(Q.class, attributeValues).size());
+
     }
 
     @After

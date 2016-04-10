@@ -39,8 +39,8 @@ public class E {
     @Column(name = "d_id")
     private long dId;
 
-    @Column(name = "p_id")
-    private long pId;
+    @Column(name = "f_id")
+    private long fId;
 
     public long getId() {
         return id;
@@ -66,11 +66,11 @@ public class E {
         this.dId = dId;
     }
 
-    public long getpId() {
-        return pId;
+    public long getfId() {
+        return fId;
     }
 
-    public void setpId(final long pId) {
-        this.pId = pId;
+    public void setfId(final long fId) {
+        this.fId = fId;
     }
 }

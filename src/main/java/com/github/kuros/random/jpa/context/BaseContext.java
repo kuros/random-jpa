@@ -78,11 +78,11 @@ public abstract class BaseContext implements JPAContext {
         cleaner.truncateAll();
     }
 
-    protected RandomGenerator getGenerator() {
+    public RandomGenerator getGenerator() {
         return generator;
     }
 
-    protected Cache getCache() {
+    public Cache getCache() {
         return cache;
     }
 }
