@@ -251,8 +251,7 @@ public class SimpleRandomGeneratorTest {
         private long time;
         private TestClass1 class1;
 
-        public TestConstructorClass(final int i, final Long l, final Date date, final TestClass1 class1) {
-//            this.i = i;
+        TestConstructorClass(final Long l, final Date date, final TestClass1 class1) {
             this.l = l;
             this.date = date;
             this.time = date.getTime();

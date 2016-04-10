@@ -12,7 +12,9 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 /*
  * Copyright (c) 2015 Kumar Rohit
@@ -33,7 +35,7 @@ import static org.junit.Assert.assertNotNull;
 public class RandomFactoryTest {
 
     @Test
-    public void testName() throws Exception {
+    public void shouldGenerateRandomValues() throws Exception {
 
         final RandomFactory randomFactory = new RandomFactory();
 
@@ -69,7 +71,38 @@ public class RandomFactoryTest {
         assertNotNull(randomFactory.generateRandom(TestEnum.class));
         assertNotNull(randomFactory.generateRandom(PrivateConstructorWithStaticMethodClass.class));
         assertNotNull(randomFactory.generateRandom(ClassAsParameter.class));
+    }
 
+    @Test
+    public void shouldGenerateObjectWithNullOrDefaultValuesOfFields() throws Exception {
+        final RandomFactory randomFactory = new RandomFactory();
+
+        final ClassWithObjects classWithObjects = randomFactory.generateRandom(ClassWithObjects.class);
+        assertNotNull(classWithObjects);
+
+        assertEquals(false, classWithObjects.aBoolean);
+        assertNull(classWithObjects.aBooleanWrapper);
+
+        assertEquals(0, classWithObjects.aByte);
+        assertNull(classWithObjects.aByteWrapper);
+
+        assertEquals(0, classWithObjects.aChar);
+        assertNull(classWithObjects.aCharWrapper);
+
+        assertEquals(0.0d, classWithObjects.aDouble, 0.000001);
+        assertNull(classWithObjects.aDoubleWrapper);
+
+        assertEquals(0.0f, classWithObjects.aFloat, 0.000001);
+        assertNull(classWithObjects.aFloatWrapper);
+
+        assertEquals(0, classWithObjects.aInt);
+        assertNull(classWithObjects.aIntWrapper);
+
+        assertEquals(0L, classWithObjects.aLong);
+        assertNull(classWithObjects.aLongWrapper);
+
+        assertEquals(0, classWithObjects.aShort);
+        assertNull(classWithObjects.aShortWrapper);
 
     }
 
@@ -115,5 +148,24 @@ public class RandomFactoryTest {
         VAL1,
         VAL2,
         VAL3
+    }
+
+    private final static class ClassWithObjects {
+        private static boolean aBoolean;
+        private static Boolean aBooleanWrapper;
+        private static byte aByte;
+        private static Byte aByteWrapper;
+        private static short aShort;
+        private static Short aShortWrapper;
+        private static int aInt;
+        private static Integer aIntWrapper;
+        private static long aLong;
+        private static Long aLongWrapper;
+        private static float aFloat;
+        private static Float aFloatWrapper;
+        private static double aDouble;
+        private static Double aDoubleWrapper;
+        private static char aChar;
+        private static Character aCharWrapper;
     }
 }
