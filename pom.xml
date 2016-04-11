@@ -140,10 +140,13 @@
     <build>
         <testResources>
             <testResource>
-                <directory>src/test/java</directory>
+                <directory>${project.basedir}/src/test/java</directory>
                 <excludes>
                     <exclude>**/*.java</exclude>
                 </excludes>
+            </testResource>
+            <testResource>
+                <directory>${project.basedir}/src/test/resources</directory>
             </testResource>
         </testResources>
         <plugins>
