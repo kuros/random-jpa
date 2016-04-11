@@ -101,13 +101,16 @@ public final class EntityResolverImpl implements EntityResolver {
             return;
         }
 
-        final Object byId = findById(field.getDeclaringClass(), fieldValueMap.get(field));
-        if (byId == null) {
-            throw new IllegalArgumentException("Element not found with id: " + fieldValueMap.get(field)
-                    + ", Class: " + field.getDeclaringClass());
-        }
+        final Object value = fieldValueMap.get(field);
+        if (value != null) {
+            final Object byId = findById(field.getDeclaringClass(), value);
+            if (byId == null) {
+                throw new IllegalArgumentException("Element not found with id: " + value
+                        + ", Class: " + field.getDeclaringClass());
+            }
 
-        generateIdForParent(fieldValueMap, field.getDeclaringClass(), byId);
+            generateIdForParent(fieldValueMap, field.getDeclaringClass(), byId);
+        }
     }
 
     private void generateIdForParent(final Map<Field, Object> fieldValueMap, final Class<?> type, final Object object) throws IllegalAccessException, NoSuchFieldException {

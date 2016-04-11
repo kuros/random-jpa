@@ -22,6 +22,8 @@ import java.lang.reflect.Field;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 
 public class EntityResolverImplTest {
 
@@ -56,6 +58,33 @@ public class EntityResolverImplTest {
         assertEquals(z.getId(), fieldValueMap.get(Util.getField(Z.class, "id")));
         assertEquals(x.getId(), fieldValueMap.get(Util.getField(X.class, "id")));
         assertEquals(y.getId(), fieldValueMap.get(Util.getField(Y.class, "id")));
+
+    }
+
+    @Test
+    public void shouldNotPopulateFieldValueForExistingHierarchyWhenNoIdIsProvided() throws Exception {
+
+        final Cache cache = Cache.create(Version.V2, Database.NONE, entityManager);
+        cache.with(MockedHierarchyGraph.getHierarchyGraph());
+
+        final X x = new X();
+        EntityManagerProvider.persist(x);
+
+        final Y y = new Y();
+        EntityManagerProvider.persist(y);
+
+        final Z z = new Z();
+        z.setxId(x.getId());
+        z.setyId(y.getId());
+        EntityManagerProvider.persist(z);
+
+        final Plan plan = Plan.of(Entity.of(Z.class).with(Z_.id, null));
+        final EntityResolver entityResolver = EntityResolverImpl.newInstance(cache, cache.getHierarchyGraph(), plan);
+        final Map<Field, Object> fieldValueMap = entityResolver.getFieldValueMap();
+
+        assertNull(fieldValueMap.get(Util.getField(Z.class, "id")));
+        assertFalse(fieldValueMap.keySet().contains((Util.getField(X.class, "id"))));
+        assertFalse(fieldValueMap.keySet().contains((Util.getField(Y.class, "id"))));
 
     }
 
