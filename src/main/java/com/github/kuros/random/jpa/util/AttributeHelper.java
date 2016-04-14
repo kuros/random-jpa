@@ -41,28 +41,28 @@ public class AttributeHelper {
             throw new NullPointerException(ATTRIBUTE_CANNOT_BE_NULL);
         }
         if (attribute instanceof PluralAttribute) {
-            return ((PluralAttribute)attribute).getBindableJavaType();
+            return ((PluralAttribute) attribute).getBindableJavaType();
         }
         return attribute.getJavaType();
     }
 
-    public static Field getField(final Attribute<? , ?> attribute) throws NoSuchFieldException {
+    public static Field getField(final Attribute<?, ?> attribute) {
 
         if (attribute == null) {
             throw new NullPointerException(ATTRIBUTE_CANNOT_BE_NULL);
         }
 
-        return attribute.getJavaMember().getDeclaringClass().getDeclaredField(getName(attribute));
+        try {
+            return attribute.getJavaMember().getDeclaringClass().getDeclaredField(getName(attribute));
+        } catch (final NoSuchFieldException e) {
+            throw new RandomJPAException("Attribute cannot be mapped to Field");
+        }
     }
 
     public static List<Field> getFields(final List<Attribute<?, ?>> attributes) {
         final List<Field> fields = new ArrayList<Field>();
         for (Attribute<?, ?> attribute : attributes) {
-            try {
-                fields.add(AttributeHelper.getField(attribute));
-            } catch (final NoSuchFieldException e) {
-                throw new RandomJPAException(e);
-            }
+            fields.add(AttributeHelper.getField(attribute));
         }
 
         return fields;

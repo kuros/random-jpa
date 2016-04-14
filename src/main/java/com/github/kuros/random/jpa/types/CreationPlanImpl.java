@@ -2,7 +2,10 @@ package com.github.kuros.random.jpa.types;
 
 import com.github.kuros.random.jpa.definition.HierarchyGraph;
 import com.github.kuros.random.jpa.random.Randomize;
+import com.github.kuros.random.jpa.random.RandomizeImpl;
+import com.github.kuros.random.jpa.util.AttributeHelper;
 
+import javax.persistence.metamodel.Attribute;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -47,13 +50,25 @@ public class CreationPlanImpl implements CreationPlan {
 
     @SuppressWarnings("unchecked")
     public <T> T get(final Class<T> type) {
-        return (T) createdNodeMap.get(type).get(0).getValue();
+        return (T) get(type, 0);
     }
 
     @SuppressWarnings("unchecked")
     public <T> T get(final Class<T> type, final int index) {
+        final RandomizeImpl randomizeImpl = (RandomizeImpl) this.randomize;
+        randomizeImpl.setVersion(Version.V1);
         return (T) createdNodeMap.get(type).get(index).getValue();
     }
+
+    public <T, V> void set(final Attribute<T, V> attribute, final V value) {
+        set(0, attribute, value);
+    }
+
+    public <T, V> void set(final int index, final Attribute<T, V> attribute, final V value) {
+        final RandomizeImpl randomizeImpl = (RandomizeImpl) this.randomize;
+        randomizeImpl.addFieldValue(AttributeHelper.getField(attribute), index, value);
+    }
+
 
     public void print(final Printer printer) {
         printer.print(root.print());
@@ -73,4 +88,5 @@ public class CreationPlanImpl implements CreationPlan {
     public HierarchyGraph getHierarchyGraph() {
         return hierarchyGraph;
     }
+
 }

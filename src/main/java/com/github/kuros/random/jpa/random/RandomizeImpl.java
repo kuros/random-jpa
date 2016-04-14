@@ -5,6 +5,8 @@ import com.github.kuros.random.jpa.exception.RandomJPAException;
 import com.github.kuros.random.jpa.metamodel.AttributeProvider;
 import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
 import com.github.kuros.random.jpa.random.generator.RandomGenerator;
+import com.github.kuros.random.jpa.types.FieldIndex;
+import com.github.kuros.random.jpa.types.Version;
 import com.github.kuros.random.jpa.util.NumberUtil;
 
 import java.lang.reflect.Field;
@@ -35,12 +37,16 @@ public final class RandomizeImpl implements Randomize {
     private final AttributeProvider attributeProvider;
     private Map<Field, Object> fieldValueMap;
     private List<Field> nullValueFields;
+    private Map<FieldIndex, Object> fieldIndexMap;
+    private Version version;
 
     private RandomizeImpl(final Cache cache, final RandomGenerator randomGenerator) {
         this.attributeProvider = cache.getAttributeProvider();
         this.randomGenerator = randomGenerator;
         this.fieldValueMap = new HashMap<Field, Object>();
         this.nullValueFields = new ArrayList<Field>();
+        this.fieldIndexMap = new HashMap<FieldIndex, Object>();
+        this.version = Version.V2;
     }
 
     public static RandomizeImpl newInstance(final Cache cache, final RandomGenerator randomGenerator) {
@@ -51,13 +57,13 @@ public final class RandomizeImpl implements Randomize {
         return randomGenerator.generateRandom(type);
     }
 
-    public <T> T populateRandomFields(final T t) {
+    public <T> T populateRandomFields(final T t, final int index) {
         final Class<?> type = t.getClass();
         final Field[] declaredFields = type.getDeclaredFields();
         for (final Field declaredField : declaredFields) {
             declaredField.setAccessible(true);
             try {
-                final Object value = fieldValueMap.get(declaredField);
+                final Object value = getFieldValue(declaredField, index);
                 if (value != null) {
                     declaredField.set(t, value);
                 } else if (isFieldEmpty(declaredField, t)
@@ -74,12 +80,20 @@ public final class RandomizeImpl implements Randomize {
         return t;
     }
 
+    private Object getFieldValue(final Field declaredField, final int index) {
+        final Object value = fieldIndexMap.get(new FieldIndex(declaredField, index));
+        if (value == null) {
+            return fieldValueMap.get(declaredField);
+        }
+        return value;
+    }
+
     private boolean isNotNullValue(final Field declaredField) {
         return !nullValueFields.contains(declaredField);
     }
 
-    public boolean isValueProvided(final Field field) {
-        return fieldValueMap.get(field) != null;
+    public boolean isValueProvided(final Field field, final int index) {
+        return getFieldValue(field, index) != null;
     }
 
     public void addFieldValue(final Map<Field, Object> fieldValues) {
@@ -90,23 +104,34 @@ public final class RandomizeImpl implements Randomize {
         this.nullValueFields = nullValueFields;
     }
 
+    public void addFieldValue(final Field field, final int index, final Object value) {
+        fieldIndexMap.put(new FieldIndex(field, index), value);
+    }
+
     private <T> boolean isFieldEmpty(final Field declaredField, final T t) {
-        try {
-            declaredField.setAccessible(true);
-            final Object defaultValue = NumberUtil.getDefaultValue(declaredField.getType());
-            return defaultValue == null ? declaredField.get(t) == defaultValue : declaredField.get(t).equals(defaultValue);
-        } catch (final IllegalAccessException e) {
-            return false;
+        if (version == Version.V1) {
+            try {
+                declaredField.setAccessible(true);
+                return declaredField.get(t) == null;
+            } catch (final IllegalAccessException e) {
+                return false;
+            }
         }
+
+        return true;
     }
 
     private boolean isRandomRequired(final Field declaredField) {
         final EntityTableMapping entityTableMapping = attributeProvider.get(declaredField.getDeclaringClass());
 
         return (fieldIsColumn(entityTableMapping, declaredField) && !fieldIsId(entityTableMapping, declaredField)
-                || attributeProvider.getUnSupportedGeneratorType().contains(entityTableMapping.getIdentifierGenerator()))
+                && isSupportedGeneratorType(entityTableMapping))
                 || randomGenerator.isRandomAttributeGeneratorProvided(declaredField);
 
+    }
+
+    private boolean isSupportedGeneratorType(final EntityTableMapping entityTableMapping) {
+        return !attributeProvider.getUnSupportedGeneratorType().contains(entityTableMapping.getIdentifierGenerator());
     }
 
     private boolean fieldIsColumn(final EntityTableMapping entityTableMapping, final Field field) {
@@ -115,5 +140,14 @@ public final class RandomizeImpl implements Randomize {
 
     private boolean fieldIsId(final EntityTableMapping entityTableMapping, final Field field) {
         return entityTableMapping != null && entityTableMapping.getAttributeIds().contains(field.getName());
+    }
+
+
+    public void setVersion(final Version version) {
+        this.version = version;
+    }
+
+    public Version getVersion() {
+        return version;
     }
 }

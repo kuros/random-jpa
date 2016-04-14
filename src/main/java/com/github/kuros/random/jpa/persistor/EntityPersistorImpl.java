@@ -7,9 +7,11 @@ import com.github.kuros.random.jpa.mapper.Relation;
 import com.github.kuros.random.jpa.persistor.functions.FunctionProcessor;
 import com.github.kuros.random.jpa.persistor.model.ResultNodeTree;
 import com.github.kuros.random.jpa.random.Randomize;
+import com.github.kuros.random.jpa.random.RandomizeImpl;
 import com.github.kuros.random.jpa.types.CreationPlan;
 import com.github.kuros.random.jpa.types.Node;
 import com.github.kuros.random.jpa.types.ResultNode;
+import com.github.kuros.random.jpa.types.Version;
 import com.github.kuros.random.jpa.util.NumberUtil;
 
 import java.lang.reflect.Field;
@@ -107,7 +109,7 @@ public final class EntityPersistorImpl implements Persistor {
             }
         }
 
-        return randomize.populateRandomFields(random);
+        return randomize.populateRandomFields(random, getIndexForNewEntity(resultNodeTree, random.getClass()) );
     }
 
     private TableNode getTableNode(final Class<?> type) {
@@ -116,9 +118,14 @@ public final class EntityPersistorImpl implements Persistor {
 
     private void createRelation(final ResultNodeTree resultNodeTree, final Relation relation, final Object object) {
         try {
-            if (!randomize.isValueProvided(relation.getFrom().getField())) {
+            final Field fromField = relation.getFrom().getField();
+            if (!randomize.isValueProvided(fromField, getIndexForNewEntity(resultNodeTree, fromField.getDeclaringClass()))) {
                 final Object value = getFieldValue(resultNodeTree, relation);
-                setFieldValue(object, relation.getFrom().getField(), value);
+                final RandomizeImpl randomizeImpl = (RandomizeImpl) this.randomize;
+                randomizeImpl.addFieldValue(fromField, getIndexForNewEntity(resultNodeTree, fromField.getDeclaringClass()), value);
+                if (randomizeImpl.getVersion() == Version.V1) {
+                    setFieldValue(object, fromField, value);
+                }
             }
         } catch (final Exception e) {
             //do nothing
@@ -137,8 +144,7 @@ public final class EntityPersistorImpl implements Persistor {
 
     private Object getFieldValue(final ResultNodeTree resultNodeTree, final Relation relation) {
         final Field field = relation.getTo().getField();
-        final Map<Class<?>, List<Object>> createdEntities = resultNodeTree.getCreatedEntities();
-        final List<Object> objects = createdEntities.get(field.getDeclaringClass());
+        final List<Object> objects = getPersistedEntitiesByFieldDeclaringClass(resultNodeTree, field.getDeclaringClass());
         final Object object = objects.get(objects.size() - 1);
         Object value = null;
         try {
@@ -154,5 +160,15 @@ public final class EntityPersistorImpl implements Persistor {
             //do nothing
         }
         return value;
+    }
+
+    private int getIndexForNewEntity(final ResultNodeTree resultNodeTree, final Class<?> declaringClass) {
+        final List<Object> values = getPersistedEntitiesByFieldDeclaringClass(resultNodeTree, declaringClass);
+        return values != null ? values.size() : 0;
+    }
+
+    private List<Object> getPersistedEntitiesByFieldDeclaringClass(final ResultNodeTree resultNodeTree, final Class<?> declaringClass) {
+        final Map<Class<?>, List<Object>> createdEntities = resultNodeTree.getCreatedEntities();
+        return createdEntities.get(declaringClass);
     }
 }

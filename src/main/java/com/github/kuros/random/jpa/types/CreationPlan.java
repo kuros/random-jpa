@@ -1,5 +1,6 @@
 package com.github.kuros.random.jpa.types;
 
+import javax.persistence.metamodel.Attribute;
 import java.util.List;
 import java.util.Map;
 
@@ -24,11 +25,15 @@ public interface CreationPlan {
 
     Node getRoot();
 
-    @SuppressWarnings("unchecked")
+    @Deprecated
     <T> T get(Class<T> type);
 
-    @SuppressWarnings("unchecked")
+    @Deprecated
     <T> T get(Class<T> type, int index);
+
+    <T, V> void set(Attribute<T, V> attribute, V value);
+
+    <T, V> void set(int index, Attribute<T, V> attribute, V value);
 
     void print(Printer printer);
 

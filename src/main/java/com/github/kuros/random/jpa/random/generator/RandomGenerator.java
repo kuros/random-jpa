@@ -89,11 +89,7 @@ public class RandomGenerator {
     private void addAttributeGenerator(final RandomAttributeGenerator randomAttributeGenerator) {
         final List<? extends Attribute> attributes = randomAttributeGenerator.getAttributes();
         for (Attribute attribute : attributes) {
-            try {
-                attributeGeneratorMap.put(AttributeHelper.getField(attribute), randomAttributeGenerator);
-            } catch (final NoSuchFieldException e) {
-                //do nothing
-            }
+            attributeGeneratorMap.put(AttributeHelper.getField(attribute), randomAttributeGenerator);
         }
     }
 }

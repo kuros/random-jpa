@@ -5,6 +5,8 @@ import com.github.kuros.random.jpa.persistor.model.ResultMap;
 import com.github.kuros.random.jpa.testUtil.EntityManagerProvider;
 import com.github.kuros.random.jpa.testUtil.entity.D;
 import com.github.kuros.random.jpa.testUtil.entity.D_;
+import com.github.kuros.random.jpa.testUtil.entity.PrimitiveEntity;
+import com.github.kuros.random.jpa.testUtil.entity.PrimitiveEntity_;
 import com.github.kuros.random.jpa.testUtil.entity.RelationEntity;
 import com.github.kuros.random.jpa.testUtil.entity.RelationManyToOne;
 import com.github.kuros.random.jpa.testUtil.entity.RelationOneToMany;
@@ -27,6 +29,7 @@ import javax.persistence.EntityManager;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -339,11 +342,84 @@ public class JPAContextTest {
 
     }
 
+    @Test
+    public void shouldPersistDefaultValuesForPrimitiveTypeForV1() throws Exception {
+        final JPAContext jpaContext = JPAContextFactory
+                .newInstance(Database.NONE, entityManager)
+                .generate();
+
+        final CreationPlan creationPlan = jpaContext.create(Plan.of(Entity.of(PrimitiveEntity.class)));
+        // setting default value false to invoke V1 version call
+        creationPlan.get(PrimitiveEntity.class).setDefaultBoolean(false);
+
+        final ResultMap persist = jpaContext.persist(creationPlan);
+        final PrimitiveEntity primitiveEntity = persist.get(PrimitiveEntity.class);
+        assertEquals(false, primitiveEntity.isDefaultBoolean());
+        assertEquals((byte) 0, primitiveEntity.getDefaultByte());
+        assertEquals((char) 0, primitiveEntity.getDefaultChar());
+        assertEquals(0.0, primitiveEntity.getDefaultDouble(), 0.0001);
+        assertEquals(0.0f, primitiveEntity.getDefaultFloat(), 0.0001);
+        assertEquals(0, primitiveEntity.getDefaultInt());
+        assertEquals(0L, primitiveEntity.getDefaultLong());
+        assertEquals((short) 0, primitiveEntity.getDefaultShort());
+
+    }
+
+    @Test
+    public void shouldPersistRandomValuesForPrimitiveTypeForV2() throws Exception {
+        final JPAContext jpaContext = JPAContextFactory
+                .newInstance(Database.NONE, entityManager)
+                .generate();
+
+        final CreationPlan creationPlan = jpaContext.create(Plan.of(Entity.of(PrimitiveEntity.class)));
+
+        final ResultMap persist = jpaContext.persist(creationPlan);
+        final PrimitiveEntity primitiveEntity = persist.get(PrimitiveEntity.class);
+        assertNotEquals((byte) 0, primitiveEntity.getDefaultByte());
+        assertNotEquals((char) 0, primitiveEntity.getDefaultChar());
+        assertNotEquals(0.0, primitiveEntity.getDefaultDouble(), 0.0001);
+        assertNotEquals(0.0f, primitiveEntity.getDefaultFloat(), 0.0001);
+        assertNotEquals(0, primitiveEntity.getDefaultInt());
+        assertNotEquals(0L, primitiveEntity.getDefaultLong());
+        assertNotEquals((short) 0, primitiveEntity.getDefaultShort());
+
+    }
+
+    @Test
+    public void shouldPersistDefaultValuesForPrimitiveTypeWhenProvided() throws Exception {
+        final JPAContext jpaContext = JPAContextFactory
+                .newInstance(Database.NONE, entityManager)
+                .generate();
+
+        final CreationPlan creationPlan = jpaContext.create(Plan.of(Entity.of(PrimitiveEntity.class)));
+
+        creationPlan.set(PrimitiveEntity_.defaultBoolean, false);
+        creationPlan.set(PrimitiveEntity_.defaultByte, (byte) 0);
+        creationPlan.set(PrimitiveEntity_.defaultChar, (char) 0);
+        creationPlan.set(PrimitiveEntity_.defaultDouble, 0.0);
+        creationPlan.set(PrimitiveEntity_.defaultFloat, 0.0F);
+        creationPlan.set(PrimitiveEntity_.defaultInt, 0);
+        creationPlan.set(PrimitiveEntity_.defaultLong, 0L);
+        creationPlan.set(PrimitiveEntity_.defaultShort, (short)0);
+
+
+        final ResultMap persist = jpaContext.persist(creationPlan);
+        final PrimitiveEntity primitiveEntity = persist.get(PrimitiveEntity.class);
+        assertEquals(false, primitiveEntity.isDefaultBoolean());
+        assertEquals((byte) 0, primitiveEntity.getDefaultByte());
+        assertEquals((char) 0, primitiveEntity.getDefaultChar());
+        assertEquals(0.0, primitiveEntity.getDefaultDouble(), 0.0001);
+        assertEquals(0.0F, primitiveEntity.getDefaultFloat(), 0.0001);
+        assertEquals(0, primitiveEntity.getDefaultInt());
+        assertEquals(0L, primitiveEntity.getDefaultLong());
+        assertEquals((short) 0, primitiveEntity.getDefaultShort());
+
+    }
+
     @After
     public void tearDown() throws Exception {
         if (entityManager != null && entityManager.isOpen()) {
             entityManager.close();
         }
-
     }
 }

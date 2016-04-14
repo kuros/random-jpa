@@ -23,9 +23,9 @@ public interface Randomize {
 
     <T> T createRandom(Class<T> type);
 
-    <T> T populateRandomFields(T t);
+    <T> T populateRandomFields(T t, final int index);
 
-    boolean isValueProvided(final Field field);
+    boolean isValueProvided(final Field field, final int index);
 
     void addFieldValue(Map<Field, Object> fieldValueMap);
 }

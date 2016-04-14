@@ -91,7 +91,7 @@ public class RandomizeImplTest {
 
         final RandomizeImplTestClass testClass = new RandomizeImplTestClass();
 
-        final RandomizeImplTestClass actual = randomize.populateRandomFields(testClass);
+        final RandomizeImplTestClass actual = randomize.populateRandomFields(testClass, 0);
 
         final ArgumentCaptor<Field> fieldArgumentCaptor = ArgumentCaptor.forClass(Field.class);
 
@@ -126,14 +126,14 @@ public class RandomizeImplTest {
 
         final RandomizeImplTestClass testClass = new RandomizeImplTestClass();
 
-        final RandomizeImplTestClass actual = randomize.populateRandomFields(testClass);
+        final RandomizeImplTestClass actual = randomize.populateRandomFields(testClass, 0);
         Mockito.verify(randomGenerator, Mockito.times(0)).generateRandom(Mockito.any(Field.class));
 
-        assertTrue(randomize.isValueProvided(aLongColumn));
+        assertTrue(randomize.isValueProvided(aLongColumn, 0));
         assertEquals(fieldObjectMap.get(aLongColumn), actual.aLongColumn);
-        assertTrue(randomize.isValueProvided(aStringColumn));
+        assertTrue(randomize.isValueProvided(aStringColumn, 0));
         assertEquals(fieldObjectMap.get(aStringColumn), actual.aStringColumn);
-        assertTrue(randomize.isValueProvided(aBooleanColumn));
+        assertTrue(randomize.isValueProvided(aBooleanColumn, 0));
         assertEquals(fieldObjectMap.get(aBooleanColumn), actual.aBooleanColumn);
 
     }
@@ -153,7 +153,7 @@ public class RandomizeImplTest {
         randomize.setNullValueFields(nullValueFields);
 
         final RandomizeImplTestClass testClass = new RandomizeImplTestClass();
-        final RandomizeImplTestClass actual = randomize.populateRandomFields(testClass);
+        final RandomizeImplTestClass actual = randomize.populateRandomFields(testClass, 0);
         Mockito.verify(randomGenerator, Mockito.times(0)).generateRandom(Mockito.any(Field.class));
 
         assertNull(actual.aLongColumn);
@@ -171,7 +171,7 @@ public class RandomizeImplTest {
         final RandomizeImpl randomize = RandomizeImpl.newInstance(cache, randomGenerator);
 
         final RandomizeImplTestClass testClass = new RandomizeImplTestClass();
-        randomize.populateRandomFields(testClass);
+        randomize.populateRandomFields(testClass, 0);
 
     }
 
