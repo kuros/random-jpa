@@ -66,7 +66,9 @@ public class OracleCharacterLengthProviderTest {
         departmentTableMapping.addAttributeColumnMapping("departmentId", "department_id");
         departmentTableMapping.addAttributeColumnMapping("departmentName", "department_name");
         departmentTableMapping.addAttributeColumnMapping("departmentAmount", "department_amount");
-        when(attributeProvider.get(eq("department"))).thenReturn(departmentTableMapping);
+        final List<EntityTableMapping> entityTableMappings = new ArrayList<EntityTableMapping>();
+        entityTableMappings.add(departmentTableMapping);
+        when(attributeProvider.get(eq("department"))).thenReturn(entityTableMappings);
     }
 
     private void mockEntityManager() {

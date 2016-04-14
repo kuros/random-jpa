@@ -39,7 +39,11 @@ public class AttributeProviderTest {
         final AttributeProvider attributeProvider = AttributeProvider.getInstance(entityManager);
 
         final EntityTableMapping entityTableMappingByClass = attributeProvider.get(R.class);
-        final EntityTableMapping entityTableMappingByName = attributeProvider.get("R");
+        final List<EntityTableMapping> entityTableMappingByNames = attributeProvider.get("R");
+
+        assertEquals(1, entityTableMappingByNames.size());
+
+        final EntityTableMapping entityTableMappingByName = entityTableMappingByNames.get(0);
 
         assertEquals(entityTableMappingByClass, entityTableMappingByName);
 

@@ -67,7 +67,9 @@ public class MSSQLUniqueConstraintProviderTest {
         final EntityTableMapping personTableMapping = new EntityTableMapping(Person.class);
         personTableMapping.addAttributeColumnMapping("firstName", "first_name");
         personTableMapping.addAttributeColumnMapping("lastName", "last_name");
-        when(attributeProvider.get(eq("person"))).thenReturn(personTableMapping);
+        final List<EntityTableMapping> entityTableMappings = new ArrayList<EntityTableMapping>();
+        entityTableMappings.add(personTableMapping);
+        when(attributeProvider.get(eq("person"))).thenReturn(entityTableMappings);
     }
 
     private void mockEntityManager() {

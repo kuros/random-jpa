@@ -49,32 +49,34 @@ public abstract class AbstractCharacterLengthProvider implements SQLCharacterLen
         for (Object o : resultList) {
             final Object[] row = (Object[]) o;
 
-            final EntityTableMapping entityTableMapping = attributeProvider.get((String) row[0]);
+            final List<EntityTableMapping> entityTableMappings = attributeProvider.get((String) row[0]);
 
-            if (entityTableMapping == null) {
-                continue;
+            if (entityTableMappings != null) {
+                for (EntityTableMapping entityTableMapping : entityTableMappings) {
+                    final String attributeName = entityTableMapping.getAttributeName((String) row[1]);
+                    final Number length = (Number) row[2];
+                    final Number precision = (Number) row[3];
+                    final Number scale = (Number) row[4];
+                    final String dataType = (String) row[5];
+
+                    final ColumnDetail columnDetail = new ColumnDetail(
+                            getValue(length),
+                            getValue(precision),
+                            getValue(scale),
+                            DATA_TYPE_MAP.get(dataType.toLowerCase()));
+
+                    final String entityName = entityTableMapping.getEntityName();
+                    ColumnCharacterLength columnCharacterLength = lengths.get(entityName);
+                    if (columnCharacterLength == null) {
+                        columnCharacterLength = ColumnCharacterLength.newInstance();
+                        lengths.put(entityName, columnCharacterLength);
+                    }
+
+                    columnCharacterLength.add(attributeName, columnDetail);
+                }
             }
 
-            final String attributeName = entityTableMapping.getAttributeName((String) row[1]);
-            final Number length = (Number) row[2];
-            final Number precision = (Number) row[3];
-            final Number scale = (Number) row[4];
-            final String dataType = (String) row[5];
 
-            final ColumnDetail columnDetail = new ColumnDetail(
-                    getValue(length),
-                    getValue(precision),
-                    getValue(scale),
-                    DATA_TYPE_MAP.get(dataType.toLowerCase()));
-
-            final String entityName = entityTableMapping.getEntityName();
-            ColumnCharacterLength columnCharacterLength = lengths.get(entityName);
-            if (columnCharacterLength == null) {
-                columnCharacterLength = ColumnCharacterLength.newInstance();
-                lengths.put(entityName, columnCharacterLength);
-            }
-
-            columnCharacterLength.add(attributeName, columnDetail);
         }
 
         return lengths;

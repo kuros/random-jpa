@@ -43,7 +43,7 @@ import java.util.Set;
  */
 public class AttributeProvider {
     private Map<Class<?>, EntityTableMapping> entityTableMappingByClass;
-    private Map<String, EntityTableMapping> entityTableMappingByTableName;
+    private Map<String, List<EntityTableMapping>> entityTableMappingByTableName;
     private EntityManager entityManager;
 
     public static AttributeProvider getInstance(final EntityManager entityManager) {
@@ -57,7 +57,7 @@ public class AttributeProvider {
 
     private void init() {
         entityTableMappingByClass = new HashMap<Class<?>, EntityTableMapping>();
-        entityTableMappingByTableName = new HashMap<String, EntityTableMapping>();
+        entityTableMappingByTableName = new HashMap<String, List<EntityTableMapping>>();
         final HibernateEntityManagerFactory entityManagerFactory = (HibernateEntityManagerFactory) entityManager.getEntityManagerFactory();
         final Map<String, ClassMetadata> allClassMetadata = entityManagerFactory.getSessionFactory().getAllClassMetadata();
 
@@ -87,11 +87,21 @@ public class AttributeProvider {
                     entityTableMapping.addAttributeIds(entityTableMapping.getAttributeName(id));
                 }
 
-                entityTableMappingByTableName.put(getTableName(singleTableEntityPersister), entityTableMapping);
+                putEntityTableMapping(singleTableEntityPersister, entityTableMapping);
                 entityTableMappingByClass.put(entity.getJavaType(), entityTableMapping);
             }
 
         }
+    }
+
+    private void putEntityTableMapping(final SingleTableEntityPersister singleTableEntityPersister, final EntityTableMapping entityTableMapping) {
+        final String tableName = getTableName(singleTableEntityPersister);
+        List<EntityTableMapping> entityTableMappings = entityTableMappingByTableName.get(tableName);
+        if (entityTableMappings == null) {
+            entityTableMappings = new ArrayList<EntityTableMapping>();
+            entityTableMappingByTableName.put(tableName, entityTableMappings);
+        }
+        entityTableMappings.add(entityTableMapping);
     }
 
     private List<String> getSupportedAttributeNames(final SingleTableEntityPersister singleTableEntityPersister) {
@@ -140,7 +150,7 @@ public class AttributeProvider {
         return entityTableMappingByClass.get(type);
     }
 
-    public EntityTableMapping get(final String tableName) {
+    public List<EntityTableMapping> get(final String tableName) {
         return entityTableMappingByTableName.get(tableName.toLowerCase());
     }
 
@@ -149,4 +159,6 @@ public class AttributeProvider {
         generators.add(Assigned.class);
         return generators;
     }
+
+
 }

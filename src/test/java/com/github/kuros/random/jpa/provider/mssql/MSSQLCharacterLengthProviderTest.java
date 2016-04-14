@@ -65,12 +65,17 @@ public class MSSQLCharacterLengthProviderTest {
 
         personTableMapping.addAttributeColumnMapping("firstName", "first_name");
         personTableMapping.addAttributeColumnMapping("lastName", "last_name");
-        when(attributeProvider.get(eq("person"))).thenReturn(personTableMapping);
+        final List<EntityTableMapping> entityTableMappings = new ArrayList<EntityTableMapping>();
+        entityTableMappings.add(personTableMapping);
+        when(attributeProvider.get(eq("person"))).thenReturn(entityTableMappings);
 
         final EntityTableMapping departmentTableMapping = new EntityTableMapping(Department.class);
         departmentTableMapping.addAttributeColumnMapping("departmentId", "department_id");
         departmentTableMapping.addAttributeColumnMapping("departmentName", "department_name");
-        when(attributeProvider.get(eq("department"))).thenReturn(departmentTableMapping);
+
+        final List<EntityTableMapping> departmentEntityTableMappings = new ArrayList<EntityTableMapping>();
+        departmentEntityTableMappings.add(departmentTableMapping);
+        when(attributeProvider.get(eq("department"))).thenReturn(departmentEntityTableMappings);
     }
 
     private void mockEntityManager() {

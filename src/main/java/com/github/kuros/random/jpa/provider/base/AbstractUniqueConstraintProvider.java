@@ -45,16 +45,18 @@ public abstract class AbstractUniqueConstraintProvider implements UniqueConstrai
         final List resultList = nativeQuery.getResultList();
         for (Object result : resultList) {
             final Object[] row = (Object[]) result;
-            final EntityTableMapping entityTableMapping = attributeProvider.get((String) row[0]);
-            if (entityTableMapping != null) {
-                final String attributeName = entityTableMapping.getAttributeName((String) row[1]);
-                if (attributeName != null) {
-                    List<String> attributeList = uniqueColumnCombinations.get(entityTableMapping.getEntityClass());
-                    if (attributeList == null) {
-                        attributeList = new ArrayList<String>();
-                        uniqueColumnCombinations.put(entityTableMapping.getEntityClass(), attributeList);
+            final List<EntityTableMapping> entityTableMappings = attributeProvider.get((String) row[0]);
+            if (entityTableMappings != null) {
+                for (EntityTableMapping entityTableMapping : entityTableMappings) {
+                    final String attributeName = entityTableMapping.getAttributeName((String) row[1]);
+                    if (attributeName != null) {
+                        List<String> attributeList = uniqueColumnCombinations.get(entityTableMapping.getEntityClass());
+                        if (attributeList == null) {
+                            attributeList = new ArrayList<String>();
+                            uniqueColumnCombinations.put(entityTableMapping.getEntityClass(), attributeList);
+                        }
+                        attributeList.add(attributeName);
                     }
-                    attributeList.add(attributeName);
                 }
             }
         }
