@@ -65,8 +65,7 @@ public class CreationPlanImpl implements CreationPlan {
     }
 
     public <T, V> void set(final int index, final Attribute<T, V> attribute, final V value) {
-        final RandomizeImpl randomizeImpl = (RandomizeImpl) this.randomize;
-        randomizeImpl.addFieldValue(AttributeHelper.getField(attribute), index, value);
+        randomize.addFieldValue(AttributeHelper.getField(attribute), index, value);
     }
 
 

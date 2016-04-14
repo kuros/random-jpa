@@ -7,7 +7,6 @@ import com.github.kuros.random.jpa.mapper.Relation;
 import com.github.kuros.random.jpa.persistor.functions.FunctionProcessor;
 import com.github.kuros.random.jpa.persistor.model.ResultNodeTree;
 import com.github.kuros.random.jpa.random.Randomize;
-import com.github.kuros.random.jpa.random.RandomizeImpl;
 import com.github.kuros.random.jpa.types.CreationPlan;
 import com.github.kuros.random.jpa.types.Node;
 import com.github.kuros.random.jpa.types.ResultNode;
@@ -121,9 +120,8 @@ public final class EntityPersistorImpl implements Persistor {
             final Field fromField = relation.getFrom().getField();
             if (!randomize.isValueProvided(fromField, getIndexForNewEntity(resultNodeTree, fromField.getDeclaringClass()))) {
                 final Object value = getFieldValue(resultNodeTree, relation);
-                final RandomizeImpl randomizeImpl = (RandomizeImpl) this.randomize;
-                randomizeImpl.addFieldValue(fromField, getIndexForNewEntity(resultNodeTree, fromField.getDeclaringClass()), value);
-                if (randomizeImpl.getVersion() == Version.V1) {
+                randomize.addFieldValue(fromField, getIndexForNewEntity(resultNodeTree, fromField.getDeclaringClass()), value);
+                if (randomize.getVersion() == Version.V1) {
                     setFieldValue(object, fromField, value);
                 }
             }
