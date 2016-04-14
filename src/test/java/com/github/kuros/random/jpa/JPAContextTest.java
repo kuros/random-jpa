@@ -20,6 +20,7 @@ import com.github.kuros.random.jpa.types.Plan;
 import com.github.kuros.random.jpa.types.Printer;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.persistence.EntityManager;
@@ -295,7 +296,7 @@ public class JPAContextTest {
 
     }
 
-    @Test
+    @Test @Ignore
     public void shouldObjectValueForMappedRelationsInCaseOfOneToMany() throws Exception {
         final Dependencies dependencies = Dependencies.newInstance();
         dependencies.withLink(DependencyHelper.getLinks());
