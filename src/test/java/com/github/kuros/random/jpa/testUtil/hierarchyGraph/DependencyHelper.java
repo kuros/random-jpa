@@ -25,8 +25,10 @@ import com.github.kuros.random.jpa.testUtil.entity.RelationEntity;
 import com.github.kuros.random.jpa.testUtil.entity.RelationEntity_;
 import com.github.kuros.random.jpa.testUtil.entity.RelationManyToOne;
 import com.github.kuros.random.jpa.testUtil.entity.RelationManyToOne_;
+import com.github.kuros.random.jpa.testUtil.entity.RelationOneToMany_;
 import com.github.kuros.random.jpa.testUtil.entity.RelationOneToOne;
 import com.github.kuros.random.jpa.testUtil.entity.RelationOneToOne_;
+import com.github.kuros.random.jpa.testUtil.entity.RelationOneToMany;
 import com.github.kuros.random.jpa.testUtil.entity.X;
 import com.github.kuros.random.jpa.testUtil.entity.X_;
 import com.github.kuros.random.jpa.testUtil.entity.Y;
@@ -62,6 +64,8 @@ public class DependencyHelper {
         relations.add(Relation.newInstance(getFieldWrapper(RelationEntity.class, "relationOneToOne"), getFieldWrapper(RelationOneToOne.class, "id")));
         relations.add(Relation.newInstance(getFieldWrapper(RelationEntity.class, "relationManyToOne"), getFieldWrapper(RelationManyToOne.class, "id")));
 
+        relations.add(Relation.newInstance(getFieldWrapper(RelationOneToMany.class, "id"), getFieldWrapper(RelationEntity.class, "relationOneToMany")));
+
         return relations;
     }
 
@@ -86,6 +90,8 @@ public class DependencyHelper {
 
         links.add(Link.newLink(RelationEntity_.relationOneToOne, RelationOneToOne_.id));
         links.add(Link.newLink(RelationEntity_.relationManyToOne, RelationManyToOne_.id));
+
+        links.add(Link.newLink(RelationOneToMany_.id, RelationEntity_.relationOneToMany));
         return links;
     }
 

@@ -12,6 +12,7 @@ import com.github.kuros.random.jpa.testUtil.entity.Q;
 import com.github.kuros.random.jpa.testUtil.entity.R;
 import com.github.kuros.random.jpa.testUtil.entity.RelationEntity;
 import com.github.kuros.random.jpa.testUtil.entity.RelationManyToOne;
+import com.github.kuros.random.jpa.testUtil.entity.RelationOneToMany;
 import com.github.kuros.random.jpa.testUtil.entity.RelationOneToOne;
 import com.github.kuros.random.jpa.testUtil.entity.X;
 import com.github.kuros.random.jpa.testUtil.entity.Y;
@@ -55,7 +56,7 @@ public class HierarchyGeneratorImplTest {
         final HierarchyGenerator hierarchyGenerator = new HierarchyGeneratorImpl();
         final HierarchyGraph hierarchyGraph = hierarchyGenerator.generate(relations);
 
-        assertEquals(15, hierarchyGraph.getKeySet().size());
+        assertEquals(16, hierarchyGraph.getKeySet().size());
         assertEquals(0, hierarchyGraph.getParents(A.class).size());
         assertEquals(0, hierarchyGraph.getParents(B.class).size());
         assertEquals(0, hierarchyGraph.getParents(F.class).size());
@@ -88,5 +89,8 @@ public class HierarchyGeneratorImplTest {
         assertEquals(2, hierarchyGraph.getParents(RelationEntity.class).size());
         assertTrue(hierarchyGraph.getParents(RelationEntity.class).contains(RelationOneToOne.class));
         assertTrue(hierarchyGraph.getParents(RelationEntity.class).contains(RelationManyToOne.class));
+
+        assertEquals(1, hierarchyGraph.getParents(RelationOneToMany.class).size());
+        assertTrue(hierarchyGraph.getParents(RelationOneToMany.class).contains(RelationEntity.class));
     }
 }

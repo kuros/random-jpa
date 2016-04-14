@@ -35,7 +35,7 @@ public class ChildGraphTest {
 
         final ChildGraph childGraph = ChildGraph.newInstance(hierarchyGraph);
 
-        assertEquals(10, childGraph.keySet().size());
+        assertEquals(11, childGraph.keySet().size());
         assertEquals(0, childGraph.getChilds(E.class).size());
         assertEquals(0, childGraph.getChilds(Z.class).size());
 

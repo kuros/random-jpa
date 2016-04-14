@@ -1,6 +1,5 @@
 package com.github.kuros.random.jpa.testUtil.entity;
 
-import javax.persistence.metamodel.ListAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
@@ -20,12 +19,9 @@ import javax.persistence.metamodel.StaticMetamodel;
  *    You should have received a copy of the GNU Lesser General Public License
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-@StaticMetamodel(RelationEntity.class)
-public class RelationEntity_ {
+@StaticMetamodel(RelationOneToMany.class)
+public class RelationOneToMany_ {
 
-    public static volatile SingularAttribute<RelationEntity, Long> id;
-    public static volatile SingularAttribute<RelationEntity, RelationOneToOne> relationOneToOne;
-    public static volatile SingularAttribute<RelationEntity, RelationManyToOne> relationManyToOne;
-    public static volatile ListAttribute<RelationEntity, RelationOneToMany> relationOneToMany;
-
+    public static volatile SingularAttribute<RelationOneToMany, Long> id;
+    public static volatile SingularAttribute<RelationOneToMany, String> name;
 }

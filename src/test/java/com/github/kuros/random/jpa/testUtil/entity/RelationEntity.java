@@ -7,8 +7,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import java.util.List;
 
 @Entity
 @Table(name = "relation")
@@ -26,6 +28,10 @@ public class RelationEntity {
     @ManyToOne
     @JoinColumn(name = "relation_many_to_one_id")
     private RelationManyToOne relationManyToOne;
+
+    @OneToMany
+    @JoinColumn(name = "relation_one_to_many_id")
+    private List<RelationOneToMany> relationOneToMany;
 
     public Long getId() {
         return id;
@@ -49,5 +55,13 @@ public class RelationEntity {
 
     public void setRelationManyToOne(final RelationManyToOne relationManyToOne) {
         this.relationManyToOne = relationManyToOne;
+    }
+
+    public List<RelationOneToMany> getRelationOneToMany() {
+        return relationOneToMany;
+    }
+
+    public void setRelationOneToMany(final List<RelationOneToMany> relationOneToMany) {
+        this.relationOneToMany = relationOneToMany;
     }
 }

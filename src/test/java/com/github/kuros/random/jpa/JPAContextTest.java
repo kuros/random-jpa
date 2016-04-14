@@ -5,11 +5,16 @@ import com.github.kuros.random.jpa.persistor.model.ResultMap;
 import com.github.kuros.random.jpa.testUtil.EntityManagerProvider;
 import com.github.kuros.random.jpa.testUtil.entity.D;
 import com.github.kuros.random.jpa.testUtil.entity.D_;
+import com.github.kuros.random.jpa.testUtil.entity.RelationEntity;
+import com.github.kuros.random.jpa.testUtil.entity.RelationManyToOne;
+import com.github.kuros.random.jpa.testUtil.entity.RelationOneToMany;
+import com.github.kuros.random.jpa.testUtil.entity.RelationOneToOne;
 import com.github.kuros.random.jpa.testUtil.entity.X;
 import com.github.kuros.random.jpa.testUtil.entity.Y;
 import com.github.kuros.random.jpa.testUtil.entity.Z;
 import com.github.kuros.random.jpa.testUtil.entity.Z_;
 import com.github.kuros.random.jpa.testUtil.hierarchyGraph.DependencyHelper;
+import com.github.kuros.random.jpa.types.CreationPlan;
 import com.github.kuros.random.jpa.types.Entity;
 import com.github.kuros.random.jpa.types.Plan;
 import com.github.kuros.random.jpa.types.Printer;
@@ -18,10 +23,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 import javax.persistence.EntityManager;
-
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 /*
@@ -289,6 +295,47 @@ public class JPAContextTest {
 
     }
 
+    @Test
+    public void shouldObjectValueForMappedRelationsInCaseOfOneToMany() throws Exception {
+        final Dependencies dependencies = Dependencies.newInstance();
+        dependencies.withLink(DependencyHelper.getLinks());
+        final JPAContext jpaContext = JPAContextFactory
+                .newInstance(Database.NONE, entityManager)
+                .with(dependencies)
+                .generate();
+
+        final CreationPlan creationPlan = jpaContext.create(Plan.of(Entity.of(RelationOneToMany.class)));
+
+        entityManager.getTransaction().begin();
+        final ResultMap persist = jpaContext.persist(creationPlan);
+        entityManager.getTransaction().commit();
+
+
+
+        final RelationOneToOne relationOneToOne = persist.get(RelationOneToOne.class);
+        assertNotNull(relationOneToOne);
+        final RelationManyToOne relationManyToOne  = persist.get(RelationManyToOne.class);
+        assertNotNull(relationManyToOne);
+
+        final RelationEntity relationEntity = persist.get(RelationEntity.class);
+        assertNotNull(relationEntity);
+
+        assertEquals(relationEntity.getRelationManyToOne().getId(), relationManyToOne.getId());
+        assertEquals(relationEntity.getRelationOneToOne().getId(), relationOneToOne.getId());
+        assertNull(relationEntity.getRelationOneToMany());
+
+        final RelationOneToMany relationOneToMany = persist.get(RelationOneToMany.class);
+        assertNotNull(relationOneToMany);
+
+        final List<RelationEntity> foundRelationEntities = EntityManagerProvider.find("FROM RelationEntity where id=" + relationEntity.getId());
+        assertEquals(1, foundRelationEntities.size());
+
+        final List<RelationOneToMany> foundOneToManies = foundRelationEntities.get(0).getRelationOneToMany();
+        assertNotNull(foundOneToManies);
+        assertEquals(1, foundOneToManies.size());
+        assertEquals(relationOneToMany.getId(), foundOneToManies.get(0).getId());
+
+    }
 
     @After
     public void tearDown() throws Exception {
