@@ -9,6 +9,9 @@ import com.github.kuros.random.jpa.random.Randomize;
 import com.github.kuros.random.jpa.random.RandomizeImpl;
 import com.github.kuros.random.jpa.random.generator.RandomGenerator;
 import com.github.kuros.random.jpa.testUtil.EntityManagerProvider;
+import com.github.kuros.random.jpa.testUtil.entity.RelationEntity;
+import com.github.kuros.random.jpa.testUtil.entity.RelationManyToOne;
+import com.github.kuros.random.jpa.testUtil.entity.RelationOneToOne;
 import com.github.kuros.random.jpa.testUtil.entity.X;
 import com.github.kuros.random.jpa.testUtil.entity.Y;
 import com.github.kuros.random.jpa.testUtil.entity.Z;
@@ -121,6 +124,28 @@ public class EntityPersistorImplTest {
         assertEquals(yValues.get(1).getId(), zValues.get(3).getyId());
     }
 
+    @Test
+    public void shouldObjectValueForMappedRelations() throws Exception {
+        final CreationPlan creationPlan = CreationPlanResolver
+                .newInstance(randomize, getRelationEntityCreationOrder())
+                .create();
+
+        entityManager.getTransaction().begin();
+        final ResultNodeTree result = unit.persist(creationPlan);
+        entityManager.getTransaction().commit();
+
+        final RelationOneToOne relationOneToOne = result.get(RelationOneToOne.class);
+        assertNotNull(relationOneToOne);
+        final RelationManyToOne relationManyToOne  = result.get(RelationManyToOne.class);
+        assertNotNull(relationManyToOne);
+
+        final RelationEntity relationEntity = result.get(RelationEntity.class);
+        assertNotNull(relationEntity);
+
+        assertEquals(relationEntity.getRelationManyToOne().getId(), relationManyToOne.getId());
+        assertEquals(relationEntity.getRelationOneToOne().getId(), relationOneToOne.getId());
+    }
+
     private CreationPlan getCreationPlanWithCounts(final int xCount, final int yCount, final int zCount) {
         final CreationOrder creationOrder = getCreationOrder();
         creationOrder.addCreationCount(X.class, xCount);
@@ -140,6 +165,15 @@ public class EntityPersistorImplTest {
         creationOrder.add(ClassDepth.newInstance(X.class, 0));
         creationOrder.add(ClassDepth.newInstance(Y.class, 0));
         creationOrder.add(ClassDepth.newInstance(Z.class, 1));
+        return creationOrder;
+    }
+
+    private CreationOrder getRelationEntityCreationOrder() {
+        final CreationOrder creationOrder = CreationOrder.newInstance();
+        creationOrder.add(ClassDepth.newInstance(RelationOneToOne.class, 0));
+        creationOrder.add(ClassDepth.newInstance(RelationManyToOne.class, 0));
+        creationOrder.add(ClassDepth.newInstance(RelationEntity.class, 0));
+
         return creationOrder;
     }
 

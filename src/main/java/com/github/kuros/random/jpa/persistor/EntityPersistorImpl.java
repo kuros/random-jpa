@@ -117,7 +117,7 @@ public final class EntityPersistorImpl implements Persistor {
     private void createRelation(final ResultNodeTree resultNodeTree, final Relation relation, final Object object) {
         try {
             if (!randomize.isValueProvided(relation.getFrom().getField())) {
-                final Object value = getFieldValue(resultNodeTree, relation.getTo().getField());
+                final Object value = getFieldValue(resultNodeTree, relation);
                 setFieldValue(object, relation.getFrom().getField(), value);
             }
         } catch (final Exception e) {
@@ -128,23 +128,28 @@ public final class EntityPersistorImpl implements Persistor {
 
     private void setFieldValue(final Object object, final Field field, final Object value) {
         try {
-
-            final Class<?> type = field.getType();
             field.setAccessible(true);
-            field.set(object, NumberUtil.castNumber(type, value));
+            field.set(object, value);
         } catch (final IllegalAccessException e) {
             //do nothing
         }
     }
 
-    private Object getFieldValue(final ResultNodeTree resultNodeTree, final Field field) {
+    private Object getFieldValue(final ResultNodeTree resultNodeTree, final Relation relation) {
+        final Field field = relation.getTo().getField();
         final Map<Class<?>, List<Object>> createdEntities = resultNodeTree.getCreatedEntities();
         final List<Object> objects = createdEntities.get(field.getDeclaringClass());
         final Object object = objects.get(objects.size() - 1);
         Object value = null;
         try {
-            field.setAccessible(true);
-            value = field.get(object);
+            final Field fromField = relation.getFrom().getField();
+            if (fromField.getType().equals(object.getClass())) {
+                value = object;
+            } else {
+                field.setAccessible(true);
+                value = field.get(object);
+                value = NumberUtil.castNumber(fromField.getType(), value);
+            }
         } catch (final IllegalAccessException e) {
             //do nothing
         }

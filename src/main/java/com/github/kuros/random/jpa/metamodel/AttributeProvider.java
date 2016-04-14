@@ -6,13 +6,22 @@ import com.github.kuros.random.jpa.util.AttributeHelper;
 import org.hibernate.id.Assigned;
 import org.hibernate.jpa.HibernateEntityManagerFactory;
 import org.hibernate.metadata.ClassMetadata;
+import org.hibernate.persister.entity.EntityPersister;
 import org.hibernate.persister.entity.SingleTableEntityPersister;
+import org.hibernate.persister.walking.spi.AssociationAttributeDefinition;
+import org.hibernate.persister.walking.spi.EntityDefinition;
+import org.hibernate.tuple.IdentifierProperty;
+import org.hibernate.tuple.NonIdentifierAttribute;
+import org.hibernate.tuple.entity.EntityBasedAssociationAttribute;
+import org.hibernate.tuple.entity.EntityMetamodel;
 
 import javax.persistence.EntityManager;
 import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.EntityType;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -63,11 +72,13 @@ public class AttributeProvider {
                 entityTableMapping.setTableName(getTableName(singleTableEntityPersister));
                 entityTableMapping.setIdentifierGenerator(singleTableEntityPersister.getIdentifierGenerator().getClass());
 
+                final List<String> attributeNames = getSupportedAttributeNames(singleTableEntityPersister);
+
                 for (Attribute attribute : entity.getAttributes()) {
                     final String name = AttributeHelper.getName(attribute);
                     final String[] propertyColumnNames = singleTableEntityPersister.getPropertyColumnNames(name);
                     final String columnName = propertyColumnNames.length > 0 ? propertyColumnNames[0] : null;
-                    if (columnName != null && attribute.getPersistentAttributeType() == Attribute.PersistentAttributeType.BASIC) {
+                    if (columnName != null && attributeNames.contains(name)) {
                         entityTableMapping.addAttributeColumnMapping(name, columnName);
                     }
                 }
@@ -81,6 +92,35 @@ public class AttributeProvider {
             }
 
         }
+    }
+
+    private List<String> getSupportedAttributeNames(final SingleTableEntityPersister singleTableEntityPersister) {
+        final EntityMetamodel entityMetamodel = singleTableEntityPersister.getEntityMetamodel();
+        final NonIdentifierAttribute[] properties = entityMetamodel.getProperties();
+        final List<String> attributeNames = new ArrayList<String>();
+        for (NonIdentifierAttribute property : properties) {
+            if (property.isInsertable()) {
+                if (property instanceof EntityBasedAssociationAttribute) {
+                    final EntityBasedAssociationAttribute entityBasedAssociationAttribute = (EntityBasedAssociationAttribute)property;
+                    if (entityBasedAssociationAttribute.getAssociationNature() == AssociationAttributeDefinition.AssociationNature.ENTITY) {
+                        final EntityDefinition entityDefinition =
+                                entityBasedAssociationAttribute.toEntityDefinition();
+                        final EntityPersister entityPersister = entityDefinition.getEntityPersister();
+                        if (entityPersister == null) {
+                            continue;
+                        }
+                    } else {
+                        continue;
+                    }
+                }
+
+                attributeNames.add(property.getName());
+            }
+        }
+
+        final IdentifierProperty identifierProperty = entityMetamodel.getIdentifierProperty();
+        attributeNames.add(identifierProperty.getName());
+        return attributeNames;
     }
 
     @VisibleForTesting

@@ -9,6 +9,9 @@ import com.github.kuros.random.jpa.testUtil.entity.E;
 import com.github.kuros.random.jpa.testUtil.entity.P;
 import com.github.kuros.random.jpa.testUtil.entity.Q;
 import com.github.kuros.random.jpa.testUtil.entity.R;
+import com.github.kuros.random.jpa.testUtil.entity.RelationEntity;
+import com.github.kuros.random.jpa.testUtil.entity.RelationManyToOne;
+import com.github.kuros.random.jpa.testUtil.entity.RelationOneToOne;
 import com.github.kuros.random.jpa.testUtil.entity.X;
 import com.github.kuros.random.jpa.testUtil.entity.Y;
 import com.github.kuros.random.jpa.testUtil.entity.Z;
@@ -32,7 +35,7 @@ public class ChildGraphTest {
 
         final ChildGraph childGraph = ChildGraph.newInstance(hierarchyGraph);
 
-        assertEquals(8, childGraph.keySet().size());
+        assertEquals(10, childGraph.keySet().size());
         assertEquals(0, childGraph.getChilds(E.class).size());
         assertEquals(0, childGraph.getChilds(Z.class).size());
 
@@ -61,6 +64,12 @@ public class ChildGraphTest {
         assertEquals(2, childGraph.getChilds(P.class).size());
         assertTrue(childGraph.getChilds(P.class).contains(Q.class));
         assertTrue(childGraph.getChilds(P.class).contains(R.class));
+
+        assertEquals(1, childGraph.getChilds(RelationOneToOne.class).size());
+        assertTrue(childGraph.getChilds(RelationOneToOne.class).contains(RelationEntity.class));
+
+        assertEquals(1, childGraph.getChilds(RelationManyToOne.class).size());
+        assertTrue(childGraph.getChilds(RelationManyToOne.class).contains(RelationEntity.class));
     }
 
     @Test

@@ -4,6 +4,7 @@ import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
 import com.github.kuros.random.jpa.testUtil.EntityManagerProvider;
 import com.github.kuros.random.jpa.testUtil.entity.AssingedId;
 import com.github.kuros.random.jpa.testUtil.entity.R;
+import com.github.kuros.random.jpa.testUtil.entity.RelationEntity;
 import org.hibernate.id.Assigned;
 import org.hibernate.id.IdentityGenerator;
 import org.hibernate.persister.entity.SingleTableEntityPersister;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class AttributeProviderTest {
@@ -67,6 +69,29 @@ public class AttributeProviderTest {
         assertEquals("r", entityTableMappingByClass.getTableName());
 
         assertEquals(IdentityGenerator.class, entityTableMappingByClass.getIdentifierGenerator());
+    }
+
+    @Test
+    public void shouldGenerateAttributeDetailsForRelationalClasses() {
+        final AttributeProvider attributeProvider = AttributeProvider.getInstance(entityManager);
+
+        final EntityTableMapping entityTableMapping = attributeProvider.get(RelationEntity.class);
+        assertNotNull(entityTableMapping);
+
+        final Set<String> attributeNames = entityTableMapping.getAttributeNames();
+        assertEquals(3, attributeNames.size());
+
+        assertTrue(attributeNames.contains("id"));
+        assertTrue(attributeNames.contains("relationOneToOne"));
+        assertTrue(attributeNames.contains("relationManyToOne"));
+
+        final Set<String> columnNames = entityTableMapping.getColumnNames();
+        assertEquals(3, columnNames.size());
+
+        assertTrue(columnNames.contains("id"));
+        assertTrue(columnNames.contains("relation_one_to_one_id"));
+        assertTrue(columnNames.contains("relation_many_to_one_id"));
+
     }
 
     @Test

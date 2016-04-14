@@ -42,7 +42,7 @@ public class HierarchyGraph {
     public void addRelation(final Relation relation) {
 
         final Class<?> fromClass = relation.getFrom().getInitializationClass();
-        TableNode tableNode = getOrCreateTableNode(fromClass);
+        final TableNode tableNode = getOrCreateTableNode(fromClass);
 
         tableNode.addRelation(relation);
         final Class<?> toClass = relation.getTo().getInitializationClass();
