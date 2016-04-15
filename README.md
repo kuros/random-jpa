@@ -134,11 +134,9 @@ CreationPlan creationPlan = jpaContext.create(plan);
 ### Modify the creationPlan
 Let us say that I want to persist these two employees with different name.
 ```java
-Employee emp1 = creationPlan.get(Employee.class);
-emp1.setName("Employee 1");
+creationPlan.set(Employee_.name, "Employee 1");
 
-Employee emp2 = creationPlan.get(Employee.class, 1);
-emp2.setName("Employee 2");
+creationPlan.get(1, Employee_.name, "Employee 2");
 ```
 
 ### Printing the creationPlan
