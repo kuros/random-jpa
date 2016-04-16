@@ -6,10 +6,8 @@ import com.github.kuros.random.jpa.util.AttributeHelper;
 import org.hibernate.id.Assigned;
 import org.hibernate.jpa.HibernateEntityManagerFactory;
 import org.hibernate.metadata.ClassMetadata;
-import org.hibernate.persister.entity.EntityPersister;
 import org.hibernate.persister.entity.SingleTableEntityPersister;
 import org.hibernate.persister.walking.spi.AssociationAttributeDefinition;
-import org.hibernate.persister.walking.spi.EntityDefinition;
 import org.hibernate.tuple.IdentifierProperty;
 import org.hibernate.tuple.NonIdentifierAttribute;
 import org.hibernate.tuple.entity.EntityBasedAssociationAttribute;
@@ -112,14 +110,7 @@ public class AttributeProvider {
             if (property.isInsertable()) {
                 if (property instanceof EntityBasedAssociationAttribute) {
                     final EntityBasedAssociationAttribute entityBasedAssociationAttribute = (EntityBasedAssociationAttribute)property;
-                    if (entityBasedAssociationAttribute.getAssociationNature() == AssociationAttributeDefinition.AssociationNature.ENTITY) {
-                        final EntityDefinition entityDefinition =
-                                entityBasedAssociationAttribute.toEntityDefinition();
-                        final EntityPersister entityPersister = entityDefinition.getEntityPersister();
-                        if (entityPersister == null) {
-                            continue;
-                        }
-                    } else {
+                    if (!(entityBasedAssociationAttribute.getAssociationNature() == AssociationAttributeDefinition.AssociationNature.ENTITY)) {
                         continue;
                     }
                 }
