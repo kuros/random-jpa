@@ -52,8 +52,8 @@ public class EntityResolverImplTest {
         EntityManagerProvider.persist(z);
 
         final Plan plan = Plan.of(Entity.of(Z.class).with(Z_.id, z.getId()));
-        final EntityResolver entityResolver = EntityResolverImpl.newInstance(cache, cache.getHierarchyGraph(), plan);
-        final Map<Field, Object> fieldValueMap = entityResolver.getFieldValueMap();
+        final EntityResolver entityResolver = EntityResolverImpl.newInstance(cache, cache.getHierarchyGraph());
+        final Map<Field, Object> fieldValueMap = entityResolver.getFieldValues(plan);
 
         assertEquals(z.getId(), fieldValueMap.get(Util.getField(Z.class, "id")));
         assertEquals(x.getId(), fieldValueMap.get(Util.getField(X.class, "id")));
@@ -79,8 +79,8 @@ public class EntityResolverImplTest {
         EntityManagerProvider.persist(z);
 
         final Plan plan = Plan.of(Entity.of(Z.class).with(Z_.id, null));
-        final EntityResolver entityResolver = EntityResolverImpl.newInstance(cache, cache.getHierarchyGraph(), plan);
-        final Map<Field, Object> fieldValueMap = entityResolver.getFieldValueMap();
+        final EntityResolver entityResolver = EntityResolverImpl.newInstance(cache, cache.getHierarchyGraph());
+        final Map<Field, Object> fieldValueMap = entityResolver.getFieldValues(plan);
 
         assertNull(fieldValueMap.get(Util.getField(Z.class, "id")));
         assertFalse(fieldValueMap.keySet().contains((Util.getField(X.class, "id"))));
@@ -95,8 +95,8 @@ public class EntityResolverImplTest {
         cache.with(MockedHierarchyGraph.getHierarchyGraph());
 
         final Plan plan = Plan.of(Entity.of(Z.class).with(Z_.id, RandomFixture.create(Long.class)));
-        final EntityResolver entityResolver = EntityResolverImpl.newInstance(cache, cache.getHierarchyGraph(), plan);
-        entityResolver.getFieldValueMap();
+        final EntityResolver entityResolver = EntityResolverImpl.newInstance(cache, cache.getHierarchyGraph());
+        entityResolver.getFieldValues(plan);
 
     }
 

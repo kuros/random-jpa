@@ -54,45 +54,42 @@ public final class EntityResolverImpl implements EntityResolver {
     private static final Logger LOGGER = LogFactory.getLogger(EntityResolverImpl.class);
     private final HierarchyGraph hierarchyGraph;
     private final EntityManager entityManager;
-    private final Plan entityList;
     private AttributeProvider attributeProvider;
 
-    private EntityResolverImpl(final Cache cache, final HierarchyGraph hierarchyGraph, final Plan plan) {
-        this.entityList = plan;
+    private EntityResolverImpl(final Cache cache, final HierarchyGraph hierarchyGraph) {
         this.entityManager = cache.getEntityManager();
         this.attributeProvider = cache.getAttributeProvider();
         this.hierarchyGraph = hierarchyGraph;
     }
 
 
-    public static EntityResolverImpl newInstance(final Cache cache, final HierarchyGraph hierarchyGraph, final Plan plan) {
-        return new EntityResolverImpl(cache, hierarchyGraph, plan);
+    public static EntityResolverImpl newInstance(final Cache cache, final HierarchyGraph hierarchyGraph) {
+        return new EntityResolverImpl(cache, hierarchyGraph);
     }
 
     @SuppressWarnings("unchecked")
-    public Map<Field, Object> getFieldValueMap() {
+    public Map<Field, Object> getFieldValues(final Plan plan) {
         final Map<Field, Object> fieldValue = new HashMap<Field, Object>();
-        final List<Entity> entities = this.entityList.getEntities();
+        final List<Entity> entities = plan.getEntities();
 
         for (Entity entity : entities) {
             final List<AttributeValue> attributeValues = EntityHelper.getAttributeValues(entity);
             for (AttributeValue attributeValue : attributeValues) {
-                try {
-                    final Field field = AttributeHelper.getField(attributeValue.getAttribute());
-                    fieldValue.put(field, attributeValue.getValue());
-                    addParentDetailsForField(fieldValue, field);
-                } catch (final IllegalAccessException e) {
-                    // Do Nothing
-                } catch (final NoSuchFieldException e) {
-                    // Do Nothing
-                }
+                final Field field = AttributeHelper.getField(attributeValue.getAttribute());
+                fieldValue.put(field, attributeValue.getValue());
+                addParentDetailsForField(fieldValue, field);
             }
         }
 
         return fieldValue;
     }
 
-    private void addParentDetailsForField(final Map<Field, Object> fieldValueMap, final Field field) throws IllegalAccessException, NoSuchFieldException {
+    public void populateFieldValuesForHierarchy(final Map<Field, Object> fieldValue, final Field field, final Object value) {
+        fieldValue.put(field, value);
+        addParentDetailsForField(fieldValue, field);
+    }
+
+    private void addParentDetailsForField(final Map<Field, Object> fieldValueMap, final Field field) {
         final EntityTableMapping entityTableMapping = attributeProvider.get(field.getDeclaringClass());
         final Set<Relation> relations = hierarchyGraph.getAttributeRelations(field.getDeclaringClass());
 
@@ -113,7 +110,7 @@ public final class EntityResolverImpl implements EntityResolver {
         }
     }
 
-    private void generateIdForParent(final Map<Field, Object> fieldValueMap, final Class<?> type, final Object object) throws IllegalAccessException, NoSuchFieldException {
+    private void generateIdForParent(final Map<Field, Object> fieldValueMap, final Class<?> type, final Object object) {
 
         final Set<Relation> relations = hierarchyGraph.getAttributeRelations(type);
         if (relations == null || relations.isEmpty()) {
@@ -124,8 +121,11 @@ public final class EntityResolverImpl implements EntityResolver {
 
         for (Relation relation : relations) {
             final FieldWrapper from = relation.getFrom();
-            final FieldValue fieldValue = new FieldValue(relation.getTo().getField(), getFieldValue(object, from.getField()));
-            multimap.put(relation.getTo().getInitializationClass(), fieldValue);
+            final Field field = relation.getTo().getField();
+            if (!fieldValueMap.containsKey(field)) {
+                final FieldValue fieldValue = new FieldValue(field, getFieldValue(object, from.getField()));
+                multimap.put(relation.getTo().getInitializationClass(), fieldValue);
+            }
         }
 
         for (Class aClass : multimap.getKeySet()) {
@@ -135,12 +135,16 @@ public final class EntityResolverImpl implements EntityResolver {
         }
     }
 
-    private Object getFieldValue(final Object object, final Field field) throws IllegalAccessException {
+    private Object getFieldValue(final Object object, final Field field) {
         field.setAccessible(true);
-        return field.get(object);
+        try {
+            return field.get(object);
+        } catch (final IllegalAccessException e) {
+            throw new RuntimeException("Field not accessible: " + field);
+        }
     }
 
-    private void findId(final Map<Field, Object> fieldValueMap, final Class aClass, final Object row) throws NoSuchFieldException, IllegalAccessException {
+    private void findId(final Map<Field, Object> fieldValueMap, final Class aClass, final Object row) {
         final EntityTableMapping entityTableMapping = attributeProvider.get(aClass);
 
         if (entityTableMapping == null || row == null) {
@@ -150,13 +154,18 @@ public final class EntityResolverImpl implements EntityResolver {
         final List<String> attributeIds = entityTableMapping.getAttributeIds();
 
         for (String attributeId : attributeIds) {
-            final Field declaredField = aClass.getDeclaredField(attributeId);
-            fieldValueMap.put(declaredField, getFieldValue(row, declaredField));
+            try {
+                final Field declaredField;
+                declaredField = aClass.getDeclaredField(attributeId);
+                fieldValueMap.put(declaredField, getFieldValue(row, declaredField));
+            } catch (final NoSuchFieldException e) {
+                // do nothing
+            }
         }
     }
 
     @SuppressWarnings("unchecked")
-    private Object findByQuery(final Class<?> tableClass, final List<FieldValue> fieldValues) throws IllegalAccessException {
+    private Object findByQuery(final Class<?> tableClass, final List<FieldValue> fieldValues) {
         filterEmptyFields(fieldValues);
 
         final CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -190,7 +199,7 @@ public final class EntityResolverImpl implements EntityResolver {
         return resultList.size() == 0 ? null : resultList.get(0);
     }
 
-    private void filterEmptyFields(final List<FieldValue> fieldValues) throws IllegalAccessException {
+    private void filterEmptyFields(final List<FieldValue> fieldValues) {
         final Set<FieldValue> emptyFields = new HashSet<FieldValue>();
         for (FieldValue keyValue : fieldValues) {
             if (keyValue.getValue() == null) {

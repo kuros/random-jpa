@@ -1,5 +1,7 @@
 package com.github.kuros.random.jpa.resolver;
 
+import com.github.kuros.random.jpa.types.Plan;
+
 import java.lang.reflect.Field;
 import java.util.Map;
 
@@ -20,5 +22,7 @@ import java.util.Map;
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 public interface EntityResolver {
-    Map<Field, Object> getFieldValueMap();
+    Map<Field, Object> getFieldValues(Plan plan);
+
+    void populateFieldValuesForHierarchy(final Map<Field, Object> fieldValue, final Field field, final Object value);
 }

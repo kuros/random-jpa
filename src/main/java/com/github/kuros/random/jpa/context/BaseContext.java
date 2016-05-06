@@ -47,8 +47,8 @@ public abstract class BaseContext implements JPAContext {
 
     protected Randomize getRandomizer(final HierarchyGraph hierarchyGraph, final Plan plan) {
         final RandomizeImpl randomize = RandomizeImpl.newInstance(cache, generator);
-        final EntityResolver entityResolver = EntityResolverImpl.newInstance(cache, hierarchyGraph, plan);
-        randomize.addFieldValue(entityResolver.getFieldValueMap());
+        final EntityResolver entityResolver = EntityResolverImpl.newInstance(cache, hierarchyGraph);
+        randomize.addFieldValue(entityResolver.getFieldValues(plan));
         randomize.setNullValueFields(AttributeHelper.getFields(plan.getNullValueAttributes()));
         return randomize;
     }

@@ -3,6 +3,9 @@ package com.github.kuros.random.jpa;
 import com.github.kuros.random.jpa.link.Dependencies;
 import com.github.kuros.random.jpa.persistor.model.ResultMap;
 import com.github.kuros.random.jpa.testUtil.EntityManagerProvider;
+import com.github.kuros.random.jpa.testUtil.entity.A;
+import com.github.kuros.random.jpa.testUtil.entity.B;
+import com.github.kuros.random.jpa.testUtil.entity.C;
 import com.github.kuros.random.jpa.testUtil.entity.D;
 import com.github.kuros.random.jpa.testUtil.entity.D_;
 import com.github.kuros.random.jpa.testUtil.entity.PrimitiveEntity;
@@ -414,6 +417,38 @@ public class JPAContextTest {
         assertEquals(0L, primitiveEntity.getDefaultLong());
         assertEquals((short) 0, primitiveEntity.getDefaultShort());
 
+    }
+
+    @Test
+    public void shouldReUseHierarchyIfIdIsProvided() throws Exception {
+
+        final Dependencies dependencies = Dependencies.newInstance();
+        dependencies.withLink(DependencyHelper.getLinks());
+        final JPAContext jpaContext = JPAContextFactory
+                .newInstance(Database.NONE, entityManager)
+                .with(dependencies)
+                .generate();
+
+        entityManager.getTransaction().begin();
+
+        final ResultMap expected = jpaContext
+                .createAndPersist(Plan.of(Entity.of(D.class)));
+
+        entityManager.getTransaction().commit();
+
+
+
+        entityManager.getTransaction().begin();
+
+        final ResultMap actual = jpaContext
+                .createAndPersist(Plan.of(Entity.of(D.class).with(D_.id, expected.get(D.class).getId())));
+
+        entityManager.getTransaction().commit();
+
+        assertEquals(expected.get(D.class).getId(), actual.get(D.class).getId());
+        assertEquals(expected.get(C.class).getId(), actual.get(C.class).getId());
+        assertEquals(expected.get(B.class).getId(), actual.get(B.class).getId());
+        assertEquals(expected.get(A.class).getId(), actual.get(A.class).getId());
     }
 
     @After
