@@ -17,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +28,7 @@ public class TriggerFunctionTest {
 
     @Mock private Cache cache;
     @Mock private Finder finder;
+    @Mock private EntityManager entityManager;
     private TriggerFunction triggerFunction;
 
     @Before
@@ -34,6 +36,7 @@ public class TriggerFunctionTest {
         MockitoAnnotations.initMocks(this);
 
         Mockito.when(cache.getTriggerCache()).thenReturn(getTriggerCache());
+        Mockito.when(cache.getEntityManager()).thenReturn(entityManager);
         triggerFunction = new TriggerFunction(cache);
         triggerFunction.setFinder(finder);
     }
