@@ -9,6 +9,7 @@ import com.github.kuros.random.jpa.types.Trigger;
 import com.github.kuros.random.jpa.util.AttributeHelper;
 import com.github.kuros.random.jpa.util.Util;
 
+import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,11 +32,13 @@ import java.util.List;
 class TriggerFunction<T> implements Function<T> {
 
     private final Cache cache;
+    private final EntityManager entityManager;
     private Finder finder;
 
     TriggerFunction(final Cache cache) {
         this.cache = cache;
         this.finder = new Finder(cache);
+        this.entityManager = cache.getEntityManager();
     }
 
     public T apply(final T object) {
@@ -48,12 +51,13 @@ class TriggerFunction<T> implements Function<T> {
 
             final T found = finder.findByAttributes(object, attributeNames);
             if (found == null) {
-                throw new RandomJPAException("Not able to load entity: "
+                throw new RandomJPAException("Entity should have been created by trigger: "
                         + type.getName()
                         + Util.printValues(object) + " by values: " + attributeNames);
             }
 
-            return found;
+            entityManager.merge(object);
+            return object;
         }
 
         return null;
