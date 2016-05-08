@@ -67,6 +67,10 @@ public final class Node<T> {
         childNodes.add(node);
     }
 
+    public int getIndex() {
+        return index;
+    }
+
     public String print() {
         final StringBuilder stringBuilder = new StringBuilder();
         print(stringBuilder, "", true);
