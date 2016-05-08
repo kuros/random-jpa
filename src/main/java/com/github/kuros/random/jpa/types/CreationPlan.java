@@ -1,8 +1,6 @@
 package com.github.kuros.random.jpa.types;
 
 import javax.persistence.metamodel.Attribute;
-import java.util.List;
-import java.util.Map;
 
 /*
  * Copyright (c) 2015 Kumar Rohit
@@ -21,10 +19,6 @@ import java.util.Map;
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 public interface CreationPlan {
-    Map<Class<?>, List<Node>> getCreatedNodeMap();
-
-    Node getRoot();
-
     @Deprecated
     <T> T get(Class<T> type);
 

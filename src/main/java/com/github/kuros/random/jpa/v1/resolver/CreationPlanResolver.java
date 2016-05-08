@@ -35,7 +35,7 @@ public final class CreationPlanResolver {
     private HierarchyGraph hierarchyGraph;
     private List<CreationOrder> creationOrders;
     private Map<Class<?>, Integer> creationCount;
-    private CreationPlan creationPlan;
+    private CreationPlanImpl creationPlan;
     private Randomize randomize;
 
     private CreationPlanResolver(final Randomize randomize, final CreationOrder... creationOrders) {

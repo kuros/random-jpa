@@ -8,6 +8,7 @@ import com.github.kuros.random.jpa.persistor.functions.FunctionProcessor;
 import com.github.kuros.random.jpa.persistor.model.ResultNodeTree;
 import com.github.kuros.random.jpa.random.Randomize;
 import com.github.kuros.random.jpa.types.CreationPlan;
+import com.github.kuros.random.jpa.types.CreationPlanImpl;
 import com.github.kuros.random.jpa.types.Node;
 import com.github.kuros.random.jpa.types.ResultNode;
 import com.github.kuros.random.jpa.types.Version;
@@ -57,7 +58,7 @@ public final class EntityPersistorImpl implements Persistor {
         final ResultNodeTree resultNodeTree = ResultNodeTree.newInstance(cache, root);
 
 
-        final Node creationPlanRoot = creationPlan.getRoot();
+        final Node creationPlanRoot = ((CreationPlanImpl)creationPlan).getRoot();
         final List<Node> childNodes = creationPlanRoot.getChildNodes();
         persist(root, resultNodeTree, childNodes);
         return resultNodeTree;
