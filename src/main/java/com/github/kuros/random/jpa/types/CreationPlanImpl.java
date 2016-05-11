@@ -30,6 +30,7 @@ import java.util.Map;
 public class CreationPlanImpl implements CreationPlan {
     private Randomize randomize;
     private Map<Class<?>, List<Node>> createdNodeMap;
+    private List<FieldIndexValue> fieldIndexValues;
     private Node root;
     private final HierarchyGraph hierarchyGraph;
 
@@ -38,6 +39,7 @@ public class CreationPlanImpl implements CreationPlan {
         this.root = Node.newInstance();
         this.randomize = randomize;
         this.hierarchyGraph = hierarchyGraph;
+        this.fieldIndexValues = new ArrayList<FieldIndexValue>();
     }
 
     public Map<Class<?>, List<Node>> getCreatedNodeMap() {
@@ -64,10 +66,10 @@ public class CreationPlanImpl implements CreationPlan {
         set(0, attribute, value);
     }
 
+    @SuppressWarnings("unchecked")
     public <T, V> void set(final int index, final Attribute<T, V> attribute, final V value) {
-        randomize.addFieldValue(AttributeHelper.getField(attribute), index, value);
+        fieldIndexValues.add(new FieldIndexValue(AttributeHelper.getField(attribute), index, value));
     }
-
 
     public void print(final Printer printer) {
         printer.print(root.print());
@@ -88,4 +90,7 @@ public class CreationPlanImpl implements CreationPlan {
         return hierarchyGraph;
     }
 
+    public List<FieldIndexValue> getFieldIndexValues() {
+        return fieldIndexValues;
+    }
 }

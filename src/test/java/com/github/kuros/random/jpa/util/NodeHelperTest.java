@@ -26,12 +26,9 @@ public class NodeHelperTest {
 
         final List<ClassIndex> reverseOrder = NodeHelper.getClassIndexInOrder(nodeA, C.class, 0);
 
-        assertEquals(C.class, reverseOrder.get(0).getType());
+        assertEquals(B.class, reverseOrder.get(0).getType());
         assertEquals(0, reverseOrder.get(0).getIndex());
-        assertEquals(B.class, reverseOrder.get(1).getType());
-        assertEquals(0, reverseOrder.get(1).getIndex());
-        assertEquals(A.class, reverseOrder.get(2).getType());
-        assertEquals(0, reverseOrder.get(2).getIndex());
+        assertEquals(A.class, reverseOrder.get(1).getType());
     }
 
     @Test
@@ -51,31 +48,31 @@ public class NodeHelperTest {
     @Test @SuppressWarnings("unchecked")
     public void shouldCreateComplexHierarchy() throws Exception {
         final Node node = createComplexHierarchy();
-        final List<Class<?>> expectedClassOrder = newArrayList(C.class, B.class, A.class);
+        final List<Class<?>> expectedClassOrder = newArrayList(B.class, A.class);
 
         //scenario-1
         List<ClassIndex> reverseOrder = NodeHelper.getClassIndexInOrder(node, C.class, 0);
-        List<Integer> expectedIndexOrder = newArrayList(0, 0, 0);
+        List<Integer> expectedIndexOrder = newArrayList(0, 0);
         verify(expectedClassOrder, expectedIndexOrder, reverseOrder);
 
         //scenario-2
         reverseOrder = NodeHelper.getClassIndexInOrder(node, C.class, 1);
-        expectedIndexOrder = newArrayList(1, 0, 0);
+        expectedIndexOrder = newArrayList(0, 0);
         verify(expectedClassOrder, expectedIndexOrder, reverseOrder);
 
         //scenario-3
         reverseOrder = NodeHelper.getClassIndexInOrder(node, C.class, 2);
-        expectedIndexOrder = newArrayList(2, 1, 0);
+        expectedIndexOrder = newArrayList(1, 0);
         verify(expectedClassOrder, expectedIndexOrder, reverseOrder);
 
         //scenario-4
         reverseOrder = NodeHelper.getClassIndexInOrder(node, C.class, 3);
-        expectedIndexOrder = newArrayList(3, 1, 0);
+        expectedIndexOrder = newArrayList(1, 0);
         verify(expectedClassOrder, expectedIndexOrder, reverseOrder);
 
         //scenario-4
         reverseOrder = NodeHelper.getClassIndexInOrder(node, C.class, 4);
-        expectedIndexOrder = newArrayList(4, 1, 0);
+        expectedIndexOrder = newArrayList(1, 0);
         verify(expectedClassOrder, expectedIndexOrder, reverseOrder);
     }
 

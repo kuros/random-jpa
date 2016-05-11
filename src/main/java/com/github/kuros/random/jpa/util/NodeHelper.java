@@ -24,13 +24,13 @@ public final class NodeHelper {
     }
 
     private static boolean find(final Stack<ClassIndex> stack, final Node root, final Class<?> type, final int index) {
-        boolean found = false;
 
         if (root.getType() == type && root.getIndex() == index) {
+            stack.pop();
             return true;
         }
 
-
+        boolean found = false;
         final List<Node> childNodes = root.getChildNodes();
         for (final Node childNode : childNodes) {
             stack.add(ClassIndex.newInstance(childNode.getType(), childNode.getIndex()));

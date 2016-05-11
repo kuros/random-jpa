@@ -5,12 +5,12 @@ public final class ClassIndex {
     private Class<?> type;
     private int index;
 
-    private ClassIndex(final Class<?> type, final int index) {
+    private ClassIndex(final Class<?> type, final Integer index) {
         this.type = type;
-        this.index = index;
+        this.index = index == null ? 0 : index;
     }
 
-    public static ClassIndex newInstance(final Class<?> type, final int index) {
+    public static ClassIndex newInstance(final Class<?> type, final Integer index) {
         return new ClassIndex(type, index);
     }
 

@@ -4,7 +4,6 @@ import com.github.kuros.random.jpa.JPAContext;
 import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.cleanup.Cleaner;
 import com.github.kuros.random.jpa.cleanup.CleanerImpl;
-import com.github.kuros.random.jpa.definition.HierarchyGraph;
 import com.github.kuros.random.jpa.persistor.EntityPersistorImpl;
 import com.github.kuros.random.jpa.persistor.Persistor;
 import com.github.kuros.random.jpa.persistor.model.ResultMap;
@@ -13,12 +12,16 @@ import com.github.kuros.random.jpa.random.Randomize;
 import com.github.kuros.random.jpa.random.RandomizeImpl;
 import com.github.kuros.random.jpa.random.generator.Generator;
 import com.github.kuros.random.jpa.random.generator.RandomGenerator;
-import com.github.kuros.random.jpa.resolver.EntityResolver;
-import com.github.kuros.random.jpa.resolver.EntityResolverImpl;
+import com.github.kuros.random.jpa.resolver.PersistedEntityResolver;
+import com.github.kuros.random.jpa.types.AttributeValue;
 import com.github.kuros.random.jpa.types.CreationPlan;
 import com.github.kuros.random.jpa.types.CreationPlanImpl;
+import com.github.kuros.random.jpa.types.Entity;
+import com.github.kuros.random.jpa.types.EntityHelper;
 import com.github.kuros.random.jpa.types.Plan;
 import com.github.kuros.random.jpa.util.AttributeHelper;
+
+import java.util.List;
 
 /*
  * Copyright (c) 2015 Kumar Rohit
@@ -45,12 +48,20 @@ public abstract class BaseContext implements JPAContext {
         this.cache = cache;
     }
 
-    protected Randomize getRandomizer(final HierarchyGraph hierarchyGraph, final Plan plan) {
+    Randomize getRandomizer(final Plan plan) {
         final RandomizeImpl randomize = RandomizeImpl.newInstance(cache, generator);
-        final EntityResolver entityResolver = EntityResolverImpl.newInstance(cache, hierarchyGraph);
-        randomize.addFieldValue(entityResolver.getFieldValues(plan));
         randomize.setNullValueFields(AttributeHelper.getFields(plan.getNullValueAttributes()));
         return randomize;
+    }
+
+    @SuppressWarnings("unchecked")
+    void addAttributeValues(final CreationPlan creationPlan, final List<Entity> entities) {
+        for (Entity entity : entities) {
+            final List<AttributeValue> attributeValues = EntityHelper.getAttributeValues(entity);
+            for (AttributeValue attributeValue : attributeValues) {
+                creationPlan.set(PersistedEntityResolver.DEFAULT_INDEX, attributeValue.getAttribute(), attributeValue.getValue());
+            }
+        }
     }
 
     public ResultMap persist(final CreationPlan creationPlan) {

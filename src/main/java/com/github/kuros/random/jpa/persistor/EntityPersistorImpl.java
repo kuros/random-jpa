@@ -7,6 +7,9 @@ import com.github.kuros.random.jpa.mapper.Relation;
 import com.github.kuros.random.jpa.persistor.functions.FunctionProcessor;
 import com.github.kuros.random.jpa.persistor.model.ResultNodeTree;
 import com.github.kuros.random.jpa.random.Randomize;
+import com.github.kuros.random.jpa.resolver.PersistedEntityResolver;
+import com.github.kuros.random.jpa.resolver.PersistedEntityResolverImpl;
+import com.github.kuros.random.jpa.types.ClassIndex;
 import com.github.kuros.random.jpa.types.CreationPlan;
 import com.github.kuros.random.jpa.types.CreationPlanImpl;
 import com.github.kuros.random.jpa.types.Node;
@@ -57,11 +60,44 @@ public final class EntityPersistorImpl implements Persistor {
         final ResultNode root = ResultNode.newInstance();
         final ResultNodeTree resultNodeTree = ResultNodeTree.newInstance(cache, root);
 
+        final PersistedEntityResolver persistedEntityResolver = new PersistedEntityResolverImpl(cache);
+        final Map<ClassIndex, Object> classIndexMap = persistedEntityResolver.loadPersistedObjectByIds(creationPlan);
 
         final Node creationPlanRoot = ((CreationPlanImpl)creationPlan).getRoot();
         final List<Node> childNodes = creationPlanRoot.getChildNodes();
-        persist(root, resultNodeTree, childNodes);
+        persist(classIndexMap, root, resultNodeTree, childNodes);
         return resultNodeTree;
+    }
+
+    private void persist(final Map<ClassIndex, Object> classIndexMap, final ResultNode resultNode, final ResultNodeTree resultNodeTree, final List<Node> childNodes) {
+        for (Node childNode : childNodes) {
+            if (childNode.getValue() != null) {
+                final ResultNode resultChildNode = ResultNode.newInstance(childNode.getType(), getIndex(resultNodeTree, childNode.getType()));
+                resultNode.addChildNode(resultChildNode);
+                persist(classIndexMap, resultChildNode, resultNodeTree, childNode);
+            }
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void persist(final Map<ClassIndex, Object> classIndexMap, final ResultNode resultNode, final ResultNodeTree resultNodeTree, final Node node) {
+        final Object random = createRandomObject(node, resultNodeTree);
+
+        Object persistedObject = classIndexMap.get(ClassIndex.newInstance(node.getType(), node.getIndex()));
+
+        if (persistedObject == null) {
+            persistedObject = classIndexMap.get(ClassIndex.newInstance(node.getType(), PersistedEntityResolver.DEFAULT_INDEX));
+            if (persistedObject == null) {
+                persistedObject = functionProcessor.findOrSave(random);
+            }
+        }
+
+        resultNode.setValue(persistedObject);
+        resultNodeTree.put(node.getType(), persistedObject);
+
+        final List<Node> childNodes = node.getChildNodes();
+        persist(classIndexMap, resultNode, resultNodeTree, childNodes);
+
     }
 
     private int getIndex(final ResultNodeTree resultNodeTree, final Class type) {
@@ -71,30 +107,6 @@ public final class EntityPersistorImpl implements Persistor {
 
     private boolean isEmpty(final List<Object> objects) {
         return objects == null || objects.isEmpty();
-    }
-
-    @SuppressWarnings("unchecked")
-    private void persist(final ResultNode resultNode, final ResultNodeTree resultNodeTree, final Node node) {
-        final Object random = createRandomObject(node, resultNodeTree);
-
-        final Object persistedObject = functionProcessor.findOrSave(random);
-
-        resultNode.setValue(persistedObject);
-        resultNodeTree.put(node.getType(), persistedObject);
-
-        final List<Node> childNodes = node.getChildNodes();
-        persist(resultNode, resultNodeTree, childNodes);
-
-    }
-
-    private void persist(final ResultNode resultNode, final ResultNodeTree resultNodeTree, final List<Node> childNodes) {
-        for (Node childNode : childNodes) {
-            if (childNode.getValue() != null) {
-                final ResultNode resultChildNode = ResultNode.newInstance(childNode.getType(), getIndex(resultNodeTree, childNode.getType()));
-                resultNode.addChildNode(resultChildNode);
-                persist(resultChildNode, resultNodeTree, childNode);
-            }
-        }
     }
 
     private Object createRandomObject(final Node node, final ResultNodeTree resultNodeTree) {

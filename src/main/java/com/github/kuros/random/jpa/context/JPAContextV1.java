@@ -49,9 +49,11 @@ public final class JPAContextV1 extends BaseContext {
         final Entity[] entityArray = new Entity[entities.size()];
         final CreationOrder creationOrder = creationOrderResolver.getCreationOrder(entities.toArray(entityArray));
 
-        final CreationPlanResolver creationPlanResolver = CreationPlanResolver.newInstance(getRandomizer(hierarchyGraph, plan), creationOrder);
+        final CreationPlanResolver creationPlanResolver = CreationPlanResolver.newInstance(getRandomizer(plan), creationOrder);
 
-        return creationPlanResolver.with(hierarchyGraph).create();
+        final CreationPlan creationPlan = creationPlanResolver.with(hierarchyGraph).create();
+        addAttributeValues(creationPlan, entities);
+        return creationPlan;
     }
 
 }

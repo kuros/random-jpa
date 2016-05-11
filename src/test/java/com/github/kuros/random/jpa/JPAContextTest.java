@@ -3,11 +3,14 @@ package com.github.kuros.random.jpa;
 import com.github.kuros.random.jpa.link.Dependencies;
 import com.github.kuros.random.jpa.persistor.model.ResultMap;
 import com.github.kuros.random.jpa.testUtil.EntityManagerProvider;
+import com.github.kuros.random.jpa.testUtil.RandomFixture;
 import com.github.kuros.random.jpa.testUtil.entity.A;
 import com.github.kuros.random.jpa.testUtil.entity.B;
 import com.github.kuros.random.jpa.testUtil.entity.C;
 import com.github.kuros.random.jpa.testUtil.entity.D;
 import com.github.kuros.random.jpa.testUtil.entity.D_;
+import com.github.kuros.random.jpa.testUtil.entity.E;
+import com.github.kuros.random.jpa.testUtil.entity.E_;
 import com.github.kuros.random.jpa.testUtil.entity.PrimitiveEntity;
 import com.github.kuros.random.jpa.testUtil.entity.PrimitiveEntity_;
 import com.github.kuros.random.jpa.testUtil.entity.RelationEntity;
@@ -449,6 +452,72 @@ public class JPAContextTest {
         assertEquals(expected.get(C.class).getId(), actual.get(C.class).getId());
         assertEquals(expected.get(B.class).getId(), actual.get(B.class).getId());
         assertEquals(expected.get(A.class).getId(), actual.get(A.class).getId());
+    }
+
+    @Test
+    public void shouldLoadPersistedObjectsInMemory() throws Exception {
+
+        final Dependencies dependencies = Dependencies.newInstance();
+        dependencies.withLink(DependencyHelper.getLinks());
+        final JPAContext jpaContext = JPAContextFactory
+                .newInstance(Database.NONE, entityManager)
+                .with(dependencies)
+                .generate();
+
+        entityManager.getTransaction().begin();
+        final ResultMap persist = jpaContext.createAndPersist(Plan.of(Entity.of(E.class, 4)));
+        entityManager.getTransaction().commit();
+
+        final CreationPlan creationPlan = jpaContext.create(Plan.of(Entity.of(E.class, 4).with(E_.id, persist.get(E.class, 3).getId())));
+        creationPlan.set(0, E_.id, persist.get(E.class, 0).getId());
+        creationPlan.set(1, E_.id, persist.get(E.class, 1).getId());
+        creationPlan.set(2, E_.id, persist.get(E.class, 2).getId());
+
+        entityManager.getTransaction().begin();
+        final ResultMap reloadedElements = jpaContext.persist(creationPlan);
+        entityManager.getTransaction().commit();
+
+        assertEquals(persist.get(E.class, 0).getId(), reloadedElements.get(E.class, 0).getId());
+        assertEquals(persist.get(E.class, 1).getId(), reloadedElements.get(E.class, 1).getId());
+        assertEquals(persist.get(E.class, 2).getId(), reloadedElements.get(E.class, 2).getId());
+        assertEquals(persist.get(E.class, 3).getId(), reloadedElements.get(E.class, 3).getId());
+    }
+
+
+    @Test
+    public void shouldSetCustomValuesThroughEntity() throws Exception {
+
+        final JPAContext jpaContextV2 = JPAContextFactory
+                .newInstance(Database.NONE, entityManager)
+                .generate();
+
+        persistAndVerifyCustomValues(jpaContextV2);
+    }
+
+    @Test
+    public void shouldSetCustomValuesThroughEntityOlderVersion() throws Exception {
+
+        final JPAContext jpaContextV2 = JPAContextFactory
+                .newInstance(Database.NONE, entityManager)
+                .create();
+
+        persistAndVerifyCustomValues(jpaContextV2);
+    }
+
+
+    private void persistAndVerifyCustomValues(final JPAContext jpaContextV2) {
+        final Long xId = RandomFixture.create(Long.class);
+        final Long yId = RandomFixture.create(Long.class);
+
+        entityManager.getTransaction().begin();
+        final ResultMap persist = jpaContextV2
+                .createAndPersist(Plan.of(Entity.of(Z.class)
+                        .with(Z_.xId, xId)
+                        .with(Z_.yId, yId)));
+        entityManager.getTransaction().commit();
+
+        assertEquals(xId, persist.get(Z.class).getxId());
+        assertEquals(yId, persist.get(Z.class).getyId());
     }
 
     @After

@@ -33,5 +33,7 @@ public interface Randomize {
 
     void addFieldValue(final Field field, final int index, final Object value);
 
+    void addFieldValue(final Field field, final Object value);
+
     Version getVersion();
 }

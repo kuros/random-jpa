@@ -100,6 +100,10 @@ public final class RandomizeImpl implements Randomize {
         this.fieldValueMap = fieldValues;
     }
 
+    public void addFieldValue(final Field field, final Object value) {
+        fieldValueMap.put(field, value);
+    }
+
     public void setNullValueFields(final List<Field> nullValueFields) {
         this.nullValueFields = nullValueFields;
     }
@@ -124,8 +128,8 @@ public final class RandomizeImpl implements Randomize {
     private boolean isRandomRequired(final Field declaredField) {
         final EntityTableMapping entityTableMapping = attributeProvider.get(declaredField.getDeclaringClass());
 
-        return (fieldIsColumn(entityTableMapping, declaredField) && !fieldIsId(entityTableMapping, declaredField)
-                && isSupportedGeneratorType(entityTableMapping))
+        return (fieldIsColumn(entityTableMapping, declaredField) && !fieldIsId(entityTableMapping, declaredField))
+//                && isSupportedGeneratorType(entityTableMapping))
                 || randomGenerator.isRandomAttributeGeneratorProvided(declaredField);
 
     }
