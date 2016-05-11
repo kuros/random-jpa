@@ -29,7 +29,7 @@
 
     <groupId>com.github.kuros</groupId>
     <artifactId>random-jpa</artifactId>
-    <version>0.3.8</version>
+    <version>0.3.9-SNAPSHOT</version>
     <name>${project.artifactId}</name>
 
     <description>This project was born out of a need to create test data for complex database hierarchy.
