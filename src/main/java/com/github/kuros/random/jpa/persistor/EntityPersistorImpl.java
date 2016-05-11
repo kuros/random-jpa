@@ -81,13 +81,13 @@ public final class EntityPersistorImpl implements Persistor {
 
     @SuppressWarnings("unchecked")
     private void persist(final Map<ClassIndex, Object> classIndexMap, final ResultNode resultNode, final ResultNodeTree resultNodeTree, final Node node) {
-        final Object random = createRandomObject(node, resultNodeTree);
 
         Object persistedObject = classIndexMap.get(ClassIndex.newInstance(node.getType(), node.getIndex()));
 
         if (persistedObject == null) {
             persistedObject = classIndexMap.get(ClassIndex.newInstance(node.getType(), PersistedEntityResolver.DEFAULT_INDEX));
             if (persistedObject == null) {
+                final Object random = createRandomObject(node, resultNodeTree);
                 persistedObject = functionProcessor.findOrSave(random);
             }
         }

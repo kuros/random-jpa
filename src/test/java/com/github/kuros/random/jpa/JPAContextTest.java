@@ -505,6 +505,38 @@ public class JPAContextTest {
     }
 
 
+    @Test
+    public void shouldSetNullValuesUsingEntityModelAndOverrideValueWhenSetExplicitly() throws Exception {
+        final JPAContext jpaContext = JPAContextFactory
+                .newInstance(Database.NONE, entityManager)
+                .generate();
+        entityManager.getTransaction().begin();
+        final CreationPlan creationPlan = jpaContext.create(Plan.of(Entity.of(Z.class, 2).with(Z_.yId, null)));
+        creationPlan.set(1, Z_.yId, 123L);
+
+        final ResultMap persist = jpaContext.persist(creationPlan);
+        entityManager.getTransaction().commit();
+
+        assertNull(persist.get(Z.class).getyId());
+        assertEquals(123L, persist.get(Z.class, 1).getyId().longValue());
+    }
+
+    @Test
+    public void shouldSetNullValuesUsingSetMethod() throws Exception {
+        final JPAContext jpaContext = JPAContextFactory
+                .newInstance(Database.NONE, entityManager)
+                .generate();
+        entityManager.getTransaction().begin();
+        final CreationPlan creationPlan = jpaContext.create(Plan.of(Entity.of(Z.class, 2)));
+        creationPlan.set(0, Z_.yId, null);
+
+        final ResultMap persist = jpaContext.persist(creationPlan);
+        entityManager.getTransaction().commit();
+
+        assertNull(persist.get(Z.class).getyId());
+        assertNotNull(persist.get(Z.class, 1).getyId());
+    }
+
     private void persistAndVerifyCustomValues(final JPAContext jpaContextV2) {
         final Long xId = RandomFixture.create(Long.class);
         final Long yId = RandomFixture.create(Long.class);

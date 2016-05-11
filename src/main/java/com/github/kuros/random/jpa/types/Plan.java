@@ -54,6 +54,7 @@ public final class Plan {
         return this;
     }
 
+    @Deprecated
     public <T, V> Plan withNullValues(final Attribute<T, V>... attributes) {
         Collections.addAll(nullValueAttributes, attributes);
         return this;

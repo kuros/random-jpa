@@ -63,9 +63,8 @@ public final class RandomizeImpl implements Randomize {
         for (final Field declaredField : declaredFields) {
             declaredField.setAccessible(true);
             try {
-                final Object value = getFieldValue(declaredField, index);
-                if (value != null) {
-                    declaredField.set(t, value);
+                if (isFieldValueProvided(declaredField, index)) {
+                    declaredField.set(t, getFieldValue(declaredField, index));
                 } else if (isFieldEmpty(declaredField, t)
                         && isRandomRequired(declaredField)
                         && isNotNullValue(declaredField)) {
@@ -87,6 +86,10 @@ public final class RandomizeImpl implements Randomize {
         }
         return value;
     }
+
+    private boolean isFieldValueProvided(final Field declaredField, final int index) {
+        return fieldIndexMap.containsKey(new FieldIndex(declaredField, index)) || fieldValueMap.containsKey(declaredField);
+     }
 
     private boolean isNotNullValue(final Field declaredField) {
         return !nullValueFields.contains(declaredField);
