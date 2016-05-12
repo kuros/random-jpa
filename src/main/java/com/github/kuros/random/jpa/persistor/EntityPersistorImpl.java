@@ -18,6 +18,7 @@ import com.github.kuros.random.jpa.types.Version;
 import com.github.kuros.random.jpa.util.NumberUtil;
 
 import java.lang.reflect.Field;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -60,8 +61,13 @@ public final class EntityPersistorImpl implements Persistor {
         final ResultNode root = ResultNode.newInstance();
         final ResultNodeTree resultNodeTree = ResultNodeTree.newInstance(cache, root);
 
-        final PersistedEntityResolver persistedEntityResolver = new PersistedEntityResolverImpl(cache);
-        final Map<ClassIndex, Object> classIndexMap = persistedEntityResolver.loadPersistedObjectByIds(creationPlan);
+        final Map<ClassIndex, Object> classIndexMap;
+        if (cache.getVersion() == Version.V1) {
+            classIndexMap = new HashMap<ClassIndex, Object>();
+        } else {
+            final PersistedEntityResolver persistedEntityResolver = new PersistedEntityResolverImpl(cache);
+            classIndexMap = persistedEntityResolver.loadPersistedObjectByIds(creationPlan);
+        }
 
         final Node creationPlanRoot = ((CreationPlanImpl)creationPlan).getRoot();
         final List<Node> childNodes = creationPlanRoot.getChildNodes();

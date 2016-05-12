@@ -127,8 +127,10 @@ public class PersistedEntityResolverImpl implements PersistedEntityResolver {
         for (Class aClass : multimap.getKeySet()) {
             final Collection<FieldValue> childObject = multimap.get(aClass);
             final Object row = findObject(aClass, childObject);
-            classIndexObjectMap.put(ClassIndex.newInstance(aClass, classIndexes.get(aClass)), row);
-            loadParentDetails(classIndexes, classIndexObjectMap, aClass, row);
+            if (row != null) {
+                classIndexObjectMap.put(ClassIndex.newInstance(aClass, classIndexes.get(aClass)), row);
+                loadParentDetails(classIndexes, classIndexObjectMap, aClass, row);
+            }
         }
     }
 
