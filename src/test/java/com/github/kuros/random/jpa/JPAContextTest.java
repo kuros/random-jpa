@@ -358,7 +358,9 @@ public class JPAContextTest {
         // setting default value false to invoke V1 version call
         creationPlan.get(PrimitiveEntity.class).setDefaultBoolean(false);
 
+        entityManager.getTransaction().begin();
         final ResultMap persist = jpaContext.persist(creationPlan);
+        entityManager.getTransaction().commit();
         final PrimitiveEntity primitiveEntity = persist.get(PrimitiveEntity.class);
         assertEquals(false, primitiveEntity.isDefaultBoolean());
         assertEquals((byte) 0, primitiveEntity.getDefaultByte());
@@ -379,7 +381,9 @@ public class JPAContextTest {
 
         final CreationPlan creationPlan = jpaContext.create(Plan.of(Entity.of(PrimitiveEntity.class)));
 
+        entityManager.getTransaction().begin();
         final ResultMap persist = jpaContext.persist(creationPlan);
+        entityManager.getTransaction().commit();
         final PrimitiveEntity primitiveEntity = persist.get(PrimitiveEntity.class);
         assertNotEquals((byte) 0, primitiveEntity.getDefaultByte());
         assertNotEquals((char) 0, primitiveEntity.getDefaultChar());
@@ -408,8 +412,9 @@ public class JPAContextTest {
         creationPlan.set(PrimitiveEntity_.defaultLong, 0L);
         creationPlan.set(PrimitiveEntity_.defaultShort, (short)0);
 
-
+        entityManager.getTransaction().begin();
         final ResultMap persist = jpaContext.persist(creationPlan);
+        entityManager.getTransaction().commit();
         final PrimitiveEntity primitiveEntity = persist.get(PrimitiveEntity.class);
         assertEquals(false, primitiveEntity.isDefaultBoolean());
         assertEquals((byte) 0, primitiveEntity.getDefaultByte());

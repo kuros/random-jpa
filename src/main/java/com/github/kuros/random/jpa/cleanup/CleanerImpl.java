@@ -3,7 +3,6 @@ package com.github.kuros.random.jpa.cleanup;
 import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.definition.ChildGraph;
 import com.github.kuros.random.jpa.definition.HierarchyGraph;
-import com.github.kuros.random.jpa.exception.RandomJPAException;
 import com.github.kuros.random.jpa.log.LogFactory;
 import com.github.kuros.random.jpa.log.Logger;
 import com.github.kuros.random.jpa.mapper.Relation;
@@ -160,12 +159,7 @@ public final class CleanerImpl implements Cleaner {
 
     private <T> Object getFieldValue(final T type, final FieldWrapper from) {
         final Field field = from.getField();
-        field.setAccessible(true);
-        try {
-            return field.get(type);
-        } catch (final IllegalAccessException e) {
-            throw new RandomJPAException(e);
-        }
+        return Util.getFieldValue(type, field);
     }
 
     private Map<Class<?>, Set<Relation>> getChildRelationMap(final Class<?> type) {

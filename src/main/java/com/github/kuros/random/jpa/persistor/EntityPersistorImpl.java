@@ -16,6 +16,7 @@ import com.github.kuros.random.jpa.types.Node;
 import com.github.kuros.random.jpa.types.ResultNode;
 import com.github.kuros.random.jpa.types.Version;
 import com.github.kuros.random.jpa.util.NumberUtil;
+import com.github.kuros.random.jpa.util.Util;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -69,9 +70,11 @@ public final class EntityPersistorImpl implements Persistor {
             classIndexMap = persistedEntityResolver.loadPersistedObjectByIds(creationPlan);
         }
 
-        final Node creationPlanRoot = ((CreationPlanImpl)creationPlan).getRoot();
+        final Node creationPlanRoot = ((CreationPlanImpl) creationPlan).getRoot();
         final List<Node> childNodes = creationPlanRoot.getChildNodes();
         persist(classIndexMap, root, resultNodeTree, childNodes);
+
+        cache.getEntityManager().flush();
         return resultNodeTree;
     }
 
@@ -127,7 +130,7 @@ public final class EntityPersistorImpl implements Persistor {
             }
         }
 
-        return randomize.populateRandomFields(random, getIndexForNewEntity(resultNodeTree, random.getClass()) );
+        return randomize.populateRandomFields(random, getIndexForNewEntity(resultNodeTree, random.getClass()));
     }
 
     private TableNode getTableNode(final Class<?> type) {
@@ -163,18 +166,12 @@ public final class EntityPersistorImpl implements Persistor {
         final Field field = relation.getTo().getField();
         final List<Object> objects = getPersistedEntitiesByFieldDeclaringClass(resultNodeTree, field.getDeclaringClass());
         final Object object = objects.get(objects.size() - 1);
-        Object value = null;
-        try {
-            final Field fromField = relation.getFrom().getField();
-            if (fromField.getType().equals(object.getClass())) {
-                value = object;
-            } else {
-                field.setAccessible(true);
-                value = field.get(object);
-                value = NumberUtil.castNumber(fromField.getType(), value);
-            }
-        } catch (final IllegalAccessException e) {
-            //do nothing
+        final Object value;
+        final Field fromField = relation.getFrom().getField();
+        if (fromField.getType().equals(object.getClass())) {
+            value = object;
+        } else {
+            value = NumberUtil.castNumber(fromField.getType(), Util.getFieldValue(object, field));
         }
         return value;
     }

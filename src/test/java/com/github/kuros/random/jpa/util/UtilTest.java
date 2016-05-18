@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -112,5 +113,41 @@ public class UtilTest {
     public void testFormatMessage() throws Exception {
         final String input = "{0}, {1}";
         assertEquals("1, 2", Util.formatMessage(input, 1, 2));
+    }
+
+    @Test
+    public void shouldGetFieldsUsingGetter() throws Exception {
+        final TestClass testClass = new TestClass(RandomFixture.create(Integer.class), RandomFixture.create(String.class));
+        final Field idField = TestClass.class.getDeclaredField("id");
+
+        final Object fieldValue = Util.getFieldValue(testClass, idField);
+        assertEquals(Integer.valueOf(testClass.getId()), fieldValue);
+    }
+
+    @Test
+    public void shouldGetFieldValueWhenGetterIsNotFound() throws Exception {
+        final TestClass testClass = new TestClass(RandomFixture.create(Integer.class), RandomFixture.create(String.class));
+        final Field valueField = TestClass.class.getDeclaredField("value");
+
+        final Object fieldValue = Util.getFieldValue(testClass, valueField);
+        assertEquals(String.valueOf(testClass.getStringValue()), fieldValue);
+    }
+
+    private class TestClass {
+        private int id;
+        private String value;
+
+        TestClass(final int id, final String value) {
+            this.id = id;
+            this.value = value;
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public String getStringValue() {
+            return value;
+        }
     }
 }

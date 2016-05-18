@@ -15,6 +15,7 @@ import com.github.kuros.random.jpa.types.FieldIndexValue;
 import com.github.kuros.random.jpa.util.ArrayListMultimap;
 import com.github.kuros.random.jpa.util.Multimap;
 import com.github.kuros.random.jpa.util.NodeHelper;
+import com.github.kuros.random.jpa.util.Util;
 
 import javax.persistence.EntityManager;
 import java.lang.reflect.Field;
@@ -147,12 +148,7 @@ public class PersistedEntityResolverImpl implements PersistedEntityResolver {
     }
 
     private Object getFieldValue(final Field field, final Object object) {
-        field.setAccessible(true);
-        try {
-            return field.get(object);
-        } catch (final IllegalAccessException e) {
-            throw new RuntimeException("Field not accessible: " + field);
-        }
+        return Util.getFieldValue(object, field);
     }
 
     private <T> T findById(final Class<T> type, final Object value) {

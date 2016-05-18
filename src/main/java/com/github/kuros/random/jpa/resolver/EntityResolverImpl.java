@@ -136,12 +136,7 @@ public final class EntityResolverImpl implements EntityResolver {
     }
 
     private Object getFieldValue(final Object object, final Field field) {
-        field.setAccessible(true);
-        try {
-            return field.get(object);
-        } catch (final IllegalAccessException e) {
-            throw new RuntimeException("Field not accessible: " + field);
-        }
+        return Util.getFieldValue(object, field);
     }
 
     private void findId(final Map<Field, Object> fieldValueMap, final Class aClass, final Object row) {

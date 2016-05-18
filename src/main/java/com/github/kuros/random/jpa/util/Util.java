@@ -4,7 +4,11 @@ import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.exception.RandomJPAException;
 import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
 
+import java.beans.BeanInfo;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.text.MessageFormat;
 import java.util.List;
 
@@ -115,6 +119,24 @@ public class Util {
     public static void assertNotNull(final String message, final Object obj) {
         if (obj == null) {
             throw new RandomJPAException(message);
+        }
+    }
+
+    public static Object getFieldValue(final Object object, final Field field) {
+        try {
+            final BeanInfo beanInfo = Introspector.getBeanInfo(object.getClass(), Object.class);
+            final PropertyDescriptor[] props = beanInfo.getPropertyDescriptors();
+            for (PropertyDescriptor pd : props) {
+                if (pd.getName().equals(field.getName())) {
+                    final Method getter = pd.getReadMethod();
+                    return getter.invoke(object);
+                }
+            }
+
+            field.setAccessible(true);
+            return field.get(object);
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
         }
     }
 }
