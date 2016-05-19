@@ -136,7 +136,7 @@ Let us say that I want to persist these two employees with different name.
 ```java
 creationPlan.set(Employee_.name, "Employee 1");
 
-creationPlan.get(1, Employee_.name, "Employee 2");
+creationPlan.set(1, Employee_.name, "Employee 2");
 ```
 
 ### Printing the creationPlan
