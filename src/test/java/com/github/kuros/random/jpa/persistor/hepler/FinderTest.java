@@ -7,7 +7,6 @@ import com.github.kuros.random.jpa.testUtil.EntityManagerProvider;
 import com.github.kuros.random.jpa.testUtil.RandomFixture;
 import com.github.kuros.random.jpa.testUtil.entity.P;
 import com.github.kuros.random.jpa.testUtil.entity.Q;
-import com.github.kuros.random.jpa.types.Version;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,7 +28,7 @@ public class FinderTest {
     @Before
     public void setUp() throws Exception {
         entityManager = EntityManagerProvider.getEntityManager();
-        final Cache cache = Cache.create(Version.V2, Database.NONE, entityManager);
+        final Cache cache = Cache.create(Database.NONE, entityManager);
 
         finder = new Finder(cache);
     }

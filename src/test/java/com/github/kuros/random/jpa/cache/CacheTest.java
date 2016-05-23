@@ -4,7 +4,6 @@ import com.github.kuros.random.jpa.Database;
 import com.github.kuros.random.jpa.testUtil.EntityManagerProvider;
 import com.github.kuros.random.jpa.testUtil.hierarchyGraph.MockedHierarchyGraph;
 import com.github.kuros.random.jpa.types.Trigger;
-import com.github.kuros.random.jpa.types.Version;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.MockitoAnnotations;
@@ -13,7 +12,6 @@ import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 public class CacheTest {
@@ -31,13 +29,12 @@ public class CacheTest {
     @Test
     public void shouldInitializeCache() throws Exception {
         final EntityManager entityManager = EntityManagerProvider.getEntityManager();
-        final Cache cache = Cache.create(Version.V2, Database.NONE, entityManager);
+        final Cache cache = Cache.create(Database.NONE, entityManager);
 
         cache.with(MockedHierarchyGraph.getHierarchyGraph());
         cache.with(triggerCache);
         cache.withSkipTruncations(new HashSet<Class<?>>());
 
-        assertEquals(Version.V2, cache.getVersion());
         assertNotNull(cache.getAttributeProvider());
         assertNotNull(cache.getEntityManager());
         assertNotNull(cache.getHierarchyGraph());

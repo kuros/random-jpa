@@ -1,7 +1,5 @@
 package com.github.kuros.random.jpa.random;
 
-import com.github.kuros.random.jpa.types.Version;
-
 import java.lang.reflect.Field;
 import java.util.Map;
 
@@ -34,6 +32,4 @@ public interface Randomize {
     void addFieldValue(final Field field, final int index, final Object value);
 
     void addFieldValue(final Field field, final Object value);
-
-    Version getVersion();
 }

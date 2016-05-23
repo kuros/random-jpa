@@ -14,12 +14,10 @@ import com.github.kuros.random.jpa.types.CreationPlan;
 import com.github.kuros.random.jpa.types.CreationPlanImpl;
 import com.github.kuros.random.jpa.types.Node;
 import com.github.kuros.random.jpa.types.ResultNode;
-import com.github.kuros.random.jpa.types.Version;
 import com.github.kuros.random.jpa.util.NumberUtil;
 import com.github.kuros.random.jpa.util.Util;
 
 import java.lang.reflect.Field;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -62,20 +60,20 @@ public final class EntityPersistorImpl implements Persistor {
         final ResultNode root = ResultNode.newInstance();
         final ResultNodeTree resultNodeTree = ResultNodeTree.newInstance(cache, root);
 
-        final Map<ClassIndex, Object> classIndexMap;
-        if (cache.getVersion() == Version.V1) {
-            classIndexMap = new HashMap<ClassIndex, Object>();
-        } else {
-            final PersistedEntityResolver persistedEntityResolver = new PersistedEntityResolverImpl(cache);
-            classIndexMap = persistedEntityResolver.loadPersistedObjectByIds(creationPlan);
-        }
-
         final Node creationPlanRoot = ((CreationPlanImpl) creationPlan).getRoot();
         final List<Node> childNodes = creationPlanRoot.getChildNodes();
+
+        final Map<ClassIndex, Object> classIndexMap = getClassIndexObjectMap(creationPlan);
+
         persist(classIndexMap, root, resultNodeTree, childNodes);
 
         cache.getEntityManager().flush();
         return resultNodeTree;
+    }
+
+    private Map<ClassIndex, Object> getClassIndexObjectMap(final CreationPlan creationPlan) {
+        final PersistedEntityResolver persistedEntityResolver = new PersistedEntityResolverImpl(cache);
+        return persistedEntityResolver.loadPersistedObjectByIds(creationPlan);
     }
 
     private void persist(final Map<ClassIndex, Object> classIndexMap, final ResultNode resultNode, final ResultNodeTree resultNodeTree, final List<Node> childNodes) {
@@ -126,7 +124,7 @@ public final class EntityPersistorImpl implements Persistor {
             final List<Relation> relations = tableNode.getRelations();
 
             for (Relation relation : relations) {
-                createRelation(resultNodeTree, relation, random);
+                createRelation(resultNodeTree, relation);
             }
         }
 
@@ -137,29 +135,17 @@ public final class EntityPersistorImpl implements Persistor {
         return hierarchyGraph.getParentRelations().get(type);
     }
 
-    private void createRelation(final ResultNodeTree resultNodeTree, final Relation relation, final Object object) {
+    private void createRelation(final ResultNodeTree resultNodeTree, final Relation relation) {
         try {
             final Field fromField = relation.getFrom().getField();
             if (!randomize.isValueProvided(fromField, getIndexForNewEntity(resultNodeTree, fromField.getDeclaringClass()))) {
                 final Object value = getFieldValue(resultNodeTree, relation);
                 randomize.addFieldValue(fromField, getIndexForNewEntity(resultNodeTree, fromField.getDeclaringClass()), value);
-                if (randomize.getVersion() == Version.V1) {
-                    setFieldValue(object, fromField, value);
-                }
             }
         } catch (final Exception e) {
             //do nothing
         }
 
-    }
-
-    private void setFieldValue(final Object object, final Field field, final Object value) {
-        try {
-            field.setAccessible(true);
-            field.set(object, value);
-        } catch (final IllegalAccessException e) {
-            //do nothing
-        }
     }
 
     private Object getFieldValue(final ResultNodeTree resultNodeTree, final Relation relation) {

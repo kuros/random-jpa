@@ -11,7 +11,6 @@ import com.github.kuros.random.jpa.testUtil.entity.Z_;
 import com.github.kuros.random.jpa.testUtil.hierarchyGraph.MockedHierarchyGraph;
 import com.github.kuros.random.jpa.types.Entity;
 import com.github.kuros.random.jpa.types.Plan;
-import com.github.kuros.random.jpa.types.Version;
 import com.github.kuros.random.jpa.util.Util;
 import org.junit.After;
 import org.junit.Before;
@@ -37,7 +36,7 @@ public class EntityResolverImplTest {
     @Test
     public void shouldPopulateFieldValueForExistingHierarchy() throws Exception {
 
-        final Cache cache = Cache.create(Version.V2, Database.NONE, entityManager);
+        final Cache cache = Cache.create(Database.NONE, entityManager);
         cache.with(MockedHierarchyGraph.getHierarchyGraph());
 
         final X x = new X();
@@ -64,7 +63,7 @@ public class EntityResolverImplTest {
     @Test
     public void shouldNotPopulateFieldValueForExistingHierarchyWhenNoIdIsProvided() throws Exception {
 
-        final Cache cache = Cache.create(Version.V2, Database.NONE, entityManager);
+        final Cache cache = Cache.create(Database.NONE, entityManager);
         cache.with(MockedHierarchyGraph.getHierarchyGraph());
 
         final X x = new X();
@@ -91,7 +90,7 @@ public class EntityResolverImplTest {
     @Test(expected = IllegalArgumentException.class)
     public void shouldThrowExceptionIfWrongIdProvided() throws Exception {
 
-        final Cache cache = Cache.create(Version.V2, Database.NONE, entityManager);
+        final Cache cache = Cache.create(Database.NONE, entityManager);
         cache.with(MockedHierarchyGraph.getHierarchyGraph());
 
         final Plan plan = Plan.of(Entity.of(Z.class).with(Z_.id, RandomFixture.create(Long.class)));

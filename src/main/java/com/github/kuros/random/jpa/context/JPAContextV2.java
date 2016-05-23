@@ -53,7 +53,7 @@ public final class JPAContextV2 extends BaseContext {
         final List<Entity> entities = plan.getEntities();
         final HierarchyGraph hierarchyGraph = MinimumHierarchyGenerator.generate(getCache().getHierarchyGraph(), entities);
 
-        final CreationOrderResolver creationOrderResolver = CreationOrderResolverImpl.newInstance(getCache(), hierarchyGraph);
+        final CreationOrderResolver creationOrderResolver = CreationOrderResolverImpl.newInstance(hierarchyGraph);
 
         final List<CreationOrder> creationOrders = new ArrayList<CreationOrder>();
         for (Entity entity : entities) {

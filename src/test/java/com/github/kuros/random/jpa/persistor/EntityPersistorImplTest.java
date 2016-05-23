@@ -20,7 +20,6 @@ import com.github.kuros.random.jpa.types.ClassDepth;
 import com.github.kuros.random.jpa.types.CreationOrder;
 import com.github.kuros.random.jpa.types.CreationPlan;
 import com.github.kuros.random.jpa.types.Trigger;
-import com.github.kuros.random.jpa.types.Version;
 import com.github.kuros.random.jpa.v1.resolver.CreationPlanResolver;
 import org.junit.After;
 import org.junit.Before;
@@ -61,7 +60,7 @@ public class EntityPersistorImplTest {
     public void setUp() throws Exception {
         hierarchyGraph = MockedHierarchyGraph.getHierarchyGraph();
         entityManager = EntityManagerProvider.getEntityManager();
-        cache = Cache.create(Version.V2, Database.NONE, entityManager);
+        cache = Cache.create(Database.NONE, entityManager);
 
         final TriggerCache triggerCache = TriggerCache.getInstance(new ArrayList<Trigger<?>>());
         cache.with(triggerCache);

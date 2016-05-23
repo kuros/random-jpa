@@ -1,15 +1,11 @@
 package com.github.kuros.random.jpa.resolver;
 
-import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.definition.HierarchyGraph;
 import com.github.kuros.random.jpa.exception.RandomJPAException;
-import com.github.kuros.random.jpa.link.Preconditions;
 import com.github.kuros.random.jpa.types.ClassDepth;
 import com.github.kuros.random.jpa.types.CreationOrder;
 import com.github.kuros.random.jpa.types.Entity;
 import com.github.kuros.random.jpa.types.EntityHelper;
-import com.github.kuros.random.jpa.types.Plan;
-import com.github.kuros.random.jpa.types.Version;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -38,22 +34,14 @@ import java.util.Stack;
  */
 public final class CreationOrderResolverImpl implements CreationOrderResolver {
 
-    private final Cache cache;
     private final HierarchyGraph hierarchyGraph;
-    private final Preconditions planLevelPreconditions;
 
-    private CreationOrderResolverImpl(final Cache cache, final HierarchyGraph hierarchyGraph, final Preconditions planLevelPreconditions) {
-        this.cache = cache;
+    private CreationOrderResolverImpl(final HierarchyGraph hierarchyGraph) {
         this.hierarchyGraph = hierarchyGraph;
-        this.planLevelPreconditions = planLevelPreconditions;
     }
 
-    public static CreationOrderResolver newInstance(final Cache cache, final HierarchyGraph hierarchyGraph, final Preconditions planLevelPreconditions) {
-        return new CreationOrderResolverImpl(cache, hierarchyGraph, planLevelPreconditions);
-    }
-
-    public static CreationOrderResolver newInstance(final Cache cache, final HierarchyGraph hierarchyGraph) {
-        return new CreationOrderResolverImpl(cache, hierarchyGraph, null);
+    public static CreationOrderResolver newInstance(final HierarchyGraph hierarchyGraph) {
+        return new CreationOrderResolverImpl(hierarchyGraph);
     }
 
     public CreationOrder getCreationOrder(final Entity... entities) {
@@ -68,13 +56,7 @@ public final class CreationOrderResolverImpl implements CreationOrderResolver {
             }
         }
 
-        if (cache.getVersion().isSupported(Version.V2)) {
-            sortCreationOrderBasedOnDepth(creationOrder);
-        }
-
-        if (cache.getVersion().isSupported(Version.V1)) {
-            applyPlanLevelPrecondition(creationOrder);
-        }
+        sortCreationOrderBasedOnDepth(creationOrder);
 
         return creationOrder;
     }
@@ -85,55 +67,6 @@ public final class CreationOrderResolverImpl implements CreationOrderResolver {
                 return -1 * Integer.valueOf(o1.getDepth()).compareTo(o2.getDepth());
             }
         });
-    }
-
-    private void applyPlanLevelPrecondition(final CreationOrder creationOrder) {
-        final Set<Class<?>> identifiers = planLevelPreconditions.getIdentifiers();
-
-        for (Class<?> identifier : identifiers) {
-            if (!creationOrder.containsClass(identifier)) {
-                continue;
-            }
-
-            final Plan preConditionPlan = planLevelPreconditions.getPlan(identifier);
-            try {
-                adjustEntityInCreationOrder(creationOrder, preConditionPlan);
-            } catch (final ClassNotFoundException e) {
-                throw new RandomJPAException(e);
-            }
-        }
-    }
-
-    private void adjustEntityInCreationOrder(final CreationOrder creationOrder, final Plan preConditionPlan) throws ClassNotFoundException {
-        for (Entity entity : preConditionPlan.getEntities()) {
-
-            final CreationOrder tempCreationOrder = CreationOrder.newInstance();
-            generateCreationOrder(tempCreationOrder, EntityHelper.getType(entity));
-            final List<ClassDepth<?>> newOrder = tempCreationOrder.getOrder();
-            final List<ClassDepth<?>> createdOrder = creationOrder.getOrder();
-            final int minIndex = getMinIndex(createdOrder, newOrder);
-
-            ClassDepth<?> location = null;
-            int i = minIndex;
-            while (i > 0) {
-                final ClassDepth<?> aClass = createdOrder.get(--i);
-                if (!newOrder.contains(aClass)) {
-                    location = aClass;
-                    break;
-                }
-            }
-
-            createdOrder.removeAll(newOrder);
-
-            i = minIndex;
-            if (location != null) {
-                i = createdOrder.indexOf(location);
-                createdOrder.addAll(i + 1, newOrder);
-            } else {
-                createdOrder.addAll(i, newOrder);
-            }
-
-        }
     }
 
     private void addCreationCount(final CreationOrder creationOrder, final Entity entity) {
@@ -231,18 +164,5 @@ public final class CreationOrderResolverImpl implements CreationOrderResolver {
             }
         }
         return true;
-    }
-
-    private int getMinIndex(final List<ClassDepth<?>> from, final List<ClassDepth<?>> order) {
-        int index = from.size();
-
-        for (ClassDepth<?> type : order) {
-            final int i = from.indexOf(type);
-            if (index > i && i != -1) {
-                index = i;
-            }
-        }
-
-        return index;
     }
 }

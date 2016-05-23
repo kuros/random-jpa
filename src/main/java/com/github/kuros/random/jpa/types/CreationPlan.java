@@ -19,11 +19,6 @@ import javax.persistence.metamodel.Attribute;
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 public interface CreationPlan {
-    @Deprecated
-    <T> T get(Class<T> type);
-
-    @Deprecated
-    <T> T get(Class<T> type, int index);
 
     <T, V> void set(Attribute<T, V> attribute, V value);
 

@@ -2,7 +2,6 @@ package com.github.kuros.random.jpa.types;
 
 import com.github.kuros.random.jpa.definition.HierarchyGraph;
 import com.github.kuros.random.jpa.random.Randomize;
-import com.github.kuros.random.jpa.random.RandomizeImpl;
 import com.github.kuros.random.jpa.util.AttributeHelper;
 
 import javax.persistence.metamodel.Attribute;
@@ -48,18 +47,6 @@ public class CreationPlanImpl implements CreationPlan {
 
     public Node getRoot() {
         return root;
-    }
-
-    @SuppressWarnings("unchecked")
-    public <T> T get(final Class<T> type) {
-        return (T) get(type, 0);
-    }
-
-    @SuppressWarnings("unchecked")
-    public <T> T get(final Class<T> type, final int index) {
-        final RandomizeImpl randomizeImpl = (RandomizeImpl) this.randomize;
-        randomizeImpl.setVersion(Version.V1);
-        return (T) createdNodeMap.get(type).get(index).getValue();
     }
 
     public <T, V> void set(final Attribute<T, V> attribute, final V value) {

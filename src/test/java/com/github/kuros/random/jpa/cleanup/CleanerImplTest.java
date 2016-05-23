@@ -11,7 +11,6 @@ import com.github.kuros.random.jpa.testUtil.entity.X;
 import com.github.kuros.random.jpa.testUtil.entity.Y;
 import com.github.kuros.random.jpa.testUtil.entity.Z;
 import com.github.kuros.random.jpa.testUtil.hierarchyGraph.MockedHierarchyGraph;
-import com.github.kuros.random.jpa.types.Version;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,7 +33,7 @@ public class CleanerImplTest {
     @Before
     public void setUp() throws Exception {
         this.entityManager = EntityManagerProvider.getEntityManager();
-        cache = Cache.create(Version.V2, Database.NONE, entityManager);
+        cache = Cache.create(Database.NONE, entityManager);
         cache.with(MockedHierarchyGraph.getHierarchyGraph());
 
         cleaner = CleanerImpl.newInstance(cache);

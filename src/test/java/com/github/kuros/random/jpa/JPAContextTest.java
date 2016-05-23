@@ -66,39 +66,6 @@ public class JPAContextTest {
     }
 
     @Test
-    public void shouldCreateAndPersistHierarchyWithDeprecatedMethod() throws Exception {
-
-        final Dependencies dependencies = Dependencies.newInstance();
-        dependencies.withLink(DependencyHelper.getLinks());
-        final JPAContext jpaContext = JPAContextFactory
-                .newInstance(Database.NONE, entityManager)
-                .with(dependencies)
-                .create();
-
-        entityManager.getTransaction().begin();
-
-        final ResultMap resultMap = jpaContext
-                .createAndPersist(Plan.of(Entity.of(Z.class)));
-
-        entityManager.getTransaction().commit();
-        entityManager.close();
-
-        assertEquals(1, resultMap.getAll(Z.class).size());
-        assertEquals(1, resultMap.getAll(X.class).size());
-        assertEquals(1, resultMap.getAll(Y.class).size());
-
-        final Z z = resultMap.get(Z.class);
-        resultMap.print(new Printer() {
-            public void print(final String string) {
-                System.out.println(string);
-            }
-        });
-
-        assertEquals(z.getxId(), resultMap.get(X.class).getId());
-        assertEquals(z.getyId(), resultMap.get(Y.class).getId());
-    }
-
-    @Test
     public void shouldCreateAndPersistHierarchy() throws Exception {
 
         final Dependencies dependencies = Dependencies.newInstance();
@@ -349,31 +316,6 @@ public class JPAContextTest {
     }
 
     @Test
-    public void shouldPersistDefaultValuesForPrimitiveTypeForV1() throws Exception {
-        final JPAContext jpaContext = JPAContextFactory
-                .newInstance(Database.NONE, entityManager)
-                .generate();
-
-        final CreationPlan creationPlan = jpaContext.create(Plan.of(Entity.of(PrimitiveEntity.class)));
-        // setting default value false to invoke V1 version call
-        creationPlan.get(PrimitiveEntity.class).setDefaultBoolean(false);
-
-        entityManager.getTransaction().begin();
-        final ResultMap persist = jpaContext.persist(creationPlan);
-        entityManager.getTransaction().commit();
-        final PrimitiveEntity primitiveEntity = persist.get(PrimitiveEntity.class);
-        assertEquals(false, primitiveEntity.isDefaultBoolean());
-        assertEquals((byte) 0, primitiveEntity.getDefaultByte());
-        assertEquals((char) 0, primitiveEntity.getDefaultChar());
-        assertEquals(0.0, primitiveEntity.getDefaultDouble(), 0.0001);
-        assertEquals(0.0f, primitiveEntity.getDefaultFloat(), 0.0001);
-        assertEquals(0, primitiveEntity.getDefaultInt());
-        assertEquals(0L, primitiveEntity.getDefaultLong());
-        assertEquals((short) 0, primitiveEntity.getDefaultShort());
-
-    }
-
-    @Test
     public void shouldPersistRandomValuesForPrimitiveTypeForV2() throws Exception {
         final JPAContext jpaContext = JPAContextFactory
                 .newInstance(Database.NONE, entityManager)
@@ -498,17 +440,6 @@ public class JPAContextTest {
 
         persistAndVerifyCustomValues(jpaContextV2);
     }
-
-    @Test
-    public void shouldSetCustomValuesThroughEntityOlderVersion() throws Exception {
-
-        final JPAContext jpaContextV2 = JPAContextFactory
-                .newInstance(Database.NONE, entityManager)
-                .create();
-
-        persistAndVerifyCustomValues(jpaContextV2);
-    }
-
 
     @Test
     public void shouldSetNullValuesUsingEntityModelAndOverrideValueWhenSetExplicitly() throws Exception {

@@ -12,7 +12,6 @@ import com.github.kuros.random.jpa.provider.factory.RelationshipProviderFactory;
 import com.github.kuros.random.jpa.provider.factory.SQLCharacterLengthProviderFactory;
 import com.github.kuros.random.jpa.provider.factory.UniqueConstraintProviderFactory;
 import com.github.kuros.random.jpa.types.Trigger;
-import com.github.kuros.random.jpa.types.Version;
 
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
@@ -39,7 +38,6 @@ public class Cache {
 
     private EntityManager entityManager;
     private Database database;
-    private Version version;
     private TriggerCache triggerCache;
     private AttributeProvider attributeProvider;
     private MultiplePrimaryKeyProvider multiplePrimaryKeyProvider;
@@ -49,8 +47,7 @@ public class Cache {
     private Set<Class<?>> skipTruncation;
     private HierarchyGraph hierarchyGraph;
 
-    private Cache(final Version version, final Database database, final EntityManager entityManager) {
-        this.version = version;
+    private Cache(final Database database, final EntityManager entityManager) {
         this.database = database;
         this.entityManager = entityManager;
         this.attributeProvider = initAttributeProvider();
@@ -62,8 +59,8 @@ public class Cache {
         this.triggerCache = TriggerCache.getInstance(new ArrayList<Trigger<?>>());
     }
 
-    public static Cache create(final Version version, final Database database, final EntityManager entityManager) {
-        return new Cache(version, database, entityManager);
+    public static Cache create(final Database database, final EntityManager entityManager) {
+        return new Cache(database, entityManager);
     }
 
     public Cache with(final TriggerCache cache) {
@@ -79,10 +76,6 @@ public class Cache {
     public Cache withSkipTruncations(final Set<Class<?>> skipTruncationValue) {
         this.skipTruncation = skipTruncationValue;
         return this;
-    }
-
-    public Version getVersion() {
-        return version;
     }
 
     public EntityManager getEntityManager() {

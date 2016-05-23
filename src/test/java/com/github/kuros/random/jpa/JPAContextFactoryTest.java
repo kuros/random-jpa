@@ -2,7 +2,6 @@ package com.github.kuros.random.jpa;
 
 import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.context.BaseContext;
-import com.github.kuros.random.jpa.context.JPAContextV1;
 import com.github.kuros.random.jpa.context.JPAContextV2;
 import com.github.kuros.random.jpa.definition.HierarchyGraph;
 import com.github.kuros.random.jpa.exception.RandomJPAException;
@@ -58,18 +57,6 @@ public class JPAContextFactoryTest {
                 .generate();
 
         assertTrue(jpaContext instanceof JPAContextV2);
-    }
-
-    @Test
-    public void createWithJpaContextV1() throws Exception {
-        final Dependencies customDependencies = Dependencies.newInstance();
-        customDependencies.withLink(DependencyHelper.getLinks());
-        final JPAContext jpaContext = JPAContextFactory
-                .newInstance(Database.NONE, entityManager)
-                .with(customDependencies)
-                .create();
-
-        assertTrue(jpaContext instanceof JPAContextV1);
     }
 
     @Test

@@ -2,7 +2,6 @@ package com.github.kuros.random.jpa;
 
 import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.cache.TriggerCache;
-import com.github.kuros.random.jpa.context.JPAContextV1;
 import com.github.kuros.random.jpa.context.JPAContextV2;
 import com.github.kuros.random.jpa.definition.CyclicValidator;
 import com.github.kuros.random.jpa.definition.HierarchyGenerator;
@@ -17,7 +16,6 @@ import com.github.kuros.random.jpa.metamodel.MetaModelProvider;
 import com.github.kuros.random.jpa.metamodel.MetaModelProviderImpl;
 import com.github.kuros.random.jpa.random.generator.Generator;
 import com.github.kuros.random.jpa.types.Trigger;
-import com.github.kuros.random.jpa.types.Version;
 
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
@@ -103,20 +101,14 @@ public final class JPAContextFactory {
         return this;
     }
 
-    @Deprecated
-    public JPAContext create() {
-        final Cache cache = getCache(Version.V1);
-        return JPAContextV1.newInstance(cache, generator);
-    }
-
     public JPAContext generate() {
-        final Cache cache = getCache(Version.V2);
+        final Cache cache = getCache();
         return JPAContextV2.newInstance(cache, generator);
     }
 
-    private Cache getCache(final Version version) {
+    private Cache getCache() {
         final Cache cache = Cache
-                .create(version, database, entityManager)
+                .create(database, entityManager)
                 .with(TriggerCache.getInstance(triggers))
                 .withSkipTruncations(skipTruncation);
 
