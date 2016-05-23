@@ -2,7 +2,7 @@ package com.github.kuros.random.jpa;
 
 import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.cache.TriggerCache;
-import com.github.kuros.random.jpa.context.JPAContextV2;
+import com.github.kuros.random.jpa.context.JPAContextImpl;
 import com.github.kuros.random.jpa.definition.CyclicValidator;
 import com.github.kuros.random.jpa.definition.HierarchyGenerator;
 import com.github.kuros.random.jpa.definition.HierarchyGeneratorImpl;
@@ -96,6 +96,7 @@ public final class JPAContextFactory {
         return this;
     }
 
+    @SuppressWarnings("unchecked")
     public JPAContextFactory withSkipTruncation(final Class<?> classes) {
         Collections.addAll(this.skipTruncation, classes);
         return this;
@@ -103,7 +104,7 @@ public final class JPAContextFactory {
 
     public JPAContext generate() {
         final Cache cache = getCache();
-        return JPAContextV2.newInstance(cache, generator);
+        return JPAContextImpl.newInstance(cache, generator);
     }
 
     private Cache getCache() {

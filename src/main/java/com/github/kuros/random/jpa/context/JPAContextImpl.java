@@ -37,14 +37,14 @@ import java.util.List;
  *    You should have received a copy of the GNU Lesser General Public License
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-public final class JPAContextV2 extends BaseContext {
+public final class JPAContextImpl extends BaseContext {
 
     public static JPAContext newInstance(final Cache cache,
                                          final Generator generator) {
-        return new JPAContextV2(cache, generator);
+        return new JPAContextImpl(cache, generator);
     }
 
-    private JPAContextV2(final Cache cache, final Generator generator) {
+    private JPAContextImpl(final Cache cache, final Generator generator) {
         super(cache, generator);
     }
 

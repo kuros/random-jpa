@@ -2,7 +2,7 @@ package com.github.kuros.random.jpa;
 
 import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.context.BaseContext;
-import com.github.kuros.random.jpa.context.JPAContextV2;
+import com.github.kuros.random.jpa.context.JPAContextImpl;
 import com.github.kuros.random.jpa.definition.HierarchyGraph;
 import com.github.kuros.random.jpa.exception.RandomJPAException;
 import com.github.kuros.random.jpa.link.Before;
@@ -56,7 +56,7 @@ public class JPAContextFactoryTest {
                 .with(customDependencies)
                 .generate();
 
-        assertTrue(jpaContext instanceof JPAContextV2);
+        assertTrue(jpaContext instanceof JPAContextImpl);
     }
 
     @Test
@@ -68,8 +68,8 @@ public class JPAContextFactoryTest {
                 .with(customDependencies)
                 .generate();
 
-        assertTrue(jpaContext instanceof JPAContextV2);
-        final JPAContextV2 jpaContextV2 = (JPAContextV2) jpaContext;
+        assertTrue(jpaContext instanceof JPAContextImpl);
+        final JPAContextImpl jpaContextV2 = (JPAContextImpl) jpaContext;
 
         final Cache cache = jpaContextV2.getCache();
         final HierarchyGraph hierarchyGraph = cache.getHierarchyGraph();
@@ -108,8 +108,8 @@ public class JPAContextFactoryTest {
                 .generate();
 
 
-        assertTrue(jpaContext instanceof JPAContextV2);
-        final JPAContextV2 jpaContextV2 = (JPAContextV2) jpaContext;
+        assertTrue(jpaContext instanceof JPAContextImpl);
+        final JPAContextImpl jpaContextV2 = (JPAContextImpl) jpaContext;
 
         final RandomGenerator randomGenerator = jpaContextV2.getGenerator();
         final Z random = randomGenerator.generateRandom(Z.class);
@@ -125,8 +125,8 @@ public class JPAContextFactoryTest {
                 .generate();
 
 
-        assertTrue(jpaContext instanceof JPAContextV2);
-        final JPAContextV2 jpaContextV2 = (JPAContextV2) jpaContext;
+        assertTrue(jpaContext instanceof JPAContextImpl);
+        final JPAContextImpl jpaContextV2 = (JPAContextImpl) jpaContext;
 
         final Cache cache = jpaContextV2.getCache();
         final HierarchyGraph hierarchyGraph = cache.getHierarchyGraph();
@@ -144,8 +144,8 @@ public class JPAContextFactoryTest {
                 .generate();
 
 
-        assertTrue(jpaContext instanceof JPAContextV2);
-        final JPAContextV2 jpaContextV2 = (JPAContextV2) jpaContext;
+        assertTrue(jpaContext instanceof JPAContextImpl);
+        final JPAContextImpl jpaContextV2 = (JPAContextImpl) jpaContext;
 
         final Cache cache = jpaContextV2.getCache();
         final HierarchyGraph hierarchyGraph = cache.getHierarchyGraph();
@@ -163,8 +163,8 @@ public class JPAContextFactoryTest {
                 .generate();
 
 
-        assertTrue(jpaContext instanceof JPAContextV2);
-        final JPAContextV2 jpaContextV2 = (JPAContextV2) jpaContext;
+        assertTrue(jpaContext instanceof JPAContextImpl);
+        final JPAContextImpl jpaContextV2 = (JPAContextImpl) jpaContext;
 
         final Cache cache = jpaContextV2.getCache();
         final Trigger<?> trigger = cache.getTriggerCache().getTrigger(D.class);
@@ -196,8 +196,8 @@ public class JPAContextFactoryTest {
                 .generate();
 
 
-        assertTrue(jpaContext instanceof JPAContextV2);
-        final JPAContextV2 jpaContextV2 = (JPAContextV2) jpaContext;
+        assertTrue(jpaContext instanceof JPAContextImpl);
+        final JPAContextImpl jpaContextV2 = (JPAContextImpl) jpaContext;
 
         final Cache cache = jpaContextV2.getCache();
         final Set<Class<?>> skipTruncation = cache.getSkipTruncation();
