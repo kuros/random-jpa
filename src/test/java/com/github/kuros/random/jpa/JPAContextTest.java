@@ -236,11 +236,8 @@ public class JPAContextTest {
         jpaContext.remove(X.class);
         entityManager.getTransaction().commit();
 
-
         final List<X> found = EntityManagerProvider.find(query);
-
         assertEquals(0, found.size());
-
     }
 
     @Test
@@ -434,11 +431,11 @@ public class JPAContextTest {
     @Test
     public void shouldSetCustomValuesThroughEntity() throws Exception {
 
-        final JPAContext jpaContextV2 = JPAContextFactory
+        final JPAContext jpaContext = JPAContextFactory
                 .newInstance(Database.NONE, entityManager)
                 .generate();
 
-        persistAndVerifyCustomValues(jpaContextV2);
+        persistAndVerifyCustomValues(jpaContext);
     }
 
     @Test
@@ -473,12 +470,12 @@ public class JPAContextTest {
         assertNotNull(persist.get(Z.class, 1).getyId());
     }
 
-    private void persistAndVerifyCustomValues(final JPAContext jpaContextV2) {
+    private void persistAndVerifyCustomValues(final JPAContext jpaContext) {
         final Long xId = RandomFixture.create(Long.class);
         final Long yId = RandomFixture.create(Long.class);
 
         entityManager.getTransaction().begin();
-        final ResultMap persist = jpaContextV2
+        final ResultMap persist = jpaContext
                 .createAndPersist(Plan.of(Entity.of(Z.class)
                         .with(Z_.xId, xId)
                         .with(Z_.yId, yId)));

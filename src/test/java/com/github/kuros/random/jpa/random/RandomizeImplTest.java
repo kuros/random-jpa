@@ -17,13 +17,11 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 /*
@@ -135,30 +133,6 @@ public class RandomizeImplTest {
         assertEquals(fieldObjectMap.get(aStringColumn), actual.aStringColumn);
         assertTrue(randomize.isValueProvided(aBooleanColumn, 0));
         assertEquals(fieldObjectMap.get(aBooleanColumn), actual.aBooleanColumn);
-
-    }
-
-    @Test
-    public void shouldNotRandomizeFieldsWhenNullAttributeValuesAreProvided() throws Exception {
-
-        mockRandomGenerator();
-        getMockedEntityTableMapping();
-
-        final RandomizeImpl randomize = RandomizeImpl.newInstance(cache, randomGenerator);
-
-        final List<Field> nullValueFields = new ArrayList<Field>();
-        nullValueFields.add(Util.getField(RandomizeImplTestClass.class, "aLongColumn"));
-        nullValueFields.add(Util.getField(RandomizeImplTestClass.class, "aStringColumn"));
-        nullValueFields.add(Util.getField(RandomizeImplTestClass.class, "aBooleanColumn"));
-        randomize.setNullValueFields(nullValueFields);
-
-        final RandomizeImplTestClass testClass = new RandomizeImplTestClass();
-        final RandomizeImplTestClass actual = randomize.populateRandomFields(testClass, 0);
-        Mockito.verify(randomGenerator, Mockito.times(0)).generateRandom(Mockito.any(Field.class));
-
-        assertNull(actual.aLongColumn);
-        assertNull(actual.aStringColumn);
-        assertNull(actual.aBooleanColumn);
 
     }
 

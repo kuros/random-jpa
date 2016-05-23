@@ -19,7 +19,6 @@ import com.github.kuros.random.jpa.types.CreationPlanImpl;
 import com.github.kuros.random.jpa.types.Entity;
 import com.github.kuros.random.jpa.types.EntityHelper;
 import com.github.kuros.random.jpa.types.Plan;
-import com.github.kuros.random.jpa.util.AttributeHelper;
 
 import java.util.List;
 
@@ -48,10 +47,8 @@ public abstract class BaseContext implements JPAContext {
         this.cache = cache;
     }
 
-    Randomize getRandomizer(final Plan plan) {
-        final RandomizeImpl randomize = RandomizeImpl.newInstance(cache, generator);
-        randomize.setNullValueFields(AttributeHelper.getFields(plan.getNullValueAttributes()));
-        return randomize;
+    Randomize getRandomizer() {
+        return RandomizeImpl.newInstance(cache, generator);
     }
 
     @SuppressWarnings("unchecked")

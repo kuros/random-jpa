@@ -65,7 +65,7 @@ public final class JPAContextImpl extends BaseContext {
         final Collection<CreationOrder> values = MergeUtil.merge(creationOrders);
         sort(values);
         final CreationPlanResolver creationPlanResolver = CreationPlanResolver.newInstance(
-                getRandomizer(plan), toArray(values));
+                getRandomizer(), toArray(values));
         final CreationPlan creationPlan = creationPlanResolver.with(hierarchyGraph).create();
         addAttributeValues(creationPlan, entities);
         return creationPlan;

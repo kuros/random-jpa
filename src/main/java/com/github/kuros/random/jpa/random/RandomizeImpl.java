@@ -9,9 +9,7 @@ import com.github.kuros.random.jpa.types.FieldIndex;
 import com.github.kuros.random.jpa.util.NumberUtil;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /*
@@ -35,14 +33,12 @@ public final class RandomizeImpl implements Randomize {
     private final RandomGenerator randomGenerator;
     private final AttributeProvider attributeProvider;
     private Map<Field, Object> fieldValueMap;
-    private List<Field> nullValueFields;
     private Map<FieldIndex, Object> fieldIndexMap;
 
     private RandomizeImpl(final Cache cache, final RandomGenerator randomGenerator) {
         this.attributeProvider = cache.getAttributeProvider();
         this.randomGenerator = randomGenerator;
         this.fieldValueMap = new HashMap<Field, Object>();
-        this.nullValueFields = new ArrayList<Field>();
         this.fieldIndexMap = new HashMap<FieldIndex, Object>();
     }
 
@@ -62,8 +58,7 @@ public final class RandomizeImpl implements Randomize {
             try {
                 if (isFieldValueProvided(declaredField, index)) {
                     declaredField.set(t, getFieldValue(declaredField, index));
-                } else if (isRandomRequired(declaredField)
-                        && isNotNullValue(declaredField)) {
+                } else if (isRandomRequired(declaredField)) {
                     declaredField.set(t, NumberUtil.castNumber(declaredField.getType(), randomGenerator.generateRandom(declaredField)));
                 }
             } catch (final Exception e) {
@@ -87,10 +82,6 @@ public final class RandomizeImpl implements Randomize {
         return fieldIndexMap.containsKey(new FieldIndex(declaredField, index)) || fieldValueMap.containsKey(declaredField);
     }
 
-    private boolean isNotNullValue(final Field declaredField) {
-        return !nullValueFields.contains(declaredField);
-    }
-
     public boolean isValueProvided(final Field field, final int index) {
         return getFieldValue(field, index) != null;
     }
@@ -101,10 +92,6 @@ public final class RandomizeImpl implements Randomize {
 
     public void addFieldValue(final Field field, final Object value) {
         fieldValueMap.put(field, value);
-    }
-
-    public void setNullValueFields(final List<Field> nullValueFields) {
-        this.nullValueFields = nullValueFields;
     }
 
     public void addFieldValue(final Field field, final int index, final Object value) {
