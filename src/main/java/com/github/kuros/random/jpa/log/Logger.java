@@ -26,7 +26,9 @@ public interface Logger {
     void debug(final String message, final Object... args);
     void debug(final String message, final Throwable throwable);
 
+    void warn(final String message, final Object... args);
+    void warn(final String message, final Throwable throwable);
+
     void error(final String message, final Object... args);
     void error(final String message, final Throwable throwable);
-
 }

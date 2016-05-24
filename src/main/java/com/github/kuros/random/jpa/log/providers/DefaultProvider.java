@@ -35,6 +35,14 @@ class DefaultProvider implements Logger {
         logger.log(Level.FINEST, message, throwable);
     }
 
+    public void warn(final String message, final Object... args) {
+        logger.log(Level.WARNING, Util.formatMessage(message, args));
+    }
+
+    public void warn(final String message, final Throwable throwable) {
+        logger.log(Level.WARNING, message, throwable);
+    }
+
     public void error(final String message, final Object... args) {
         logger.log(Level.SEVERE, message, args);
     }

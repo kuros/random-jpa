@@ -133,6 +133,16 @@ public class UtilTest {
         assertEquals(String.valueOf(testClass.getStringValue()), fieldValue);
     }
 
+    @Test
+    public void shouldCovertListToString() throws Exception {
+        final List<String> strings = new ArrayList<String>();
+        strings.add("a");
+        strings.add("b");
+        strings.add("c");
+
+        assertEquals("[a, b, c]", Util.convertToString(strings));
+    }
+
     private class TestClass {
         private int id;
         private String value;

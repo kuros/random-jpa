@@ -37,6 +37,15 @@ class Log4JProvider implements Logger {
         logger.info(message, throwable);
     }
 
+    public void warn(final String message, final Object... args) {
+        final String formatMessage = Util.formatMessage(message, args);
+        logger.warn(formatMessage);
+    }
+
+    public void warn(final String message, final Throwable throwable) {
+        logger.warn(message, throwable);
+    }
+
     public void error(final String message, final Object... args) {
         final String formatMessage = Util.formatMessage(message, args);
         logger.error(formatMessage);

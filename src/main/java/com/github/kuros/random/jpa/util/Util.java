@@ -10,6 +10,7 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.text.MessageFormat;
+import java.util.Collection;
 import java.util.List;
 
 /*
@@ -138,5 +139,19 @@ public class Util {
         } catch (final Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static String convertToString(final Collection<?> objects) {
+        String str = "[";
+        boolean isNotFirst = false;
+        for (Object object : objects) {
+            if (isNotFirst) {
+                str += ", ";
+            }
+            str += object;
+            isNotFirst = true;
+        }
+        str += "]";
+        return str;
     }
 }

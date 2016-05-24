@@ -33,6 +33,14 @@ class Slf4JProvider implements Logger {
         logger.debug(message, throwable);
     }
 
+    public void warn(final String message, final Object... args) {
+        logger.warn(message, args);
+    }
+
+    public void warn(final String message, final Throwable throwable) {
+        logger.warn(message, throwable);
+    }
+
     public void error(final String message, final Object... args) {
         logger.error(message, args);
     }
