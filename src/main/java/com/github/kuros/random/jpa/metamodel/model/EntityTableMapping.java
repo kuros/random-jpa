@@ -78,8 +78,9 @@ public class EntityTableMapping {
     }
 
     public void addAttributeColumnMapping(final String attributeName, final String columnName) {
-        attributeColumnMapping.put(attributeName, columnName);
-        columnAttributeMapping.put(columnName, attributeName);
+        final String columnNameInLowerCase = columnName.toLowerCase();
+        attributeColumnMapping.put(attributeName, columnNameInLowerCase);
+        columnAttributeMapping.put(columnNameInLowerCase, attributeName);
     }
 
     public String getColumnName(final String attributeName) {
@@ -87,7 +88,7 @@ public class EntityTableMapping {
     }
 
     public String getAttributeName(final String columnName) {
-        return columnAttributeMapping.get(columnName);
+        return columnAttributeMapping.get(columnName.toLowerCase());
     }
 
     public List<String> getColumnIds() {
