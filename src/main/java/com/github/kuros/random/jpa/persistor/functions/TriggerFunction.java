@@ -4,12 +4,17 @@ import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.cache.TriggerCache;
 import com.github.kuros.random.jpa.exception.RandomJPAException;
 import com.github.kuros.random.jpa.link.Link;
+import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
 import com.github.kuros.random.jpa.persistor.hepler.Finder;
 import com.github.kuros.random.jpa.types.Trigger;
 import com.github.kuros.random.jpa.util.AttributeHelper;
 import com.github.kuros.random.jpa.util.Util;
 
 import javax.persistence.EntityManager;
+import java.beans.BeanInfo;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,11 +61,36 @@ class TriggerFunction<T> implements Function<T> {
                         + Util.printValues(object) + " by values: " + attributeNames);
             }
 
-            entityManager.merge(object);
-            return object;
+            copyValues(object, found);
+
+            entityManager.merge(found);
+            return found;
         }
 
         return null;
+    }
+
+    private void copyValues(final T from, final T to) {
+
+        final EntityTableMapping entityTableMapping = cache.getAttributeProvider().get(from.getClass());
+        final List<String> attributeIds = entityTableMapping.getAttributeIds();
+        try {
+            final BeanInfo beanInfo = Introspector.getBeanInfo(from.getClass(), Object.class);
+            final PropertyDescriptor[] props = beanInfo.getPropertyDescriptors();
+            for (PropertyDescriptor pd : props) {
+
+                if (!attributeIds.contains(pd.getName())) {
+                    final Method getter = pd.getReadMethod();
+
+                    final Object value = getter.invoke(from);
+
+                    pd.getWriteMethod().invoke(to, value);
+                }
+            }
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     private List<String> getAttributeNames(final Trigger<?> trigger) {

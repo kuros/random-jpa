@@ -3,6 +3,8 @@ package com.github.kuros.random.jpa.persistor.functions;
 import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.cache.TriggerCache;
 import com.github.kuros.random.jpa.exception.RandomJPAException;
+import com.github.kuros.random.jpa.metamodel.AttributeProvider;
+import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
 import com.github.kuros.random.jpa.persistor.hepler.Finder;
 import com.github.kuros.random.jpa.testUtil.EntityManagerProvider;
 import com.github.kuros.random.jpa.testUtil.RandomFixture;
@@ -29,6 +31,7 @@ public class TriggerFunctionTest {
     @Mock private Cache cache;
     @Mock private Finder finder;
     @Mock private EntityManager entityManager;
+    @Mock private AttributeProvider attributeProvider;
     private TriggerFunction triggerFunction;
 
     @Before
@@ -37,19 +40,30 @@ public class TriggerFunctionTest {
 
         Mockito.when(cache.getTriggerCache()).thenReturn(getTriggerCache());
         Mockito.when(cache.getEntityManager()).thenReturn(entityManager);
+        Mockito.when(cache.getAttributeProvider()).thenReturn(attributeProvider);
         triggerFunction = new TriggerFunction(cache);
         triggerFunction.setFinder(finder);
     }
 
     @Test @SuppressWarnings("unchecked")
     public void shouldFindObjectIfObjectIsTriggerEntity() {
-        final Z z = RandomFixture.create(Z.class);
 
-        Mockito.when(finder.findByAttributes(Mockito.any(), Mockito.anyList())).thenReturn(z);
+        EntityTableMapping entityTableMapping = new EntityTableMapping(Z.class);
+        entityTableMapping.addAttributeIds("id");
+
+        Mockito.when(attributeProvider.get(Mockito.eq(Z.class))).thenReturn(entityTableMapping);
+
+        final Z z = RandomFixture.create(Z.class);
+        final Z dbEntry = RandomFixture.create(Z.class);
+        dbEntry.setxId(z.getxId());
+
+        Mockito.when(finder.findByAttributes(Mockito.any(), Mockito.anyList())).thenReturn(dbEntry);
 
         final Z apply = (Z) triggerFunction.apply(z);
 
-        assertEquals(z, apply);
+        assertEquals(dbEntry.getId(), apply.getId());
+        assertEquals(dbEntry.getxId(), apply.getxId());
+        assertEquals(z.getyId(), apply.getyId());
     }
 
     @Test(expected = RandomJPAException.class) @SuppressWarnings("unchecked")

@@ -1,8 +1,5 @@
 package com.github.kuros.random.jpa.link;
 
-import com.github.kuros.random.jpa.types.Entity;
-import com.github.kuros.random.jpa.types.Plan;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

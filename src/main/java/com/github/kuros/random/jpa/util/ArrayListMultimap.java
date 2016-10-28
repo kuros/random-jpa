@@ -1,6 +1,10 @@
 package com.github.kuros.random.jpa.util;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /*
  * Copyright (c) 2015 Kumar Rohit
