@@ -2,6 +2,7 @@ package com.github.kuros.random.jpa.cleanup;
 
 import com.github.kuros.random.jpa.Database;
 import com.github.kuros.random.jpa.cache.Cache;
+import com.github.kuros.random.jpa.persistor.hepler.Finder;
 import com.github.kuros.random.jpa.testUtil.EntityManagerProvider;
 import com.github.kuros.random.jpa.testUtil.RandomFixture;
 import com.github.kuros.random.jpa.testUtil.entity.P;
@@ -29,14 +30,18 @@ public class CleanerImplTest {
     private Cache cache;
     private EntityManager entityManager;
     private Cleaner cleaner;
+    private Finder finder;
 
     @Before
     public void setUp() throws Exception {
         this.entityManager = EntityManagerProvider.getEntityManager();
         cache = Cache.create(Database.NONE, entityManager);
         cache.with(MockedHierarchyGraph.getHierarchyGraph());
+        finder = new Finder(cache);
+        finder.setEntityManager(entityManager);
 
         cleaner = CleanerImpl.newInstance(cache);
+        ((CleanerImpl)cleaner).setFinder(finder);
     }
 
     @Test

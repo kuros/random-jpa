@@ -36,7 +36,12 @@ public class Finder {
     private EntityManager entityManager;
 
     public Finder(final Cache cache) {
-        this.entityManager = cache.getEntityManager();
+        this.entityManager = getEntityManager(cache);
+    }
+
+    EntityManager getEntityManager(final Cache cache) {
+        final EntityManagerWithNoLock entityManagerWithNoLock = new EntityManagerWithNoLockImpl(cache.getEntityManager());
+        return entityManagerWithNoLock.getEntityManager();
     }
 
     @SuppressWarnings("unchecked")
@@ -115,5 +120,9 @@ public class Finder {
 
     private <T> boolean isEmpty(final Class<T> type, final Map<String, Object> attributeValues) {
         return type == null || attributeValues == null || attributeValues.isEmpty();
+    }
+
+    public void setEntityManager(final EntityManager entityManager) {
+        this.entityManager = entityManager;
     }
 }

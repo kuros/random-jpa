@@ -199,4 +199,7 @@ public final class CleanerImpl implements Cleaner {
         }
     }
 
+    void setFinder(final Finder finder) {
+        this.finder = finder;
+    }
 }
