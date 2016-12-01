@@ -81,10 +81,13 @@ class TriggerFunction<T> implements Function<T> {
 
                 if (!attributeIds.contains(pd.getName())) {
                     final Method getter = pd.getReadMethod();
+                    final Method setter = pd.getWriteMethod();
 
-                    final Object value = getter.invoke(from);
+                    if (getter != null && setter != null) {
+                        final Object value = getter.invoke(from);
+                        setter.invoke(to, value);
+                    }
 
-                    pd.getWriteMethod().invoke(to, value);
                 }
             }
         } catch (final Exception e) {
