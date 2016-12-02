@@ -37,8 +37,8 @@ import java.util.Set;
  */
 public final class CleanerImpl implements Cleaner {
 
-    public static final int BATCH_SIZE = 10;
-    public static final String DELETE_FROM = "DELETE FROM ";
+    private static final int BATCH_SIZE = 10;
+    private static final String DELETE_FROM = "DELETE FROM ";
     private EntityManager entityManager;
     private HierarchyGraph hierarchyGraph;
     private ChildGraph childGraph;
@@ -199,7 +199,4 @@ public final class CleanerImpl implements Cleaner {
         }
     }
 
-    void setFinder(final Finder finder) {
-        this.finder = finder;
-    }
 }
