@@ -17,6 +17,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /*
  * Copyright (c) 2015 Kumar Rohit
@@ -48,7 +49,7 @@ public class Finder {
     }
 
     @SuppressWarnings("unchecked")
-    public  <T> T findByAttributes(final T typeObject, final List<String> attributes) {
+    public <T> T findByAttributes(final T typeObject, final List<String> attributes) {
 
         if (isEmpty(typeObject, attributes)) {
             throw new ResultNotFoundException("object/attributes are empty");
@@ -59,9 +60,11 @@ public class Finder {
 
         final String tableName = entityTableMapping.getTableName();
 
-        final String query = SELECT_FROM + tableName + " " + getNoLockCondition() + getWhereClause(entityTableMapping, typeObject, attributes);
+        final String query = SELECT_FROM + tableName + " " + getNoLockCondition() + getWhereClause(entityTableMapping, attributes);
 
         final Query nativeQuery = entityManager.createNativeQuery(query, tableClass);
+
+        populateParameters(nativeQuery, typeObject, attributes);
 
         try {
             final Object singleResult = nativeQuery.getSingleResult();
@@ -71,10 +74,8 @@ public class Finder {
         }
     }
 
-    private <T> String getWhereClause(final EntityTableMapping entityTableMapping, final T typeObject, final List<String> attributes) {
-        final StringJoiner andJoiner = new StringJoiner(" WHERE ", " and ");
-        final StringBuilder builder = new StringBuilder();
-        for (final String attribute : attributes) {
+    private <T> void populateParameters(final Query nativeQuery, final T typeObject, final List<String> attributes) {
+        for (String attribute : attributes) {
             try {
                 final Field declaredField = Util.getField(typeObject.getClass(), attribute);
                 declaredField.setAccessible(true);
@@ -83,14 +84,21 @@ public class Finder {
                     throw new EmptyFieldException();
                 }
 
-                final String columnName = entityTableMapping.getColumnName(attribute);
-
-                builder.append(andJoiner.next()).append(columnName).append("=").append("'").append(fieldValue).append("'");
+                nativeQuery.setParameter(attribute, fieldValue);
             } catch (final EmptyFieldException e) {
                 throw new ResultNotFoundException(e);
             } catch (final Exception e) {
                 throw new RandomJPAException(e);
             }
+        }
+    }
+
+    private String getWhereClause(final EntityTableMapping entityTableMapping, final List<String> attributes) {
+        final StringJoiner andJoiner = new StringJoiner(" WHERE ", " and ");
+        final StringBuilder builder = new StringBuilder();
+        for (final String attribute : attributes) {
+            final String columnName = entityTableMapping.getColumnName(attribute);
+            builder.append(andJoiner.next()).append(columnName).append("=:").append(attribute);
         }
         return builder.toString();
     }
@@ -110,7 +118,7 @@ public class Finder {
     }
 
     @SuppressWarnings("unchecked")
-    public  <T> List<T> findByAttributes(final Class<T> type, final Map<String, Object> attributeValues) {
+    public <T> List<T> findByAttributes(final Class<T> type, final Map<String, Object> attributeValues) {
 
         if (isEmpty(type, attributeValues)) {
             return new ArrayList<T>();
@@ -118,27 +126,29 @@ public class Finder {
 
         final EntityTableMapping entityTableMapping = attributeProvider.get(type);
 
-        final String query = SELECT_FROM + entityTableMapping.getTableName() + " " + getNoLockCondition() + getWhereClause(entityTableMapping, attributeValues);
+        final String query = SELECT_FROM + entityTableMapping.getTableName() + " " + getNoLockCondition() + getWhereClause(entityTableMapping, attributeValues.keySet());
 
         System.out.println(query);
 
         final Query nativeQuery = entityManager.createNativeQuery(query, type);
+        for (String attribute : attributeValues.keySet()) {
+            nativeQuery.setParameter(attribute, attributeValues.get(attribute));
+        }
         return nativeQuery.getResultList();
     }
 
-    private String getWhereClause(final EntityTableMapping entityTableMapping, final Map<String, Object> attributeValues) {
+    private String getWhereClause(final EntityTableMapping entityTableMapping, final Set<String> attributeValues) {
         final StringJoiner andJoiner = new StringJoiner(" WHERE ", " and ");
         final StringBuilder builder = new StringBuilder();
 
-        for (String attribute : attributeValues.keySet()) {
+        for (String attribute : attributeValues) {
             final String columnName = entityTableMapping.getColumnName(attribute);
             builder
                     .append(andJoiner.next())
                     .append(columnName)
-                    .append("=")
-                    .append("'")
-                    .append(attributeValues.get(attribute))
-                    .append("'");
+                    .append("=:")
+                    .append(attribute);
+
         }
         return builder.toString();
     }
