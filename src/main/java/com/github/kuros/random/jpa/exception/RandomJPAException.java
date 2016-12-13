@@ -26,7 +26,7 @@ public class RandomJPAException extends RuntimeException {
         super(message);
     }
 
-    public RandomJPAException(Throwable cause) {
+    public RandomJPAException(final Throwable cause) {
         super(cause);
     }
 }

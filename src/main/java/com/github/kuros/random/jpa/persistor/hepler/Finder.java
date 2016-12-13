@@ -1,15 +1,18 @@
 package com.github.kuros.random.jpa.persistor.hepler;
 
+import com.github.kuros.random.jpa.Database;
 import com.github.kuros.random.jpa.cache.Cache;
+import com.github.kuros.random.jpa.exception.EmptyFieldException;
 import com.github.kuros.random.jpa.exception.RandomJPAException;
+import com.github.kuros.random.jpa.exception.ResultNotFoundException;
+import com.github.kuros.random.jpa.metamodel.AttributeProvider;
+import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
+import com.github.kuros.random.jpa.util.StringJoiner;
 import com.github.kuros.random.jpa.util.Util;
 
 import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,54 +36,77 @@ import java.util.Map;
  */
 public class Finder {
 
+    public static final String SELECT_FROM = "SELECT * FROM ";
     private EntityManager entityManager;
+    private AttributeProvider attributeProvider;
+    private Database database;
 
     public Finder(final Cache cache) {
         this.entityManager = cache.getEntityManager();
+        this.attributeProvider = cache.getAttributeProvider();
+        database = cache.getDatabase();
     }
 
     @SuppressWarnings("unchecked")
     public  <T> T findByAttributes(final T typeObject, final List<String> attributes) {
 
         if (isEmpty(typeObject, attributes)) {
-            return null;
+            throw new ResultNotFoundException("object/attributes are empty");
         }
 
         final Class<?> tableClass = typeObject.getClass();
-        final CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        final CriteriaQuery q = criteriaBuilder.createQuery(tableClass);
+        final EntityTableMapping entityTableMapping = attributeProvider.get(tableClass);
 
-        final Root<?> from = q.from(tableClass);
+        final String tableName = entityTableMapping.getTableName();
 
-        q.select(from);
+        final String query = SELECT_FROM + tableName + " " + getNoLockCondition() + getWhereClause(entityTableMapping, typeObject, attributes);
 
-        final Predicate[] predicates = new Predicate[attributes.size()];
+        final Query nativeQuery = entityManager.createNativeQuery(query, tableClass);
 
-        for (int i = 0; i < attributes.size(); i++) {
-            final String attribute = attributes.get(i);
+        try {
+            final Object singleResult = nativeQuery.getSingleResult();
+            return (T) singleResult;
+        } catch (final NoResultException e) {
+            throw new ResultNotFoundException(e);
+        }
+    }
+
+    private <T> String getWhereClause(final EntityTableMapping entityTableMapping, final T typeObject, final List<String> attributes) {
+        final StringJoiner andJoiner = new StringJoiner(" WHERE ", " and ");
+        final StringBuilder builder = new StringBuilder();
+        for (final String attribute : attributes) {
             try {
-                final Field declaredField = Util.getField(tableClass, attribute);
+                final Field declaredField = Util.getField(typeObject.getClass(), attribute);
                 declaredField.setAccessible(true);
                 final Object fieldValue = declaredField.get(typeObject);
                 if (fieldValue == null) {
-                    return null;
+                    throw new EmptyFieldException();
                 }
-                predicates[i] = criteriaBuilder.equal(from.get(attribute), fieldValue);
+
+                final String columnName = entityTableMapping.getColumnName(attribute);
+
+                builder.append(andJoiner.next()).append(columnName).append("=").append("'").append(fieldValue).append("'");
+            } catch (final EmptyFieldException e) {
+                throw new ResultNotFoundException(e);
             } catch (final Exception e) {
                 throw new RandomJPAException(e);
             }
         }
-
-        q.where(predicates);
-
-        final TypedQuery typedQuery = entityManager.createQuery(q);
-        final List resultList = typedQuery.getResultList();
-
-        return resultList.size() == 0 ? null : (T) resultList.get(0);
+        return builder.toString();
     }
 
-    private <T> boolean isEmpty(final T typeObject, final List<String> attributes) {
-        return typeObject == null || attributes == null || attributes.isEmpty();
+    private String getNoLockCondition() {
+        final String val;
+        switch (database) {
+            case MS_SQL_SERVER:
+                val = "WITH(NOLOCK)";
+                break;
+            case MY_SQL:
+            case ORACLE:
+            default:
+                val = "";
+        }
+        return val;
     }
 
     @SuppressWarnings("unchecked")
@@ -90,27 +116,35 @@ public class Finder {
             return new ArrayList<T>();
         }
 
-        final CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        final CriteriaQuery q = criteriaBuilder.createQuery(type);
+        final EntityTableMapping entityTableMapping = attributeProvider.get(type);
 
-        final Root<?> from = q.from(type);
+        final String query = SELECT_FROM + entityTableMapping.getTableName() + " " + getNoLockCondition() + getWhereClause(entityTableMapping, attributeValues);
 
-        q.select(from);
+        System.out.println(query);
 
-        final Predicate[] predicates = new Predicate[attributeValues.keySet().size()];
+        final Query nativeQuery = entityManager.createNativeQuery(query, type);
+        return nativeQuery.getResultList();
+    }
 
-        final List<Predicate> predicateList = new ArrayList<Predicate>();
-        for (String s : attributeValues.keySet()) {
-            predicateList.add(criteriaBuilder.equal(from.get(s), attributeValues.get(s)));
+    private String getWhereClause(final EntityTableMapping entityTableMapping, final Map<String, Object> attributeValues) {
+        final StringJoiner andJoiner = new StringJoiner(" WHERE ", " and ");
+        final StringBuilder builder = new StringBuilder();
+
+        for (String attribute : attributeValues.keySet()) {
+            final String columnName = entityTableMapping.getColumnName(attribute);
+            builder
+                    .append(andJoiner.next())
+                    .append(columnName)
+                    .append("=")
+                    .append("'")
+                    .append(attributeValues.get(attribute))
+                    .append("'");
         }
+        return builder.toString();
+    }
 
-        q.where(predicateList.toArray(predicates));
-
-        q.where(predicates);
-
-        final TypedQuery typedQuery = entityManager.createQuery(q);
-
-        return typedQuery.getResultList();
+    private <T> boolean isEmpty(final T typeObject, final List<String> attributes) {
+        return typeObject == null || attributes == null || attributes.isEmpty();
     }
 
     private <T> boolean isEmpty(final Class<T> type, final Map<String, Object> attributeValues) {

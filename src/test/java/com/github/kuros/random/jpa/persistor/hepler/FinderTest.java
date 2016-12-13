@@ -3,6 +3,7 @@ package com.github.kuros.random.jpa.persistor.hepler;
 import com.github.kuros.random.jpa.Database;
 import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.exception.RandomJPAException;
+import com.github.kuros.random.jpa.exception.ResultNotFoundException;
 import com.github.kuros.random.jpa.testUtil.EntityManagerProvider;
 import com.github.kuros.random.jpa.testUtil.RandomFixture;
 import com.github.kuros.random.jpa.testUtil.entity.P;
@@ -18,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 public class FinderTest {
 
@@ -69,14 +70,14 @@ public class FinderTest {
         finder.findByAttributes(input, attributes);
     }
 
-    @Test
+    @Test(expected = ResultNotFoundException.class)
     public void shouldReturnNullIfResultIsNotFound() throws Exception {
         final Q input = new Q();
         input.setpId(RandomFixture.create(Long.class));
 
         final List<String> attributes = new ArrayList<String>();
         attributes.add("pId");
-        assertNull(finder.findByAttributes(input, attributes));
+        finder.findByAttributes(input, attributes);
     }
 
     @Test
@@ -84,21 +85,40 @@ public class FinderTest {
         final Q input = new Q();
 
         final List<String> attributes = new ArrayList<String>();
-        assertNull(finder.findByAttributes(input, attributes));
+
+        try {
+            finder.findByAttributes(input, attributes);
+            fail();
+        } catch (final ResultNotFoundException e) {
+            // success
+        }
 
         attributes.add("id");
-        assertNull(finder.findByAttributes(null, attributes));
 
-        assertNull(finder.findByAttributes(input, null));
+
+        try {
+            finder.findByAttributes(null, attributes);
+            fail();
+        } catch (final ResultNotFoundException e) {
+            // success
+        }
+
+
+        try {
+            finder.findByAttributes(input, null);
+            fail();
+        } catch (final ResultNotFoundException e) {
+            //success
+        }
     }
 
-    @Test
+    @Test(expected = RandomJPAException.class)
     public void shouldReturnNullIfAttributeValueIsNull() throws Exception {
         final Q input = new Q();
 
         final List<String> attributes = new ArrayList<String>();
         attributes.add("pId");
-        assertNull(finder.findByAttributes(input, attributes));
+        finder.findByAttributes(input, attributes);
     }
 
     @Test

@@ -133,4 +133,8 @@ public class Cache {
     public HierarchyGraph getHierarchyGraph() {
         return hierarchyGraph;
     }
+
+    public Database getDatabase() {
+        return database;
+    }
 }

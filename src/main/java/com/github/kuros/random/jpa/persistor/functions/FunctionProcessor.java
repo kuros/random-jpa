@@ -37,9 +37,13 @@ public class FunctionProcessor<T> {
         T persistedObject = null;
 
         for (Function<T> function : functions) {
-            persistedObject = function.apply(object);
-            if (persistedObject != null) {
-                break;
+            try {
+                persistedObject = function.apply(object);
+                if (persistedObject != null) {
+                    break;
+                }
+            } catch (final RandomJPAException e) {
+                // Do nothing
             }
         }
 
