@@ -2,6 +2,7 @@ package com.github.kuros.random.jpa;
 
 import com.github.kuros.random.jpa.persistor.model.ResultMap;
 import com.github.kuros.random.jpa.types.CreationPlan;
+import com.github.kuros.random.jpa.types.Entity;
 import com.github.kuros.random.jpa.types.Plan;
 
 /*
@@ -23,7 +24,11 @@ import com.github.kuros.random.jpa.types.Plan;
 public interface JPAContext {
     CreationPlan create(Plan plan);
 
+    CreationPlan create(Entity... entities);
+
     ResultMap persist(CreationPlan creationPlan);
+
+    ResultMap createAndPersist(Entity... entities);
 
     ResultMap createAndPersist(Plan plan);
 

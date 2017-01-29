@@ -125,12 +125,28 @@ final JPAContext jpaContext = JPAContextFactory.newInstance(Database.MS_SQL_SERV
 ### Creating Plan
 Once JPAContext is initialized, you can use it to create plans and persist them accordingly.
 Let us say that we want to create two different Employees referring to single Person
+Or
+```java
+CreationPlan creationPlan = jpaContext.create(
+            Entity.of(Employee.class, 2).with(Employee_.Country, INDIA),
+            Entity.of(Person.class).with(Person_.gender, "Male"));
+```
+or
 ```java
 Plan plan = Plan.create()
             .add(Entity.of(Employee.class, 2).with(Employee_.Country, INDIA))
             .add(Entity.of(Person.class).with(Person_.gender, "Male");
 CreationPlan creationPlan = jpaContext.create(plan);
 ```
+or
+```java
+Plan plan = Plan.of(
+            Entity.of(Employee.class, 2).with(Employee_.Country, INDIA),
+            Entity.of(Person.class).with(Person_.gender, "Male"));
+
+CreationPlan creationPlan = jpaContext.create(plan);
+```
+
 ### Modify the creationPlan
 Let us say that I want to persist these two employees with different name.
 ```java

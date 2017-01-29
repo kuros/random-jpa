@@ -61,10 +61,18 @@ public abstract class BaseContext implements JPAContext {
         }
     }
 
+    public CreationPlan create(final Entity... entities) {
+        return create(Plan.of(entities));
+    }
+
     public ResultMap persist(final CreationPlan creationPlan) {
         final CreationPlanImpl creationPlanImpl = (CreationPlanImpl) creationPlan;
         final Persistor persistor = EntityPersistorImpl.newInstance(cache, creationPlanImpl.getHierarchyGraph(), creationPlanImpl.getRandomize());
         return ResultMapImpl.newInstance(persistor.persist(creationPlan));
+    }
+
+    public ResultMap createAndPersist(final Entity... entities) {
+        return createAndPersist(Plan.of(entities));
     }
 
     public ResultMap createAndPersist(final Plan plan) {
