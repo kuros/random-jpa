@@ -29,7 +29,8 @@ public interface Randomize {
 
     void addDefaultFieldValue(Map<Field, Object> fieldValueMap);
 
+    void addDefaultFieldValue(final Field field, final Object value);
+
     void addCustomFieldValue(final Field field, final int index, final Object value);
 
-    void addDefaultFieldValue(final Field field, final Object value);
 }

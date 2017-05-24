@@ -56,7 +56,7 @@ public final class RandomizeImpl implements Randomize {
         for (final Field declaredField : declaredFields) {
             declaredField.setAccessible(true);
             try {
-                if (isFieldValueProvided(declaredField, index)) {
+                if (isValueProvided(declaredField, index)) {
                     declaredField.set(t, getFieldValue(declaredField, index));
                 } else if (isRandomRequired(declaredField)) {
                     declaredField.set(t, NumberUtil.castNumber(declaredField.getType(), randomGenerator.generateRandom(declaredField)));
@@ -71,19 +71,17 @@ public final class RandomizeImpl implements Randomize {
     }
 
     private Object getFieldValue(final Field declaredField, final int index) {
-        final Object value = customFieldIndexMap.get(new FieldIndex(declaredField, index));
-        if (value == null) {
-            return defaultFieldValueMap.get(declaredField);
-        }
-        return value;
-    }
+        final FieldIndex key = new FieldIndex(declaredField, index);
 
-    private boolean isFieldValueProvided(final Field declaredField, final int index) {
-        return customFieldIndexMap.containsKey(new FieldIndex(declaredField, index)) || defaultFieldValueMap.containsKey(declaredField);
+        if (customFieldIndexMap.containsKey(key)) {
+            return customFieldIndexMap.get(key);
+        }
+
+        return defaultFieldValueMap.get(declaredField);
     }
 
     public boolean isValueProvided(final Field field, final int index) {
-        return getFieldValue(field, index) != null;
+        return customFieldIndexMap.containsKey(new FieldIndex(field, index)) || defaultFieldValueMap.containsKey(field);
     }
 
     public void addDefaultFieldValue(final Map<Field, Object> fieldValues) {

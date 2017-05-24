@@ -11,8 +11,11 @@ import com.github.kuros.random.jpa.testUtil.entity.D;
 import com.github.kuros.random.jpa.testUtil.entity.D_;
 import com.github.kuros.random.jpa.testUtil.entity.E;
 import com.github.kuros.random.jpa.testUtil.entity.E_;
+import com.github.kuros.random.jpa.testUtil.entity.P;
 import com.github.kuros.random.jpa.testUtil.entity.PrimitiveEntity;
 import com.github.kuros.random.jpa.testUtil.entity.PrimitiveEntity_;
+import com.github.kuros.random.jpa.testUtil.entity.Q;
+import com.github.kuros.random.jpa.testUtil.entity.Q_;
 import com.github.kuros.random.jpa.testUtil.entity.RelationEntity;
 import com.github.kuros.random.jpa.testUtil.entity.RelationManyToOne;
 import com.github.kuros.random.jpa.testUtil.entity.RelationOneToMany;
@@ -468,6 +471,27 @@ public class JPAContextTest {
 
         assertNull(persist.get(Z.class).getyId());
         assertNotNull(persist.get(Z.class, 1).getyId());
+    }
+
+    @Test
+    public void shouldOverrideCustomValuesForEntityReferenceIdIsNull() throws Exception {
+        final Dependencies dependencies = Dependencies.newInstance();
+        dependencies.withLink(DependencyHelper.getLinks());
+        final JPAContext jpaContext = JPAContextFactory
+                .newInstance(Database.NONE, entityManager)
+                .with(dependencies)
+                .generate();
+
+
+        entityManager.getTransaction().begin();
+
+        final CreationPlan creationPlan = jpaContext.create(Entity.of(Q.class));
+        creationPlan.set(Q_.pId, null);
+
+        final ResultMap persist = jpaContext.persist(creationPlan);
+        entityManager.getTransaction().commit();
+
+        assertNull(persist.get(Q.class).getpId());
     }
 
     private void persistAndVerifyCustomValues(final JPAContext jpaContext) {
