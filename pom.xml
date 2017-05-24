@@ -80,6 +80,7 @@
         <maven-deploy-plugin.version>2.5</maven-deploy-plugin.version>
         <maven-javadoc-plugin.version>2.7</maven-javadoc-plugin.version>
         <maven-source-plugin.version>2.1.2</maven-source-plugin.version>
+        <coveralls-maven-plugin.version>3.0.1</coveralls-maven-plugin.version>
     </properties>
 
     <dependencies>
@@ -195,6 +196,11 @@
                                 </goals>
                             </execution>
                         </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.eluder.coveralls</groupId>
+                        <artifactId>coveralls-maven-plugin</artifactId>
+                        <version>${coveralls-maven-plugin.version}</version>
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
