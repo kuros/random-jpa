@@ -27,9 +27,9 @@ public interface Randomize {
 
     boolean isValueProvided(final Field field, final int index);
 
-    void addFieldValue(Map<Field, Object> fieldValueMap);
+    void addDefaultFieldValue(Map<Field, Object> fieldValueMap);
 
-    void addFieldValue(final Field field, final int index, final Object value);
+    void addCustomFieldValue(final Field field, final int index, final Object value);
 
-    void addFieldValue(final Field field, final Object value);
+    void addDefaultFieldValue(final Field field, final Object value);
 }

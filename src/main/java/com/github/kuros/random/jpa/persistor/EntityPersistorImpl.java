@@ -140,7 +140,7 @@ public final class EntityPersistorImpl implements Persistor {
             final Field fromField = relation.getFrom().getField();
             if (!randomize.isValueProvided(fromField, getIndexForNewEntity(resultNodeTree, fromField.getDeclaringClass()))) {
                 final Object value = getFieldValue(resultNodeTree, relation);
-                randomize.addFieldValue(fromField, getIndexForNewEntity(resultNodeTree, fromField.getDeclaringClass()), value);
+                randomize.addCustomFieldValue(fromField, getIndexForNewEntity(resultNodeTree, fromField.getDeclaringClass()), value);
             }
         } catch (final Exception e) {
             //do nothing

@@ -78,9 +78,9 @@ public class PersistedEntityResolverImpl implements PersistedEntityResolver {
         if ((entityTableMapping != null && !entityTableMapping.getAttributeIds().contains(declaredField.getName()))
                 || relations == null) {
             if (fieldIndexValue.getIndex() == PersistedEntityResolver.DEFAULT_INDEX) {
-                randomize.addFieldValue(fieldIndexValue.getField(), fieldIndexValue.getValue());
+                randomize.addDefaultFieldValue(fieldIndexValue.getField(), fieldIndexValue.getValue());
             } else {
-                randomize.addFieldValue(fieldIndexValue.getField(), fieldIndexValue.getIndex(), fieldIndexValue.getValue());
+                randomize.addCustomFieldValue(fieldIndexValue.getField(), fieldIndexValue.getIndex(), fieldIndexValue.getValue());
             }
             return false;
         }

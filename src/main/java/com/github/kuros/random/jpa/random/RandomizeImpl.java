@@ -32,14 +32,14 @@ public final class RandomizeImpl implements Randomize {
 
     private final RandomGenerator randomGenerator;
     private final AttributeProvider attributeProvider;
-    private Map<Field, Object> fieldValueMap;
-    private Map<FieldIndex, Object> fieldIndexMap;
+    private Map<Field, Object> defaultFieldValueMap;
+    private Map<FieldIndex, Object> customFieldIndexMap;
 
     private RandomizeImpl(final Cache cache, final RandomGenerator randomGenerator) {
         this.attributeProvider = cache.getAttributeProvider();
         this.randomGenerator = randomGenerator;
-        this.fieldValueMap = new HashMap<Field, Object>();
-        this.fieldIndexMap = new HashMap<FieldIndex, Object>();
+        this.defaultFieldValueMap = new HashMap<Field, Object>();
+        this.customFieldIndexMap = new HashMap<FieldIndex, Object>();
     }
 
     public static RandomizeImpl newInstance(final Cache cache, final RandomGenerator randomGenerator) {
@@ -71,31 +71,31 @@ public final class RandomizeImpl implements Randomize {
     }
 
     private Object getFieldValue(final Field declaredField, final int index) {
-        final Object value = fieldIndexMap.get(new FieldIndex(declaredField, index));
+        final Object value = customFieldIndexMap.get(new FieldIndex(declaredField, index));
         if (value == null) {
-            return fieldValueMap.get(declaredField);
+            return defaultFieldValueMap.get(declaredField);
         }
         return value;
     }
 
     private boolean isFieldValueProvided(final Field declaredField, final int index) {
-        return fieldIndexMap.containsKey(new FieldIndex(declaredField, index)) || fieldValueMap.containsKey(declaredField);
+        return customFieldIndexMap.containsKey(new FieldIndex(declaredField, index)) || defaultFieldValueMap.containsKey(declaredField);
     }
 
     public boolean isValueProvided(final Field field, final int index) {
         return getFieldValue(field, index) != null;
     }
 
-    public void addFieldValue(final Map<Field, Object> fieldValues) {
-        this.fieldValueMap = fieldValues;
+    public void addDefaultFieldValue(final Map<Field, Object> fieldValues) {
+        this.defaultFieldValueMap = fieldValues;
     }
 
-    public void addFieldValue(final Field field, final Object value) {
-        fieldValueMap.put(field, value);
+    public void addDefaultFieldValue(final Field field, final Object value) {
+        defaultFieldValueMap.put(field, value);
     }
 
-    public void addFieldValue(final Field field, final int index, final Object value) {
-        fieldIndexMap.put(new FieldIndex(field, index), value);
+    public void addCustomFieldValue(final Field field, final int index, final Object value) {
+        customFieldIndexMap.put(new FieldIndex(field, index), value);
     }
 
     private boolean isRandomRequired(final Field declaredField) {

@@ -120,7 +120,7 @@ public class RandomizeImplTest {
         fieldObjectMap.put(aBooleanColumn, RandomFixture.create(aBooleanColumn.getType()));
 
         final Randomize randomize = RandomizeImpl.newInstance(cache, randomGenerator);
-        randomize.addFieldValue(fieldObjectMap);
+        randomize.addDefaultFieldValue(fieldObjectMap);
 
         final RandomizeImplTestClass testClass = new RandomizeImplTestClass();
 
