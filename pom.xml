@@ -168,6 +168,24 @@
                     <testNGArtifactName>none:none</testNGArtifactName>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.7.6.201602180812</version>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.eluder.coveralls</groupId>
+                <artifactId>coveralls-maven-plugin</artifactId>
+                <version>${coveralls-maven-plugin.version}</version>
+            </plugin>
         </plugins>
     </build>
 
@@ -196,11 +214,6 @@
                                 </goals>
                             </execution>
                         </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.eluder.coveralls</groupId>
-                        <artifactId>coveralls-maven-plugin</artifactId>
-                        <version>${coveralls-maven-plugin.version}</version>
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>

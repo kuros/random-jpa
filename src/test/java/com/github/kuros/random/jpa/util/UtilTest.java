@@ -15,10 +15,10 @@ import org.mockito.MockitoAnnotations;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /*
  * Copyright (c) 2015 Kumar Rohit
@@ -59,8 +59,7 @@ public class UtilTest {
         person.setFirstName("myName");
 
         final String printValues = Util.printValues(person);
-        assertEquals("[personId: 1, firstName: myName, lastName: null]", printValues);
-        System.out.println(new Date());
+        assertTrue(printValues.contains("[personId: 1, firstName: myName, lastName: null"));
     }
 
     @Test
