@@ -1,4 +1,4 @@
-# Random-JPA [![Build Status](https://travis-ci.org/kuros/random-jpa.svg?branch=master)](https://travis-ci.org/kuros/random-jpa) [![Coverage Status](https://coveralls.io/repos/kuros/random-jpa/badge.svg?branch=master&service=github)](https://coveralls.io/github/kuros/random-jpa?branch=master)  [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.kuros/random-jpa/badge.svg)](http://search.maven.org/#search|ga|1|random-jpa)
+# Random-JPA [![Build Status](https://travis-ci.org/kuros/random-jpa.svg?branch=master)](https://travis-ci.org/kuros/random-jpa) [![Coverage Status](https://coveralls.io/repos/github/kuros/random-jpa/badge.svg?branch=master)](https://coveralls.io/github/kuros/random-jpa?branch=master)  [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.kuros/random-jpa/badge.svg)](http://search.maven.org/#search|ga|1|random-jpa)
 It has been always been a challenge to create a test data. This project aims at providing easier mechanism to create test data.
 
 Maven Group Plugin | Latest Version
