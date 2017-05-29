@@ -11,7 +11,6 @@ import com.github.kuros.random.jpa.testUtil.entity.D;
 import com.github.kuros.random.jpa.testUtil.entity.D_;
 import com.github.kuros.random.jpa.testUtil.entity.E;
 import com.github.kuros.random.jpa.testUtil.entity.E_;
-import com.github.kuros.random.jpa.testUtil.entity.P;
 import com.github.kuros.random.jpa.testUtil.entity.PrimitiveEntity;
 import com.github.kuros.random.jpa.testUtil.entity.PrimitiveEntity_;
 import com.github.kuros.random.jpa.testUtil.entity.Q;
@@ -27,7 +26,6 @@ import com.github.kuros.random.jpa.testUtil.entity.Z_;
 import com.github.kuros.random.jpa.testUtil.hierarchyGraph.DependencyHelper;
 import com.github.kuros.random.jpa.types.CreationPlan;
 import com.github.kuros.random.jpa.types.Entity;
-import com.github.kuros.random.jpa.types.Plan;
 import com.github.kuros.random.jpa.types.Printer;
 import org.junit.After;
 import org.junit.Before;
@@ -81,7 +79,7 @@ public class JPAContextTest {
         entityManager.getTransaction().begin();
 
         final ResultMap resultMap = jpaContext
-                .createAndPersist(Plan.of(Entity.of(Z.class)));
+                .createAndPersist(Entity.of(Z.class));
 
         entityManager.getTransaction().commit();
         entityManager.close();
@@ -111,7 +109,7 @@ public class JPAContextTest {
         entityManager.getTransaction().begin();
 
         final ResultMap resultMap = jpaContext
-                .createAndPersist(Plan.of(Entity.of(D.class).withSoftLink(D_.zId, Z_.id)));
+                .createAndPersist(Entity.of(D.class).withSoftLink(D_.zId, Z_.id));
 
         entityManager.getTransaction().commit();
         entityManager.close();
@@ -137,7 +135,7 @@ public class JPAContextTest {
         entityManager.getTransaction().begin();
 
         final ResultMap resultMap = jpaContext
-                .createAndPersist(Plan.of(Entity.of(Z.class, 2), Entity.of(X.class).createBefore(Y.class)));
+                .createAndPersist(Entity.of(Z.class, 2), Entity.of(X.class).createBefore(Y.class));
 
         entityManager.getTransaction().commit();
         entityManager.close();
@@ -170,9 +168,9 @@ public class JPAContextTest {
         entityManager.getTransaction().begin();
 
         final ResultMap resultMap = jpaContext
-                .createAndPersist(Plan.of(Entity.of(Z.class, 2),
+                .createAndPersist(Entity.of(Z.class, 2),
                         Entity.of(X.class).createBefore(Y.class),
-                        Entity.of(Y.class, 2)));
+                        Entity.of(Y.class, 2));
 
         entityManager.getTransaction().commit();
         entityManager.close();
@@ -282,7 +280,7 @@ public class JPAContextTest {
                 .generate();
 
 
-        final CreationPlan creationPlan = jpaContext.create(Plan.of(Entity.of(RelationOneToMany.class)));
+        final CreationPlan creationPlan = jpaContext.create(Entity.of(RelationOneToMany.class));
 
         entityManager.getTransaction().begin();
         final ResultMap persist = jpaContext.persist(creationPlan);
@@ -321,7 +319,7 @@ public class JPAContextTest {
                 .newInstance(Database.NONE, entityManager)
                 .generate();
 
-        final CreationPlan creationPlan = jpaContext.create(Plan.of(Entity.of(PrimitiveEntity.class)));
+        final CreationPlan creationPlan = jpaContext.create(Entity.of(PrimitiveEntity.class));
 
         entityManager.getTransaction().begin();
         final ResultMap persist = jpaContext.persist(creationPlan);
@@ -343,7 +341,7 @@ public class JPAContextTest {
                 .newInstance(Database.NONE, entityManager)
                 .generate();
 
-        final CreationPlan creationPlan = jpaContext.create(Plan.of(Entity.of(PrimitiveEntity.class)));
+        final CreationPlan creationPlan = jpaContext.create(Entity.of(PrimitiveEntity.class));
 
         creationPlan.set(PrimitiveEntity_.defaultBoolean, false);
         creationPlan.set(PrimitiveEntity_.defaultByte, (byte) 0);
@@ -382,7 +380,7 @@ public class JPAContextTest {
         entityManager.getTransaction().begin();
 
         final ResultMap expected = jpaContext
-                .createAndPersist(Plan.of(Entity.of(D.class)));
+                .createAndPersist(Entity.of(D.class));
 
         entityManager.getTransaction().commit();
 
@@ -391,7 +389,7 @@ public class JPAContextTest {
         entityManager.getTransaction().begin();
 
         final ResultMap actual = jpaContext
-                .createAndPersist(Plan.of(Entity.of(D.class).with(D_.id, expected.get(D.class).getId())));
+                .createAndPersist(Entity.of(D.class).with(D_.id, expected.get(D.class).getId()));
 
         entityManager.getTransaction().commit();
 
@@ -412,10 +410,10 @@ public class JPAContextTest {
                 .generate();
 
         entityManager.getTransaction().begin();
-        final ResultMap persist = jpaContext.createAndPersist(Plan.of(Entity.of(E.class, 4)));
+        final ResultMap persist = jpaContext.createAndPersist(Entity.of(E.class, 4));
         entityManager.getTransaction().commit();
 
-        final CreationPlan creationPlan = jpaContext.create(Plan.of(Entity.of(E.class, 4).with(E_.id, persist.get(E.class, 3).getId())));
+        final CreationPlan creationPlan = jpaContext.create(Entity.of(E.class, 4).with(E_.id, persist.get(E.class, 3).getId()));
         creationPlan.set(0, E_.id, persist.get(E.class, 0).getId());
         creationPlan.set(1, E_.id, persist.get(E.class, 1).getId());
         creationPlan.set(2, E_.id, persist.get(E.class, 2).getId());
@@ -447,7 +445,7 @@ public class JPAContextTest {
                 .newInstance(Database.NONE, entityManager)
                 .generate();
         entityManager.getTransaction().begin();
-        final CreationPlan creationPlan = jpaContext.create(Plan.of(Entity.of(Z.class, 2).with(Z_.yId, null)));
+        final CreationPlan creationPlan = jpaContext.create(Entity.of(Z.class, 2).with(Z_.yId, null));
         creationPlan.set(1, Z_.yId, 123L);
 
         final ResultMap persist = jpaContext.persist(creationPlan);
@@ -463,7 +461,7 @@ public class JPAContextTest {
                 .newInstance(Database.NONE, entityManager)
                 .generate();
         entityManager.getTransaction().begin();
-        final CreationPlan creationPlan = jpaContext.create(Plan.of(Entity.of(Z.class, 2)));
+        final CreationPlan creationPlan = jpaContext.create(Entity.of(Z.class, 2));
         creationPlan.set(0, Z_.yId, null);
 
         final ResultMap persist = jpaContext.persist(creationPlan);
@@ -500,9 +498,9 @@ public class JPAContextTest {
 
         entityManager.getTransaction().begin();
         final ResultMap persist = jpaContext
-                .createAndPersist(Plan.of(Entity.of(Z.class)
+                .createAndPersist(Entity.of(Z.class)
                         .with(Z_.xId, xId)
-                        .with(Z_.yId, yId)));
+                        .with(Z_.yId, yId));
         entityManager.getTransaction().commit();
 
         assertEquals(xId, persist.get(Z.class).getxId());

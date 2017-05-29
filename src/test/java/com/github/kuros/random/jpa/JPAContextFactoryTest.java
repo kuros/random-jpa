@@ -1,8 +1,6 @@
 package com.github.kuros.random.jpa;
 
 import com.github.kuros.random.jpa.cache.Cache;
-import com.github.kuros.random.jpa.context.BaseContext;
-import com.github.kuros.random.jpa.context.JPAContextImpl;
 import com.github.kuros.random.jpa.definition.HierarchyGraph;
 import com.github.kuros.random.jpa.exception.RandomJPAException;
 import com.github.kuros.random.jpa.link.Before;
@@ -21,8 +19,6 @@ import com.github.kuros.random.jpa.testUtil.entity.Y;
 import com.github.kuros.random.jpa.testUtil.entity.Z;
 import com.github.kuros.random.jpa.testUtil.entity.Z_;
 import com.github.kuros.random.jpa.testUtil.hierarchyGraph.DependencyHelper;
-import com.github.kuros.random.jpa.types.CreationPlan;
-import com.github.kuros.random.jpa.types.Plan;
 import com.github.kuros.random.jpa.types.Trigger;
 import org.junit.After;
 import org.junit.Test;
@@ -212,18 +208,6 @@ public class JPAContextFactoryTest {
                 .newInstance(Database.NONE, entityManager)
                 .withPreconditions(Before.of(D.class).create(Z.class), Before.of(Z.class).create(D.class))
                 .generate();
-    }
-
-
-    public class TestClass extends BaseContext {
-
-        public TestClass(final Cache cache, final Generator generator) {
-            super(cache, generator);
-        }
-
-        public CreationPlan create(final Plan plan) {
-            return null;
-        }
     }
 
     @After

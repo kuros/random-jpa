@@ -128,8 +128,6 @@ public class Finder {
 
         final String query = SELECT_FROM + entityTableMapping.getTableName() + " " + getNoLockCondition() + getWhereClause(entityTableMapping, attributeValues.keySet());
 
-        System.out.println(query);
-
         final Query nativeQuery = entityManager.createNativeQuery(query, type);
         for (String attribute : attributeValues.keySet()) {
             nativeQuery.setParameter(attribute, attributeValues.get(attribute));

@@ -22,15 +22,12 @@ import com.github.kuros.random.jpa.types.Plan;
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 public interface JPAContext {
-    CreationPlan create(Plan plan);
 
     CreationPlan create(Entity... entities);
 
     ResultMap persist(CreationPlan creationPlan);
 
     ResultMap createAndPersist(Entity... entities);
-
-    ResultMap createAndPersist(Plan plan);
 
     <T, V> void remove(Class<T> type, V... ids);
 
