@@ -6,6 +6,7 @@ import com.github.kuros.random.jpa.provider.model.ForeignKeyRelation;
 import com.github.kuros.random.jpa.provider.mssql.MSSQLRelationshipProvider;
 import com.github.kuros.random.jpa.provider.mysql.MySqlRelationshipProvider;
 import com.github.kuros.random.jpa.provider.oracle.OracleRelationshipProvider;
+import com.github.kuros.random.jpa.provider.postgres.PostgresRelationshipProvider;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -49,6 +50,12 @@ public class RelationshipProviderFactoryTest {
     public void getRelationshipProviderForOracle() throws Exception {
         final RelationshipProvider relationshipProvider = RelationshipProviderFactory.getRelationshipProvider(Database.ORACLE, entityManager);
         assertTrue(relationshipProvider instanceof OracleRelationshipProvider);
+    }
+
+    @Test
+    public void getRelationshipProviderForPostgres() throws Exception {
+        final RelationshipProvider relationshipProvider = RelationshipProviderFactory.getRelationshipProvider(Database.POSTGRES, entityManager);
+        assertTrue(relationshipProvider instanceof PostgresRelationshipProvider);
     }
 
     @Test

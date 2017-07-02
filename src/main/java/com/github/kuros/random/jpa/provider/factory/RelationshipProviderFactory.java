@@ -6,6 +6,7 @@ import com.github.kuros.random.jpa.provider.model.ForeignKeyRelation;
 import com.github.kuros.random.jpa.provider.mssql.MSSQLRelationshipProvider;
 import com.github.kuros.random.jpa.provider.mysql.MySqlRelationshipProvider;
 import com.github.kuros.random.jpa.provider.oracle.OracleRelationshipProvider;
+import com.github.kuros.random.jpa.provider.postgres.PostgresRelationshipProvider;
 
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
@@ -41,6 +42,10 @@ public class RelationshipProviderFactory {
             case ORACLE:
                 relationshipProvider = OracleRelationshipProvider.newInstance(entityManager);
                 break;
+            case POSTGRES:
+                relationshipProvider = PostgresRelationshipProvider.newInstance(entityManager);
+                break;
+            case NONE:
             default:
                 relationshipProvider = new EmptyRelationshipProvider();
         }

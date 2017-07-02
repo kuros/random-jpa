@@ -6,6 +6,7 @@ import com.github.kuros.random.jpa.provider.MultiplePrimaryKeyProvider;
 import com.github.kuros.random.jpa.provider.mssql.MSSQLMultiplePrimaryKeyProvider;
 import com.github.kuros.random.jpa.provider.mysql.MySqlMultiplePrimaryKeyProvider;
 import com.github.kuros.random.jpa.provider.oracle.OracleMultiplePrimaryKeyProvider;
+import com.github.kuros.random.jpa.provider.postgres.PostgresMultiplePrimaryKeyProvider;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -56,6 +57,14 @@ public class MultiplePrimaryKeyProviderFactoryTest {
                 MultiplePrimaryKeyProviderFactory.getMultiplePrimaryKeyProvider(Database.ORACLE, entityManager, attributeProvider);
 
         assertTrue(multiplePrimaryKeyProvider instanceof OracleMultiplePrimaryKeyProvider);
+    }
+
+    @Test
+    public void getMultiplePrimaryKeyProviderForPostgres() throws Exception {
+        final MultiplePrimaryKeyProvider multiplePrimaryKeyProvider =
+                MultiplePrimaryKeyProviderFactory.getMultiplePrimaryKeyProvider(Database.POSTGRES, entityManager, attributeProvider);
+
+        assertTrue(multiplePrimaryKeyProvider instanceof PostgresMultiplePrimaryKeyProvider);
     }
 
     @Test

@@ -6,6 +6,7 @@ import com.github.kuros.random.jpa.provider.SQLCharacterLengthProvider;
 import com.github.kuros.random.jpa.provider.mssql.MSSQLCharacterLengthProvider;
 import com.github.kuros.random.jpa.provider.mysql.MySqlCharacterLengthProvider;
 import com.github.kuros.random.jpa.provider.oracle.OracleCharacterLengthProvider;
+import com.github.kuros.random.jpa.provider.postgres.PostgresCharacterLengthProvider;
 import com.github.kuros.random.jpa.testUtil.RandomFixture;
 import org.junit.Before;
 import org.junit.Test;
@@ -50,6 +51,12 @@ public class SQLCharacterLengthProviderFactoryTest {
     public void getSqlCharacterLengthProviderForOracle() throws Exception {
         final SQLCharacterLengthProvider sqlCharacterLengthProvider = SQLCharacterLengthProviderFactory.getSqlCharacterLengthProvider(Database.ORACLE, entityManager, attributeProvider);
         assertTrue(sqlCharacterLengthProvider instanceof OracleCharacterLengthProvider);
+    }
+
+    @Test
+    public void getSqlCharacterLengthProviderForPostgres() throws Exception {
+        final SQLCharacterLengthProvider sqlCharacterLengthProvider = SQLCharacterLengthProviderFactory.getSqlCharacterLengthProvider(Database.POSTGRES, entityManager, attributeProvider);
+        assertTrue(sqlCharacterLengthProvider instanceof PostgresCharacterLengthProvider);
     }
 
     @Test

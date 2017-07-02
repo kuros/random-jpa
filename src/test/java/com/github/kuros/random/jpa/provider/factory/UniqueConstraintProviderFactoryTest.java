@@ -6,6 +6,7 @@ import com.github.kuros.random.jpa.provider.UniqueConstraintProvider;
 import com.github.kuros.random.jpa.provider.mssql.MSSQLUniqueConstraintProvider;
 import com.github.kuros.random.jpa.provider.mysql.MySqlUniqueConstraintProvider;
 import com.github.kuros.random.jpa.provider.oracle.OracleUniqueConstraintProvider;
+import com.github.kuros.random.jpa.provider.postgres.PostgresUniqueConstraintProvider;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -49,6 +50,12 @@ public class UniqueConstraintProviderFactoryTest {
     public void getUniqueCombinationAttributesForOracle() throws Exception {
         final UniqueConstraintProvider uniqueConstraintProvider = UniqueConstraintProviderFactory.getUniqueConstraintProvider(Database.ORACLE, entityManager, attributeProvider);
         assertTrue(uniqueConstraintProvider instanceof OracleUniqueConstraintProvider);
+    }
+
+    @Test
+    public void getUniqueCombinationAttributesForPostgres() throws Exception {
+        final UniqueConstraintProvider uniqueConstraintProvider = UniqueConstraintProviderFactory.getUniqueConstraintProvider(Database.POSTGRES, entityManager, attributeProvider);
+        assertTrue(uniqueConstraintProvider instanceof PostgresUniqueConstraintProvider);
     }
 
     @Test

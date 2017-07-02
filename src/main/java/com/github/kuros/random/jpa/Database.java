@@ -20,5 +20,6 @@ public enum Database {
     MS_SQL_SERVER,
     MY_SQL,
     ORACLE,
+    POSTGRES,
     NONE
 }

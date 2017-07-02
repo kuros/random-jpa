@@ -6,6 +6,7 @@ import com.github.kuros.random.jpa.provider.UniqueConstraintProvider;
 import com.github.kuros.random.jpa.provider.mssql.MSSQLUniqueConstraintProvider;
 import com.github.kuros.random.jpa.provider.mysql.MySqlUniqueConstraintProvider;
 import com.github.kuros.random.jpa.provider.oracle.OracleUniqueConstraintProvider;
+import com.github.kuros.random.jpa.provider.postgres.PostgresUniqueConstraintProvider;
 
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
@@ -41,6 +42,10 @@ public class UniqueConstraintProviderFactory {
             case ORACLE:
                 uniqueConstraintProvider = OracleUniqueConstraintProvider.getInstance(entityManager, attributeProvider);
                 break;
+            case POSTGRES:
+                uniqueConstraintProvider = PostgresUniqueConstraintProvider.getInstance(entityManager, attributeProvider);
+                break;
+            case NONE:
             default:
                 uniqueConstraintProvider = new DefaultUniqueConstraintProvider();
         }

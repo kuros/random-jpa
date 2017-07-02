@@ -6,6 +6,7 @@ import com.github.kuros.random.jpa.provider.SQLCharacterLengthProvider;
 import com.github.kuros.random.jpa.provider.mssql.MSSQLCharacterLengthProvider;
 import com.github.kuros.random.jpa.provider.mysql.MySqlCharacterLengthProvider;
 import com.github.kuros.random.jpa.provider.oracle.OracleCharacterLengthProvider;
+import com.github.kuros.random.jpa.provider.postgres.PostgresCharacterLengthProvider;
 
 import javax.persistence.EntityManager;
 
@@ -39,6 +40,10 @@ public class SQLCharacterLengthProviderFactory {
             case ORACLE:
                 sqlCharacterLengthProvider = OracleCharacterLengthProvider.getInstance(entityManager, attributeProvider);
                 break;
+            case POSTGRES:
+                sqlCharacterLengthProvider = PostgresCharacterLengthProvider.getInstance(entityManager, attributeProvider);
+                break;
+            case NONE:
             default:
                 sqlCharacterLengthProvider = new DefaultSQLCharacterLengthProvider();
                 break;
