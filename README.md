@@ -16,7 +16,8 @@ com.github.kuros.random-jpa | [v0.4.8](https://github.com/kuros/random-jpa/relea
 1. Microsoft SQL Server
 2. MySQL
 3. Oracle
-4. NONE (You can still use functionality, but the dependency has to provided/maintained manually).
+4. Postgres
+5. NONE (You can still use functionality, but the dependency has to provided/maintained manually).
 
 ## Supported JPA Implementation
 1. Hibernate (Version - 4.3.7.Final)
