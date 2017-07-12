@@ -18,5 +18,7 @@ package com.github.kuros.random.jpa.provider;
  */
 public interface SQLCharacterLengthProvider {
 
+    int DEFAULT_MAX_LENGTH = 10;
+
     Object applyLengthConstraint(final String entityName, final String attributeName, final Object value);
 }

@@ -56,7 +56,7 @@ public class SQLCharacterLengthProviderFactory {
 
     static class DefaultSQLCharacterLengthProvider implements SQLCharacterLengthProvider {
         public Integer getMaxLength(final String entityName, final String attributeName) {
-            return 10;
+            return DEFAULT_MAX_LENGTH;
         }
 
         public Object applyLengthConstraint(final String entityName, final String attributeName, final Object value) {

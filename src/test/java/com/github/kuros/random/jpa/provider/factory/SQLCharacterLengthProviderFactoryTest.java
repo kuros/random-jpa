@@ -36,6 +36,11 @@ public class SQLCharacterLengthProviderFactoryTest {
     }
 
     @Test
+    public void verifyDefaultMaxLength() throws Exception {
+        assertEquals(10, SQLCharacterLengthProvider.DEFAULT_MAX_LENGTH);
+    }
+
+    @Test
     public void getSqlCharacterLengthProviderForMsSqlServer() throws Exception {
         final SQLCharacterLengthProvider sqlCharacterLengthProvider = SQLCharacterLengthProviderFactory.getSqlCharacterLengthProvider(Database.MS_SQL_SERVER, entityManager, attributeProvider);
         assertTrue(sqlCharacterLengthProvider instanceof MSSQLCharacterLengthProvider);

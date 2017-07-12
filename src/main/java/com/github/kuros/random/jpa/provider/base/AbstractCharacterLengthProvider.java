@@ -1,5 +1,7 @@
 package com.github.kuros.random.jpa.provider.base;
 
+import com.github.kuros.random.jpa.log.LogFactory;
+import com.github.kuros.random.jpa.log.Logger;
 import com.github.kuros.random.jpa.metamodel.AttributeProvider;
 import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
 import com.github.kuros.random.jpa.provider.SQLCharacterLengthProvider;
@@ -31,6 +33,8 @@ import java.util.Map;
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 public abstract class AbstractCharacterLengthProvider implements SQLCharacterLengthProvider {
+
+    private static final Logger LOGGER = LogFactory.getLogger(AbstractCharacterLengthProvider.class);
     private static final Map<String, Class<?>> DATA_TYPE_MAP;
     private Map<String, ColumnCharacterLength> columnLengthsByTable;
     private EntityManager entityManager;
@@ -49,20 +53,22 @@ public abstract class AbstractCharacterLengthProvider implements SQLCharacterLen
         for (Object o : resultList) {
             final Object[] row = (Object[]) o;
 
-            final List<EntityTableMapping> entityTableMappings = attributeProvider.get((String) row[0]);
+            String tableName = (String) row[0];
+            final List<EntityTableMapping> entityTableMappings = attributeProvider.get(tableName);
 
             if (entityTableMappings != null) {
                 for (EntityTableMapping entityTableMapping : entityTableMappings) {
-                    final String attributeName = entityTableMapping.getAttributeName((String) row[1]);
+                    String columnName = (String) row[1];
+                    final String attributeName = entityTableMapping.getAttributeName(columnName);
                     final Number length = (Number) row[2];
                     final Number precision = (Number) row[3];
                     final Number scale = (Number) row[4];
                     final String dataType = (String) row[5];
 
                     final ColumnDetail columnDetail = new ColumnDetail(
-                            getValue(length),
-                            getValue(precision),
-                            getValue(scale),
+                            getValue(tableName, columnName, length),
+                            getValue(tableName, columnName, precision),
+                            getValue(tableName, columnName, scale),
                             DATA_TYPE_MAP.get(dataType.toLowerCase()));
 
                     final String entityName = entityTableMapping.getEntityName();
@@ -117,8 +123,19 @@ public abstract class AbstractCharacterLengthProvider implements SQLCharacterLen
 
     protected abstract String getQuery();
 
-    private Integer getValue(final Number number) {
-        return number == null ? null : number.intValue();
+    private Integer getValue(String tableName, String columnName, final Number number) {
+        if (number == null) {
+            return null;
+        }
+
+        final Integer value;
+        if (number.intValue() > 0) {
+            value = number.intValue();
+        } else {
+            LOGGER.info("-ve value found, using default value:" + DEFAULT_MAX_LENGTH + " for Table: " + tableName + ", Column: " + columnName);
+            value = DEFAULT_MAX_LENGTH;
+        }
+        return value;
     }
 
     static {
