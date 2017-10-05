@@ -19,4 +19,55 @@
             <property name="hibernate.hbm2ddl.auto" value="create-drop"/>
         </properties>
     </persistence-unit>
+    <persistence-unit name="eclipse-link" transaction-type="RESOURCE_LOCAL">
+        <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+        <properties>
+            <!-- Default database login using Oracle for EclipseLink's internal connection pool,
+                 change this to access your own database. -->
+            <property name="javax.persistence.jdbc.driver" value="org.hsqldb.jdbcDriver" />
+            <property name="javax.persistence.jdbc.url" value="jdbc:hsqldb:mem:random-jpa-eclipse-link" />
+            <property name="javax.persistence.jdbc.user" value="sa" />
+            <property name="javax.persistence.jdbc.password" value="" />
+
+            <!-- The database platform is auto-detected by default,
+                 if you want to set a specific platform this can be set. -->
+            <!-- property name=""eclipselink.target-database" value="Oracle" / -->
+
+            <!-- Optimize database writes to use batching. -->
+            <property name="eclipselink.jdbc.batch-writing" value="JDBC" />
+
+            <!-- Avoids flush being triggered before every query execution. -->
+            <property name="eclipselink.persistence-context.flush-mode" value="COMMIT" />
+
+            <!-- Configure connection pool. -->
+            <property name="eclipselink.jdbc.connections.initial" value="1" />
+            <property name="eclipselink.jdbc.connections.min" value="64" />
+            <property name="eclipselink.jdbc.connections.max" value="64" />
+
+            <!-- In JSE no server platform is used, if you wish to use this example is a JEE server with JTA,
+                             then you need to set this. -->
+            <!-- property name="eclipselink.target-server" value="WebLogic" / -->
+
+            <!-- Configure cache size. -->
+            <property name="eclipselink.cache.size.default" value="1000" />
+            <!-- If desired, this option would disable caching. -->
+            <!-- property name="eclipselink.cache.shared.default" value="false" /-->
+
+            <!-- If desired, this option would force a JDBC connection to be held for the duration of an EntityManager,
+                 instead of returned to the pool in between queries/transactions. -->
+            <!-- property name="eclipselink.jdbc.exclusive-connection.mode" value="Always" / -->
+
+            <!-- Configure database to be created on startup if not already existing. -->
+            <!-- property name="eclipselink.ddl-generation" value="create-tables" / -->
+            <!-- To drop and replace existing schema this can be used. -->
+            <property name="eclipselink.ddl-generation" value="drop-and-create-tables" />
+
+            <!-- Configure simple SQL logging for demonstration. -->
+            <property name="eclipselink.logging.level" value="FINE" />
+            <property name="eclipselink.logging.thread" value="false" />
+            <property name="eclipselink.logging.session" value="false" />
+            <property name="eclipselink.logging.exceptions" value="false" />
+            <property name="eclipselink.logging.timestamp" value="false" />
+        </properties>
+    </persistence-unit>
 </persistence>
