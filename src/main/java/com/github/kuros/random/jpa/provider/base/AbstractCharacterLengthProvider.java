@@ -129,11 +129,11 @@ public abstract class AbstractCharacterLengthProvider implements SQLCharacterLen
         }
 
         final Integer value;
-        if (number.intValue() > 0) {
-            value = number.intValue();
-        } else {
+        if (number.intValue() < 0) {
             LOGGER.info("-ve value found, using default value:" + DEFAULT_MAX_LENGTH + " for Table: " + tableName + ", Column: " + columnName);
             value = DEFAULT_MAX_LENGTH;
+        } else {
+            value = number.intValue();
         }
         return value;
     }

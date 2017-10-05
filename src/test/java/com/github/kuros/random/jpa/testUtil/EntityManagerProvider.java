@@ -11,11 +11,14 @@ import java.util.List;
 public class EntityManagerProvider {
 
     private static final EntityManagerFactory ENTITY_MANAGER_FACTORY;
+    private static final EntityManagerFactory ECLIPSELINK_FACTORY;
     private static final Logger LOGGER = LogFactory.getLogger(EntityManagerProvider.class);
 
     public static void init() {
         final EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         entityManager.close();
+
+        ECLIPSELINK_FACTORY.createEntityManager().close();
     }
 
     public static <T> T persist(final T t) {
@@ -40,7 +43,12 @@ public class EntityManagerProvider {
         return ENTITY_MANAGER_FACTORY.createEntityManager();
     }
 
+    public static EntityManager getEclipseLinkEntityManager() {
+        return ECLIPSELINK_FACTORY.createEntityManager();
+    }
+
     static {
         ENTITY_MANAGER_FACTORY = Persistence.createEntityManagerFactory("RandomJpaService");
+        ECLIPSELINK_FACTORY = Persistence.createEntityManagerFactory("eclipse-link");
     }
 }
