@@ -21,6 +21,7 @@
     </persistence-unit>
     <persistence-unit name="eclipse-link" transaction-type="RESOURCE_LOCAL">
         <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+        <exclude-unlisted-classes>false</exclude-unlisted-classes>
         <properties>
             <!-- Default database login using Oracle for EclipseLink's internal connection pool,
                  change this to access your own database. -->
