@@ -85,7 +85,7 @@ public class Finder {
                     throw new EmptyFieldException();
                 }
 
-                nativeQuery.setParameter(i , fieldValue);
+                nativeQuery.setParameter(i + 1 , fieldValue);
             } catch (final EmptyFieldException e) {
                 throw new ResultNotFoundException(e);
             } catch (final Exception e) {
