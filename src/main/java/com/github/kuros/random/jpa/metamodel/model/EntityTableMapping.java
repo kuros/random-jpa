@@ -73,7 +73,7 @@ public class EntityTableMapping {
         attributeIds.add(id);
     }
 
-    public void addColumnIds(final String[] ids) {
+    public void addColumnIds(final String... ids) {
         Collections.addAll(columnIds, ids);
     }
 
