@@ -34,6 +34,7 @@ class PersistFunction<T> implements Function<T> {
     public T apply(final T object) {
         final Class<?> tableClass = object.getClass();
         entityManager.persist(object);
+        entityManager.flush();
         LOGGER.debug("Persisted values for table: " + tableClass.getName());
         return object;
     }

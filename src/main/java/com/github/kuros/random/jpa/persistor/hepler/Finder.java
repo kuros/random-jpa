@@ -75,7 +75,8 @@ public class Finder {
     }
 
     private <T> void populateParameters(final Query nativeQuery, final T typeObject, final List<String> attributes) {
-        for (String attribute : attributes) {
+        for (int i = 0; i < attributes.size(); i++) {
+            final String attribute = attributes.get(i);
             try {
                 final Field declaredField = Util.getField(typeObject.getClass(), attribute);
                 declaredField.setAccessible(true);
@@ -84,7 +85,7 @@ public class Finder {
                     throw new EmptyFieldException();
                 }
 
-                nativeQuery.setParameter(attribute, fieldValue);
+                nativeQuery.setParameter(i , fieldValue);
             } catch (final EmptyFieldException e) {
                 throw new ResultNotFoundException(e);
             } catch (final Exception e) {
@@ -98,7 +99,7 @@ public class Finder {
         final StringBuilder builder = new StringBuilder();
         for (final String attribute : attributes) {
             final String columnName = entityTableMapping.getColumnName(attribute);
-            builder.append(andJoiner.next()).append(columnName).append("=:").append(attribute);
+            builder.append(andJoiner.next()).append(columnName).append("= ? ");
         }
         return builder.toString();
     }
@@ -126,11 +127,13 @@ public class Finder {
 
         final EntityTableMapping entityTableMapping = attributeProvider.get(type);
 
-        final String query = SELECT_FROM + entityTableMapping.getTableName() + " " + getNoLockCondition() + getWhereClause(entityTableMapping, attributeValues.keySet());
+        final List<String> attributeValueList = new ArrayList<String>(attributeValues.keySet());
+        final String query = SELECT_FROM + entityTableMapping.getTableName() + " " + getNoLockCondition() + getWhereClause(entityTableMapping, attributeValueList);
 
         final Query nativeQuery = entityManager.createNativeQuery(query, type);
-        for (String attribute : attributeValues.keySet()) {
-            nativeQuery.setParameter(attribute, attributeValues.get(attribute));
+        for (int i = 0; i < attributeValueList.size(); i++) {
+            final String attribute = attributeValueList.get(i);
+            nativeQuery.setParameter(i + 1, attributeValues.get(attribute));
         }
         return nativeQuery.getResultList();
     }
@@ -144,8 +147,7 @@ public class Finder {
             builder
                     .append(andJoiner.next())
                     .append(columnName)
-                    .append("=:")
-                    .append(attribute);
+                    .append("= ? ");
 
         }
         return builder.toString();
