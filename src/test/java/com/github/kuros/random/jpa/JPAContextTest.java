@@ -270,7 +270,7 @@ public class JPAContextTest {
 
     }
 
-    @Test @Ignore
+    @Test
     public void shouldObjectValueForMappedRelationsInCaseOfOneToMany() throws Exception {
         final Dependencies dependencies = Dependencies.newInstance();
         dependencies.withLink(DependencyHelper.getLinks());
