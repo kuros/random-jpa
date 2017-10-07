@@ -2,14 +2,10 @@ package com.github.kuros.random.jpa.metamodel.providers;
 
 import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
 import org.eclipse.persistence.descriptors.ClassDescriptor;
-import org.eclipse.persistence.internal.helper.DatabaseField;
-import org.eclipse.persistence.internal.jpa.EntityManagerFactoryDelegate;
 import org.eclipse.persistence.internal.jpa.metamodel.EntityTypeImpl;
 import org.eclipse.persistence.mappings.DatabaseMapping;
-import org.eclipse.persistence.mappings.DirectToFieldMapping;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.metamodel.EntityType;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,20 +43,20 @@ public class EclipseLinkProvider implements Provider {
 
             final ClassDescriptor descriptor = entityType.getDescriptor();
 
-            entityTableMapping.setTableName(descriptor.getTableName());
+            entityTableMapping.setTableName(descriptor.getTableName().toLowerCase());
 
             for (DatabaseMapping databaseMapping : descriptor.getMappings()) {
-                if (databaseMapping instanceof DirectToFieldMapping) {
-                    if (databaseMapping.isReadOnly()) {
-                        continue;
-                    }
-                    if (databaseMapping.isPrimaryKeyMapping()) {
-                        entityTableMapping.addColumnIds(databaseMapping.getField().getName());
-                        entityTableMapping.addAttributeIds(databaseMapping.getAttributeName());
-                    }
-                    entityTableMapping.addAttributeColumnMapping(databaseMapping.getAttributeName(), databaseMapping.getField().getName());
+                if (databaseMapping.isReadOnly()) {
+                    continue;
+                }
+                if (databaseMapping.isPrimaryKeyMapping()) {
+                    entityTableMapping.addColumnIds(databaseMapping.getField().getName());
+                    entityTableMapping.addAttributeIds(databaseMapping.getAttributeName());
                 }
 
+                if (databaseMapping.getFields().size() > 0) {
+                    entityTableMapping.addAttributeColumnMapping(databaseMapping.getAttributeName(), databaseMapping.getFields().get(0).getName());
+                }
             }
 
             putEntityTableMapping(descriptor.getTableName(), entityTableMapping);
@@ -72,7 +68,7 @@ public class EclipseLinkProvider implements Provider {
         List<EntityTableMapping> entityTableMappings = entityTableMappingByTableName.get(tableName);
         if (entityTableMappings == null) {
             entityTableMappings = new ArrayList<EntityTableMapping>();
-            entityTableMappingByTableName.put(tableName, entityTableMappings);
+            entityTableMappingByTableName.put(tableName.toLowerCase(), entityTableMappings);
         }
         entityTableMappings.add(entityTableMapping);
     }
