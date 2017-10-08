@@ -57,7 +57,11 @@ public final class RandomizeImpl implements Randomize {
             declaredField.setAccessible(true);
             try {
                 if (isValueProvided(declaredField, index)) {
-                    declaredField.set(t, getFieldValue(declaredField, index));
+                    try {
+                        declaredField.set(t, getFieldValue(declaredField, index));
+                    } catch (final IllegalArgumentException e) {
+                        //do nothing
+                    }
                 } else if (isRandomRequired(declaredField)) {
                     declaredField.set(t, NumberUtil.castNumber(declaredField.getType(), randomGenerator.generateRandom(declaredField)));
                 }
