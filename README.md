@@ -21,6 +21,7 @@ com.github.kuros.random-jpa | [v0.4.10](https://github.com/kuros/random-jpa/rele
 
 ## Supported JPA Implementation
 1. Hibernate (Version - 4.3.7.Final)
+2. EclipseLink
 
 ## Usage
 In order to use.
