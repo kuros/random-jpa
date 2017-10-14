@@ -2,8 +2,9 @@ package com.github.kuros.random.jpa.metamodel;
 
 import com.github.kuros.random.jpa.exception.RandomJPAException;
 import com.github.kuros.random.jpa.metamodel.providers.EclipseLinkProvider;
-import com.github.kuros.random.jpa.metamodel.providers.HibernateProvider;
 import com.github.kuros.random.jpa.metamodel.providers.Provider;
+import com.github.kuros.random.jpa.metamodel.providers.hibernate.v4.HibernateProviderV4;
+import com.github.kuros.random.jpa.metamodel.providers.hibernate.v5.HibernateProviderV5;
 
 import javax.persistence.EntityManager;
 import java.lang.reflect.Constructor;
@@ -16,7 +17,8 @@ public class AttributeProviderFactory {
 
     static {
         PROVIDER_MAP.put("org.eclipse.persistence.internal.jpa.EntityManagerFactoryDelegate", EclipseLinkProvider.class);
-        PROVIDER_MAP.put("org.hibernate.jpa.internal.EntityManagerFactoryImpl", HibernateProvider.class);
+        PROVIDER_MAP.put("org.hibernate.jpa.internal.EntityManagerFactoryImpl", HibernateProviderV4.class);
+        PROVIDER_MAP.put("org.hibernate.internal.SessionFactoryImpl", HibernateProviderV5.class);
     }
 
     public static Provider getProvider(final EntityManager entityManager) {

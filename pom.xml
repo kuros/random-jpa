@@ -29,7 +29,7 @@
 
     <groupId>com.github.kuros</groupId>
     <artifactId>random-jpa</artifactId>
-    <version>0.4.10</version>
+    <version>0.4.11-SNAPSHOT</version>
     <name>${project.artifactId}</name>
 
     <description>This project was born out of a need to create test data for complex database hierarchy.
@@ -107,7 +107,7 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
-            <version>4.3.7.Final</version>
+            <version>5.2.11.Final</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

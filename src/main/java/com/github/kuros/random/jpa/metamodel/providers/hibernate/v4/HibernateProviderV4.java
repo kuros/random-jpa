@@ -1,7 +1,8 @@
-package com.github.kuros.random.jpa.metamodel.providers;
+package com.github.kuros.random.jpa.metamodel.providers.hibernate.v4;
 
 import com.github.kuros.random.jpa.annotation.VisibleForTesting;
 import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
+import com.github.kuros.random.jpa.metamodel.providers.Provider;
 import com.github.kuros.random.jpa.util.AttributeHelper;
 import org.hibernate.id.Assigned;
 import org.hibernate.jpa.HibernateEntityManagerFactory;
@@ -39,13 +40,13 @@ import java.util.Set;
  *    You should have received a copy of the GNU Lesser General Public License
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class HibernateProvider implements Provider {
+public class HibernateProviderV4 implements Provider {
 
     private Map<Class<?>, EntityTableMapping> entityTableMappingByClass;
     private Map<String, List<EntityTableMapping>> entityTableMappingByTableName;
     private EntityManager entityManager;
 
-    public HibernateProvider(final EntityManager entityManager) {
+    public HibernateProviderV4(final EntityManager entityManager) {
         this.entityManager = entityManager;
         this.entityTableMappingByClass = new HashMap<Class<?>, EntityTableMapping>();
         this.entityTableMappingByTableName = new HashMap<String, List<EntityTableMapping>>();
@@ -65,7 +66,6 @@ public class HibernateProvider implements Provider {
 
                 entityTableMapping.addColumnIds(singleTableEntityPersister.getKeyColumnNames());
                 entityTableMapping.setTableName(getTableName(singleTableEntityPersister));
-                entityTableMapping.setIdentifierGenerator(singleTableEntityPersister.getIdentifierGenerator().getClass());
 
                 final List<String> attributeNames = getSupportedAttributeNames(singleTableEntityPersister);
 

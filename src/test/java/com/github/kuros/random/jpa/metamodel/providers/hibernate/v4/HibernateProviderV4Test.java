@@ -1,4 +1,4 @@
-package com.github.kuros.random.jpa.metamodel.providers;
+package com.github.kuros.random.jpa.metamodel.providers.hibernate.v4;
 
 import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
 import com.github.kuros.random.jpa.testUtil.EntityManagerProvider;
@@ -39,19 +39,19 @@ import static org.junit.Assert.assertTrue;
  *    You should have received a copy of the GNU Lesser General Public License
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class HibernateProviderTest {
+public class HibernateProviderV4Test {
 
     private EntityManager entityManager;
     @Mock
     private SingleTableEntityPersister singleTableEntityPersister;
 
-    private HibernateProvider hibernateProvider;
+    private HibernateProviderV4 hibernateProvider;
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         entityManager = EntityManagerProvider.getEntityManager();
-        hibernateProvider = new HibernateProvider(entityManager);
+        hibernateProvider = new HibernateProviderV4(entityManager);
     }
 
     @Test
@@ -90,8 +90,6 @@ public class HibernateProviderTest {
         assertEquals(R.class, entityTableMappingByClass.getEntityClass());
         assertEquals("com.github.kuros.random.jpa.testUtil.entity.R", entityTableMappingByClass.getEntityName());
         assertEquals("r", entityTableMappingByClass.getTableName());
-
-        assertEquals(IdentityGenerator.class, entityTableMappingByClass.getIdentifierGenerator());
     }
 
     @Test
@@ -114,13 +112,6 @@ public class HibernateProviderTest {
         assertTrue(columnNames.contains("relation_one_to_one_id"));
         assertTrue(columnNames.contains("relation_many_to_one_id"));
 
-    }
-
-    @Test
-    public void shouldSetIdentityGeneratorAssignedIfNoGeneratorTypeIsMentionedInEntity() throws Exception {
-
-        final EntityTableMapping entityTableMapping = hibernateProvider.get(AssingedId.class);
-        assertEquals(Assigned.class, entityTableMapping.getIdentifierGenerator());
     }
 
     @Test
