@@ -4,13 +4,9 @@ import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
 import com.github.kuros.random.jpa.testUtil.EntityManagerProvider;
 import com.github.kuros.random.jpa.testUtil.entity.R;
 import com.github.kuros.random.jpa.testUtil.entity.RelationEntity;
-import org.hibernate.id.Assigned;
-import org.hibernate.persister.entity.SingleTableEntityPersister;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import javax.persistence.EntityManager;
@@ -40,8 +36,6 @@ import static org.junit.Assert.assertTrue;
 public class HibernateProviderV5Test {
 
     private EntityManager entityManager;
-    @Mock
-    private SingleTableEntityPersister singleTableEntityPersister;
 
     private HibernateProviderV5 hibernateProvider;
 
@@ -109,23 +103,6 @@ public class HibernateProviderV5Test {
         assertTrue(columnNames.contains("id"));
         assertTrue(columnNames.contains("relation_one_to_one_id"));
         assertTrue(columnNames.contains("relation_many_to_one_id"));
-
-    }
-
-    @Test
-    public void validateListOfUnsupportedIdentifierGenerator() throws Exception {
-        final Set<Class<?>> unSupportedGeneratorType = hibernateProvider.getUnSupportedGeneratorType();
-
-        assertEquals(1, unSupportedGeneratorType.size());
-        assertTrue(unSupportedGeneratorType.contains(Assigned.class));
-
-    }
-
-    @Test
-    public void shouldParseTableIfSchemaIsProvided() throws Exception {
-        Mockito.when(singleTableEntityPersister.getTableName()).thenReturn("someSchema.someTableName");
-        final String tableName = hibernateProvider.getTableName(singleTableEntityPersister);
-        assertEquals("sometablename", tableName);
 
     }
 

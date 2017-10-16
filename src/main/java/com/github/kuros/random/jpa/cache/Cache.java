@@ -3,6 +3,7 @@ package com.github.kuros.random.jpa.cache;
 import com.github.kuros.random.jpa.Database;
 import com.github.kuros.random.jpa.definition.HierarchyGraph;
 import com.github.kuros.random.jpa.metamodel.AttributeProvider;
+import com.github.kuros.random.jpa.metamodel.AttributeProviderFactory;
 import com.github.kuros.random.jpa.provider.MultiplePrimaryKeyProvider;
 import com.github.kuros.random.jpa.provider.RelationshipProvider;
 import com.github.kuros.random.jpa.provider.SQLCharacterLengthProvider;
@@ -123,7 +124,7 @@ public class Cache {
     }
 
     private AttributeProvider initAttributeProvider() {
-        return AttributeProvider.getInstance(entityManager);
+        return AttributeProviderFactory.getProvider(entityManager);
     }
 
     public Set<Class<?>> getSkipTruncation() {

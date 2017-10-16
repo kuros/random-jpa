@@ -1,5 +1,6 @@
 package com.github.kuros.random.jpa.metamodel.providers;
 
+import com.github.kuros.random.jpa.metamodel.AttributeProvider;
 import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
 import org.eclipse.persistence.descriptors.ClassDescriptor;
 import org.eclipse.persistence.internal.jpa.metamodel.EntityTypeImpl;
@@ -29,7 +30,7 @@ import java.util.Set;
  *    You should have received a copy of the GNU Lesser General Public License
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class EclipseLinkProvider implements Provider {
+public class EclipseLinkProvider implements AttributeProvider {
 
     private Map<Class<?>, EntityTableMapping> entityTableMappingByClass;
     private Map<String, List<EntityTableMapping>> entityTableMappingByTableName;
@@ -54,9 +55,9 @@ public class EclipseLinkProvider implements Provider {
         final Set<EntityType<?>> entities = entityManager.getMetamodel().getEntities();
 
         for (EntityType<?> entity : entities) {
-            final EntityTypeImpl entityType = (EntityTypeImpl) entity;
             final EntityTableMapping entityTableMapping = new EntityTableMapping(entity.getJavaType());
 
+            final EntityTypeImpl entityType = (EntityTypeImpl) entity;
             final ClassDescriptor descriptor = entityType.getDescriptor();
 
             entityTableMapping.setTableName(descriptor.getTableName().toLowerCase());

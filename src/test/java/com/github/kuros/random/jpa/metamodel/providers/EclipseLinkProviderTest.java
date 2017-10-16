@@ -4,7 +4,6 @@ import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
 import com.github.kuros.random.jpa.testUtil.EntityManagerProvider;
 import com.github.kuros.random.jpa.testUtil.entity.R;
 import com.github.kuros.random.jpa.testUtil.entity.RelationEntity;
-import org.hibernate.id.IdentityGenerator;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

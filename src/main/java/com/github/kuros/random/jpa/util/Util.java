@@ -8,6 +8,7 @@ import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.MessageFormat;
 import java.util.Collection;
@@ -153,5 +154,15 @@ public class Util {
         }
         str += "]";
         return str;
+    }
+
+    public static Object invokeMethod(final Object object, final String name, final Object... params) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        final Class<?>[] paramClasses = new Class[params.length];
+
+        for (int i = 0; i < params.length; i++) {
+            paramClasses[i] = params[i].getClass();
+        }
+        final Method method = object.getClass().getMethod(name, paramClasses);
+        return method.invoke(object, params);
     }
 }

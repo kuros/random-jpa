@@ -1,10 +1,7 @@
 package com.github.kuros.random.jpa.metamodel;
 
-import com.github.kuros.random.jpa.annotation.VisibleForTesting;
 import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
-import com.github.kuros.random.jpa.metamodel.providers.Provider;
 
-import javax.persistence.EntityManager;
 import java.util.List;
 
 /*
@@ -23,28 +20,9 @@ import java.util.List;
  *    You should have received a copy of the GNU Lesser General Public License
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class AttributeProvider {
+public interface AttributeProvider {
 
-    private Provider provider;
+    EntityTableMapping get(final Class<?> type);
 
-    public static AttributeProvider getInstance(final EntityManager entityManager) {
-        return new AttributeProvider(entityManager);
-    }
-
-    private AttributeProvider(final EntityManager entityManager) {
-        this.provider = AttributeProviderFactory.getProvider(entityManager);
-    }
-
-    @VisibleForTesting
-    AttributeProvider(final Provider provider) {
-        this.provider = provider;
-    }
-
-    public EntityTableMapping get(final Class<?> type) {
-        return provider.get(type);
-    }
-
-    public List<EntityTableMapping> get(final String tableName) {
-        return provider.get(tableName);
-    }
+    List<EntityTableMapping> get(final String tableName);
 }
