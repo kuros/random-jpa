@@ -2,9 +2,6 @@ package com.github.kuros.random.jpa.metamodel.providers;
 
 import com.github.kuros.random.jpa.metamodel.AttributeProvider;
 import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
-import org.eclipse.persistence.descriptors.ClassDescriptor;
-import org.eclipse.persistence.internal.jpa.metamodel.EntityTypeImpl;
-import org.eclipse.persistence.mappings.DatabaseMapping;
 
 import javax.persistence.EntityManager;
 import javax.persistence.metamodel.EntityType;
@@ -13,6 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import static com.github.kuros.random.jpa.util.Util.invokeMethod;
 
 /*
  * Copyright (c) 2015 Kumar Rohit
@@ -52,33 +51,39 @@ public class EclipseLinkProvider implements AttributeProvider {
     }
 
     private void init() {
-        final Set<EntityType<?>> entities = entityManager.getMetamodel().getEntities();
 
-        for (EntityType<?> entity : entities) {
-            final EntityTableMapping entityTableMapping = new EntityTableMapping(entity.getJavaType());
+        try {
+            final Set<EntityType<?>> entities = entityManager.getMetamodel().getEntities();
+            for (EntityType<?> entity : entities) {
+                final EntityTableMapping entityTableMapping = new EntityTableMapping(entity.getJavaType());
+                final Object descriptor = invokeMethod(entity, "getDescriptor");
+                final String tableName = (String) invokeMethod(descriptor, "getTableName");
+                entityTableMapping.setTableName(tableName.toLowerCase());
 
-            final EntityTypeImpl entityType = (EntityTypeImpl) entity;
-            final ClassDescriptor descriptor = entityType.getDescriptor();
+                final List<Object> mappings = (List<Object>) invokeMethod(descriptor, "getMappings");
+                for (Object databaseMapping : mappings) {
+                    if ((Boolean) invokeMethod(databaseMapping, "isReadOnly")) {
+                        continue;
+                    }
+                    if ((Boolean) invokeMethod(databaseMapping, "isPrimaryKeyMapping")) {
+                        final Object field = invokeMethod(databaseMapping, "getField");
+                        entityTableMapping.addColumnIds((String) invokeMethod(field, "getName"));
+                        entityTableMapping.addAttributeIds((String) invokeMethod(databaseMapping, "getAttributeName"));
+                    }
 
-            entityTableMapping.setTableName(descriptor.getTableName().toLowerCase());
-
-            for (DatabaseMapping databaseMapping : descriptor.getMappings()) {
-                if (databaseMapping.isReadOnly()) {
-                    continue;
+                    final List<Object> fields = (List<Object>) invokeMethod(databaseMapping, "getFields");
+                    if (fields.size() > 0) {
+                        entityTableMapping.addAttributeColumnMapping((String)invokeMethod(databaseMapping, "getAttributeName"), (String)invokeMethod(fields.get(0), "getName"));
+                    }
                 }
-                if (databaseMapping.isPrimaryKeyMapping()) {
-                    entityTableMapping.addColumnIds(databaseMapping.getField().getName());
-                    entityTableMapping.addAttributeIds(databaseMapping.getAttributeName());
-                }
 
-                if (databaseMapping.getFields().size() > 0) {
-                    entityTableMapping.addAttributeColumnMapping(databaseMapping.getAttributeName(), databaseMapping.getFields().get(0).getName());
-                }
+                putEntityTableMapping((String) invokeMethod(descriptor, "getTableName"), entityTableMapping);
+                entityTableMappingByClass.put(entity.getJavaType(), entityTableMapping);
             }
-
-            putEntityTableMapping(descriptor.getTableName(), entityTableMapping);
-            entityTableMappingByClass.put(entity.getJavaType(), entityTableMapping);
+        } catch (final Exception e) {
+            e.printStackTrace();
         }
+
     }
 
     private void putEntityTableMapping(final String tableName, final EntityTableMapping entityTableMapping) {
