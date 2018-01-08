@@ -91,18 +91,14 @@ public class HibernateProviderV5Test {
         assertNotNull(entityTableMapping);
 
         final Set<String> attributeNames = entityTableMapping.getAttributeNames();
-        assertEquals(3, attributeNames.size());
+        assertEquals(1, attributeNames.size());
 
         assertTrue(attributeNames.contains("id"));
-        assertTrue(attributeNames.contains("relationOneToOne"));
-        assertTrue(attributeNames.contains("relationManyToOne"));
 
         final Set<String> columnNames = entityTableMapping.getColumnNames();
-        assertEquals(3, columnNames.size());
+        assertEquals(1, columnNames.size());
 
         assertTrue(columnNames.contains("id"));
-        assertTrue(columnNames.contains("relation_one_to_one_id"));
-        assertTrue(columnNames.contains("relation_many_to_one_id"));
 
     }
 

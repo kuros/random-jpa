@@ -60,16 +60,7 @@ public abstract class HibernateProviderBase implements AttributeProvider {
                     entityTableMapping.addColumnIds((String[]) invokeMethod(classMetadata, "getKeyColumnNames"));
                     entityTableMapping.setTableName(getTableName((String) invokeMethod(classMetadata, "getTableName")));
 
-                    final List<String> attributeNames = getSupportedAttributeNames(classMetadata);
-
-                    for (Attribute attribute : entity.getAttributes()) {
-                        final String name = AttributeHelper.getName(attribute);
-                        final String[] propertyColumnNames = (String[]) invokeMethod(classMetadata, "getPropertyColumnNames", name);
-                        final String columnName = propertyColumnNames.length > 0 ? propertyColumnNames[0] : null;
-                        if (columnName != null && attributeNames.contains(name)) {
-                            entityTableMapping.addAttributeColumnMapping(name, columnName);
-                        }
-                    }
+                    addAttributeColumnMapping(entity, classMetadata, entityTableMapping);
 
                     for (String id : entityTableMapping.getColumnIds()) {
                         entityTableMapping.addAttributeIds(entityTableMapping.getAttributeName(id));
@@ -81,7 +72,20 @@ public abstract class HibernateProviderBase implements AttributeProvider {
 
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            // do nothing
+        }
+    }
+
+    private void addAttributeColumnMapping(final EntityType<?> entity, final Object classMetadata, final EntityTableMapping entityTableMapping) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, ClassNotFoundException {
+        final List<String> attributeNames = getSupportedAttributeNames(classMetadata);
+
+        for (Attribute attribute : entity.getAttributes()) {
+            final String name = AttributeHelper.getName(attribute);
+            final String[] propertyColumnNames = (String[]) invokeMethod(classMetadata, "getPropertyColumnNames", name);
+            final String columnName = propertyColumnNames.length > 0 ? propertyColumnNames[0] : null;
+            if (columnName != null && attributeNames.contains(name)) {
+                entityTableMapping.addAttributeColumnMapping(name, columnName);
+            }
         }
     }
 
@@ -100,15 +104,8 @@ public abstract class HibernateProviderBase implements AttributeProvider {
         final Object[] properties = (Object[]) invokeMethod(entityMetamodel, "getProperties");
         final List<String> attributeNames = new ArrayList<String>();
         for (Object property : properties) {
-            if ((Boolean)invokeMethod(property, "isInsertable")) {
-                if (isInstanceOfEntityBasedAssociationAttribute(property)) {
-                    final Object associationNature = invokeMethod(property, "getAssociationNature");
-                    final Object name = invokeMethod(associationNature, "name");
-                    if (!(name.equals("ENTITY"))) {
-                        continue;
-                    }
-                }
-
+            if ((Boolean)invokeMethod(property, "isInsertable")
+                    && instanceOfBasicType(invokeMethod(property, "getType"))) {
                 attributeNames.add((String) invokeMethod(property, "getName"));
             }
         }
@@ -116,12 +113,6 @@ public abstract class HibernateProviderBase implements AttributeProvider {
         final Object identifierProperty = invokeMethod(entityMetamodel, "getIdentifierProperty");
         attributeNames.add((String) invokeMethod(identifierProperty, "getName"));
         return attributeNames;
-    }
-
-    private boolean isInstanceOfEntityBasedAssociationAttribute(final Object property) throws ClassNotFoundException {
-        final String name = "org.hibernate.tuple.entity.EntityBasedAssociationAttribute";
-        final Class<?> aClass = Class.forName(name);
-        return aClass.isInstance(property);
     }
 
     @VisibleForTesting
@@ -149,6 +140,11 @@ public abstract class HibernateProviderBase implements AttributeProvider {
         final Class<?> singleTableClass = Class.forName(singleTableEntityPersister);
 
         return singleTableClass.isInstance(obj);
+    }
+
+    private boolean instanceOfBasicType(final Object obj) throws ClassNotFoundException {
+        final Class<?> basicType = Class.forName("org.hibernate.type.BasicType");
+        return basicType.isInstance(obj);
     }
 
     protected abstract Map<String, Object> getMetaDataMap(final EntityManagerFactory entityManagerFactory) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException;
