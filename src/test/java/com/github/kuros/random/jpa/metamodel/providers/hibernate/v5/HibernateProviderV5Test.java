@@ -6,6 +6,7 @@ import com.github.kuros.random.jpa.testUtil.entity.R;
 import com.github.kuros.random.jpa.testUtil.entity.RelationEntity;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.MockitoAnnotations;
 
@@ -91,9 +92,12 @@ public class HibernateProviderV5Test {
         assertNotNull(entityTableMapping);
 
         final Set<String> attributeNames = entityTableMapping.getAttributeNames();
-        assertEquals(1, attributeNames.size());
+        assertEquals(4, attributeNames.size());
 
         assertTrue(attributeNames.contains("id"));
+        assertTrue(attributeNames.contains("relationOneToOne"));
+        assertTrue(attributeNames.contains("relationManyToOne"));
+        assertTrue(attributeNames.contains("relationOneToMany"));
 
         final Set<String> columnNames = entityTableMapping.getColumnNames();
         assertEquals(1, columnNames.size());

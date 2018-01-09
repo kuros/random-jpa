@@ -68,10 +68,12 @@ public class EntityTableMapping {
         Collections.addAll(columnIds, ids);
     }
 
-    public void addAttributeColumnMapping(final String attributeName, final String columnName) {
-        final String columnNameInLowerCase = columnName.toLowerCase();
+    public void addAttributeColumnMapping(final String attributeName, final ColumnNameType columnNameType) {
+        final String columnNameInLowerCase = columnNameType.getColumnName().toLowerCase();
         attributeColumnMapping.put(attributeName, columnNameInLowerCase);
-        columnAttributeMapping.put(columnNameInLowerCase, attributeName);
+        if (columnNameType.getType() == ColumnNameType.Type.BASIC) {
+            columnAttributeMapping.put(columnNameInLowerCase, attributeName);
+        }
     }
 
     public String getColumnName(final String attributeName) {

@@ -162,7 +162,29 @@ public class Util {
         for (int i = 0; i < params.length; i++) {
             paramClasses[i] = params[i].getClass();
         }
-        final Method method = object.getClass().getMethod(name, paramClasses);
-        return method.invoke(object, params);
+        final Class<?> aClass = object.getClass();
+        final Method method = getMethod(name, aClass, paramClasses);
+        final Object invoke;
+        if (method.isAccessible()) {
+            invoke = method.invoke(object, params);
+        } else {
+            method.setAccessible(true);
+            invoke = method.invoke(object, params);
+            method.setAccessible(false);
+        }
+
+        return invoke;
+    }
+
+    private static Method getMethod(final String methodName, final Class<?> objClass, final Class<?>[] paramClasses) throws NoSuchMethodException {
+        if (objClass == Object.class) {
+            return objClass.getDeclaredMethod(methodName, paramClasses);
+        }
+
+        try {
+            return objClass.getDeclaredMethod(methodName, paramClasses);
+        } catch (final NoSuchMethodException e) {
+            return getMethod(methodName, objClass.getSuperclass(), paramClasses);
+        }
     }
 }

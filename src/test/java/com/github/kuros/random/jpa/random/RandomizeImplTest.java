@@ -3,6 +3,7 @@ package com.github.kuros.random.jpa.random;
 import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.exception.RandomJPAException;
 import com.github.kuros.random.jpa.metamodel.AttributeProvider;
+import com.github.kuros.random.jpa.metamodel.model.ColumnNameType;
 import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
 import com.github.kuros.random.jpa.random.generator.RandomGenerator;
 import com.github.kuros.random.jpa.testUtil.RandomFixture;
@@ -152,9 +153,9 @@ public class RandomizeImplTest {
     private EntityTableMapping getMockedEntityTableMapping() {
         final EntityTableMapping entityTableMapping = new EntityTableMapping(RandomizeImplTestClass.class);
         entityTableMapping.addAttributeIds("id");
-        entityTableMapping.addAttributeColumnMapping("aLongColumn", "long_column");
-        entityTableMapping.addAttributeColumnMapping("aStringColumn", "string_column");
-        entityTableMapping.addAttributeColumnMapping("aBooleanColumn", "boolean_column");
+        entityTableMapping.addAttributeColumnMapping("aLongColumn", new ColumnNameType("long_column", ColumnNameType.Type.BASIC));
+        entityTableMapping.addAttributeColumnMapping("aStringColumn", new ColumnNameType("string_column", ColumnNameType.Type.BASIC));
+        entityTableMapping.addAttributeColumnMapping("aBooleanColumn", new ColumnNameType("boolean_column", ColumnNameType.Type.BASIC));
         Mockito.when(attributeProvider.get(Mockito.eq(RandomizeImplTestClass.class))).thenReturn(entityTableMapping);
         return entityTableMapping;
     }

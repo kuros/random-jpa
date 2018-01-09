@@ -86,11 +86,9 @@ public class EclipseLinkProviderTest {
         assertTrue(attributeNames.contains("relationManyToOne"));
 
         final Set<String> columnNames = entityTableMapping.getColumnNames();
-        assertEquals(3, columnNames.size());
+        assertEquals(1, columnNames.size());
 
         assertTrue(columnNames.contains("id"));
-        assertTrue(columnNames.contains("relation_one_to_one_id"));
-        assertTrue(columnNames.contains("relation_many_to_one_id"));
 
     }
 

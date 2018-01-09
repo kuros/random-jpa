@@ -3,6 +3,7 @@ package com.github.kuros.random.jpa.persistor.functions;
 import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.exception.RandomJPAException;
 import com.github.kuros.random.jpa.metamodel.AttributeProvider;
+import com.github.kuros.random.jpa.metamodel.model.ColumnNameType;
 import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
 import com.github.kuros.random.jpa.persistor.hepler.Finder;
 import com.github.kuros.random.jpa.random.simple.SimpleRandomGenerator;
@@ -90,7 +91,7 @@ public class FindByIdTest {
         entityTableMapping.addAttributeIds(id);
         final String[] strings = {id};
         entityTableMapping.addColumnIds(strings);
-        entityTableMapping.addAttributeColumnMapping("anyVariable", "any_column_name");
+        entityTableMapping.addAttributeColumnMapping("anyVariable", new ColumnNameType("any_column_name", ColumnNameType.Type.BASIC));
         return entityTableMapping;
     }
 

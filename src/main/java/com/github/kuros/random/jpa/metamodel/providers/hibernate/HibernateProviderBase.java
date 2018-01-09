@@ -2,6 +2,7 @@ package com.github.kuros.random.jpa.metamodel.providers.hibernate;
 
 import com.github.kuros.random.jpa.annotation.VisibleForTesting;
 import com.github.kuros.random.jpa.metamodel.AttributeProvider;
+import com.github.kuros.random.jpa.metamodel.model.ColumnNameType;
 import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
 import com.github.kuros.random.jpa.util.AttributeHelper;
 
@@ -77,14 +78,14 @@ public abstract class HibernateProviderBase implements AttributeProvider {
     }
 
     private void addAttributeColumnMapping(final EntityType<?> entity, final Object classMetadata, final EntityTableMapping entityTableMapping) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, ClassNotFoundException {
-        final List<String> attributeNames = getSupportedAttributeNames(classMetadata);
+        final Map<String, ColumnNameType.Type> supportedAttributeNames = getSupportedAttributeNames(classMetadata);
 
         for (Attribute attribute : entity.getAttributes()) {
             final String name = AttributeHelper.getName(attribute);
             final String[] propertyColumnNames = (String[]) invokeMethod(classMetadata, "getPropertyColumnNames", name);
             final String columnName = propertyColumnNames.length > 0 ? propertyColumnNames[0] : null;
-            if (columnName != null && attributeNames.contains(name)) {
-                entityTableMapping.addAttributeColumnMapping(name, columnName);
+            if (columnName != null && supportedAttributeNames.keySet().contains(name)) {
+                entityTableMapping.addAttributeColumnMapping(name, new ColumnNameType(columnName, supportedAttributeNames.get(name)));
             }
         }
     }
@@ -98,21 +99,30 @@ public abstract class HibernateProviderBase implements AttributeProvider {
         entityTableMappings.add(entityTableMapping);
     }
 
-    private List<String> getSupportedAttributeNames(final Object singleTableEntityPersister) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, ClassNotFoundException {
+    private Map<String, ColumnNameType.Type> getSupportedAttributeNames(final Object classMetaData) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, ClassNotFoundException {
 
-        final Object entityMetamodel = invokeMethod(singleTableEntityPersister, "getEntityMetamodel");
-        final Object[] properties = (Object[]) invokeMethod(entityMetamodel, "getProperties");
-        final List<String> attributeNames = new ArrayList<String>();
-        for (Object property : properties) {
-            if ((Boolean)invokeMethod(property, "isInsertable")
-                    && instanceOfBasicType(invokeMethod(property, "getType"))) {
-                attributeNames.add((String) invokeMethod(property, "getName"));
+        Map<String, ColumnNameType.Type> attributeTypeMap = new HashMap<String, ColumnNameType.Type>();
+        final boolean[] insertables = (boolean[]) invokeMethod(classMetaData, "getPropertyInsertability");
+        final String[] propertyNames = (String[]) invokeMethod(classMetaData, "getPropertyNames");
+        final Object[] propertyTypes = (Object[]) invokeMethod(classMetaData, "getPropertyTypes");
+        for (int i = 0; i < propertyNames.length; i++) {
+            try {
+                if (insertables[i]) {
+                    if (instanceOfBasicType(propertyTypes[i])) {
+                        attributeTypeMap.put(propertyNames[i], ColumnNameType.Type.BASIC);
+                    } else {
+                        attributeTypeMap.put(propertyNames[i], ColumnNameType.Type.MAPPED);
+                    }
+                }
+            } catch (final IndexOutOfBoundsException e) {
+                //Skip
             }
         }
 
+        final Object entityMetamodel = invokeMethod(classMetaData, "getEntityMetamodel");
         final Object identifierProperty = invokeMethod(entityMetamodel, "getIdentifierProperty");
-        attributeNames.add((String) invokeMethod(identifierProperty, "getName"));
-        return attributeNames;
+        attributeTypeMap.put((String) invokeMethod(identifierProperty, "getName"), ColumnNameType.Type.BASIC);
+        return attributeTypeMap;
     }
 
     @VisibleForTesting

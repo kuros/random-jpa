@@ -1,10 +1,12 @@
 package com.github.kuros.random.jpa.metamodel.providers;
 
 import com.github.kuros.random.jpa.metamodel.AttributeProvider;
+import com.github.kuros.random.jpa.metamodel.model.ColumnNameType;
 import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
 
 import javax.persistence.EntityManager;
 import javax.persistence.metamodel.EntityType;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -60,22 +62,7 @@ public class EclipseLinkProvider implements AttributeProvider {
                 final String tableName = (String) invokeMethod(descriptor, "getTableName");
                 entityTableMapping.setTableName(tableName.toLowerCase());
 
-                final List<Object> mappings = (List<Object>) invokeMethod(descriptor, "getMappings");
-                for (Object databaseMapping : mappings) {
-                    if ((Boolean) invokeMethod(databaseMapping, "isReadOnly")) {
-                        continue;
-                    }
-                    if ((Boolean) invokeMethod(databaseMapping, "isPrimaryKeyMapping")) {
-                        final Object field = invokeMethod(databaseMapping, "getField");
-                        entityTableMapping.addColumnIds((String) invokeMethod(field, "getName"));
-                        entityTableMapping.addAttributeIds((String) invokeMethod(databaseMapping, "getAttributeName"));
-                    }
-
-                    final List<Object> fields = (List<Object>) invokeMethod(databaseMapping, "getFields");
-                    if (fields.size() > 0) {
-                        entityTableMapping.addAttributeColumnMapping((String)invokeMethod(databaseMapping, "getAttributeName"), (String)invokeMethod(fields.get(0), "getName"));
-                    }
-                }
+                addAttributeMapping(entityTableMapping, descriptor);
 
                 putEntityTableMapping((String) invokeMethod(descriptor, "getTableName"), entityTableMapping);
                 entityTableMappingByClass.put(entity.getJavaType(), entityTableMapping);
@@ -84,6 +71,31 @@ public class EclipseLinkProvider implements AttributeProvider {
             e.printStackTrace();
         }
 
+    }
+
+    private void addAttributeMapping(final EntityTableMapping entityTableMapping, final Object descriptor) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        final List<Object> mappings = (List<Object>) invokeMethod(descriptor, "getMappings");
+        for (Object databaseMapping : mappings) {
+            if ((Boolean) invokeMethod(databaseMapping, "isReadOnly")) {
+                continue;
+            }
+            if ((Boolean) invokeMethod(databaseMapping, "isPrimaryKeyMapping")) {
+                final Object field = invokeMethod(databaseMapping, "getField");
+                entityTableMapping.addColumnIds((String) invokeMethod(field, "getName"));
+                entityTableMapping.addAttributeIds((String) invokeMethod(databaseMapping, "getAttributeName"));
+            }
+
+            final List<Object> fields = (List<Object>) invokeMethod(databaseMapping, "getFields");
+            if (fields.size() > 0) {
+                final boolean isForeignReferenceMapping = (Boolean) invokeMethod(databaseMapping, "isForeignReferenceMapping");
+
+                if (isForeignReferenceMapping) {
+                    entityTableMapping.addAttributeColumnMapping((String)invokeMethod(databaseMapping, "getAttributeName"), new ColumnNameType((String)invokeMethod(fields.get(0), "getName"), ColumnNameType.Type.MAPPED));
+                } else {
+                    entityTableMapping.addAttributeColumnMapping((String)invokeMethod(databaseMapping, "getAttributeName"), new ColumnNameType((String)invokeMethod(fields.get(0), "getName"), ColumnNameType.Type.BASIC));
+                }
+            }
+        }
     }
 
     private void putEntityTableMapping(final String tableName, final EntityTableMapping entityTableMapping) {

@@ -1,6 +1,7 @@
 package com.github.kuros.random.jpa.provider.oracle;
 
 import com.github.kuros.random.jpa.metamodel.AttributeProvider;
+import com.github.kuros.random.jpa.metamodel.model.ColumnNameType;
 import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
 import com.github.kuros.random.jpa.provider.SQLCharacterLengthProvider;
 import com.github.kuros.random.jpa.testUtil.entity.Department;
@@ -63,9 +64,9 @@ public class OracleCharacterLengthProviderTest {
 
     private void mockAttributeProvider() {
         final EntityTableMapping departmentTableMapping = new EntityTableMapping(Department.class);
-        departmentTableMapping.addAttributeColumnMapping("departmentId", "department_id");
-        departmentTableMapping.addAttributeColumnMapping("departmentName", "department_name");
-        departmentTableMapping.addAttributeColumnMapping("departmentAmount", "department_amount");
+        departmentTableMapping.addAttributeColumnMapping("departmentId", new ColumnNameType("department_id", ColumnNameType.Type.BASIC));
+        departmentTableMapping.addAttributeColumnMapping("departmentName", new ColumnNameType("department_name", ColumnNameType.Type.BASIC));
+        departmentTableMapping.addAttributeColumnMapping("departmentAmount", new ColumnNameType("department_amount", ColumnNameType.Type.BASIC));
         final List<EntityTableMapping> entityTableMappings = new ArrayList<EntityTableMapping>();
         entityTableMappings.add(departmentTableMapping);
         when(attributeProvider.get(eq("department"))).thenReturn(entityTableMappings);

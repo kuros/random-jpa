@@ -1,6 +1,7 @@
 package com.github.kuros.random.jpa.provider.mssql;
 
 import com.github.kuros.random.jpa.metamodel.AttributeProvider;
+import com.github.kuros.random.jpa.metamodel.model.ColumnNameType;
 import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
 import com.github.kuros.random.jpa.provider.SQLCharacterLengthProvider;
 import com.github.kuros.random.jpa.testUtil.entity.Department;
@@ -63,15 +64,15 @@ public class MSSQLCharacterLengthProviderTest {
     private void mockAttributeProvider() {
         final EntityTableMapping personTableMapping = new EntityTableMapping(Person.class);
 
-        personTableMapping.addAttributeColumnMapping("firstName", "first_name");
-        personTableMapping.addAttributeColumnMapping("lastName", "last_name");
+        personTableMapping.addAttributeColumnMapping("firstName", new ColumnNameType("first_name", ColumnNameType.Type.BASIC));
+        personTableMapping.addAttributeColumnMapping("lastName", new ColumnNameType("last_name", ColumnNameType.Type.BASIC));
         final List<EntityTableMapping> entityTableMappings = new ArrayList<EntityTableMapping>();
         entityTableMappings.add(personTableMapping);
         when(attributeProvider.get(eq("person"))).thenReturn(entityTableMappings);
 
         final EntityTableMapping departmentTableMapping = new EntityTableMapping(Department.class);
-        departmentTableMapping.addAttributeColumnMapping("departmentId", "department_id");
-        departmentTableMapping.addAttributeColumnMapping("departmentName", "department_name");
+        departmentTableMapping.addAttributeColumnMapping("departmentId", new ColumnNameType("department_id", ColumnNameType.Type.BASIC));
+        departmentTableMapping.addAttributeColumnMapping("departmentName", new ColumnNameType("department_name", ColumnNameType.Type.BASIC));
 
         final List<EntityTableMapping> departmentEntityTableMappings = new ArrayList<EntityTableMapping>();
         departmentEntityTableMappings.add(departmentTableMapping);
