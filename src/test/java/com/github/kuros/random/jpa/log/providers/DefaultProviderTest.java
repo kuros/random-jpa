@@ -2,6 +2,7 @@ package com.github.kuros.random.jpa.log.providers;
 
 import com.github.kuros.random.jpa.testUtil.RandomFixture;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
@@ -111,6 +112,37 @@ public class DefaultProviderTest {
         final Throwable throwable = new RuntimeException();
 
         provider.error(message, throwable);
+
+        Mockito.verify(logger, Mockito.times(1)).log(levelCaptor.capture(), messageCaptor.capture(), throwableArgumentCaptor.capture());
+        assertEquals(message, messageCaptor.getValue());
+        assertEquals(throwable, throwableArgumentCaptor.getValue());
+    }
+
+    @Test @Ignore
+    public void shouldLogWarnWithMessageAndArguments() throws Exception {
+        final ArgumentCaptor<Level> levelCaptor = ArgumentCaptor.forClass(Level.class);
+        final ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
+        final ArgumentCaptor<Object[]> objectArgumentCaptor = ArgumentCaptor.forClass(Object[].class);
+        final String message = RandomFixture.create(String.class);
+
+        final Object[] args = {};
+        provider.warn(message, args);
+
+        Mockito.verify(logger, Mockito.times(1)).log(levelCaptor.capture(), messageCaptor.capture(), objectArgumentCaptor.capture());
+        assertEquals(Level.WARNING, levelCaptor.getValue());
+        assertEquals(message, messageCaptor.getValue());
+        assertArrayEquals(args, objectArgumentCaptor.getValue());
+    }
+
+    @Test
+    public void shouldLogWarnWithMessageAndException() throws Exception {
+        final ArgumentCaptor<Level> levelCaptor = ArgumentCaptor.forClass(Level.class);
+        final ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
+        final ArgumentCaptor<Throwable> throwableArgumentCaptor = ArgumentCaptor.forClass(Throwable.class);
+        final String message = RandomFixture.create(String.class);
+        final Throwable throwable = new RuntimeException();
+
+        provider.warn(message, throwable);
 
         Mockito.verify(logger, Mockito.times(1)).log(levelCaptor.capture(), messageCaptor.capture(), throwableArgumentCaptor.capture());
         assertEquals(message, messageCaptor.getValue());

@@ -98,10 +98,49 @@ public class RelationCreatorTest {
         assertEquals(0, generate.size());
     }
 
+    @Test
+    public void testNoRelationIsCreatedWhenTableMappingIsNotFound() throws Exception {
+        when(metaModelProvider.getFieldsByTableName()).thenReturn(getFieldsByTableName());
+
+        mockRelationshipProviderForReferencedTableNotFound();
+
+        final List<Relation> generate = RelationCreator
+                .from(metaModelProvider)
+                .with(relationshipProvider)
+                .generate();
+
+        assertEquals(0, generate.size());
+    }
+
+    @Test
+    public void testNoRelationIsCreatedWhenColumnMappingIsNotFound() throws Exception {
+        when(metaModelProvider.getFieldsByTableName()).thenReturn(getFieldsByTableName());
+
+        mockRelationshipProviderForReferencedColumnNotFound();
+
+        final List<Relation> generate = RelationCreator
+                .from(metaModelProvider)
+                .with(relationshipProvider)
+                .generate();
+
+        assertEquals(0, generate.size());
+    }
     private void mockRelationshipProvider() {
         final List<ForeignKeyRelation> foreignKeyRelations = new ArrayList<ForeignKeyRelation>();
         foreignKeyRelations.add(ForeignKeyRelation.newInstance("test_class_table_name", "attr1", "test_class_2_table_name", "attr1"));
         foreignKeyRelations.add(ForeignKeyRelation.newInstance("test_class_table_name", "attr_2", "test_class_2_table_name", "attr2"));
+        when(relationshipProvider.getForeignKeyRelations()).thenReturn(foreignKeyRelations);
+    }
+
+    private void mockRelationshipProviderForReferencedTableNotFound() {
+        final List<ForeignKeyRelation> foreignKeyRelations = new ArrayList<ForeignKeyRelation>();
+        foreignKeyRelations.add(ForeignKeyRelation.newInstance("test_class_table_name", "attr1", "table_not_found", "attr1"));
+        when(relationshipProvider.getForeignKeyRelations()).thenReturn(foreignKeyRelations);
+    }
+
+    private void mockRelationshipProviderForReferencedColumnNotFound() {
+        final List<ForeignKeyRelation> foreignKeyRelations = new ArrayList<ForeignKeyRelation>();
+        foreignKeyRelations.add(ForeignKeyRelation.newInstance("test_class_table_name", "attr1", "test_class_2_table_name", "someAttr"));
         when(relationshipProvider.getForeignKeyRelations()).thenReturn(foreignKeyRelations);
     }
 

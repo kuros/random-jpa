@@ -63,6 +63,13 @@ public class UtilTest {
     }
 
     @Test
+    public void printValueShouldReturnEmptyStringIfObjectIsNull() throws Exception {
+        final String values = Util.printValues(null);
+
+        assertEquals("", values);
+    }
+
+    @Test
     public void shouldReturnEmptyStringForNullObjectWhenPrintingNull() throws Exception {
         assertEquals("", Util.printEntityId(cache, null));
     }
@@ -142,6 +149,15 @@ public class UtilTest {
         assertEquals("[a, b, c]", Util.convertToString(strings));
     }
 
+    @Test
+    public void shouldGetFieldsUsingGetterFromParentClass() throws Exception {
+        final SubTestClass testClass = new SubTestClass(RandomFixture.create(Integer.class), RandomFixture.create(String.class));
+        final Field idField = TestClass.class.getDeclaredField("id");
+
+        final Object fieldValue = Util.getFieldValue(testClass, idField);
+        assertEquals(Integer.valueOf(testClass.getId()), fieldValue);
+    }
+
     private class TestClass {
         private int id;
         private String value;
@@ -157,6 +173,12 @@ public class UtilTest {
 
         public String getStringValue() {
             return value;
+        }
+    }
+
+    private class SubTestClass extends TestClass {
+        SubTestClass(final int id, final String value) {
+            super(id, value);
         }
     }
 }
