@@ -1,6 +1,7 @@
 package com.github.kuros.random.jpa.metamodel.providers.hibernate;
 
 import com.github.kuros.random.jpa.annotation.VisibleForTesting;
+import com.github.kuros.random.jpa.exception.MetaModelGenerationException;
 import com.github.kuros.random.jpa.metamodel.AttributeProvider;
 import com.github.kuros.random.jpa.metamodel.model.ColumnNameType;
 import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
@@ -73,7 +74,7 @@ public abstract class HibernateProviderBase implements AttributeProvider {
 
             }
         } catch (Exception e) {
-            // do nothing
+            throw new MetaModelGenerationException("Failed to generate metamodel\n", e);
         }
     }
 

@@ -1,6 +1,8 @@
 package com.github.kuros.random.jpa.util;
 
 import com.github.kuros.random.jpa.cache.Cache;
+import com.github.kuros.random.jpa.exception.MethodInvocationException;
+import com.github.kuros.random.jpa.exception.MethodNotFoundException;
 import com.github.kuros.random.jpa.exception.RandomJPAException;
 import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
 
@@ -8,7 +10,6 @@ import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.MessageFormat;
 import java.util.Collection;
@@ -156,22 +157,36 @@ public class Util {
         return str;
     }
 
-    public static Object invokeMethod(final Object object, final String name, final Object... params) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public static Object invokeMethod(final Object object, final String name, final Object... params)  {
         final Class<?>[] paramClasses = new Class[params.length];
 
         for (int i = 0; i < params.length; i++) {
             paramClasses[i] = params[i].getClass();
         }
         final Class<?> aClass = object.getClass();
-        final Method method = getMethod(name, aClass, paramClasses);
-        final Object invoke;
-        if (method.isAccessible()) {
-            invoke = method.invoke(object, params);
-        } else {
-            method.setAccessible(true);
-            invoke = method.invoke(object, params);
-            method.setAccessible(false);
+
+        final Method method;
+        try {
+            method = getMethod(name, aClass, paramClasses);
+        } catch (NoSuchMethodException e) {
+            throw new MethodNotFoundException("Method Not found: { class:" + object.getClass().getName() +
+            " , method: " + name + "params: [" + paramClasses + "]}");
         }
+        final Object invoke;
+
+        try {
+            if (method.isAccessible()) {
+                invoke = method.invoke(object, params);
+            } else {
+                method.setAccessible(true);
+                invoke = method.invoke(object, params);
+                method.setAccessible(false);
+            }
+        } catch (final Exception e) {
+            throw new MethodInvocationException("Method Not found: { class:" + object.getClass().getName() +
+                    " , method: " + name + "params: [" + paramClasses + "]}", e);
+        }
+
 
         return invoke;
     }
