@@ -1,12 +1,12 @@
 package com.github.kuros.random.jpa.metamodel.providers.hibernate.v5;
 
 import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
+import com.github.kuros.random.jpa.metamodel.providers.HibernateProvider;
 import com.github.kuros.random.jpa.testUtil.EntityManagerProvider;
 import com.github.kuros.random.jpa.testUtil.entity.R;
 import com.github.kuros.random.jpa.testUtil.entity.RelationEntity;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.MockitoAnnotations;
 
@@ -38,13 +38,13 @@ public class HibernateProviderV5Test {
 
     private EntityManager entityManager;
 
-    private HibernateProviderV5 hibernateProvider;
+    private HibernateProvider hibernateProvider;
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         entityManager = EntityManagerProvider.getEntityManager();
-        hibernateProvider = new HibernateProviderV5(entityManager);
+        hibernateProvider = new HibernateProvider(entityManager);
     }
 
     @Test
