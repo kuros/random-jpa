@@ -22,17 +22,17 @@ public class PostgresRelationshipProviderTest {
     @Test
     public void testQueryForPostgress() throws Exception {
         final String expectedQuery = "SELECT\n" +
-                "  tc.table_name,\n" +
-                "  kcu.column_name,\n" +
-                "  ccu.table_name,\n" +
-                "  ccu.column_name\n" +
+                "  tc.table_name as p_table,\n" +
+                "  kcu.column_name as p_column,\n" +
+                "  ccu.table_name as r_table,\n" +
+                "  ccu.column_name as r_column\n" +
                 "FROM\n" +
                 "  information_schema.table_constraints AS tc\n" +
                 "  JOIN information_schema.key_column_usage AS kcu\n" +
                 "    ON tc.constraint_name = kcu.constraint_name\n" +
                 "  JOIN information_schema.constraint_column_usage AS ccu\n" +
                 "    ON ccu.constraint_name = tc.constraint_name\n" +
-                "WHERE constraint_type = 'FOREIGN KEY'";
+                "WHERE tc.constraint_type = 'FOREIGN KEY'";
 
         PostgresRelationshipProvider postgresRelationshipProvider = PostgresRelationshipProvider.newInstance(entityManager);
 
