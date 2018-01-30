@@ -2,6 +2,7 @@ package com.github.kuros.random.jpa.persistor.functions;
 
 import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.exception.RandomJPAException;
+import com.github.kuros.random.jpa.exception.ResultNotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +43,7 @@ public class FunctionProcessor<T> {
                 if (persistedObject != null) {
                     break;
                 }
-            } catch (final RandomJPAException e) {
+            } catch (final ResultNotFoundException e) {
                 // Do nothing
             }
         }
