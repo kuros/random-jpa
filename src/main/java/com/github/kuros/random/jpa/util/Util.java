@@ -143,18 +143,32 @@ public class Util {
         }
     }
 
+    public static void setFieldValue(final Field field, final Object object, final Object value) {
+        try {
+            if (field.isAccessible()) {
+                field.set(object, value);
+            } else {
+                field.setAccessible(true);
+                field.set(object, value);
+                field.setAccessible(false);
+            }
+        } catch (IllegalAccessException e) {
+            throw new RandomJPAException("Unable to set value for field: " + field.getName());
+        }
+    }
+
     public static String convertToString(final Collection<?> objects) {
-        String str = "[";
+        StringBuilder str = new StringBuilder("[");
         boolean isNotFirst = false;
         for (Object object : objects) {
             if (isNotFirst) {
-                str += ", ";
+                str.append(", ");
             }
-            str += object;
+            str.append(object);
             isNotFirst = true;
         }
-        str += "]";
-        return str;
+        str.append("]");
+        return str.toString();
     }
 
     public static Object invokeMethod(final Object object, final String name, final Object... params)  {
@@ -170,7 +184,7 @@ public class Util {
             method = getMethod(name, aClass, paramClasses);
         } catch (NoSuchMethodException e) {
             throw new MethodNotFoundException("Method Not found: { class:" + object.getClass().getName() +
-            " , method: " + name + "params: [" + paramClasses + "]}");
+            " , method: " + name + "params: [" + paramClasses.toString() + "]}");
         }
         final Object invoke;
 
@@ -184,7 +198,7 @@ public class Util {
             }
         } catch (final Exception e) {
             throw new MethodInvocationException("Method Not found: { class:" + object.getClass().getName() +
-                    " , method: " + name + "params: [" + paramClasses + "]}", e);
+                    " , method: " + name + "params: [" + paramClasses.toString() + "]}", e);
         }
 
 

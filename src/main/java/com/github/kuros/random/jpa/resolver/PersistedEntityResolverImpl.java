@@ -8,6 +8,7 @@ import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
 import com.github.kuros.random.jpa.metamodel.model.FieldWrapper;
 import com.github.kuros.random.jpa.persistor.hepler.Finder;
 import com.github.kuros.random.jpa.random.Randomize;
+import com.github.kuros.random.jpa.random.generator.RandomFactory;
 import com.github.kuros.random.jpa.types.ClassIndex;
 import com.github.kuros.random.jpa.types.CreationPlan;
 import com.github.kuros.random.jpa.types.CreationPlanImpl;
@@ -46,21 +47,30 @@ public class PersistedEntityResolverImpl implements PersistedEntityResolver {
         final List<FieldIndexValue> fieldIndexValues = plan.getFieldIndexValues();
 
         for (FieldIndexValue fieldIndexValue : fieldIndexValues) {
+            populateRandomizer(plan, fieldIndexValue);
 
-            if (shouldGenerateParents(plan, fieldIndexValue)) {
+            if (shouldGenerateParents(fieldIndexValue.getField())) {
                 final Field field = fieldIndexValue.getField();
                 final Map<Class, Integer> classIndexes = getClassIndicesMap(plan, fieldIndexValue, field);
 
                 final Object value = fieldIndexValue.getValue();
                 if (value != null) {
-                    final Object byId = findById(fieldIndexValue.getField().getDeclaringClass(), value);
-                    if (byId == null) {
-                        throw new IllegalArgumentException("Element not found with id: " + value
-                                + ", Class: " + field.getDeclaringClass());
-                    }
+                    final EntityTableMapping entityTableMapping = attributeProvider.get(field.getDeclaringClass());
+                    if (entityTableMapping != null && entityTableMapping.getAttributeIds().contains(field.getName())) {
+                        final Object byId = findById(fieldIndexValue.getField().getDeclaringClass(), value);
+                        if (byId == null) {
+                            throw new IllegalArgumentException("Element not found with id: " + value
+                                    + ", Class: " + field.getDeclaringClass());
+                        }
 
-                    classIndexObjectMap.put(ClassIndex.newInstance(field.getDeclaringClass(), fieldIndexValue.getIndex()), byId);
-                    loadParentDetails(classIndexes, classIndexObjectMap, field.getDeclaringClass(), byId);
+                        classIndexObjectMap.put(ClassIndex.newInstance(field.getDeclaringClass(), fieldIndexValue.getIndex()), byId);
+                        loadParentDetails(classIndexes, classIndexObjectMap, field.getDeclaringClass(), byId);
+                    } else {
+                        RandomFactory factory = new RandomFactory();
+                        final Object obj = factory.generateRandom(field.getDeclaringClass());
+                        Util.setFieldValue(field, obj, value);
+                        loadParentDetails(classIndexes, classIndexObjectMap, field.getDeclaringClass(), obj);
+                    }
                 }
             }
 
@@ -68,23 +78,18 @@ public class PersistedEntityResolverImpl implements PersistedEntityResolver {
         return classIndexObjectMap;
     }
 
-    private boolean shouldGenerateParents(final CreationPlanImpl plan, final FieldIndexValue fieldIndexValue) {
+    private boolean shouldGenerateParents(final Field field) {
+        return hierarchyGraph.getAttributeRelations(field.getDeclaringClass()) != null;
+    }
+
+    private void populateRandomizer(final CreationPlanImpl plan, final FieldIndexValue fieldIndexValue) {
         final Randomize randomize = plan.getRandomize();
-        final Field declaredField = fieldIndexValue.getField();
 
-        final EntityTableMapping entityTableMapping = attributeProvider.get(declaredField.getDeclaringClass());
-        final Set<Relation> relations = hierarchyGraph.getAttributeRelations(declaredField.getDeclaringClass());
-
-        if ((entityTableMapping != null && !entityTableMapping.getAttributeIds().contains(declaredField.getName()))
-                || relations == null) {
-            if (fieldIndexValue.getIndex() == PersistedEntityResolver.DEFAULT_INDEX) {
-                randomize.addDefaultFieldValue(fieldIndexValue.getField(), fieldIndexValue.getValue());
-            } else {
-                randomize.addCustomFieldValue(fieldIndexValue.getField(), fieldIndexValue.getIndex(), fieldIndexValue.getValue());
-            }
-            return false;
+        if (fieldIndexValue.getIndex() == PersistedEntityResolver.DEFAULT_INDEX) {
+            randomize.addDefaultFieldValue(fieldIndexValue.getField(), fieldIndexValue.getValue());
+        } else {
+            randomize.addCustomFieldValue(fieldIndexValue.getField(), fieldIndexValue.getIndex(), fieldIndexValue.getValue());
         }
-        return true;
     }
 
     private Map<Class, Integer> getClassIndicesMap(final CreationPlanImpl plan, final FieldIndexValue fieldIndexValue, final Field field) {
