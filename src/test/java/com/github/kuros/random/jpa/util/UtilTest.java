@@ -140,6 +140,16 @@ public class UtilTest {
     }
 
     @Test
+    public void shouldGetFieldValueWhenGetterSignatureIsDifferent() throws Exception {
+        final TestClass testClass = new TestClass(RandomFixture.create(String.class));
+
+        final Field valueField = TestClass.class.getDeclaredField("differentSignature");
+
+        final Object fieldValue = Util.getFieldValue(testClass, valueField);
+        assertEquals(String.valueOf(testClass.getSomeDifferentSignature()), fieldValue);
+    }
+
+    @Test
     public void shouldCovertListToString() throws Exception {
         final List<String> strings = new ArrayList<String>();
         strings.add("a");
@@ -161,10 +171,15 @@ public class UtilTest {
     private class TestClass {
         private int id;
         private String value;
+        private String differentSignature;
 
         TestClass(final int id, final String value) {
             this.id = id;
             this.value = value;
+        }
+
+        public TestClass(final String differentSignature) {
+            this.differentSignature = differentSignature;
         }
 
         public int getId() {
@@ -173,6 +188,10 @@ public class UtilTest {
 
         public String getStringValue() {
             return value;
+        }
+
+        public String getSomeDifferentSignature() {
+            return differentSignature;
         }
     }
 

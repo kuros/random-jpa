@@ -118,7 +118,7 @@ public class DefaultProviderTest {
         assertEquals(throwable, throwableArgumentCaptor.getValue());
     }
 
-    @Test @Ignore
+    @Test
     public void shouldLogWarnWithMessageAndArguments() throws Exception {
         final ArgumentCaptor<Level> levelCaptor = ArgumentCaptor.forClass(Level.class);
         final ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
@@ -128,10 +128,9 @@ public class DefaultProviderTest {
         final Object[] args = {};
         provider.warn(message, args);
 
-        Mockito.verify(logger, Mockito.times(1)).log(levelCaptor.capture(), messageCaptor.capture(), objectArgumentCaptor.capture());
+        Mockito.verify(logger, Mockito.times(1)).log(levelCaptor.capture(), messageCaptor.capture());
         assertEquals(Level.WARNING, levelCaptor.getValue());
         assertEquals(message, messageCaptor.getValue());
-        assertArrayEquals(args, objectArgumentCaptor.getValue());
     }
 
     @Test

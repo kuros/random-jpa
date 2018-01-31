@@ -12,6 +12,7 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -32,6 +33,9 @@ import java.util.List;
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 public class Util {
+
+    private Util() {
+    }
 
     public static String printValues(final Object object) {
         if (object == null) {
@@ -82,8 +86,7 @@ public class Util {
                 try {
                     final String attribute = attributeIds.get(i);
                     final Field declaredField = getField(type, attribute);
-                    declaredField.setAccessible(true);
-                    final Object value = declaredField.get(object);
+                    final Object value = Util.getFieldValue(object, declaredField);
 
                     if (i != 0) {
                         builder.append(", ");
@@ -132,14 +135,24 @@ public class Util {
             for (PropertyDescriptor pd : props) {
                 if (pd.getName().equals(field.getName())) {
                     final Method getter = pd.getReadMethod();
-                    return getter.invoke(object);
+                    if (getter != null) {
+                        return getter.invoke(object);
+                    } else {
+                        break;
+                    }
                 }
             }
 
-            field.setAccessible(true);
-            return field.get(object);
+            if (field.isAccessible()) {
+                return field.get(object);
+            } else {
+                field.setAccessible(true);
+                final Object result = field.get(object);
+                field.setAccessible(false);
+                return result;
+            }
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            throw new RandomJPAException(e);
         }
     }
 
@@ -184,7 +197,7 @@ public class Util {
             method = getMethod(name, aClass, paramClasses);
         } catch (NoSuchMethodException e) {
             throw new MethodNotFoundException("Method Not found: { class:" + object.getClass().getName() +
-            " , method: " + name + "params: [" + paramClasses.toString() + "]}");
+            " , method: " + name + "params: [" + Arrays.toString(paramClasses) + "]}");
         }
         final Object invoke;
 
@@ -198,7 +211,7 @@ public class Util {
             }
         } catch (final Exception e) {
             throw new MethodInvocationException("Method Not found: { class:" + object.getClass().getName() +
-                    " , method: " + name + "params: [" + paramClasses.toString() + "]}", e);
+                    " , method: " + name + "params: [" + Arrays.toString(paramClasses) + "]}", e);
         }
 
 
