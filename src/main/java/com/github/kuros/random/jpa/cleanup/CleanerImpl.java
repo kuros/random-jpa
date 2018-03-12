@@ -6,15 +6,24 @@ import com.github.kuros.random.jpa.definition.HierarchyGraph;
 import com.github.kuros.random.jpa.log.LogFactory;
 import com.github.kuros.random.jpa.log.Logger;
 import com.github.kuros.random.jpa.mapper.Relation;
+import com.github.kuros.random.jpa.metamodel.AttributeProvider;
+import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
 import com.github.kuros.random.jpa.metamodel.model.FieldWrapper;
 import com.github.kuros.random.jpa.persistor.hepler.Finder;
+import com.github.kuros.random.jpa.types.DeletionOrder;
+import com.github.kuros.random.jpa.types.DeletionOrderImpl;
+import com.github.kuros.random.jpa.util.ArrayListMultimap;
+import com.github.kuros.random.jpa.util.Multimap;
 import com.github.kuros.random.jpa.util.NumberUtil;
 import com.github.kuros.random.jpa.util.Util;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -89,6 +98,77 @@ public final class CleanerImpl implements Cleaner {
         }
     }
 
+    public <T, V> DeletionOrder getDeletionOrder(final Class<T> type, final V... ids) {
+        final List<Object> deletionOrder = new ArrayList<Object>();
+        for (V id : ids) {
+            final T byId = findById(type, id);
+            if (byId == null) {
+                throw new IllegalArgumentException("Element not found with id: " + id
+                        + ", Class: " + type);
+            }
+
+            getDeleteOrder(deletionOrder, byId);
+        }
+
+        return DeletionOrderImpl.create(deletionOrder);
+    }
+
+    public void delete(final DeletionOrder deletionOrder) {
+        final List<Object> deletionOrders = deletionOrder.getDeletionOrders();
+        final AttributeProvider attributeProvider = cache.getAttributeProvider();
+
+        final Set<Class> uniqueClassesInOrder = new LinkedHashSet<Class>();
+        Multimap<Class, Object> classEntityMultimap = ArrayListMultimap.newArrayListMultimap();
+        for (Object entity : deletionOrders) {
+            classEntityMultimap.put(entity.getClass(), entity);
+            uniqueClassesInOrder.add(entity.getClass());
+        }
+
+        for (Class type : uniqueClassesInOrder) {
+            final EntityTableMapping entityTableMapping = attributeProvider.get(type);
+            final List<String> columnIds = entityTableMapping.getColumnIds();
+
+            StringBuilder queryBuilder = new StringBuilder();
+            queryBuilder.append(DELETE_FROM)
+                    .append(entityTableMapping.getTableName())
+                    .append(" WHERE ");
+            final Map<String, List<Object>> allParams = new HashMap<String, List<Object>>();
+            for (int i = 0; i < columnIds.size(); i++) {
+                if (i != 0) {
+                    queryBuilder.append(" AND ");
+                }
+
+                final String column = columnIds.get(i);
+                queryBuilder.append(column)
+                        .append(" IN (:")
+                        .append(column)
+                        .append(")");
+
+                final List<Object> params = new ArrayList<Object>();
+
+                for (Object entity : classEntityMultimap.get(type)) {
+
+                    final String attributeName = entityTableMapping.getAttributeName(column);
+                    final Field declaredField = Util.getField(type, attributeName);
+                    final Object value = Util.getFieldValue(entity, declaredField);
+                    params.add(value);
+                }
+                allParams.put(column, params);
+            }
+
+            final Query query = entityManager.createNativeQuery(queryBuilder.toString());
+            for (String paramKey : allParams.keySet()) {
+                query.setParameter(paramKey, allParams.get(paramKey));
+            }
+
+            query.executeUpdate();
+
+        }
+
+        entityManager.flush();
+
+    }
+
     public void truncate(final Class<?> type) {
         final Set<Class<?>> skippedClasses = new HashSet<Class<?>>(allClassesToSkip);
         truncate(skippedClasses, type);
@@ -105,7 +185,6 @@ public final class CleanerImpl implements Cleaner {
         if (!skip.contains(type)) {
             final int rowsDeleted = entityManager.createQuery(DELETE_FROM + type.getSimpleName()).executeUpdate();
             skip.add(type);
-
             LOGGER.debug("Class: " + type + " No. of rows deleted: " + rowsDeleted);
         }
 
@@ -129,24 +208,43 @@ public final class CleanerImpl implements Cleaner {
         }
     }
 
-    private <T> void deleteChilds(final T type) {
-
+    private <T> void getDeleteOrder(final List<Object> deletionOrder, final T type) {
         final Set<Class<?>> childs = childGraph.getChilds(type.getClass());
         final Map<Class<?>, Set<Relation>> childRelationMap = getChildRelationMap(type.getClass());
         for (Class<?> child : childs) {
 
-            final Map<String, Object> attributeValues = new HashMap<String, Object>();
-
-            final Set<Relation> relations = childRelationMap.get(child);
-            for (Relation relation : relations) {
-                final FieldWrapper from = relation.getFrom();
-                final Object value = getFieldValue(type, from);
-
-                final FieldWrapper to = relation.getTo();
-                attributeValues.put(to.getFieldName(), NumberUtil.castNumber(to.getField().getType(), value));
+            final List<?> byAttributes = getChilds(childRelationMap, type, child);
+            for (Object byAttribute : byAttributes) {
+                getDeleteOrder(deletionOrder, byAttribute);
             }
+        }
 
-            final List<?> byAttributes = finder.findByAttributes(child, attributeValues);
+        if (!allClassesToSkip.contains(type.getClass())) {
+            deletionOrder.add(type);
+        }
+    }
+
+    private <T> List<?> getChilds(final Map<Class<?>, Set<Relation>> childRelationMap, final T type, final Class<?> child) {
+        final Map<String, Object> attributeValues = new HashMap<String, Object>();
+
+        final Set<Relation> relations = childRelationMap.get(child);
+        for (Relation relation : relations) {
+            final FieldWrapper from = relation.getFrom();
+            final Object value = getFieldValue(type, from);
+
+            final FieldWrapper to = relation.getTo();
+            attributeValues.put(to.getFieldName(), NumberUtil.castNumber(to.getField().getType(), value));
+        }
+
+        return finder.findByAttributes(child, attributeValues);
+    }
+
+    private <T> void deleteChilds(final T type) {
+        final Set<Class<?>> childs = childGraph.getChilds(type.getClass());
+        final Map<Class<?>, Set<Relation>> childRelationMap = getChildRelationMap(type.getClass());
+        for (Class<?> child : childs) {
+
+            final List<?> byAttributes = getChilds(childRelationMap, (T) type, child);
             for (Object byAttribute : byAttributes) {
                 deleteChilds(byAttribute);
             }

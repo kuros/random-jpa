@@ -11,8 +11,10 @@ import com.github.kuros.random.jpa.testUtil.entity.X;
 import com.github.kuros.random.jpa.testUtil.entity.Y;
 import com.github.kuros.random.jpa.testUtil.entity.Z;
 import com.github.kuros.random.jpa.testUtil.hierarchyGraph.MockedHierarchyGraph;
+import com.github.kuros.random.jpa.types.DeletionOrder;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.persistence.EntityManager;
@@ -53,6 +55,32 @@ public class CleanerImplTest {
         cleaner.delete(X.class, x.getId());
 
         entityManager.getTransaction().commit();
+
+        assertNull(entityManager.find(X.class, x.getId()));
+        assertNull(entityManager.find(Z.class, z.getId()));
+        assertNotNull(entityManager.find(Y.class, y.getId()));
+
+    }
+
+    @Test @Ignore
+    public void shouldDeleteRowsWithIdsExceptParallelClassesByDeletionOrder() throws Exception {
+
+        final X x = getX(null);
+
+        final Y y = getY();
+
+        final Z z = getZ(x, y);
+
+        entityManager.getTransaction().begin();
+
+        final DeletionOrder deletionOrder =
+                cleaner.getDeletionOrder(X.class, x.getId());
+        cleaner.delete(deletionOrder);
+
+        entityManager.flush();
+        entityManager.getTransaction().commit();
+
+        entityManager = EntityManagerProvider.getEntityManager();
 
         assertNull(entityManager.find(X.class, x.getId()));
         assertNull(entityManager.find(Z.class, z.getId()));

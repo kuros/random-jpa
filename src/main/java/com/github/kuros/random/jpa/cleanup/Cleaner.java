@@ -1,5 +1,7 @@
 package com.github.kuros.random.jpa.cleanup;
 
+import com.github.kuros.random.jpa.types.DeletionOrder;
+
 /*
  * Copyright (c) 2015 Kumar Rohit
  *
@@ -18,9 +20,14 @@ package com.github.kuros.random.jpa.cleanup;
  */
 public interface Cleaner {
 
-    <T, V> void delete(Class<T> type, V... ids);
+    <T, V> DeletionOrder getDeletionOrder(Class<T> type, V... ids);
 
-    void truncate(final Class<?> type);
+    void delete(DeletionOrder deletionOrder);
+
+    void truncate(Class<?> type);
 
     void truncateAll();
+
+    @Deprecated
+    <T, V> void delete(Class<T> type, V... ids);
 }

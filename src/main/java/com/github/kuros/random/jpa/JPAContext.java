@@ -2,6 +2,7 @@ package com.github.kuros.random.jpa;
 
 import com.github.kuros.random.jpa.persistor.model.ResultMap;
 import com.github.kuros.random.jpa.types.CreationPlan;
+import com.github.kuros.random.jpa.types.DeletionOrder;
 import com.github.kuros.random.jpa.types.Entity;
 import com.github.kuros.random.jpa.types.Plan;
 
@@ -29,9 +30,14 @@ public interface JPAContext {
 
     ResultMap createAndPersist(Entity... entities);
 
-    <T, V> void remove(Class<T> type, V... ids);
+    <T, V> DeletionOrder getDeletionOrder(Class<T> type, V... ids);
+
+    void remove(DeletionOrder deletionOrder);
 
     void remove(Class<?> type);
 
     void removeAll();
+
+    @Deprecated
+    <T, V> void remove(Class<T> type, V... ids);
 }

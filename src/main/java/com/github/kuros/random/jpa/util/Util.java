@@ -1,6 +1,7 @@
 package com.github.kuros.random.jpa.util;
 
 import com.github.kuros.random.jpa.cache.Cache;
+import com.github.kuros.random.jpa.exception.FieldNotFoundException;
 import com.github.kuros.random.jpa.exception.MethodInvocationException;
 import com.github.kuros.random.jpa.exception.MethodNotFoundException;
 import com.github.kuros.random.jpa.exception.RandomJPAException;
@@ -107,14 +108,14 @@ public class Util {
         }
     }
 
-    public static Field getField(final Class<?> tableClass, final String attribute) throws NoSuchFieldException {
+    public static Field getField(final Class<?> tableClass, final String attribute) {
         try {
             return tableClass.getDeclaredField(attribute);
         } catch (final NoSuchFieldException e) {
             if (tableClass.getSuperclass() != Object.class) {
                 return getField(tableClass.getSuperclass(), attribute);
             }
-            throw e;
+            throw new FieldNotFoundException(e);
         }
     }
 

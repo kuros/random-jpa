@@ -21,6 +21,7 @@ import com.github.kuros.random.jpa.types.ClassDepth;
 import com.github.kuros.random.jpa.types.CreationOrder;
 import com.github.kuros.random.jpa.types.CreationPlan;
 import com.github.kuros.random.jpa.types.CreationPlanImpl;
+import com.github.kuros.random.jpa.types.DeletionOrder;
 import com.github.kuros.random.jpa.types.Entity;
 import com.github.kuros.random.jpa.types.EntityHelper;
 import com.github.kuros.random.jpa.types.Plan;
@@ -80,6 +81,16 @@ public final class JPAContextImpl implements JPAContext {
 
     public ResultMap createAndPersist(final Entity... entities) {
         return createAndPersist(Plan.of(entities));
+    }
+
+    public <T, V> DeletionOrder getDeletionOrder(final Class<T> type, final V... ids) {
+        final Cleaner cleaner = CleanerImpl.newInstance(cache);
+        return cleaner.getDeletionOrder(type, ids);
+    }
+
+    public void remove(final DeletionOrder deletionOrder) {
+        final Cleaner cleaner = CleanerImpl.newInstance(cache);
+        cleaner.delete(deletionOrder);
     }
 
     public <T, V> void remove(final Class<T> type, final V... ids) {
