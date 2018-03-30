@@ -16,7 +16,7 @@ public class AttributeProviderFactory {
         try {
             Class.forName("org.hibernate.Version");
             return new HibernateProvider(entityManager);
-        } catch (final Exception e) {
+        } catch (final ClassNotFoundException e) {
             try {
                 Class.forName("org.eclipse.persistence.sessions.DatabaseLogin");
                 return new EclipseLinkProvider(entityManager);
