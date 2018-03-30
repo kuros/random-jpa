@@ -14,7 +14,6 @@ import com.github.kuros.random.jpa.testUtil.hierarchyGraph.MockedHierarchyGraph;
 import com.github.kuros.random.jpa.types.DeletionOrder;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.persistence.EntityManager;
@@ -62,7 +61,7 @@ public class CleanerImplTest {
 
     }
 
-    @Test @Ignore
+    @Test
     public void shouldDeleteRowsWithIdsExceptParallelClassesByDeletionOrder() throws Exception {
 
         final X x = getX(null);
