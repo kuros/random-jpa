@@ -33,7 +33,7 @@ public class AttributeHelper {
     }
 
     public static String getName(final Attribute<?, ?> attribute) {
-        return attribute.getJavaMember().getName();
+        return attribute.getName();
     }
 
     public static Class<?> getAttributeClass(final Attribute<?, ?> attribute) {

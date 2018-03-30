@@ -23,4 +23,6 @@ import javax.persistence.metamodel.StaticMetamodel;
 public class A_ {
 
     public static volatile SingularAttribute<A, Long> id;
+    public static volatile SingularAttribute<A, String> name;
+    public static volatile SingularAttribute<A, String> address;
 }

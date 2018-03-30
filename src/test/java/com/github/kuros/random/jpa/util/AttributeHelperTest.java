@@ -63,6 +63,15 @@ public class AttributeHelperTest {
     }
 
     @Test
+    public void shouldReturnNameOfTheMappedMethodField() throws Exception {
+        EntityManagerProvider.init();
+
+        final String name = AttributeHelper.getName(A_.address);
+
+        Assert.assertEquals("address", name);
+    }
+
+    @Test
     public void shouldReturnListOfFieldsForAtttributes() throws Exception {
 
         EntityManagerProvider.init();

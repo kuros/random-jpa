@@ -36,6 +36,8 @@ public class A {
     @Column
     private String name;
 
+    private String address;
+
     public String getName() {
         return name;
     }
@@ -52,4 +54,12 @@ public class A {
         this.id = id;
     }
 
+    @Column
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(final String address) {
+        this.address = address;
+    }
 }
