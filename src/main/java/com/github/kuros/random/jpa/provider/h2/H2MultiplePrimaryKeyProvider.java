@@ -25,12 +25,10 @@ import javax.persistence.EntityManager;
  */
 public class H2MultiplePrimaryKeyProvider extends AbstractMultiplePrimaryKeyProvider {
 
-    private static final String QUERY = "select DISTINCT kc.TABLE_NAME, kc.COLUMN_NAME\n" +
-            "            from information_schema.TABLE_CONSTRAINTS tc, information_schema.KEY_COLUMN_USAGE kc\n" +
-            "            WHERE kc.CONSTRAINT_NAME = tc.CONSTRAINT_NAME\n" +
-            "            and kc.TABLE_SCHEMA = tc.TABLE_SCHEMA\n" +
-            "            and tc.CONSTRAINT_TYPE = 'PRIMARY KEY'\n" +
-            "            and tc.CONSTRAINT_SCHEMA='PUBLIC'";
+    private static final String QUERY = "select C.TABLE_NAME AS tab_name, C.COLUMN_LIST as col_name\n" +
+            "from INFORMATION_SCHEMA.CONSTRAINTS C\n" +
+            "where C.CONSTRAINT_TYPE = 'PRIMARY KEY'\n" +
+            "AND C.TABLE_SCHEMA = 'PUBLIC'";
 
     @VisibleForTesting
     H2MultiplePrimaryKeyProvider(final EntityManager entityManager, final AttributeProvider attributeProvider) {
