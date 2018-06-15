@@ -3,6 +3,7 @@ package com.github.kuros.random.jpa.provider.factory;
 import com.github.kuros.random.jpa.Database;
 import com.github.kuros.random.jpa.metamodel.AttributeProvider;
 import com.github.kuros.random.jpa.provider.UniqueConstraintProvider;
+import com.github.kuros.random.jpa.provider.h2.H2UniqueConstraintProvider;
 import com.github.kuros.random.jpa.provider.mssql.MSSQLUniqueConstraintProvider;
 import com.github.kuros.random.jpa.provider.mysql.MySqlUniqueConstraintProvider;
 import com.github.kuros.random.jpa.provider.oracle.OracleUniqueConstraintProvider;
@@ -56,6 +57,12 @@ public class UniqueConstraintProviderFactoryTest {
     public void getUniqueCombinationAttributesForPostgres() throws Exception {
         final UniqueConstraintProvider uniqueConstraintProvider = UniqueConstraintProviderFactory.getUniqueConstraintProvider(Database.POSTGRES, entityManager, attributeProvider);
         assertTrue(uniqueConstraintProvider instanceof PostgresUniqueConstraintProvider);
+    }
+
+    @Test
+    public void getUniqueCombinationAttributesForH2() throws Exception {
+        final UniqueConstraintProvider uniqueConstraintProvider = UniqueConstraintProviderFactory.getUniqueConstraintProvider(Database.H2, entityManager, attributeProvider);
+        assertTrue(uniqueConstraintProvider instanceof H2UniqueConstraintProvider);
     }
 
     @Test

@@ -21,5 +21,6 @@ public enum Database {
     MY_SQL,
     ORACLE,
     POSTGRES,
+    H2,
     NONE
 }

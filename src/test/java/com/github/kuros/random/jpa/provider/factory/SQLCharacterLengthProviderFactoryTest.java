@@ -3,6 +3,7 @@ package com.github.kuros.random.jpa.provider.factory;
 import com.github.kuros.random.jpa.Database;
 import com.github.kuros.random.jpa.metamodel.AttributeProvider;
 import com.github.kuros.random.jpa.provider.SQLCharacterLengthProvider;
+import com.github.kuros.random.jpa.provider.h2.H2CharacterLengthProvider;
 import com.github.kuros.random.jpa.provider.mssql.MSSQLCharacterLengthProvider;
 import com.github.kuros.random.jpa.provider.mysql.MySqlCharacterLengthProvider;
 import com.github.kuros.random.jpa.provider.oracle.OracleCharacterLengthProvider;
@@ -62,6 +63,12 @@ public class SQLCharacterLengthProviderFactoryTest {
     public void getSqlCharacterLengthProviderForPostgres() throws Exception {
         final SQLCharacterLengthProvider sqlCharacterLengthProvider = SQLCharacterLengthProviderFactory.getSqlCharacterLengthProvider(Database.POSTGRES, entityManager, attributeProvider);
         assertTrue(sqlCharacterLengthProvider instanceof PostgresCharacterLengthProvider);
+    }
+
+    @Test
+    public void getSqlCharacterLengthProviderForH2() throws Exception {
+        final SQLCharacterLengthProvider sqlCharacterLengthProvider = SQLCharacterLengthProviderFactory.getSqlCharacterLengthProvider(Database.H2, entityManager, attributeProvider);
+        assertTrue(sqlCharacterLengthProvider instanceof H2CharacterLengthProvider);
     }
 
     @Test

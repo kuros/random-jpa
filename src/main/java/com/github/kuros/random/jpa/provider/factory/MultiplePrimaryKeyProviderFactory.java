@@ -3,6 +3,7 @@ package com.github.kuros.random.jpa.provider.factory;
 import com.github.kuros.random.jpa.Database;
 import com.github.kuros.random.jpa.metamodel.AttributeProvider;
 import com.github.kuros.random.jpa.provider.MultiplePrimaryKeyProvider;
+import com.github.kuros.random.jpa.provider.h2.H2MultiplePrimaryKeyProvider;
 import com.github.kuros.random.jpa.provider.mssql.MSSQLMultiplePrimaryKeyProvider;
 import com.github.kuros.random.jpa.provider.mysql.MySqlMultiplePrimaryKeyProvider;
 import com.github.kuros.random.jpa.provider.oracle.OracleMultiplePrimaryKeyProvider;
@@ -44,6 +45,9 @@ public class MultiplePrimaryKeyProviderFactory {
                 break;
             case POSTGRES:
                 multiplePrimaryKeyProvider = PostgresMultiplePrimaryKeyProvider.getInstance(entityManager, attributeProvider);
+                break;
+            case H2:
+                multiplePrimaryKeyProvider = H2MultiplePrimaryKeyProvider.getInstance(entityManager, attributeProvider);
                 break;
             case NONE:
             default:

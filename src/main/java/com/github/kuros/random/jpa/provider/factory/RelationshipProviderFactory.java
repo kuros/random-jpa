@@ -2,6 +2,7 @@ package com.github.kuros.random.jpa.provider.factory;
 
 import com.github.kuros.random.jpa.Database;
 import com.github.kuros.random.jpa.provider.RelationshipProvider;
+import com.github.kuros.random.jpa.provider.h2.H2RelationshipProvider;
 import com.github.kuros.random.jpa.provider.model.ForeignKeyRelation;
 import com.github.kuros.random.jpa.provider.mssql.MSSQLRelationshipProvider;
 import com.github.kuros.random.jpa.provider.mysql.MySqlRelationshipProvider;
@@ -44,6 +45,9 @@ public class RelationshipProviderFactory {
                 break;
             case POSTGRES:
                 relationshipProvider = PostgresRelationshipProvider.newInstance(entityManager);
+                break;
+            case H2:
+                relationshipProvider = H2RelationshipProvider.newInstance(entityManager);
                 break;
             case NONE:
             default:
