@@ -11,7 +11,9 @@ import com.github.kuros.random.jpa.testUtil.entity.Z_;
 import com.github.kuros.random.jpa.util.Util;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 
@@ -23,9 +25,11 @@ public class DependencyResolverTest {
         final Dependencies dependencies = Dependencies.newInstance();
         dependencies.withLink(Link.newLink(Z_.xId, X_.id));
 
-        final List<Relation> relations = DependencyResolver.resolveDependency(dependencies);
+        final Set<Relation> relationSet = DependencyResolver.resolveDependency(dependencies);
 
-        assertEquals(1, relations.size());
+        assertEquals(1, relationSet.size());
+
+        final List<Relation> relations = new ArrayList<Relation>(relationSet);
 
         assertEquals(Util.getField(Z.class, "xId"), relations.get(0).getFrom().getField());
         assertEquals(Util.getField(X.class, "id"), relations.get(0).getTo().getField());
@@ -33,7 +37,7 @@ public class DependencyResolverTest {
 
     @Test
     public void shouldReturnEmptyListIfDependenciesAreNull() throws Exception {
-        final List<Relation> relations = DependencyResolver.resolveDependency(null);
+        final Set<Relation> relations = DependencyResolver.resolveDependency(null);
         assertEquals(0, relations.size());
     }
 }

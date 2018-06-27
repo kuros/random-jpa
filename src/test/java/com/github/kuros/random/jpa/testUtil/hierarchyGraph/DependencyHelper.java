@@ -29,6 +29,8 @@ import com.github.kuros.random.jpa.testUtil.entity.RelationOneToMany_;
 import com.github.kuros.random.jpa.testUtil.entity.RelationOneToOne;
 import com.github.kuros.random.jpa.testUtil.entity.RelationOneToOne_;
 import com.github.kuros.random.jpa.testUtil.entity.RelationOneToMany;
+import com.github.kuros.random.jpa.testUtil.entity.SelfJoinEntity;
+import com.github.kuros.random.jpa.testUtil.entity.SelfJoinEntity_;
 import com.github.kuros.random.jpa.testUtil.entity.X;
 import com.github.kuros.random.jpa.testUtil.entity.X_;
 import com.github.kuros.random.jpa.testUtil.entity.Y;
@@ -67,6 +69,14 @@ public class DependencyHelper {
         relations.add(Relation.newInstance(getFieldWrapper(RelationOneToMany.class, "id"), getFieldWrapper(RelationEntity.class, "relationOneToMany")));
 
         return relations;
+    }
+
+    public static List<Link> getIgnoreLinks() {
+
+        final List<Link> links = new ArrayList<Link>();
+
+        links.add(Link.newLink(SelfJoinEntity_.refId, SelfJoinEntity_.id));
+        return links;
     }
 
     public static List<Link> getLinks() {

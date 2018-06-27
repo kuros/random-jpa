@@ -72,4 +72,14 @@ public class FieldWrapper {
         result = 31 * result + field.hashCode();
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "FieldWrapper{" +
+                "initializationClass=" + initializationClass +
+                ", field=" + field +
+                ", fieldName='" + fieldName + '\'' +
+                ", overriddenFieldName='" + overriddenFieldName + '\'' +
+                '}';
+    }
 }

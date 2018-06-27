@@ -8,8 +8,9 @@ import com.github.kuros.random.jpa.util.AttributeHelper;
 
 import javax.persistence.metamodel.Attribute;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /*
  * Copyright (c) 2015 Kumar Rohit
@@ -29,33 +30,39 @@ import java.util.List;
  */
 public class DependencyResolver {
 
-    public static List<Relation> resolveDependency(final Dependencies dependencies) {
+    public static Set<Relation> resolveDependency(final Dependencies dependencies) {
 
         if (dependencies != null) {
             final List<Link> links = dependencies.getLinks();
             return generateRelations(links);
         }
 
-        return new ArrayList<Relation>();
+        return new HashSet<Relation>();
     }
 
-    public static List<Relation> generateRelations(final List<Link> links) {
-        final List<Relation> relations = new ArrayList<Relation>();
+    public static Set<Relation> ignoreLinks(final Dependencies dependencies) {
+
+        if (dependencies != null) {
+            final List<Link> links = dependencies.getIgnoreLinks();
+            return generateRelations(links);
+        }
+
+        return new HashSet<Relation>();
+    }
+
+    public static Set<Relation> generateRelations(final List<Link> links) {
+        final Set<Relation> relations = new HashSet<Relation>();
 
         for (Link link : links) {
-            try {
-                final Field from = getFieldValue(link.getFrom());
-                final Field to = getFieldValue(link.getTo());
-                relations.add(Relation.newInstance(new FieldWrapper(from), new FieldWrapper(to)));
-            } catch (final NoSuchFieldException e) {
-                //do nothing
-            }
+            final Field from = getFieldValue(link.getFrom());
+            final Field to = getFieldValue(link.getTo());
+            relations.add(Relation.newInstance(new FieldWrapper(from), new FieldWrapper(to)));
         }
 
         return relations;
     }
 
-    private static Field getFieldValue(final Attribute attribute) throws NoSuchFieldException {
+    private static Field getFieldValue(final Attribute attribute) {
         return AttributeHelper.getField(attribute);
     }
 }

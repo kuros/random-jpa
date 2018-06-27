@@ -61,4 +61,12 @@ public class Relation {
         result = 31 * result + to.hashCode();
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "Relation{" +
+                "from=" + from +
+                ", to=" + to +
+                '}';
+    }
 }

@@ -71,8 +71,9 @@ public class JPAContextTest {
 
         final Dependencies dependencies = Dependencies.newInstance();
         dependencies.withLink(DependencyHelper.getLinks());
+        dependencies.ignoreLinks(DependencyHelper.getIgnoreLinks());
         final JPAContext jpaContext = JPAContextFactory
-                .newInstance(Database.NONE, entityManager)
+                .newInstance(Database.H2, entityManager)
                 .with(dependencies)
                 .generate();
 

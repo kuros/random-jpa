@@ -66,6 +66,7 @@ public final class JPAContextFactory {
 
     public JPAContextFactory with(final Dependencies customDependencies) {
         this.dependencies.withLink(customDependencies.getLinks());
+        this.dependencies.ignoreLinks(customDependencies.getIgnoreLinks());
         return this;
     }
 

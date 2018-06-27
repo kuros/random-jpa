@@ -21,10 +21,12 @@ import java.util.List;
  */
 public final class Dependencies {
 
-    private List<Link> links;
+    private final List<Link> links;
+    private final List<Link> ignoreLinks;
 
     private Dependencies() {
         this.links = new ArrayList<Link>();
+        this.ignoreLinks = new ArrayList<Link>();
     }
 
     public static Dependencies newInstance() {
@@ -41,7 +43,21 @@ public final class Dependencies {
         return this;
     }
 
+    public Dependencies ignoreLink(final Link link) {
+        this.ignoreLinks.add(link);
+        return this;
+    }
+
+    public Dependencies ignoreLinks(final List<Link> allLinks) {
+        this.ignoreLinks.addAll(allLinks);
+        return this;
+    }
+
     public List<Link> getLinks() {
         return links;
+    }
+
+    public List<Link> getIgnoreLinks() {
+        return ignoreLinks;
     }
 }

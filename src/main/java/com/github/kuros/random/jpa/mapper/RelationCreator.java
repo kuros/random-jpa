@@ -66,22 +66,21 @@ public final class RelationCreator {
 
         final Map<String, Set<String>> missingColumns = new HashMap<String, Set<String>>();
         final Set<String> missingTable = new HashSet<String>();
+        final Set<Relation> ignoreRelations = DependencyResolver.ignoreLinks(dependencies);
 
         for (ForeignKeyRelation foreignKeyRelation : foreignKeyRelations) {
-
+            final FieldWrapper from = getFieldWrapper(foreignKeyRelation);
             try {
-                final FieldWrapper from = getFieldWrapper(foreignKeyRelation);
-                try {
-                    final FieldWrapper to = getReferencedFieldValue(foreignKeyRelation);
-                    final Relation relation = Relation.newInstance(from, to);
+                final FieldWrapper to = getReferencedFieldValue(foreignKeyRelation);
+                final Relation relation = Relation.newInstance(from, to);
+
+                if (!ignoreRelations.contains(relation)) {
                     relations.add(relation);
-                } catch (final EntityNotDeclared e) {
-                    missingTable.add(foreignKeyRelation.getReferencedTable());
-                } catch (final ColumnNotDeclared e) {
-                    addToMissingColumns(missingColumns, foreignKeyRelation);
                 }
-            } catch (final Exception e) {
-                //no action required
+            } catch (final EntityNotDeclared e) {
+                missingTable.add(foreignKeyRelation.getReferencedTable());
+            } catch (final ColumnNotDeclared e) {
+                addToMissingColumns(missingColumns, foreignKeyRelation);
             }
         }
 
