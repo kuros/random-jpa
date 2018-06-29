@@ -69,8 +69,8 @@ public final class RelationCreator {
         final Set<Relation> ignoreRelations = DependencyResolver.ignoreLinks(dependencies);
 
         for (ForeignKeyRelation foreignKeyRelation : foreignKeyRelations) {
-            final FieldWrapper from = getFieldWrapper(foreignKeyRelation);
             try {
+                final FieldWrapper from = getFieldWrapper(foreignKeyRelation);
                 final FieldWrapper to = getReferencedFieldValue(foreignKeyRelation);
                 final Relation relation = Relation.newInstance(from, to);
 
