@@ -230,4 +230,16 @@ public class Util {
             return getMethod(methodName, objClass.getSuperclass(), paramClasses);
         }
     }
+
+    public static String getDeepestRootCauseMessage(final Throwable throwable) {
+        return getDeepestRootCause(throwable).getMessage();
+    }
+
+    public static Throwable getDeepestRootCause(final Throwable throwable) {
+        if (throwable.getCause() == null) {
+            return throwable;
+        }
+
+        return getDeepestRootCause(throwable.getCause());
+    }
 }
