@@ -56,7 +56,7 @@ public class MSSQLCharacterLengthProviderTest {
     }
 
     @Test
-    public void testApplyLengthConstraint() throws Exception {
+    public void testApplyLengthConstraint() {
         assertEquals("abcde", sqlCharacterLengthProvider.applyLengthConstraint(Department.class.getName(), "departmentName", "abcdefghijkl"));
         assertEquals("feature yet not implemented for mssql", 789, sqlCharacterLengthProvider.applyLengthConstraint(Department.class.getName(), "departmentId", 123456789));
     }
@@ -66,7 +66,7 @@ public class MSSQLCharacterLengthProviderTest {
 
         personTableMapping.addAttributeColumnMapping("firstName", new ColumnNameType("first_name", ColumnNameType.Type.BASIC));
         personTableMapping.addAttributeColumnMapping("lastName", new ColumnNameType("last_name", ColumnNameType.Type.BASIC));
-        final List<EntityTableMapping> entityTableMappings = new ArrayList<EntityTableMapping>();
+        final List<EntityTableMapping> entityTableMappings = new ArrayList<>();
         entityTableMappings.add(personTableMapping);
         when(attributeProvider.get(eq("person"))).thenReturn(entityTableMappings);
 
@@ -74,7 +74,7 @@ public class MSSQLCharacterLengthProviderTest {
         departmentTableMapping.addAttributeColumnMapping("departmentId", new ColumnNameType("department_id", ColumnNameType.Type.BASIC));
         departmentTableMapping.addAttributeColumnMapping("departmentName", new ColumnNameType("department_name", ColumnNameType.Type.BASIC));
 
-        final List<EntityTableMapping> departmentEntityTableMappings = new ArrayList<EntityTableMapping>();
+        final List<EntityTableMapping> departmentEntityTableMappings = new ArrayList<>();
         departmentEntityTableMappings.add(departmentTableMapping);
         when(attributeProvider.get(eq("department"))).thenReturn(departmentEntityTableMappings);
     }
@@ -86,7 +86,7 @@ public class MSSQLCharacterLengthProviderTest {
         final Object[] row4 = {"employee", "employee_name", 10, null, null, "varchar"};
         final Object[] row5 = {"department", "department_id", null, (byte)3, 2, "decimal"};
 
-        final List<Object[]> resultList = new ArrayList<Object[]>();
+        final List<Object[]> resultList = new ArrayList<>();
         resultList.add(row1);
         resultList.add(row2);
         resultList.add(row3);

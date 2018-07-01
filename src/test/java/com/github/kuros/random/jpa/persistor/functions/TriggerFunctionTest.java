@@ -87,7 +87,7 @@ public class TriggerFunctionTest {
         final Trigger trigger = Trigger.of(Z.class);
         trigger.withLink(Z_.xId, X_.id);
 
-        final List<Trigger<?>> triggers = new ArrayList<Trigger<?>>();
+        final List<Trigger<?>> triggers = new ArrayList<>();
         triggers.add(trigger);
 
         return TriggerCache.getInstance(triggers);

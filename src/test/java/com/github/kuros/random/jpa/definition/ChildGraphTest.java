@@ -29,7 +29,7 @@ import static org.junit.Assert.assertTrue;
 public class ChildGraphTest {
 
     @Test
-    public void shouldGenerateChildGraph() throws Exception {
+    public void shouldGenerateChildGraph() {
 
         final HierarchyGraph hierarchyGraph = MockedHierarchyGraph.getHierarchyGraph();
 
@@ -73,7 +73,7 @@ public class ChildGraphTest {
     }
 
     @Test
-    public void shouldReturnRelationWithChilds() throws Exception {
+    public void shouldReturnRelationWithChilds() {
         final HierarchyGraph hierarchyGraph = MockedHierarchyGraph.getHierarchyGraph();
 
         final ChildGraph childGraph = ChildGraph.newInstance(hierarchyGraph);
@@ -81,14 +81,14 @@ public class ChildGraphTest {
         final Set<Relation> childRelations = childGraph.getChildRelations(X.class);
 
         assertEquals(1, childRelations.size());
-        final List<Relation> relations = new ArrayList<Relation>(childRelations);
+        final List<Relation> relations = new ArrayList<>(childRelations);
         final Relation relation = relations.get(0);
         assertEquals("id" , relation.getFrom().getFieldName());
         assertEquals("xId" , relation.getTo().getFieldName());
     }
 
     @Test
-    public void shouldReturnNullIfChildNodeNotFound() throws Exception {
+    public void shouldReturnNullIfChildNodeNotFound() {
         final ChildGraph childGraph = ChildGraph.newInstance();
         assertNull(childGraph.getNode(X.class));
 

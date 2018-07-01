@@ -33,7 +33,7 @@ public class PostgresCharacterLengthProviderTest {
     }
 
     @Test
-    public void testQueryToFetchCharacterLengths() throws Exception {
+    public void testQueryToFetchCharacterLengths() {
         final String expectedQuery = "SELECT table_name, column_name, character_maximum_length, numeric_precision, numeric_scale, data_type\n" +
                 "FROM information_schema.columns WHERE table_schema not in ('pg_catalog', 'information_schema')";
 

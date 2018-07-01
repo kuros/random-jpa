@@ -24,7 +24,7 @@ public class Slf4JProviderTest {
     }
 
     @Test
-    public void shouldLogInfoWithMessageAndArguments() throws Exception {
+    public void shouldLogInfoWithMessageAndArguments() {
         final ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
         final ArgumentCaptor<Object[]> objectArgumentCaptor = ArgumentCaptor.forClass(Object[].class);
         final String message = RandomFixture.create(String.class);
@@ -41,7 +41,7 @@ public class Slf4JProviderTest {
     }
 
     @Test
-    public void shouldLogInfoWithMessageAndException() throws Exception {
+    public void shouldLogInfoWithMessageAndException() {
         final ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
         final ArgumentCaptor<Throwable> throwableArgumentCaptor = ArgumentCaptor.forClass(Throwable.class);
         final String message = RandomFixture.create(String.class);
@@ -57,7 +57,7 @@ public class Slf4JProviderTest {
 
 
     @Test
-    public void shouldLogDebugWithMessageAndArguments() throws Exception {
+    public void shouldLogDebugWithMessageAndArguments() {
         final ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
         final ArgumentCaptor<Object[]> objectArgumentCaptor = ArgumentCaptor.forClass(Object[].class);
         final String s = RandomFixture.create(String.class);
@@ -74,7 +74,7 @@ public class Slf4JProviderTest {
     }
 
     @Test
-    public void shouldLogDebugWithMessageAndException() throws Exception {
+    public void shouldLogDebugWithMessageAndException() {
         final ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
         final ArgumentCaptor<Throwable> throwableArgumentCaptor = ArgumentCaptor.forClass(Throwable.class);
         final String message = RandomFixture.create(String.class);
@@ -89,7 +89,7 @@ public class Slf4JProviderTest {
 
 
     @Test
-    public void shouldLogErrorWithMessageAndArguments() throws Exception {
+    public void shouldLogErrorWithMessageAndArguments() {
         final ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
         final ArgumentCaptor<Object[]> objectArgumentCaptor = ArgumentCaptor.forClass(Object[].class);
         final String s = RandomFixture.create(String.class);
@@ -106,7 +106,7 @@ public class Slf4JProviderTest {
     }
 
     @Test
-    public void shouldLogErrorWithMessageAndException() throws Exception {
+    public void shouldLogErrorWithMessageAndException() {
         final ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
         final ArgumentCaptor<Throwable> throwableArgumentCaptor = ArgumentCaptor.forClass(Throwable.class);
         final String message = RandomFixture.create(String.class);

@@ -25,8 +25,8 @@ public final class Generator {
     private List<RandomClassGenerator> randomClassGenerators;
 
     private Generator() {
-        randomAttributeGenerators = new ArrayList<RandomAttributeGenerator>();
-        randomClassGenerators = new ArrayList<RandomClassGenerator>();
+        randomAttributeGenerators = new ArrayList<>();
+        randomClassGenerators = new ArrayList<>();
     }
 
     public static Generator newInstance() {

@@ -27,19 +27,15 @@ public class ArrayListMultimap<T, V> implements Multimap<T, V> {
     private Map<T, List<V>> map;
 
     private ArrayListMultimap() {
-        this.map = new HashMap<T, List<V>>();
+        this.map = new HashMap<>();
     }
 
     public static <T, V> ArrayListMultimap<T, V> newArrayListMultimap() {
-        return new ArrayListMultimap<T, V>();
+        return new ArrayListMultimap<>();
     }
 
     public void put(final T t, final V v) {
-        List<V> list = map.get(t);
-        if (list == null) {
-            list = new ArrayList<V>();
-            map.put(t, list);
-        }
+        List<V> list = map.computeIfAbsent(t, k -> new ArrayList<>());
 
         list.add(v);
     }

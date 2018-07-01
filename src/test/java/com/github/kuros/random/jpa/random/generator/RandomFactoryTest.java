@@ -74,7 +74,7 @@ public class RandomFactoryTest {
     }
 
     @Test
-    public void shouldGenerateObjectWithNullOrDefaultValuesOfFields() throws Exception {
+    public void shouldGenerateObjectWithNullOrDefaultValuesOfFields() {
         final RandomFactory randomFactory = new RandomFactory();
 
         final ClassWithObjects classWithObjects = randomFactory.generateRandom(ClassWithObjects.class);

@@ -39,12 +39,11 @@ public final class StringJoiner {
 
     @Override
     public String toString() {
-        final StringBuilder s = new StringBuilder(512).append("StringJoiner(");
 
-        s.append("items=").append(sequenceLength);
-        s.append(", index=").append(index);
-
-        return s.append(")").toString();
+        return "StringJoiner(" +
+                "items=" + sequenceLength +
+                ", index=" + index +
+                ")";
     }
 
 

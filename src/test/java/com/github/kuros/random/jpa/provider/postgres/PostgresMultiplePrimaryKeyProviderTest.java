@@ -34,7 +34,7 @@ public class PostgresMultiplePrimaryKeyProviderTest {
 
 
     @Test
-    public void testMultiplePrimaryKeyQuery() throws Exception {
+    public void testMultiplePrimaryKeyQuery() {
         final String query = "SELECT t.table_name,\n" +
                 "  kcu.column_name\n" +
                 "FROM    INFORMATION_SCHEMA.TABLES t\n" +

@@ -29,11 +29,11 @@ public final class Trigger<T> {
 
     private Trigger(final Class<T> triggerClass) {
         this.triggerClass = triggerClass;
-        this.links = new ArrayList<Link>();
+        this.links = new ArrayList<>();
     }
 
     public static <T> Trigger<T> of(final Class<T> triggerClass) {
-        return new Trigger<T>(triggerClass);
+        return new Trigger<>(triggerClass);
     }
 
     public Trigger withLink(final Attribute<T, ?> triggerAttribute, final Attribute dependsOnAttribute) {

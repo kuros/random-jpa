@@ -30,7 +30,7 @@ public class CreationOrderResolverImplTest {
     }
 
     @Test
-    public void shouldGenerateOrderForZeroDepth() throws Exception {
+    public void shouldGenerateOrderForZeroDepth() {
         final CreationOrderResolver resolver = CreationOrderResolverImpl.newInstance(MockedHierarchyGraph.getHierarchyGraph());
 
         final CreationOrder creationOrder = resolver.getCreationOrder(Entity.of(A.class));
@@ -48,7 +48,7 @@ public class CreationOrderResolverImplTest {
     }
 
     @Test
-    public void shouldGenerateOrderForMultipleDepthV2() throws Exception {
+    public void shouldGenerateOrderForMultipleDepthV2() {
         final CreationOrderResolver resolver = CreationOrderResolverImpl.newInstance(MockedHierarchyGraph.getHierarchyGraph());
 
         final CreationOrder creationOrder = resolver.getCreationOrder(Entity.of(A.class), Entity.of(E.class));
@@ -68,7 +68,7 @@ public class CreationOrderResolverImplTest {
     }
 
     private Map<Class<?>, Integer> getExpectedDepths() {
-        final Map<Class<?>, Integer> expected = new HashMap<Class<?>, Integer>();
+        final Map<Class<?>, Integer> expected = new HashMap<>();
         expected.put(X.class, 0);
         expected.put(A.class, 3);
         expected.put(B.class, 3);

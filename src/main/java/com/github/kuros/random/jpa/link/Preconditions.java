@@ -27,7 +27,7 @@ public class Preconditions {
     private final Map<Class<?>, Plan> preConditionMap;
 
     public Preconditions() {
-        preConditionMap = new HashMap<Class<?>, Plan>();
+        preConditionMap = new HashMap<>();
     }
 
     public void add(final Class<?> type, final Plan plan) {

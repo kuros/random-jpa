@@ -36,7 +36,7 @@ public class FindByIdTest {
     }
 
     @Test @SuppressWarnings("unchecked")
-    public void shouldReturnNullIfDefaultValueForIdIsFound() throws Exception {
+    public void shouldReturnNullIfDefaultValueForIdIsFound() {
 
         final FindById findById = new FindById(cache);
         findById.setFinder(finder);
@@ -51,7 +51,7 @@ public class FindByIdTest {
     }
 
     @Test @SuppressWarnings("unchecked")
-    public void shouldReturnInvokeFinderToLoadDataFromDB() throws Exception {
+    public void shouldReturnInvokeFinderToLoadDataFromDB() {
 
         final FindById findById = new FindById(cache);
         findById.setFinder(finder);
@@ -68,7 +68,7 @@ public class FindByIdTest {
     }
 
     @Test(expected = RandomJPAException.class)  @SuppressWarnings("unchecked")
-    public void shouldThrowExceptionAttributeIdIsNotFound() throws Exception {
+    public void shouldThrowExceptionAttributeIdIsNotFound() {
         mockEntityTableMapping("randomAttributeId");
         final FindById findById = new FindById(cache);
         findById.setFinder(finder);

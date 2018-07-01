@@ -26,7 +26,7 @@ public final class TriggerCache {
     private Map<Class<?>, Trigger<?>> triggerMap;
 
     private TriggerCache(final List<Trigger<?>> triggers) {
-        this.triggerMap = new HashMap<Class<?>, Trigger<?>>();
+        this.triggerMap = new HashMap<>();
         for (Trigger<?> trigger : triggers) {
             triggerMap.put(trigger.getTriggerClass(), trigger);
         }

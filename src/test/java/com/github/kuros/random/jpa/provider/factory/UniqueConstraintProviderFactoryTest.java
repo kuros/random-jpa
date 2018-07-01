@@ -36,37 +36,37 @@ public class UniqueConstraintProviderFactoryTest {
     }
 
     @Test
-    public void getUniqueCombinationAttributesForMsSqlServer() throws Exception {
+    public void getUniqueCombinationAttributesForMsSqlServer() {
         final UniqueConstraintProvider uniqueConstraintProvider = UniqueConstraintProviderFactory.getUniqueConstraintProvider(Database.MS_SQL_SERVER, entityManager, attributeProvider);
         assertTrue(uniqueConstraintProvider instanceof MSSQLUniqueConstraintProvider);
     }
 
     @Test
-    public void getUniqueCombinationAttributesForMySql() throws Exception {
+    public void getUniqueCombinationAttributesForMySql() {
         final UniqueConstraintProvider uniqueConstraintProvider = UniqueConstraintProviderFactory.getUniqueConstraintProvider(Database.MY_SQL, entityManager, attributeProvider);
         assertTrue(uniqueConstraintProvider instanceof MySqlUniqueConstraintProvider);
     }
 
     @Test
-    public void getUniqueCombinationAttributesForOracle() throws Exception {
+    public void getUniqueCombinationAttributesForOracle() {
         final UniqueConstraintProvider uniqueConstraintProvider = UniqueConstraintProviderFactory.getUniqueConstraintProvider(Database.ORACLE, entityManager, attributeProvider);
         assertTrue(uniqueConstraintProvider instanceof OracleUniqueConstraintProvider);
     }
 
     @Test
-    public void getUniqueCombinationAttributesForPostgres() throws Exception {
+    public void getUniqueCombinationAttributesForPostgres() {
         final UniqueConstraintProvider uniqueConstraintProvider = UniqueConstraintProviderFactory.getUniqueConstraintProvider(Database.POSTGRES, entityManager, attributeProvider);
         assertTrue(uniqueConstraintProvider instanceof PostgresUniqueConstraintProvider);
     }
 
     @Test
-    public void getUniqueCombinationAttributesForH2() throws Exception {
+    public void getUniqueCombinationAttributesForH2() {
         final UniqueConstraintProvider uniqueConstraintProvider = UniqueConstraintProviderFactory.getUniqueConstraintProvider(Database.H2, entityManager, attributeProvider);
         assertTrue(uniqueConstraintProvider instanceof H2UniqueConstraintProvider);
     }
 
     @Test
-    public void getUniqueCombinationAttributesForNoDatabase() throws Exception {
+    public void getUniqueCombinationAttributesForNoDatabase() {
         final UniqueConstraintProvider uniqueConstraintProvider = UniqueConstraintProviderFactory.getUniqueConstraintProvider(Database.NONE, entityManager, attributeProvider);
         assertTrue(uniqueConstraintProvider instanceof UniqueConstraintProviderFactory.DefaultUniqueConstraintProvider);
 

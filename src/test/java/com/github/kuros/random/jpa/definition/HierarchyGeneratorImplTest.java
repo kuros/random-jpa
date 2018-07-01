@@ -51,7 +51,7 @@ public class HierarchyGeneratorImplTest {
     }
 
     @Test
-    public void testAddRelation() throws Exception {
+    public void testAddRelation() {
         final List<Relation> relations = DependencyHelper.getDependency();
         final HierarchyGenerator hierarchyGenerator = new HierarchyGeneratorImpl();
         final HierarchyGraph hierarchyGraph = hierarchyGenerator.generate(relations);

@@ -60,7 +60,7 @@ public class AttributeHelper {
     }
 
     public static List<Field> getFields(final List<Attribute<?, ?>> attributes) {
-        final List<Field> fields = new ArrayList<Field>();
+        final List<Field> fields = new ArrayList<>();
         for (Attribute<?, ?> attribute : attributes) {
             fields.add(AttributeHelper.getField(attribute));
         }

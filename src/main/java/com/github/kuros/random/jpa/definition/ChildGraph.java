@@ -28,11 +28,11 @@ public final class ChildGraph {
     private Map<Class<?>, ChildNode> childNodes;
 
     private ChildGraph() {
-        childNodes = new HashMap<Class<?>, ChildNode>();
+        childNodes = new HashMap<>();
     }
 
     private ChildGraph(final HierarchyGraph hierarchyGraph) {
-        childNodes = new HashMap<Class<?>, ChildNode>();
+        childNodes = new HashMap<>();
 
         final Set<Class<?>> childs = hierarchyGraph.getKeySet();
 
@@ -73,7 +73,7 @@ public final class ChildGraph {
 
     public Set<Class<?>> getChilds(final Class<?> type) {
         final ChildNode childNode = childNodes.get(type);
-        return childNode == null ? new HashSet<Class<?>>() : childNode.getChildClasses();
+        return childNode == null ? new HashSet<>() : childNode.getChildClasses();
     }
 
     public ChildNode getNode(final Class<?> type) {
@@ -84,11 +84,11 @@ public final class ChildGraph {
         final ChildNode childNode = childNodes.get(type);
 
         if (childNode == null) {
-            return new HashSet<Relation>();
+            return new HashSet<>();
         }
 
         final Set<Relation> childRelations = childNode.getChildRelations(type);
-        return childRelations == null ? new HashSet<Relation>() : childRelations;
+        return childRelations == null ? new HashSet<>() : childRelations;
     }
 
     public Set<Class<?>> keySet() {

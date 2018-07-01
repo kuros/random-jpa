@@ -37,7 +37,7 @@ public class MultiplePrimaryKeyProviderFactoryTest {
     }
 
     @Test
-    public void getMultiplePrimaryKeyProviderForMsSQL() throws Exception {
+    public void getMultiplePrimaryKeyProviderForMsSQL() {
         final MultiplePrimaryKeyProvider multiplePrimaryKeyProvider =
                 MultiplePrimaryKeyProviderFactory.getMultiplePrimaryKeyProvider(Database.MS_SQL_SERVER, entityManager, attributeProvider);
 
@@ -45,7 +45,7 @@ public class MultiplePrimaryKeyProviderFactoryTest {
     }
 
     @Test
-    public void getMultiplePrimaryKeyProviderForMySQL() throws Exception {
+    public void getMultiplePrimaryKeyProviderForMySQL() {
         final MultiplePrimaryKeyProvider multiplePrimaryKeyProvider =
                 MultiplePrimaryKeyProviderFactory.getMultiplePrimaryKeyProvider(Database.MY_SQL, entityManager, attributeProvider);
 
@@ -53,7 +53,7 @@ public class MultiplePrimaryKeyProviderFactoryTest {
     }
 
     @Test
-    public void getMultiplePrimaryKeyProviderForOracle() throws Exception {
+    public void getMultiplePrimaryKeyProviderForOracle() {
         final MultiplePrimaryKeyProvider multiplePrimaryKeyProvider =
                 MultiplePrimaryKeyProviderFactory.getMultiplePrimaryKeyProvider(Database.ORACLE, entityManager, attributeProvider);
 
@@ -61,7 +61,7 @@ public class MultiplePrimaryKeyProviderFactoryTest {
     }
 
     @Test
-    public void getMultiplePrimaryKeyProviderForPostgres() throws Exception {
+    public void getMultiplePrimaryKeyProviderForPostgres() {
         final MultiplePrimaryKeyProvider multiplePrimaryKeyProvider =
                 MultiplePrimaryKeyProviderFactory.getMultiplePrimaryKeyProvider(Database.POSTGRES, entityManager, attributeProvider);
 
@@ -69,7 +69,7 @@ public class MultiplePrimaryKeyProviderFactoryTest {
     }
 
     @Test
-    public void getMultiplePrimaryKeyProviderForH2() throws Exception {
+    public void getMultiplePrimaryKeyProviderForH2() {
         final MultiplePrimaryKeyProvider multiplePrimaryKeyProvider =
                 MultiplePrimaryKeyProviderFactory.getMultiplePrimaryKeyProvider(Database.H2, entityManager, attributeProvider);
 
@@ -77,7 +77,7 @@ public class MultiplePrimaryKeyProviderFactoryTest {
     }
 
     @Test
-    public void getMultiplePrimaryKeyProviderForNoDatabase() throws Exception {
+    public void getMultiplePrimaryKeyProviderForNoDatabase() {
         final MultiplePrimaryKeyProvider multiplePrimaryKeyProvider =
                 MultiplePrimaryKeyProviderFactory.getMultiplePrimaryKeyProvider(Database.NONE, entityManager, attributeProvider);
 

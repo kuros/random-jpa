@@ -31,11 +31,11 @@ public final class Node<T> {
         this.type = type;
         this.depth = depth;
         this.index = index;
-        this.childNodes = new ArrayList<Node>();
+        this.childNodes = new ArrayList<>();
     }
 
     public static <T> Node<T> newInstance(final Class<T> type, final int depth, final int index) {
-        return new Node<T>(type, depth, index);
+        return new Node<>(type, depth, index);
     }
 
     @SuppressWarnings("unchecked")

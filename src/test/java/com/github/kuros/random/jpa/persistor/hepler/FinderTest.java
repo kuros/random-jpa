@@ -35,7 +35,7 @@ public class FinderTest {
     }
 
     @Test
-    public void shouldFindElementByAttributes() throws Exception {
+    public void shouldFindElementByAttributes() {
         final P p = new P();
         EntityManagerProvider.persist(p);
         final Q expected = new Q();
@@ -45,7 +45,7 @@ public class FinderTest {
         final Q input = new Q();
         input.setpId(p.getId());
 
-        final List<String> attributes = new ArrayList<String>();
+        final List<String> attributes = new ArrayList<>();
         attributes.add("pId");
         final Q actual = finder.findByAttributes(input, attributes);
 
@@ -55,7 +55,7 @@ public class FinderTest {
     }
 
     @Test(expected = RandomJPAException.class)
-    public void shouldThrowExceptionIfAttributeNamesAreIncorrect() throws Exception {
+    public void shouldThrowExceptionIfAttributeNamesAreIncorrect() {
         final P p = new P();
         EntityManagerProvider.persist(p);
         final Q expected = new Q();
@@ -65,26 +65,26 @@ public class FinderTest {
         final Q input = new Q();
         input.setpId(p.getId());
 
-        final List<String> attributes = new ArrayList<String>();
+        final List<String> attributes = new ArrayList<>();
         attributes.add("randomId");
         finder.findByAttributes(input, attributes);
     }
 
     @Test(expected = ResultNotFoundException.class)
-    public void shouldReturnNullIfResultIsNotFound() throws Exception {
+    public void shouldReturnNullIfResultIsNotFound() {
         final Q input = new Q();
         input.setpId(RandomFixture.create(Long.class));
 
-        final List<String> attributes = new ArrayList<String>();
+        final List<String> attributes = new ArrayList<>();
         attributes.add("pId");
         finder.findByAttributes(input, attributes);
     }
 
     @Test
-    public void shouldReturnNullIfInputIsEmpty() throws Exception {
+    public void shouldReturnNullIfInputIsEmpty() {
         final Q input = new Q();
 
-        final List<String> attributes = new ArrayList<String>();
+        final List<String> attributes = new ArrayList<>();
 
         try {
             finder.findByAttributes(input, attributes);
@@ -113,23 +113,23 @@ public class FinderTest {
     }
 
     @Test(expected = RandomJPAException.class)
-    public void shouldReturnNullIfAttributeValueIsNull() throws Exception {
+    public void shouldReturnNullIfAttributeValueIsNull() {
         final Q input = new Q();
 
-        final List<String> attributes = new ArrayList<String>();
+        final List<String> attributes = new ArrayList<>();
         attributes.add("pId");
         finder.findByAttributes(input, attributes);
     }
 
     @Test
-    public void shouldFindByAttributesByMapValue() throws Exception {
+    public void shouldFindByAttributesByMapValue() {
         final P p = new P();
         EntityManagerProvider.persist(p);
         final Q expected = new Q();
         expected.setpId(p.getId());
         EntityManagerProvider.persist(expected);
 
-        final Map<String, Object> attributeValues = new HashMap<String, Object>();
+        final Map<String, Object> attributeValues = new HashMap<>();
         attributeValues.put("pId", p.getId());
 
         final List<Q> actual = finder.findByAttributes(Q.class, attributeValues);
@@ -139,9 +139,9 @@ public class FinderTest {
     }
 
     @Test
-    public void shouldReturnEmptyListIfResultNotFoundWithFindByAttributesByMapValue() throws Exception {
+    public void shouldReturnEmptyListIfResultNotFoundWithFindByAttributesByMapValue() {
 
-        final Map<String, Object> attributeValues = new HashMap<String, Object>();
+        final Map<String, Object> attributeValues = new HashMap<>();
         attributeValues.put("pId", RandomFixture.create(Long.class));
 
         final List<Q> actual = finder.findByAttributes(Q.class, attributeValues);
@@ -150,21 +150,21 @@ public class FinderTest {
     }
 
     @Test
-    public void shouldReturnNullWithFindByAttributesByMapValueIsEmpty() throws Exception {
+    public void shouldReturnNullWithFindByAttributesByMapValueIsEmpty() {
         final P p = new P();
         EntityManagerProvider.persist(p);
         final Q expected = new Q();
         expected.setpId(p.getId());
         EntityManagerProvider.persist(expected);
 
-        final Map<String, Object> attributeValues = new HashMap<String, Object>();
+        final Map<String, Object> attributeValues = new HashMap<>();
         assertEquals(0 , finder.findByAttributes(null, attributeValues).size());
         assertEquals(0 , finder.findByAttributes(Q.class, attributeValues).size());
 
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         if (entityManager != null && entityManager.isOpen()) {
             entityManager.close();
         }

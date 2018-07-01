@@ -34,7 +34,7 @@ public abstract class AbstractMultiplePrimaryKeyProvider implements MultiplePrim
     private EntityManager entityManager;
 
     public AbstractMultiplePrimaryKeyProvider(final EntityManager entityManager, final AttributeProvider attributeProvider) {
-        this.multiplePrimaryKeyCombinations = new HashMap<Class<?>, List<String>>();
+        this.multiplePrimaryKeyCombinations = new HashMap<>();
         this.entityManager = entityManager;
         this.attributeProvider = attributeProvider;
         init();
@@ -50,11 +50,7 @@ public abstract class AbstractMultiplePrimaryKeyProvider implements MultiplePrim
                 for (EntityTableMapping entityTableMapping : entityTableMappings) {
                     final String attributeName = entityTableMapping.getAttributeName((String) row[1]);
                     if (attributeName != null) {
-                        List<String> attributeList = multiplePrimaryKeyCombinations.get(entityTableMapping.getEntityClass());
-                        if (attributeList == null) {
-                            attributeList = new ArrayList<String>();
-                            multiplePrimaryKeyCombinations.put(entityTableMapping.getEntityClass(), attributeList);
-                        }
+                        List<String> attributeList = multiplePrimaryKeyCombinations.computeIfAbsent(entityTableMapping.getEntityClass(), k -> new ArrayList<>());
                         attributeList.add(attributeName);
                     }
                 }
@@ -67,7 +63,7 @@ public abstract class AbstractMultiplePrimaryKeyProvider implements MultiplePrim
     private void filter() {
         final Set<Map.Entry<Class<?>, List<String>>> entries = multiplePrimaryKeyCombinations.entrySet();
 
-        final List<Class<?>> singleColumnTables = new ArrayList<Class<?>>();
+        final List<Class<?>> singleColumnTables = new ArrayList<>();
 
         for (Map.Entry<Class<?>, List<String>> entry : entries) {
             if (entry.getValue().size() <= 1) {

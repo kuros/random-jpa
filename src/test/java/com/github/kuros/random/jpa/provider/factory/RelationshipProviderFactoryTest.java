@@ -36,37 +36,37 @@ public class RelationshipProviderFactoryTest {
     }
 
     @Test
-    public void getRelationshipProviderForMsSQL() throws Exception {
+    public void getRelationshipProviderForMsSQL() {
         final RelationshipProvider relationshipProvider = RelationshipProviderFactory.getRelationshipProvider(Database.MS_SQL_SERVER, entityManager);
         assertTrue(relationshipProvider instanceof MSSQLRelationshipProvider);
     }
 
     @Test
-    public void getRelationshipProviderForMySQL() throws Exception {
+    public void getRelationshipProviderForMySQL() {
         final RelationshipProvider relationshipProvider = RelationshipProviderFactory.getRelationshipProvider(Database.MY_SQL, entityManager);
         assertTrue(relationshipProvider instanceof MySqlRelationshipProvider);
     }
 
     @Test
-    public void getRelationshipProviderForOracle() throws Exception {
+    public void getRelationshipProviderForOracle() {
         final RelationshipProvider relationshipProvider = RelationshipProviderFactory.getRelationshipProvider(Database.ORACLE, entityManager);
         assertTrue(relationshipProvider instanceof OracleRelationshipProvider);
     }
 
     @Test
-    public void getRelationshipProviderForPostgres() throws Exception {
+    public void getRelationshipProviderForPostgres() {
         final RelationshipProvider relationshipProvider = RelationshipProviderFactory.getRelationshipProvider(Database.POSTGRES, entityManager);
         assertTrue(relationshipProvider instanceof PostgresRelationshipProvider);
     }
 
     @Test
-    public void getRelationshipProviderForH2() throws Exception {
+    public void getRelationshipProviderForH2() {
         final RelationshipProvider relationshipProvider = RelationshipProviderFactory.getRelationshipProvider(Database.H2, entityManager);
         assertTrue(relationshipProvider instanceof H2RelationshipProvider);
     }
 
     @Test
-    public void getRelationshipProviderForNoDatabase() throws Exception {
+    public void getRelationshipProviderForNoDatabase() {
         final RelationshipProvider relationshipProvider = RelationshipProviderFactory.getRelationshipProvider(Database.NONE, entityManager);
         assertTrue(relationshipProvider instanceof RelationshipProviderFactory.EmptyRelationshipProvider);
 

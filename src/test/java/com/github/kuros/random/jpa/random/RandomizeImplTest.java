@@ -59,16 +59,14 @@ public class RandomizeImplTest {
     }
 
     private void mockRandomGenerator() {
-        Mockito.when(randomGenerator.generateRandom(Mockito.any(Field.class))).thenAnswer(new Answer<Object>() {
-            public Object answer(final InvocationOnMock invocationOnMock) {
-                final Field field = (Field) invocationOnMock.getArguments()[0];
-                return RandomFixture.create(field.getType());
-            }
+        Mockito.when(randomGenerator.generateRandom(Mockito.any(Field.class))).thenAnswer(invocationOnMock -> {
+            final Field field = (Field) invocationOnMock.getArguments()[0];
+            return RandomFixture.create(field.getType());
         });
     }
 
     @Test
-    public void shouldRandomizeClass() throws InstantiationException, IllegalAccessException {
+    public void shouldRandomizeClass() {
 
         mockRandomGenerator();
 
@@ -81,7 +79,7 @@ public class RandomizeImplTest {
     }
 
     @Test
-    public void shouldRandomizeFields() throws Exception {
+    public void shouldRandomizeFields() {
 
         mockRandomGenerator();
         getMockedEntityTableMapping();
@@ -105,12 +103,12 @@ public class RandomizeImplTest {
     }
 
     @Test
-    public void shouldNotRandomizeFieldsWhenTheValuesHasBeenSetManually() throws Exception {
+    public void shouldNotRandomizeFieldsWhenTheValuesHasBeenSetManually() {
 
         mockRandomGenerator();
         getMockedEntityTableMapping();
 
-        final Map<Field, Object> fieldObjectMap = new HashMap<Field, Object>();
+        final Map<Field, Object> fieldObjectMap = new HashMap<>();
         final Field aLongColumn = Util.getField(RandomizeImplTestClass.class, "aLongColumn");
         fieldObjectMap.put(aLongColumn, RandomFixture.create(aLongColumn.getType()));
 
@@ -138,7 +136,7 @@ public class RandomizeImplTest {
     }
 
     @Test(expected = RandomJPAException.class)
-    public void shouldThrowExceptionErrorIsFoundSettingTheFieldValue() throws Exception {
+    public void shouldThrowExceptionErrorIsFoundSettingTheFieldValue() {
         getMockedEntityTableMapping();
 
         Mockito.when(randomGenerator.generateRandom(Mockito.any(Field.class))).thenThrow(new RuntimeException());

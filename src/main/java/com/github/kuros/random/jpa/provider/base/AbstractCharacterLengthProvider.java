@@ -47,7 +47,7 @@ public abstract class AbstractCharacterLengthProvider implements SQLCharacterLen
     }
 
     private Map<String, ColumnCharacterLength> init() {
-        final Map<String, ColumnCharacterLength> lengths = new HashMap<String, ColumnCharacterLength>();
+        final Map<String, ColumnCharacterLength> lengths = new HashMap<>();
         final Query query = entityManager.createNativeQuery(getQuery());
         final List resultList = query.getResultList();
         for (Object o : resultList) {
@@ -139,7 +139,7 @@ public abstract class AbstractCharacterLengthProvider implements SQLCharacterLen
     }
 
     static {
-        DATA_TYPE_MAP = new HashMap<String, Class<?>>();
+        DATA_TYPE_MAP = new HashMap<>();
         DATA_TYPE_MAP.put("int", Integer.class);
         DATA_TYPE_MAP.put("integer", Integer.class);
         DATA_TYPE_MAP.put("bigint", Long.class);

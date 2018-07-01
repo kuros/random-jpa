@@ -56,7 +56,7 @@ public class OracleCharacterLengthProviderTest {
     }
 
     @Test
-    public void testApplyLengthConstraint() throws Exception {
+    public void testApplyLengthConstraint() {
         assertEquals("abcde", sqlCharacterLengthProvider.applyLengthConstraint(Department.class.getName(), "departmentName", "abcdefghijkl"));
         assertEquals(789, sqlCharacterLengthProvider.applyLengthConstraint(Department.class.getName(), "departmentId", 123456789));
         assertEquals(345.68, sqlCharacterLengthProvider.applyLengthConstraint(Department.class.getName(), "departmentAmount", 12345.6789));
@@ -67,7 +67,7 @@ public class OracleCharacterLengthProviderTest {
         departmentTableMapping.addAttributeColumnMapping("departmentId", new ColumnNameType("department_id", ColumnNameType.Type.BASIC));
         departmentTableMapping.addAttributeColumnMapping("departmentName", new ColumnNameType("department_name", ColumnNameType.Type.BASIC));
         departmentTableMapping.addAttributeColumnMapping("departmentAmount", new ColumnNameType("department_amount", ColumnNameType.Type.BASIC));
-        final List<EntityTableMapping> entityTableMappings = new ArrayList<EntityTableMapping>();
+        final List<EntityTableMapping> entityTableMappings = new ArrayList<>();
         entityTableMappings.add(departmentTableMapping);
         when(attributeProvider.get(eq("department"))).thenReturn(entityTableMappings);
     }
@@ -77,7 +77,7 @@ public class OracleCharacterLengthProviderTest {
         final Object[] row2 = {"department", "department_id", null, BigDecimal.valueOf(3), null, "NUMBER"};
         final Object[] row3 = {"department", "department_amount", null, BigDecimal.valueOf(3), BigDecimal.valueOf(2), "NUMBER"};
 
-        final List<Object[]> resultList = new ArrayList<Object[]>();
+        final List<Object[]> resultList = new ArrayList<>();
         resultList.add(row1);
         resultList.add(row2);
         resultList.add(row3);

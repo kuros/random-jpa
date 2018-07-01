@@ -56,7 +56,7 @@ public class FunctionProcessor<T> {
     }
 
     List<Function> getFunctions() {
-        final List<Function> functions = new ArrayList<Function>();
+        final List<Function> functions = new ArrayList<>();
         functions.add(new TriggerFunction(cache));
         functions.add(new FindByUniqueIdentities(cache));
         functions.add(new FindById(cache));

@@ -32,15 +32,12 @@ import static org.junit.Assert.assertEquals;
  */
 public class MetaModelProviderImplTest {
 
-    private EntityManager entityManager;
     private MetaModelProvider metaModelProvider;
-    private Cache cache;
 
     @Before
     public void setUp() throws Exception {
-        entityManager = EntityManagerProvider.getEntityManager();
-        cache = Cache.create(Database.NONE, entityManager);
-        metaModelProvider = new MetaModelProviderImpl(cache);
+        final EntityManager entityManager = EntityManagerProvider.getEntityManager();
+        metaModelProvider = new MetaModelProviderImpl(Cache.create(Database.NONE, entityManager));
     }
 
     @Test

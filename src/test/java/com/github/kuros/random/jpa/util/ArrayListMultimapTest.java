@@ -10,7 +10,7 @@ import static org.junit.Assert.assertTrue;
 public class ArrayListMultimapTest {
 
     @Test
-    public void shouldCreateACollectionWhenMultipleValuesAreAddedWithSameKey() throws Exception {
+    public void shouldCreateACollectionWhenMultipleValuesAreAddedWithSameKey() {
         final Multimap<Integer, Integer> multimap = ArrayListMultimap.newArrayListMultimap();
 
         multimap.put(1, 4);

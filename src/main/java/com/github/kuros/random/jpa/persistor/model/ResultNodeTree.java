@@ -32,7 +32,7 @@ public class ResultNodeTree {
 
     private ResultNodeTree(final Cache cache, final ResultNode root) {
         this.cache = cache;
-        this.resultMap = new HashMap<Class<?>, List<Object>>();
+        this.resultMap = new HashMap<>();
         this.root = root;
     }
 
@@ -41,12 +41,7 @@ public class ResultNodeTree {
     }
 
     public void put(final Class<?> type, final Object object) {
-        List<Object> objects = resultMap.get(type);
-        if (objects == null) {
-            objects = new ArrayList<Object>();
-            resultMap.put(type, objects);
-        }
-        objects.add(object);
+        resultMap.computeIfAbsent(type, k -> new ArrayList<>()).add(object);
     }
 
 

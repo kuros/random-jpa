@@ -28,7 +28,7 @@ public final class Before {
 
     private Before(final Class<?> type) {
         this.type = type;
-        this.toClasses = new ArrayList<Class<?>>();
+        this.toClasses = new ArrayList<>();
     }
 
     public static Before of(final Class<?> type) {

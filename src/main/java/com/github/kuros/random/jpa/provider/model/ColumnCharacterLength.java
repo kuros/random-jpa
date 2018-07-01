@@ -24,7 +24,7 @@ public final class ColumnCharacterLength {
     private final Map<String, ColumnDetail> nameColumnDetails;
 
     private ColumnCharacterLength() {
-        this.nameColumnDetails = new HashMap<String, ColumnDetail>();
+        this.nameColumnDetails = new HashMap<>();
     }
 
     public static ColumnCharacterLength newInstance() {

@@ -11,7 +11,6 @@ import com.github.kuros.random.jpa.types.CreationOrder;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +21,7 @@ import static org.junit.Assert.assertTrue;
 public class MergeUtilTest {
 
     @Test
-    public void shouldNotMergeCreationOrdersWhenNoDuplicateEntryFound() throws Exception {
+    public void shouldNotMergeCreationOrdersWhenNoDuplicateEntryFound() {
         final CreationOrder creationOrder1 = CreationOrder.newInstance();
         creationOrder1.add(ClassDepth.newInstance(A.class, 0));
         creationOrder1.add(ClassDepth.newInstance(B.class, 0));
@@ -31,7 +30,7 @@ public class MergeUtilTest {
         creationOrder2.add(ClassDepth.newInstance(C.class, 0));
         creationOrder2.add(ClassDepth.newInstance(D.class, 0));
 
-        final List<CreationOrder> input = new ArrayList<CreationOrder>();
+        final List<CreationOrder> input = new ArrayList<>();
         input.add(creationOrder1);
         input.add(creationOrder2);
 
@@ -46,7 +45,7 @@ public class MergeUtilTest {
     }
 
     @Test
-    public void shouldMergeCreationOrdersWhenDuplicateEntryFound() throws Exception {
+    public void shouldMergeCreationOrdersWhenDuplicateEntryFound() {
         final CreationOrder creationOrder1 = CreationOrder.newInstance();
         creationOrder1.add(ClassDepth.newInstance(A.class, 0));
         creationOrder1.add(ClassDepth.newInstance(B.class, 0));
@@ -59,7 +58,7 @@ public class MergeUtilTest {
         creationOrder3.add(ClassDepth.newInstance(B.class, 0));
         creationOrder3.add(ClassDepth.newInstance(C.class, 0));
 
-        final List<CreationOrder> input = new ArrayList<CreationOrder>();
+        final List<CreationOrder> input = new ArrayList<>();
         input.add(creationOrder1);
         input.add(creationOrder2);
         input.add(creationOrder3);
@@ -75,7 +74,7 @@ public class MergeUtilTest {
     }
 
     @Test
-    public void shouldMergeWhenDuplicateEntryFoundAndNotMergeOtherwise() throws Exception {
+    public void shouldMergeWhenDuplicateEntryFoundAndNotMergeOtherwise() {
         final CreationOrder creationOrder1 = CreationOrder.newInstance();
         creationOrder1.add(ClassDepth.newInstance(A.class, 0));
         creationOrder1.add(ClassDepth.newInstance(B.class, 0));
@@ -92,7 +91,7 @@ public class MergeUtilTest {
         creationOrder4.add(ClassDepth.newInstance(X.class, 0));
         creationOrder4.add(ClassDepth.newInstance(Y.class, 0));
 
-        final List<CreationOrder> input = new ArrayList<CreationOrder>();
+        final List<CreationOrder> input = new ArrayList<>();
         input.add(creationOrder1);
         input.add(creationOrder2);
         input.add(creationOrder3);
@@ -112,7 +111,7 @@ public class MergeUtilTest {
     }
 
     @Test
-    public void shouldNotOverrideCreationCountIfLess() throws Exception {
+    public void shouldNotOverrideCreationCountIfLess() {
         final CreationOrder creationOrder1 = CreationOrder.newInstance();
         creationOrder1.add(ClassDepth.newInstance(A.class, 0));
         creationOrder1.add(ClassDepth.newInstance(B.class, 0));
@@ -132,7 +131,7 @@ public class MergeUtilTest {
         final int expectedCCount = 5;
         creationOrder2.addCreationCount(C.class, expectedCCount);
 
-        final List<CreationOrder> input = new ArrayList<CreationOrder>();
+        final List<CreationOrder> input = new ArrayList<>();
         input.add(creationOrder1);
         input.add(creationOrder2);
 
@@ -149,7 +148,7 @@ public class MergeUtilTest {
     }
 
     @Test
-    public void shouldModifyDepthIfMergerDepthIsHigh() throws Exception {
+    public void shouldModifyDepthIfMergerDepthIsHigh() {
         final CreationOrder creationOrder1 = CreationOrder.newInstance();
         creationOrder1.add(ClassDepth.newInstance(A.class, 1));
         creationOrder1.add(ClassDepth.newInstance(B.class, 2));
@@ -158,7 +157,7 @@ public class MergeUtilTest {
         creationOrder2.add(ClassDepth.newInstance(B.class, 3));
         creationOrder2.add(ClassDepth.newInstance(C.class, 4));
 
-        final List<CreationOrder> input = new ArrayList<CreationOrder>();
+        final List<CreationOrder> input = new ArrayList<>();
         input.add(creationOrder1);
         input.add(creationOrder2);
 
@@ -169,11 +168,7 @@ public class MergeUtilTest {
         final CreationOrder creationOrder = actual.get(0);
         final List<ClassDepth<?>> order = creationOrder.getOrder();
         assertEquals(3, order.size());
-        Collections.sort(order, new Comparator<ClassDepth<?>>() {
-            public int compare(final ClassDepth<?> o1, final ClassDepth<?> o2) {
-                return o1.getType().getName().compareTo(o2.getType().getName());
-            }
-        });
+        order.sort(Comparator.comparing(o -> o.getType().getName()));
 
         assertEquals(A.class, order.get(0).getType());
         assertEquals(1, order.get(0).getDepth());
@@ -186,7 +181,7 @@ public class MergeUtilTest {
     }
 
     @Test
-    public void shouldNotModifyDepthIfMergerDepthIsLow() throws Exception {
+    public void shouldNotModifyDepthIfMergerDepthIsLow() {
         final CreationOrder creationOrder1 = CreationOrder.newInstance();
         creationOrder1.add(ClassDepth.newInstance(A.class, 1));
         creationOrder1.add(ClassDepth.newInstance(B.class, 3));
@@ -195,7 +190,7 @@ public class MergeUtilTest {
         creationOrder2.add(ClassDepth.newInstance(B.class, 2));
         creationOrder2.add(ClassDepth.newInstance(C.class, 4));
 
-        final List<CreationOrder> input = new ArrayList<CreationOrder>();
+        final List<CreationOrder> input = new ArrayList<>();
         input.add(creationOrder1);
         input.add(creationOrder2);
 
@@ -206,11 +201,7 @@ public class MergeUtilTest {
         final CreationOrder creationOrder = actual.get(0);
         final List<ClassDepth<?>> order = creationOrder.getOrder();
         assertEquals(3, order.size());
-        Collections.sort(order, new Comparator<ClassDepth<?>>() {
-            public int compare(final ClassDepth<?> o1, final ClassDepth<?> o2) {
-                return o1.getType().getName().compareTo(o2.getType().getName());
-            }
-        });
+        order.sort(Comparator.comparing(o -> o.getType().getName()));
 
         assertEquals(A.class, order.get(0).getType());
         assertEquals(1, order.get(0).getDepth());

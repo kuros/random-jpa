@@ -38,8 +38,8 @@ public final class RandomizeImpl implements Randomize {
     private RandomizeImpl(final Cache cache, final RandomGenerator randomGenerator) {
         this.attributeProvider = cache.getAttributeProvider();
         this.randomGenerator = randomGenerator;
-        this.defaultFieldValueMap = new HashMap<Field, Object>();
-        this.customFieldIndexMap = new HashMap<FieldIndex, Object>();
+        this.defaultFieldValueMap = new HashMap<>();
+        this.customFieldIndexMap = new HashMap<>();
     }
 
     public static RandomizeImpl newInstance(final Cache cache, final RandomGenerator randomGenerator) {

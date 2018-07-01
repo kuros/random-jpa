@@ -19,7 +19,6 @@ import com.github.kuros.random.jpa.testUtil.hierarchyGraph.MockedHierarchyGraph;
 import com.github.kuros.random.jpa.types.ClassDepth;
 import com.github.kuros.random.jpa.types.CreationOrder;
 import com.github.kuros.random.jpa.types.CreationPlan;
-import com.github.kuros.random.jpa.types.Trigger;
 import com.github.kuros.random.jpa.v1.resolver.CreationPlanResolver;
 import org.junit.After;
 import org.junit.Before;
@@ -50,19 +49,17 @@ import static org.junit.Assert.assertNotNull;
  */
 public class EntityPersistorImplTest {
 
-    private Cache cache;
-    private HierarchyGraph hierarchyGraph;
     private EntityManager entityManager;
     private Randomize randomize;
     private Persistor unit;
 
     @Before
     public void setUp() throws Exception {
-        hierarchyGraph = MockedHierarchyGraph.getHierarchyGraph();
+        final HierarchyGraph hierarchyGraph = MockedHierarchyGraph.getHierarchyGraph();
         entityManager = EntityManagerProvider.getEntityManager();
-        cache = Cache.create(Database.NONE, entityManager);
+        final Cache cache = Cache.create(Database.NONE, entityManager);
 
-        final TriggerCache triggerCache = TriggerCache.getInstance(new ArrayList<Trigger<?>>());
+        final TriggerCache triggerCache = TriggerCache.getInstance(new ArrayList<>());
         cache.with(triggerCache);
 
         cache.with(hierarchyGraph);
@@ -97,7 +94,7 @@ public class EntityPersistorImplTest {
 
     @Test
     public void shouldPersistCreationPlanWithCount() {
-        final CreationPlan creationPlan = getCreationPlanWithCounts(1, 2, 2);
+        final CreationPlan creationPlan = getCreationPlanWithCounts();
 
         entityManager.getTransaction().begin();
         final ResultNodeTree result = unit.persist(creationPlan);
@@ -124,7 +121,7 @@ public class EntityPersistorImplTest {
     }
 
     @Test
-    public void shouldObjectValueForMappedRelations() throws Exception {
+    public void shouldObjectValueForMappedRelations() {
         final CreationPlan creationPlan = CreationPlanResolver
                 .newInstance(randomize, getRelationEntityCreationOrder())
                 .create();
@@ -145,11 +142,11 @@ public class EntityPersistorImplTest {
         assertEquals(relationEntity.getRelationOneToOne().getId(), relationOneToOne.getId());
     }
 
-    private CreationPlan getCreationPlanWithCounts(final int xCount, final int yCount, final int zCount) {
+    private CreationPlan getCreationPlanWithCounts() {
         final CreationOrder creationOrder = getCreationOrder();
-        creationOrder.addCreationCount(X.class, xCount);
-        creationOrder.addCreationCount(Y.class, yCount);
-        creationOrder.addCreationCount(Z.class, zCount);
+        creationOrder.addCreationCount(X.class, 1);
+        creationOrder.addCreationCount(Y.class, 2);
+        creationOrder.addCreationCount(Z.class, 2);
         return CreationPlanResolver.newInstance(randomize, creationOrder).create();
     }
 
@@ -177,7 +174,7 @@ public class EntityPersistorImplTest {
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         if (entityManager != null && entityManager.isOpen()) {
             entityManager.close();
         }

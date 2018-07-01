@@ -40,11 +40,11 @@ public final class Entity<T> {
     private Entity(final Class<T> type, final int count) {
         validate(count);
         this.type = type;
-        this.attributeValues = new ArrayList<AttributeValue>();
+        this.attributeValues = new ArrayList<>();
         this.count = count;
-        this.softLinks = new ArrayList<Link>();
-        this.afterClasses = new ArrayList<Class<?>>();
-        this.beforeClasses = new ArrayList<Class<?>>();
+        this.softLinks = new ArrayList<>();
+        this.afterClasses = new ArrayList<>();
+        this.beforeClasses = new ArrayList<>();
     }
 
     private void validate(final int entityCount) {
@@ -54,11 +54,11 @@ public final class Entity<T> {
     }
 
     public static <T> Entity<T> of(final Class<T> type) {
-        return new Entity<T>(type);
+        return new Entity<>(type);
     }
 
     public static <T> Entity<T> of(final Class<T> type, final int count) {
-        return new Entity<T>(type, count);
+        return new Entity<>(type, count);
     }
 
     public <V> Entity<T> with(final Attribute<T, V> attribute, final V value) {

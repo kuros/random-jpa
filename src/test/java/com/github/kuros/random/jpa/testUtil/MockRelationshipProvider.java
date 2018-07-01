@@ -36,7 +36,7 @@ public class MockRelationshipProvider {
         final String[] relation3 = {"employee_department", "departmentId", "department", "departmentId"};
         final String[] relation4 = {"employee_department", "shiftId", "shift", "shiftId"};
 
-        final List<Object> objects = new ArrayList<Object>();
+        final List<Object> objects = new ArrayList<>();
         objects.add(relation1);
         objects.add(relation2);
         objects.add(relation3);

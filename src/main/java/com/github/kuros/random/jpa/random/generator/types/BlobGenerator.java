@@ -47,16 +47,16 @@ public final class BlobGenerator implements RandomClassGenerator {
 
         final RandomClassGenerator stringGenerator = StringGenerator.getInstance();
 
-        String random = "";
+        StringBuilder random = new StringBuilder();
 
         for (int i = 0; i < RANDOM.nextInt(MAX_ITER_COUNT); i++) {
-            random += stringGenerator.doGenerate(String.class);
+            random.append(stringGenerator.doGenerate(String.class));
         }
 
 
         Blob blob;
         try {
-            blob = new SerialBlob(random.getBytes(Charset.defaultCharset()));
+            blob = new SerialBlob(random.toString().getBytes(Charset.defaultCharset()));
         } catch (final SQLException e) {
             throw new RandomJPAException("");
         }

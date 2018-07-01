@@ -42,7 +42,7 @@ public class PersistedEntityResolverImpl implements PersistedEntityResolver {
 
     public Map<ClassIndex, Object> loadPersistedObjectByIds(final CreationPlan creationPlan) {
 
-        final Map<ClassIndex, Object> classIndexObjectMap = new HashMap<ClassIndex, Object>();
+        final Map<ClassIndex, Object> classIndexObjectMap = new HashMap<>();
         final CreationPlanImpl plan = (CreationPlanImpl) creationPlan;
         final List<FieldIndexValue> fieldIndexValues = plan.getFieldIndexValues();
 
@@ -99,7 +99,7 @@ public class PersistedEntityResolverImpl implements PersistedEntityResolver {
                 field.getDeclaringClass(),
                 index);
 
-        final Map<Class, Integer> classIndexMap = new HashMap<Class, Integer>();
+        final Map<Class, Integer> classIndexMap = new HashMap<>();
         for (ClassIndex classIndex : classIndexInOrder) {
             if (fieldIndexValue.getIndex() == PersistedEntityResolver.DEFAULT_INDEX) {
                 classIndexMap.put(classIndex.getType(), PersistedEntityResolver.DEFAULT_INDEX);
@@ -141,7 +141,7 @@ public class PersistedEntityResolverImpl implements PersistedEntityResolver {
     }
 
     private Object findObject(final Class<?> type, final Collection<FieldValue> fieldValues) {
-        final Map<String, Object> params = new HashMap<String, Object>();
+        final Map<String, Object> params = new HashMap<>();
 
         for (FieldValue fieldValue : fieldValues) {
             params.put(fieldValue.getField().getName(), fieldValue.getValue());

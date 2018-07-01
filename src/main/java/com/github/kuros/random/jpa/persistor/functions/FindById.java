@@ -30,9 +30,8 @@ import java.util.List;
  */
 class FindById<T> implements Function<T> {
 
-    private final Cache cache;
     private final AttributeProvider attributeProvider;
-    private static final List<Class> PRIMITIVE_ID_CLASSES = new ArrayList<Class>();
+    private static final List<Class> PRIMITIVE_ID_CLASSES = new ArrayList<>();
     private Finder finder;
 
     static {
@@ -44,7 +43,6 @@ class FindById<T> implements Function<T> {
     }
 
     FindById(final Cache cache) {
-        this.cache = cache;
         this.attributeProvider = cache.getAttributeProvider();
         this.finder = new Finder(cache);
     }

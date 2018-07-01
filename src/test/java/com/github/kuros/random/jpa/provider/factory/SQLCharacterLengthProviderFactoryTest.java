@@ -37,42 +37,42 @@ public class SQLCharacterLengthProviderFactoryTest {
     }
 
     @Test
-    public void verifyDefaultMaxLength() throws Exception {
+    public void verifyDefaultMaxLength() {
         assertEquals(10, SQLCharacterLengthProvider.DEFAULT_MAX_LENGTH);
     }
 
     @Test
-    public void getSqlCharacterLengthProviderForMsSqlServer() throws Exception {
+    public void getSqlCharacterLengthProviderForMsSqlServer() {
         final SQLCharacterLengthProvider sqlCharacterLengthProvider = SQLCharacterLengthProviderFactory.getSqlCharacterLengthProvider(Database.MS_SQL_SERVER, entityManager, attributeProvider);
         assertTrue(sqlCharacterLengthProvider instanceof MSSQLCharacterLengthProvider);
     }
 
     @Test
-    public void getSqlCharacterLengthProviderForMySql() throws Exception {
+    public void getSqlCharacterLengthProviderForMySql() {
         final SQLCharacterLengthProvider sqlCharacterLengthProvider = SQLCharacterLengthProviderFactory.getSqlCharacterLengthProvider(Database.MY_SQL, entityManager, attributeProvider);
         assertTrue(sqlCharacterLengthProvider instanceof MySqlCharacterLengthProvider);
     }
 
     @Test
-    public void getSqlCharacterLengthProviderForOracle() throws Exception {
+    public void getSqlCharacterLengthProviderForOracle() {
         final SQLCharacterLengthProvider sqlCharacterLengthProvider = SQLCharacterLengthProviderFactory.getSqlCharacterLengthProvider(Database.ORACLE, entityManager, attributeProvider);
         assertTrue(sqlCharacterLengthProvider instanceof OracleCharacterLengthProvider);
     }
 
     @Test
-    public void getSqlCharacterLengthProviderForPostgres() throws Exception {
+    public void getSqlCharacterLengthProviderForPostgres() {
         final SQLCharacterLengthProvider sqlCharacterLengthProvider = SQLCharacterLengthProviderFactory.getSqlCharacterLengthProvider(Database.POSTGRES, entityManager, attributeProvider);
         assertTrue(sqlCharacterLengthProvider instanceof PostgresCharacterLengthProvider);
     }
 
     @Test
-    public void getSqlCharacterLengthProviderForH2() throws Exception {
+    public void getSqlCharacterLengthProviderForH2() {
         final SQLCharacterLengthProvider sqlCharacterLengthProvider = SQLCharacterLengthProviderFactory.getSqlCharacterLengthProvider(Database.H2, entityManager, attributeProvider);
         assertTrue(sqlCharacterLengthProvider instanceof H2CharacterLengthProvider);
     }
 
     @Test
-    public void getSqlCharacterLengthProviderForNoDatabase() throws Exception {
+    public void getSqlCharacterLengthProviderForNoDatabase() {
         final SQLCharacterLengthProvider sqlCharacterLengthProvider = SQLCharacterLengthProviderFactory.getSqlCharacterLengthProvider(Database.NONE, entityManager, attributeProvider);
         assertTrue(sqlCharacterLengthProvider instanceof SQLCharacterLengthProviderFactory.DefaultSQLCharacterLengthProvider);
 

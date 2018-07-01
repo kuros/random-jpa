@@ -34,7 +34,7 @@ public class EclipseLinkProviderTest {
     }
 
     @Test
-    public void shouldGenerateAttributeDetails() throws Exception {
+    public void shouldGenerateAttributeDetails() {
 
         final EntityTableMapping entityTableMappingByClass = hibernateProvider.get(R.class);
         final List<EntityTableMapping> entityTableMappingByNames = hibernateProvider.get("R");
@@ -94,7 +94,7 @@ public class EclipseLinkProviderTest {
 
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         if (entityManager != null && entityManager.isOpen()) {
             entityManager.close();
         }

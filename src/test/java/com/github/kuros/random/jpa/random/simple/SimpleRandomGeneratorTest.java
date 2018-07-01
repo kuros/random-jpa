@@ -36,7 +36,7 @@ import static org.junit.Assert.assertNull;
 public class SimpleRandomGeneratorTest {
 
     @Test
-    public void testRandomObjectIsCreatedWithSimpleAttributes() throws Exception {
+    public void testRandomObjectIsCreatedWithSimpleAttributes() {
         final SimpleRandomGenerator simpleRandomGenerator = SimpleRandomGeneratorFactory
                 .newInstance()
                 .create();
@@ -49,7 +49,7 @@ public class SimpleRandomGeneratorTest {
     }
 
     @Test
-    public void testRandomObjectIsCreatedWithSimpleAttributesWhenNoPackageNameIsProvided() throws Exception {
+    public void testRandomObjectIsCreatedWithSimpleAttributesWhenNoPackageNameIsProvided() {
         final SimpleRandomGenerator simpleRandomGenerator = SimpleRandomGeneratorFactory
                 .newInstance()
                 .create();
@@ -62,7 +62,7 @@ public class SimpleRandomGeneratorTest {
     }
 
     @Test
-    public void testRandomObjectIsCreatedForComplexObjectsButCustomAttributesIsNotGenerated() throws Exception {
+    public void testRandomObjectIsCreatedForComplexObjectsButCustomAttributesIsNotGenerated() {
         final SimpleRandomGenerator simpleRandomGenerator = SimpleRandomGeneratorFactory
                 .newInstance()
                 .create();
@@ -80,12 +80,12 @@ public class SimpleRandomGeneratorTest {
     }
 
     @Test
-    public void testExplicitGenerationOfClass() throws Exception {
+    public void testExplicitGenerationOfClass() {
         final SimpleRandomGenerator simpleRandomGenerator = SimpleRandomGeneratorFactory
                 .newInstance()
                 .with(new RandomClassGenerator() {
                     public Collection<Class<?>> getTypes() {
-                        final Set<Class<?>> classes = new HashSet<Class<?>>();
+                        final Set<Class<?>> classes = new HashSet<>();
                         classes.add(Integer.class);
                         return classes;
                     }
@@ -102,7 +102,7 @@ public class SimpleRandomGeneratorTest {
     }
 
     @Test
-    public void testEnumIsGenerated() throws Exception {
+    public void testEnumIsGenerated() {
         final SimpleRandomGenerator simpleRandomGenerator = SimpleRandomGeneratorFactory
                 .newInstance()
                 .create();
@@ -117,7 +117,7 @@ public class SimpleRandomGeneratorTest {
     }
 
     @Test
-    public void testCollectionIsNotGenerated() throws Exception {
+    public void testCollectionIsNotGenerated() {
         final SimpleRandomGenerator simpleRandomGenerator = SimpleRandomGeneratorFactory
                 .newInstance()
                 .create();
@@ -133,7 +133,7 @@ public class SimpleRandomGeneratorTest {
     }
 
     @Test
-    public void testArrayIsGenerated() throws Exception {
+    public void testArrayIsGenerated() {
         final SimpleRandomGenerator simpleRandomGenerator = SimpleRandomGeneratorFactory
                 .newInstance()
                 .create();
@@ -145,7 +145,7 @@ public class SimpleRandomGeneratorTest {
     }
 
     @Test
-    public void shouldGenerateRandomFieldAsProvidedInRandomGenerator() throws Exception {
+    public void shouldGenerateRandomFieldAsProvidedInRandomGenerator() {
         final SimpleRandomGenerator simpleRandomGenerator = SimpleRandomGeneratorFactory
                 .newInstance()
                 .with(new RandomFieldGenerator() {
@@ -154,7 +154,7 @@ public class SimpleRandomGeneratorTest {
                     }
 
                     public Set<String> getFieldNames() {
-                        final Set<String> fieldNames = new HashSet<String>();
+                        final Set<String> fieldNames = new HashSet<>();
                         fieldNames.add("i");
                         fieldNames.add("s");
                         return fieldNames;
@@ -175,7 +175,7 @@ public class SimpleRandomGeneratorTest {
     }
 
     @Test (expected = RandomJPAException.class)
-    public void shouldThrowExceptionWhenFieldIsNotFound() throws Exception {
+    public void shouldThrowExceptionWhenFieldIsNotFound() {
         SimpleRandomGeneratorFactory
                 .newInstance()
                 .with(new RandomFieldGenerator() {
@@ -184,7 +184,7 @@ public class SimpleRandomGeneratorTest {
                     }
 
                     public Set<String> getFieldNames() {
-                        final Set<String> fieldNames = new HashSet<String>();
+                        final Set<String> fieldNames = new HashSet<>();
                         fieldNames.add("fieldNameThatNotExists");
                         return fieldNames;
                     }
@@ -197,7 +197,7 @@ public class SimpleRandomGeneratorTest {
     }
 
     @Test
-    public void shouldCreateRandomObjectWithConstructorInvocation() throws Exception {
+    public void shouldCreateRandomObjectWithConstructorInvocation() {
         final SimpleRandomGenerator simpleRandomGenerator = SimpleRandomGeneratorFactory.newInstance().create();
 
         final TestConstructorClass random = simpleRandomGenerator.getRandom(TestConstructorClass.class);

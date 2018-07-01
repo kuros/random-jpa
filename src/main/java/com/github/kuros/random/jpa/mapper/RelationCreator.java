@@ -43,7 +43,7 @@ public final class RelationCreator {
 
     private RelationCreator(final MetaModelProvider metaModelProvider) {
         fieldsByTableName = metaModelProvider.getFieldsByTableName();
-        this.foreignKeyRelations = new ArrayList<ForeignKeyRelation>();
+        this.foreignKeyRelations = new ArrayList<>();
         this.dependencies = Dependencies.newInstance();
     }
 
@@ -62,10 +62,10 @@ public final class RelationCreator {
     }
 
     public List<Relation> generate() {
-        final ArrayList<Relation> relations = new ArrayList<Relation>();
+        final ArrayList<Relation> relations = new ArrayList<>();
 
-        final Map<String, Set<String>> missingColumns = new HashMap<String, Set<String>>();
-        final Set<String> missingTable = new HashSet<String>();
+        final Map<String, Set<String>> missingColumns = new HashMap<>();
+        final Set<String> missingTable = new HashSet<>();
         final Set<Relation> ignoreRelations = DependencyResolver.ignoreLinks(dependencies);
 
         for (ForeignKeyRelation foreignKeyRelation : foreignKeyRelations) {
@@ -102,11 +102,7 @@ public final class RelationCreator {
     }
 
     private void addToMissingColumns(final Map<String, Set<String>> missingColumns, final ForeignKeyRelation foreignKeyRelation) {
-        Set<String> columns = missingColumns.get(foreignKeyRelation.getReferencedTable());
-        if (columns == null) {
-            columns = new HashSet<String>();
-            missingColumns.put(foreignKeyRelation.getReferencedTable(), columns);
-        }
+        Set<String> columns = missingColumns.computeIfAbsent(foreignKeyRelation.getReferencedTable(), k -> new HashSet<>());
 
         columns.add(foreignKeyRelation.getReferencedAttribute());
     }

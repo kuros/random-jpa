@@ -57,11 +57,11 @@ public final class JPAContextFactory {
     private JPAContextFactory(final Database database, final EntityManager entityManager) {
         this.database = database;
         this.entityManager = entityManager;
-        this.preconditions = new ArrayList<Before>();
+        this.preconditions = new ArrayList<>();
         this.generator = Generator.newInstance();
         this.dependencies = Dependencies.newInstance();
-        this.triggers = new ArrayList<Trigger<?>>();
-        this.skipTruncation = new HashSet<Class<?>>();
+        this.triggers = new ArrayList<>();
+        this.skipTruncation = new HashSet<>();
     }
 
     public JPAContextFactory with(final Dependencies customDependencies) {

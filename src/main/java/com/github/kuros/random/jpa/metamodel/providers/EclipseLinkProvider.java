@@ -39,8 +39,8 @@ public class EclipseLinkProvider implements AttributeProvider {
 
     public EclipseLinkProvider(final EntityManager entityManager) {
         this.entityManager = entityManager;
-        this.entityTableMappingByClass = new HashMap<Class<?>, EntityTableMapping>();
-        this.entityTableMappingByTableName = new HashMap<String, List<EntityTableMapping>>();
+        this.entityTableMappingByClass = new HashMap<>();
+        this.entityTableMappingByTableName = new HashMap<>();
         init();
     }
 
@@ -73,7 +73,7 @@ public class EclipseLinkProvider implements AttributeProvider {
 
     }
 
-    private void addAttributeMapping(final EntityTableMapping entityTableMapping, final Object descriptor) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    private void addAttributeMapping(final EntityTableMapping entityTableMapping, final Object descriptor) {
         final List<Object> mappings = (List<Object>) invokeMethod(descriptor, "getMappings");
         for (Object databaseMapping : mappings) {
             if ((Boolean) invokeMethod(databaseMapping, "isReadOnly")) {
@@ -101,7 +101,7 @@ public class EclipseLinkProvider implements AttributeProvider {
     private void putEntityTableMapping(final String tableName, final EntityTableMapping entityTableMapping) {
         List<EntityTableMapping> entityTableMappings = entityTableMappingByTableName.get(tableName);
         if (entityTableMappings == null) {
-            entityTableMappings = new ArrayList<EntityTableMapping>();
+            entityTableMappings = new ArrayList<>();
             entityTableMappingByTableName.put(tableName.toLowerCase(), entityTableMappings);
         }
         entityTableMappings.add(entityTableMapping);

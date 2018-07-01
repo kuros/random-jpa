@@ -32,7 +32,7 @@ public class CyclicValidator {
 
     public void validate() {
         final Set<Class<?>> keySet = hierarchyGraph.getKeySet();
-        final Set<Class<?>> result = new HashSet<Class<?>>();
+        final Set<Class<?>> result = new HashSet<>();
         for (Class<?> aClass : keySet) {
             isCyclic(result, aClass);
             result.remove(aClass);

@@ -37,8 +37,8 @@ public final class ChildNode {
 
     private ChildNode(final Class<?> parent, final int level) {
         this.parent = parent;
-        this.childClasses = new HashSet<Class<?>>();
-        this.childRelations = new HashMap<Class<?>, Set<Relation>>();
+        this.childClasses = new HashSet<>();
+        this.childRelations = new HashMap<>();
         this.level = level;
     }
 
@@ -54,11 +54,7 @@ public final class ChildNode {
 
         final Relation relation = Relation.newInstance(childRef, parentRef);
 
-        Set<Relation> relations = childRelations.get(childRef.getInitializationClass());
-        if (relations == null) {
-            relations = new HashSet<Relation>();
-            childRelations.put(childRef.getInitializationClass(), relations);
-        }
+        Set<Relation> relations = childRelations.computeIfAbsent(childRef.getInitializationClass(), k -> new HashSet<>());
 
         relations.add(relation);
         return this;

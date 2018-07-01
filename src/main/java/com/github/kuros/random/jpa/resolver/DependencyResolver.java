@@ -37,7 +37,7 @@ public class DependencyResolver {
             return generateRelations(links);
         }
 
-        return new HashSet<Relation>();
+        return new HashSet<>();
     }
 
     public static Set<Relation> ignoreLinks(final Dependencies dependencies) {
@@ -47,11 +47,11 @@ public class DependencyResolver {
             return generateRelations(links);
         }
 
-        return new HashSet<Relation>();
+        return new HashSet<>();
     }
 
     public static Set<Relation> generateRelations(final List<Link> links) {
-        final Set<Relation> relations = new HashSet<Relation>();
+        final Set<Relation> relations = new HashSet<>();
 
         for (Link link : links) {
             final Field from = getFieldValue(link.getFrom());

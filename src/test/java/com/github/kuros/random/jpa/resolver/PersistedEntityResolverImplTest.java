@@ -18,7 +18,7 @@ public class PersistedEntityResolverImplTest {
 
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         if (entityManager != null && entityManager.isOpen()) {
             entityManager.close();
         }

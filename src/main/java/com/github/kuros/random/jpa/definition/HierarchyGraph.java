@@ -31,8 +31,8 @@ public class HierarchyGraph {
 
     @VisibleForTesting
     HierarchyGraph() {
-        this.parentRelations = new HashMap<Class<?>, TableNode>();
-        attributeRelations = new HashMap<Class<?>, Set<Relation>>();
+        this.parentRelations = new HashMap<>();
+        attributeRelations = new HashMap<>();
     }
 
     public static HierarchyGraph newInstance() {
@@ -78,11 +78,7 @@ public class HierarchyGraph {
 
 
     private void populateAttributeRelations(final Class<?> fromClass, final Relation relation) {
-        Set<Relation> relations = attributeRelations.get(fromClass);
-        if (relations == null) {
-            relations = new HashSet<Relation>();
-            attributeRelations.put(fromClass, relations);
-        }
+        Set<Relation> relations = attributeRelations.computeIfAbsent(fromClass, k -> new HashSet<>());
 
         relations.add(relation);
     }
@@ -93,7 +89,7 @@ public class HierarchyGraph {
 
     public Set<Class<?>> getParents(final Class tableClass) {
         final TableNode tableNode = parentRelations.get(tableClass);
-        return tableNode != null ? tableNode.getParentClasses() : new HashSet<Class<?>>();
+        return tableNode != null ? tableNode.getParentClasses() : new HashSet<>();
     }
 
     public TableNode getTableNode(final Class tableClass) {

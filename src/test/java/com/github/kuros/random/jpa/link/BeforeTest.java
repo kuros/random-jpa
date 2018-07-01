@@ -11,7 +11,7 @@ import static org.junit.Assert.assertTrue;
 public class BeforeTest {
 
     @Test
-    public void shouldGetCorrectTypeAndReferenceClasses() throws Exception {
+    public void shouldGetCorrectTypeAndReferenceClasses() {
         final Before before = Before.of(A.class).create(B.class, C.class);
         assertEquals(A.class, before.getType());
         assertEquals(2, before.getToClasses().size());

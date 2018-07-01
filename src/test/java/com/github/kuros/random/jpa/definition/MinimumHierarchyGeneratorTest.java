@@ -20,10 +20,10 @@ public class MinimumHierarchyGeneratorTest {
 
 
     @Test
-    public void shouldGenerateMinimumHierarchyGraphWithSingleDepth() throws Exception {
+    public void shouldGenerateMinimumHierarchyGraphWithSingleDepth() {
         final HierarchyGraph hierarchyGraph = MockedHierarchyGraph.getHierarchyGraph();
 
-        final List<Entity> entities = new ArrayList<Entity>();
+        final List<Entity> entities = new ArrayList<>();
         entities.add(Entity.of(A.class));
         final HierarchyGraph generatedHierarchyGraph = MinimumHierarchyGenerator.generate(hierarchyGraph, entities);
 
@@ -32,10 +32,10 @@ public class MinimumHierarchyGeneratorTest {
     }
 
     @Test
-    public void shouldGenerateMinimumHierarchyGraphWithDepthAsOne() throws Exception {
+    public void shouldGenerateMinimumHierarchyGraphWithDepthAsOne() {
         final HierarchyGraph hierarchyGraph = MockedHierarchyGraph.getHierarchyGraph();
 
-        final List<Entity> entities = new ArrayList<Entity>();
+        final List<Entity> entities = new ArrayList<>();
         entities.add(Entity.of(Z.class));
         final HierarchyGraph generatedHierarchyGraph = MinimumHierarchyGenerator.generate(hierarchyGraph, entities);
 
@@ -49,10 +49,10 @@ public class MinimumHierarchyGeneratorTest {
     }
 
     @Test
-    public void shouldGenerateMinimumHierarchyGraphWithSingleDepthAndCreateAfterFeature() throws Exception {
+    public void shouldGenerateMinimumHierarchyGraphWithSingleDepthAndCreateAfterFeature() {
         final HierarchyGraph hierarchyGraph = MockedHierarchyGraph.getHierarchyGraph();
 
-        final List<Entity> entities = new ArrayList<Entity>();
+        final List<Entity> entities = new ArrayList<>();
         entities.add(Entity.of(A.class).createAfter(F.class));
         final HierarchyGraph generatedHierarchyGraph = MinimumHierarchyGenerator.generate(hierarchyGraph, entities);
 
@@ -66,10 +66,10 @@ public class MinimumHierarchyGeneratorTest {
     }
 
     @Test
-    public void shouldNotGenerateAssociatedClassWithSingleDepthAndCreateBeforeFeatureIfNotRequired() throws Exception {
+    public void shouldNotGenerateAssociatedClassWithSingleDepthAndCreateBeforeFeatureIfNotRequired() {
         final HierarchyGraph hierarchyGraph = MockedHierarchyGraph.getHierarchyGraph();
 
-        final List<Entity> entities = new ArrayList<Entity>();
+        final List<Entity> entities = new ArrayList<>();
         entities.add(Entity.of(A.class).createBefore(F.class));
         final HierarchyGraph generatedHierarchyGraph = MinimumHierarchyGenerator.generate(hierarchyGraph, entities);
 
@@ -83,10 +83,10 @@ public class MinimumHierarchyGeneratorTest {
     }
 
     @Test(expected = RandomJPAException.class)
-    public void shouldThrowExceptionWhenCyclicDependencyFound() throws Exception {
+    public void shouldThrowExceptionWhenCyclicDependencyFound() {
         final HierarchyGraph hierarchyGraph = MockedHierarchyGraph.getHierarchyGraph();
 
-        final List<Entity> entities = new ArrayList<Entity>();
+        final List<Entity> entities = new ArrayList<>();
         entities.add(Entity.of(A.class).createAfter(F.class));
         entities.add(Entity.of(F.class).createAfter(A.class));
         MinimumHierarchyGenerator.generate(hierarchyGraph, entities);

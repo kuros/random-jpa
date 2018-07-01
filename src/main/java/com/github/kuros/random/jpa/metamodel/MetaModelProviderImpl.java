@@ -42,7 +42,7 @@ public class MetaModelProviderImpl implements MetaModelProvider {
     public Map<String, List<FieldWrapper>> getFieldsByTableName() {
         final Set<EntityType<?>> entities = getEntityTypes();
 
-        final Map<String, List<FieldWrapper>> entityMap = new HashMap<String, List<FieldWrapper>>();
+        final Map<String, List<FieldWrapper>> entityMap = new HashMap<>();
         for (EntityType<?> entity : entities) {
             final Class<?> javaType = entity.getJavaType();
 
@@ -55,7 +55,7 @@ public class MetaModelProviderImpl implements MetaModelProvider {
     }
 
     private List<FieldWrapper> getFields(final Class<?> type) {
-        final List<FieldWrapper> fields = new ArrayList<FieldWrapper>();
+        final List<FieldWrapper> fields = new ArrayList<>();
         final EntityTableMapping entityTableMapping = attributeProvider.get(type);
 
         getFieldsIncludingSuperClass(type, type, entityTableMapping, fields);

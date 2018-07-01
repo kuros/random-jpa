@@ -11,7 +11,7 @@ import java.util.Map;
 public class MergeUtil {
 
     public static List<CreationOrder> merge(final List<CreationOrder> creationOrders) {
-        final Map<OrderKey, CreationOrder> compactMap = new LinkedHashMap<OrderKey, CreationOrder>();
+        final Map<OrderKey, CreationOrder> compactMap = new LinkedHashMap<>();
 
         for (CreationOrder creationOrder : creationOrders) {
 
@@ -32,7 +32,7 @@ public class MergeUtil {
             }
         }
 
-        return new ArrayList<CreationOrder>(compactMap.values());
+        return new ArrayList<>(compactMap.values());
     }
 
     private static void mergeRightToLeft(final CreationOrder left, final CreationOrder right) {
@@ -73,7 +73,7 @@ public class MergeUtil {
         }
 
         OrderKey(final ClassDepth<?> aClass) {
-            this.classes = new ArrayList<ClassDepth<?>>();
+            this.classes = new ArrayList<>();
             this.classes.add(aClass);
         }
 

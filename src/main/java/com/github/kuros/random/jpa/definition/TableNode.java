@@ -33,8 +33,8 @@ public final class TableNode {
     }
 
     private TableNode() {
-        this.parentClasses = new HashSet<Class<?>>();
-        this.relations = new ArrayList<Relation>();
+        this.parentClasses = new HashSet<>();
+        this.relations = new ArrayList<>();
     }
 
     public TableNode addRelation(final Relation relation) {

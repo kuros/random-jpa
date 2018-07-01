@@ -59,7 +59,7 @@ public final class MockEntityManagerProvider {
     }
 
     public Set<EntityType<?>> getEntities() {
-        final Set<EntityType<?>> entities = new HashSet<EntityType<?>>();
+        final Set<EntityType<?>> entities = new HashSet<>();
         entities.add(createEntityType(Department.class));
         entities.add(createEntityType(Employee.class));
         entities.add(createEntityType(EmployeeDepartment.class));

@@ -47,7 +47,7 @@ public class RandomFactory {
     private static final Random RANDOM = new Random();
 
     public RandomFactory() {
-        randomClassGeneratorMap = new HashMap<Class<?>, RandomClassGenerator>();
+        randomClassGeneratorMap = new HashMap<>();
         init();
     }
 

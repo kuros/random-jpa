@@ -90,7 +90,7 @@ public class HierarchyGraphTest {
         final List<Relation> relations = tableNode.getRelations();
         Assert.assertEquals(2, relations.size());
 
-        final List<String> fieldNames = new ArrayList<String>();
+        final List<String> fieldNames = new ArrayList<>();
         fieldNames.add("attr1");
         fieldNames.add("attr2");
 
@@ -189,8 +189,7 @@ public class HierarchyGraphTest {
         final Set<Relation> keySet = hierarchyGraph.getAttributeRelations(TestClass.class);
         Assert.assertEquals(1, keySet.size());
 
-        final List<Relation> relations = new ArrayList<Relation>();
-        relations.addAll(keySet);
+        final List<Relation> relations = new ArrayList<>(keySet);
         Assert.assertEquals(from, relations.get(0).getFrom().getField());
         Assert.assertEquals(to, relations.get(0).getTo().getField());
     }

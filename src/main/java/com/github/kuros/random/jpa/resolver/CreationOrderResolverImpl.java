@@ -51,7 +51,7 @@ public final class CreationOrderResolverImpl implements CreationOrderResolver {
             addCreationCount(creationOrder, entity);
             try {
                 generateCreationOrder(creationOrder, type);
-            } catch (final ClassNotFoundException e) {
+            } catch (final Exception e) {
                 throw new RandomJPAException("Class Not Found", e);
             }
         }
@@ -62,29 +62,21 @@ public final class CreationOrderResolverImpl implements CreationOrderResolver {
     }
 
     private void sortCreationOrderBasedOnDepth(final CreationOrder creationOrder) {
-        Collections.sort(creationOrder.getOrder(), new Comparator<ClassDepth<?>>() {
-            public int compare(final ClassDepth<?> o1, final ClassDepth<?> o2) {
-                return -1 * Integer.valueOf(o1.getDepth()).compareTo(o2.getDepth());
-            }
-        });
+        creationOrder.getOrder().sort((o1, o2) -> -1 * Integer.compare(o1.getDepth(), o2.getDepth()));
     }
 
     private void addCreationCount(final CreationOrder creationOrder, final Entity entity) {
         creationOrder.addCreationCount(EntityHelper.getType(entity), EntityHelper.getCount(entity));
     }
 
-    private void generateCreationOrder(final CreationOrder creationOrder, final Class<?> type) throws ClassNotFoundException {
+    private void generateCreationOrder(final CreationOrder creationOrder, final Class<?> type) {
 
         final ClassDepth classDepth = ClassDepth.newInstance(type, 0);
-        final Queue<ClassDepth<?>> queue = new PriorityQueue<ClassDepth<?>>(11, new Comparator<ClassDepth<?>>() {
-            public int compare(final ClassDepth<?> o1, final ClassDepth<?> o2) {
-                return Integer.valueOf(o1.getDepth()).compareTo(o2.getDepth());
-            }
-        });
+        final Queue<ClassDepth<?>> queue = new PriorityQueue<>(11, Comparator.comparingInt(ClassDepth::getDepth));
 
         queue.offer(classDepth);
 
-        final Stack<ClassDepth<?>> stack = new Stack<ClassDepth<?>>();
+        final Stack<ClassDepth<?>> stack = new Stack<>();
         stack.push(classDepth);
 
         while (!queue.isEmpty()) {

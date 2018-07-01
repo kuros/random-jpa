@@ -32,7 +32,7 @@ public final class SimpleRandomGeneratorFactory {
 
     private SimpleRandomGeneratorFactory() {
         this.randomFactory = new RandomFactory();
-        this.randomFieldGeneratorMap = new HashMap<Class<?>, RandomFieldGenerator>();
+        this.randomFieldGeneratorMap = new HashMap<>();
     }
 
     public static SimpleRandomGeneratorFactory newInstance() {

@@ -40,7 +40,7 @@ public final class CreationPlanResolver {
 
     private CreationPlanResolver(final Randomize randomize, final CreationOrder... creationOrders) {
         this.creationOrders = Arrays.asList(creationOrders);
-        this.creationCount = new HashMap<Class<?>, Integer>();
+        this.creationCount = new HashMap<>();
         this.randomize = randomize;
 
         initCreationCount();
@@ -95,11 +95,7 @@ public final class CreationPlanResolver {
     }
 
     private void addToCreatedNode(final Class<?> key, final Node node) {
-        List<Node> nodes = creationPlan.getCreatedNodeMap().get(key);
-        if (nodes == null) {
-            nodes = new ArrayList<Node>();
-            creationPlan.getCreatedNodeMap().put(key, nodes);
-        }
+        List<Node> nodes = creationPlan.getCreatedNodeMap().computeIfAbsent(key, k -> new ArrayList<>());
 
         nodes.add(node);
     }

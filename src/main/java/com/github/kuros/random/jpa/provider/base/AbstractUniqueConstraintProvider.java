@@ -34,7 +34,7 @@ public abstract class AbstractUniqueConstraintProvider implements UniqueConstrai
     protected EntityManager entityManager;
 
     public AbstractUniqueConstraintProvider(final AttributeProvider attributeProvider, final EntityManager entityManager) {
-        this.uniqueColumnCombinations = new HashMap<Class<?>, List<String>>();
+        this.uniqueColumnCombinations = new HashMap<>();
         this.attributeProvider = attributeProvider;
         this.entityManager = entityManager;
         init();
@@ -59,7 +59,7 @@ public abstract class AbstractUniqueConstraintProvider implements UniqueConstrai
     protected void filter() {
         final Set<Map.Entry<Class<?>, List<String>>> entries = uniqueColumnCombinations.entrySet();
 
-        final List<Class<?>> singleColumnTables = new ArrayList<Class<?>>();
+        final List<Class<?>> singleColumnTables = new ArrayList<>();
 
         for (Map.Entry<Class<?>, List<String>> entry : entries) {
             if (entry.getValue().size() <= 1) {
@@ -76,11 +76,7 @@ public abstract class AbstractUniqueConstraintProvider implements UniqueConstrai
     protected void addAttribute(final EntityTableMapping entityTableMapping, final String columnName) {
         final String attributeName = entityTableMapping.getAttributeName(columnName);
         if (attributeName != null) {
-            List<String> attributeList = uniqueColumnCombinations.get(entityTableMapping.getEntityClass());
-            if (attributeList == null) {
-                attributeList = new ArrayList<String>();
-                uniqueColumnCombinations.put(entityTableMapping.getEntityClass(), attributeList);
-            }
+            List<String> attributeList = uniqueColumnCombinations.computeIfAbsent(entityTableMapping.getEntityClass(), k -> new ArrayList<>());
             attributeList.add(attributeName);
         }
     }

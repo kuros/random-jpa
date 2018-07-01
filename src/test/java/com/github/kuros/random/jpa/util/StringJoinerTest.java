@@ -2,12 +2,12 @@ package com.github.kuros.random.jpa.util;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class StringJoinerTest {
 
     @Test
-    public void shouldReturnGivenStringWithNext() throws Exception {
+    public void shouldReturnGivenStringWithNext() {
         final StringJoiner stringJoiner = new StringJoiner("a", "b", "c");
 
         assertEquals("a", stringJoiner.next());
@@ -17,7 +17,7 @@ public class StringJoinerTest {
     }
 
     @Test
-    public void shouldReturnCommaPrecedeedByBlank() throws Exception {
+    public void shouldReturnCommaPrecedeedByBlank() {
 
         final StringJoiner comma = StringJoiner.comma();
 
@@ -26,7 +26,7 @@ public class StringJoinerTest {
     }
 
     @Test
-    public void validateToString() throws Exception {
+    public void validateToString() {
         StringJoiner joiner = new StringJoiner("a", "b", "c");
 
         assertEquals("StringJoiner(items=3, index=0)", joiner.toString());

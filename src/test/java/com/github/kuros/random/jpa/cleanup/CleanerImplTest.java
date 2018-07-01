@@ -41,7 +41,7 @@ public class CleanerImplTest {
     }
 
     @Test
-    public void shouldDeleteRowsWithIdsExceptParallelClasses() throws Exception {
+    public void shouldDeleteRowsWithIdsExceptParallelClasses() {
 
         final X x = getX(null);
 
@@ -62,7 +62,7 @@ public class CleanerImplTest {
     }
 
     @Test
-    public void shouldDeleteRowsWithIdsExceptParallelClassesByDeletionOrder() throws Exception {
+    public void shouldDeleteRowsWithIdsExceptParallelClassesByDeletionOrder() {
 
         final X x = getX(null);
 
@@ -88,7 +88,7 @@ public class CleanerImplTest {
     }
 
     @Test
-    public void shouldNotDeleteRowsWithChildClassIsSkipped() throws Exception {
+    public void shouldNotDeleteRowsWithChildClassIsSkipped() {
 
         final X x = getX(null);
 
@@ -96,7 +96,7 @@ public class CleanerImplTest {
 
         final Z z = getZ(x, y);
 
-        final Set<Class<?>> classes = new HashSet<Class<?>>();
+        final Set<Class<?>> classes = new HashSet<>();
         classes.add(Z.class);
         cache.withSkipTruncations(classes);
         cleaner = CleanerImpl.newInstance(cache);
@@ -114,13 +114,13 @@ public class CleanerImplTest {
     }
 
     @Test
-    public void shouldDeleteRowsWithParentClassIsSkipped() throws Exception {
+    public void shouldDeleteRowsWithParentClassIsSkipped() {
 
         final P p = getP();
 
         final Q q = getQ(p);
 
-        final Set<Class<?>> classes = new HashSet<Class<?>>();
+        final Set<Class<?>> classes = new HashSet<>();
         classes.add(P.class);
         cache.withSkipTruncations(classes);
         cleaner = CleanerImpl.newInstance(cache);
@@ -137,7 +137,7 @@ public class CleanerImplTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void shouldThrowExceptionIfEntityWithIdNotFound() throws Exception {
+    public void shouldThrowExceptionIfEntityWithIdNotFound() {
         entityManager.getTransaction().begin();
         cleaner.delete(Q.class, RandomFixture.create(Long.class));
         entityManager.getTransaction().commit();
@@ -145,7 +145,7 @@ public class CleanerImplTest {
 
 
     @Test @SuppressWarnings("unchecked")
-    public void shouldTruncateLeafNode() throws Exception {
+    public void shouldTruncateLeafNode() {
         final P p = getP();
         final Q q = getQ(p);
 
@@ -179,7 +179,7 @@ public class CleanerImplTest {
     }
 
     @Test @SuppressWarnings("unchecked")
-    public void shouldNotTruncateParallelNodes() throws Exception {
+    public void shouldNotTruncateParallelNodes() {
         final X x = getX(null);
         final Y y = getY();
         final Z r = getZ(x, y);
@@ -198,8 +198,8 @@ public class CleanerImplTest {
     }
 
     @Test
-    public void shouldSkipTruncateIfParentNodeIsSkipped() throws Exception {
-        final Set<Class<?>> classes = new HashSet<Class<?>>();
+    public void shouldSkipTruncateIfParentNodeIsSkipped() {
+        final Set<Class<?>> classes = new HashSet<>();
         classes.add(Z.class);
         cache.withSkipTruncations(classes);
         cleaner = CleanerImpl.newInstance(cache);
@@ -221,7 +221,7 @@ public class CleanerImplTest {
     }
 
     @Test @SuppressWarnings("unchecked")
-    public void shouldTruncateAllTables() throws Exception {
+    public void shouldTruncateAllTables() {
         final X y = getX(null);
         final P p = getP();
         final Q q = getQ(p);
@@ -289,7 +289,7 @@ public class CleanerImplTest {
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         if (entityManager != null && entityManager.isOpen()) {
             entityManager.close();
         }

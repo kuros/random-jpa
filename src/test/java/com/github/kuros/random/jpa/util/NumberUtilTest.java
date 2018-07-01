@@ -14,18 +14,18 @@ import static org.junit.Assert.assertNull;
 public class NumberUtilTest {
 
     @Test
-    public void shouldReturnNullIfInputValueIsNull() throws Exception {
+    public void shouldReturnNullIfInputValueIsNull() {
         assertNull(NumberUtil.castNumber(Integer.TYPE, null));
     }
 
     @Test
-    public void shouldReturnObjectIfTypeMatches() throws Exception {
+    public void shouldReturnObjectIfTypeMatches() {
         final Integer integer = NumberUtil.castNumber(Integer.class, 1);
         assertEquals(1, integer.intValue());
     }
 
     @Test
-    public void shouldCastLongToInteger() throws Exception {
+    public void shouldCastLongToInteger() {
         final Integer integer = NumberUtil.castNumber(Integer.class, 1L);
         assertEquals(1, integer.intValue());
 
@@ -34,7 +34,7 @@ public class NumberUtilTest {
     }
 
     @Test
-    public void shouldCastIntegerToLong() throws Exception {
+    public void shouldCastIntegerToLong() {
         final Long aLong = NumberUtil.castNumber(Long.class, 1);
         assertEquals(1, aLong.intValue());
 
@@ -43,7 +43,7 @@ public class NumberUtilTest {
     }
 
     @Test
-    public void shouldCastIntegerToShort() throws Exception {
+    public void shouldCastIntegerToShort() {
         final Short aShort = NumberUtil.castNumber(Short.class, 1);
         assertEquals(Short.valueOf("1"), aShort);
 
@@ -52,7 +52,7 @@ public class NumberUtilTest {
     }
 
     @Test
-    public void shouldCastIntegerToFloat() throws Exception {
+    public void shouldCastIntegerToFloat() {
         final Float aFloat = NumberUtil.castNumber(Float.class, 1);
         assertEquals(Float.valueOf("1"), aFloat, 0.00001);
 
@@ -61,7 +61,7 @@ public class NumberUtilTest {
     }
 
     @Test
-    public void shouldCastIntegerToDouble() throws Exception {
+    public void shouldCastIntegerToDouble() {
         final Double aDouble = NumberUtil.castNumber(Double.class, 1);
         assertEquals(Double.valueOf("1"), aDouble, 0.00001);
 
@@ -70,7 +70,7 @@ public class NumberUtilTest {
     }
 
     @Test
-    public void shouldCastIntegerToByte() throws Exception {
+    public void shouldCastIntegerToByte() {
         final Byte aByte = NumberUtil.castNumber(Byte.class, 1);
         assertEquals(Byte.valueOf("1"), aByte, 0.00001);
 
@@ -79,31 +79,31 @@ public class NumberUtilTest {
     }
 
     @Test
-    public void shouldCastIntegerToBigDecimal() throws Exception {
+    public void shouldCastIntegerToBigDecimal() {
         final BigDecimal bigDecimal = NumberUtil.castNumber(BigDecimal.class, 1);
         assertEquals(BigDecimal.valueOf(1), bigDecimal);
     }
 
     @Test
-    public void shouldCastIntegerToAtomicInteger() throws Exception {
+    public void shouldCastIntegerToAtomicInteger() {
         final AtomicInteger atomicInteger = NumberUtil.castNumber(AtomicInteger.class, 1);
         assertEquals(new AtomicInteger(1).get(), atomicInteger.get());
     }
 
     @Test
-    public void shouldCastIntegerToAtomicLong() throws Exception {
+    public void shouldCastIntegerToAtomicLong() {
         final AtomicLong atomicLong = NumberUtil.castNumber(AtomicLong.class, 1);
         assertEquals(new AtomicLong(1).get(), atomicLong.get());
     }
 
     @Test
-    public void shouldCastIntegerToBigInteger() throws Exception {
+    public void shouldCastIntegerToBigInteger() {
         final BigInteger bigInteger = NumberUtil.castNumber(BigInteger.class, 1);
         assertEquals(BigInteger.valueOf(1), bigInteger);
     }
 
     @Test
-    public void shouldParseStringToNumber() throws Exception {
+    public void shouldParseStringToNumber() {
         final String input = "1";
         assertEquals(Integer.valueOf(input), NumberUtil.parseNumber(Integer.class, input));
 
@@ -112,13 +112,13 @@ public class NumberUtilTest {
     }
 
     @Test(expected = RandomJPAException.class)
-    public void shouldThrowExceptionIfNumberCannotBeParsed() throws Exception {
+    public void shouldThrowExceptionIfNumberCannotBeParsed() {
         final String input = "abc";
         NumberUtil.parseNumber(Integer.class, input);
     }
 
     @Test
-    public void shouldReturnDefaultValues() throws Exception {
+    public void shouldReturnDefaultValues() {
 
         assertEquals(false, NumberUtil.getDefaultValue(Boolean.TYPE));
         assertNull(NumberUtil.getDefaultValue(Boolean.class));

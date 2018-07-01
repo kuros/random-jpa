@@ -39,12 +39,12 @@ public class JPAContextFactoryTest {
     private EntityManager entityManager;
 
     @org.junit.Before
-    public void setUp() throws Exception {
+    public void setUp() {
         entityManager = EntityManagerProvider.getEntityManager();
     }
 
     @Test
-    public void generateWithJpaContextV2() throws Exception {
+    public void generateWithJpaContextV2() {
         final Dependencies customDependencies = Dependencies.newInstance();
         customDependencies.withLink(DependencyHelper.getLinks());
         final JPAContext jpaContext = JPAContextFactory
@@ -56,7 +56,7 @@ public class JPAContextFactoryTest {
     }
 
     @Test
-    public void createJpaContext() throws Exception {
+    public void createJpaContext() {
         final Dependencies customDependencies = Dependencies.newInstance();
         customDependencies.withLink(DependencyHelper.getLinks());
         final JPAContext jpaContext = JPAContextFactory
@@ -78,14 +78,14 @@ public class JPAContextFactoryTest {
     }
 
     @Test
-    public void createJpaContextWithGenerator() throws Exception {
+    public void createJpaContextWithGenerator() {
 
         final Z z = new Z();
 
         final Generator generator = Generator.newInstance();
         generator.addClassGenerator(new RandomClassGenerator() {
             public Collection<Class<?>> getTypes() {
-                final List<Class<?>> classes = new ArrayList<Class<?>>();
+                final List<Class<?>> classes = new ArrayList<>();
                 classes.add(Z.class);
                 return classes;
             }
@@ -114,7 +114,7 @@ public class JPAContextFactoryTest {
     }
 
     @Test
-    public void createJpaContextWithoutPreConditions() throws Exception {
+    public void createJpaContextWithoutPreConditions() {
 
         final JPAContext jpaContext = JPAContextFactory
                 .newInstance(Database.NONE, entityManager)
@@ -132,7 +132,7 @@ public class JPAContextFactoryTest {
     }
 
     @Test
-    public void createJpaContextWithPreConditions() throws Exception {
+    public void createJpaContextWithPreConditions() {
 
         final JPAContext jpaContext = JPAContextFactory
                 .newInstance(Database.NONE, entityManager)
@@ -151,7 +151,7 @@ public class JPAContextFactoryTest {
     }
 
     @Test
-    public void createJpaContextWithTriggerTables() throws Exception {
+    public void createJpaContextWithTriggerTables() {
 
         final JPAContext jpaContext = JPAContextFactory
                 .newInstance(Database.NONE, entityManager)
@@ -174,9 +174,9 @@ public class JPAContextFactoryTest {
     }
 
     @Test(expected = RandomJPAException.class)
-    public void throwExceptionWhenTriggersNotInitializedProperly() throws Exception {
+    public void throwExceptionWhenTriggersNotInitializedProperly() {
 
-        final JPAContext jpaContext = JPAContextFactory
+        JPAContextFactory
                 .newInstance(Database.NONE, entityManager)
                 .withTriggers(Trigger.of(D.class))
                 .generate();
@@ -184,7 +184,7 @@ public class JPAContextFactoryTest {
     }
 
     @Test
-    public void createJpaContextWithSkipTruncation() throws Exception {
+    public void createJpaContextWithSkipTruncation() {
 
         final JPAContext jpaContext = JPAContextFactory
                 .newInstance(Database.NONE, entityManager)
@@ -202,7 +202,7 @@ public class JPAContextFactoryTest {
     }
 
     @Test(expected = RandomJPAException.class)
-    public void validateCyclicDependency() throws Exception {
+    public void validateCyclicDependency() {
 
         JPAContextFactory
                 .newInstance(Database.NONE, entityManager)
@@ -211,7 +211,7 @@ public class JPAContextFactoryTest {
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         if (entityManager != null && entityManager.isOpen()) {
             entityManager.close();
         }

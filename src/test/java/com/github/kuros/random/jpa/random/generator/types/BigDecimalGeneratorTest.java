@@ -30,17 +30,17 @@ import static org.junit.Assert.assertTrue;
 public class BigDecimalGeneratorTest {
 
     @Test
-    public void testGetTypes() throws Exception {
+    public void testGetTypes() {
         final Collection<Class<?>> types = BigDecimalGenerator.getInstance().getTypes();
 
-        final List<Class<?>> classes = new ArrayList<Class<?>>(types);
+        final List<Class<?>> classes = new ArrayList<>(types);
         assertEquals(1, types.size());
         assertEquals(BigDecimal.class, classes.get(0));
 
     }
 
     @Test
-    public void testDoGenerate() throws Exception {
+    public void testDoGenerate() {
         final Object actual = BigDecimalGenerator.getInstance().doGenerate(null);
         assertNotNull(actual);
         assertTrue(actual instanceof BigDecimal);

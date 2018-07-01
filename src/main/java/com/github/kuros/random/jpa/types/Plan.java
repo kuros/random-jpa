@@ -24,7 +24,7 @@ public final class Plan {
     private List<Entity> entities;
 
     private Plan() {
-        this.entities = new ArrayList<Entity>();
+        this.entities = new ArrayList<>();
     }
 
     public static Plan create() {

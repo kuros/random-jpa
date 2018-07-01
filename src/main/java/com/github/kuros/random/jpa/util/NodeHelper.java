@@ -10,13 +10,13 @@ import java.util.Stack;
 public final class NodeHelper {
 
     public static List<ClassIndex> getClassIndexInOrder(final Node node, final Class<?> type, final int index) {
-        final Stack<ClassIndex> stack = new Stack<ClassIndex>();
+        final Stack<ClassIndex> stack = new Stack<>();
         final Node root = Node.newInstance();
         root.addChildNode(node);
 
         find(stack, root, type, index);
 
-        final List<ClassIndex> result = new ArrayList<ClassIndex>();
+        final List<ClassIndex> result = new ArrayList<>();
         while (!stack.empty()) {
             result.add(stack.pop());
         }

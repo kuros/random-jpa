@@ -38,10 +38,10 @@ public class EntityTableMapping {
     public EntityTableMapping(final Class<?> entityClass) {
         this.entityClass = entityClass;
         this.entityName = entityClass.getName();
-        this.attributeIds = new ArrayList<String>();
-        this.columnIds = new ArrayList<String>();
-        this.attributeColumnMapping = new HashMap<String, String>();
-        this.columnAttributeMapping = new HashMap<String, String>();
+        this.attributeIds = new ArrayList<>();
+        this.columnIds = new ArrayList<>();
+        this.attributeColumnMapping = new HashMap<>();
+        this.columnAttributeMapping = new HashMap<>();
     }
 
     public Class<?> getEntityClass() {

@@ -20,7 +20,7 @@ public class PostgresRelationshipProviderTest {
     }
 
     @Test
-    public void testQueryForPostgress() throws Exception {
+    public void testQueryForPostgress() {
         final String expectedQuery = "SELECT\n" +
                 "  tc.table_name as p_table,\n" +
                 "  kcu.column_name as p_column,\n" +

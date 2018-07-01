@@ -56,8 +56,8 @@ public class Cache {
         this.relationshipProvider = initRelationshipProvider();
         this.sqlCharacterLengthProvider = initSqlCharacterLengthProvider();
         this.uniqueConstraintProvider = initUniqueConstraintProvider();
-        this.skipTruncation = new HashSet<Class<?>>();
-        this.triggerCache = TriggerCache.getInstance(new ArrayList<Trigger<?>>());
+        this.skipTruncation = new HashSet<>();
+        this.triggerCache = TriggerCache.getInstance(new ArrayList<>());
     }
 
     public static Cache create(final Database database, final EntityManager entityManager) {

@@ -60,7 +60,7 @@ public class RelationshipProviderFactory {
     static class EmptyRelationshipProvider implements RelationshipProvider {
 
         public List<ForeignKeyRelation> getForeignKeyRelations() {
-            return new ArrayList<ForeignKeyRelation>();
+            return new ArrayList<>();
         }
     }
 }

@@ -34,7 +34,7 @@ public class PostgresUniqueConstraintProviderTest {
     }
 
     @Test
-    public void testQueryForUniqueConstraint() throws Exception {
+    public void testQueryForUniqueConstraint() {
         final String query = "SELECT table_name, column_name\n" +
                 "FROM information_schema.constraint_column_usage WHERE constraint_schema not in ('pg_catalog', 'information_schema')";
 

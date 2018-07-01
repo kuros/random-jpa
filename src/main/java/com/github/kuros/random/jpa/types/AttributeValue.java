@@ -29,7 +29,7 @@ public final class AttributeValue<E, V> {
     }
 
     public static <E, V> AttributeValue<E, V> newInstance(final Attribute<E, V> attribute, final V value) {
-        return new AttributeValue<E, V>(attribute, value);
+        return new AttributeValue<>(attribute, value);
     }
 
     public Attribute<?, V> getAttribute() {

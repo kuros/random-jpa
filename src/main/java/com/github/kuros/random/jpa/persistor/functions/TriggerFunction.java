@@ -99,7 +99,7 @@ class TriggerFunction<T> implements Function<T> {
     private List<String> getAttributeNames(final Trigger<?> trigger) {
         final List<Link> links = trigger.getLinks();
 
-        final List<String> attributeNames = new ArrayList<String>();
+        final List<String> attributeNames = new ArrayList<>();
         for (Link link : links) {
             final String name = AttributeHelper.getName(link.getFrom());
             attributeNames.add(name);

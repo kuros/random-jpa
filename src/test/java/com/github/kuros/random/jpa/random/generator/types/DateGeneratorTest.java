@@ -33,9 +33,9 @@ import static org.junit.Assert.assertTrue;
 public class DateGeneratorTest {
 
     @Test
-    public void testGetTypes() throws Exception {
+    public void testGetTypes() {
         final Collection<Class<?>> types = DateGenerator.getInstance().getTypes();
-        final List<Class<?>> classes = new ArrayList<Class<?>>(types);
+        final List<Class<?>> classes = new ArrayList<>(types);
         assertEquals(4, classes.size());
         assertEquals(Date.class, classes.get(0));
         assertEquals(Calendar.class, classes.get(1));
@@ -44,14 +44,14 @@ public class DateGeneratorTest {
     }
 
     @Test
-    public void shouldReturnRandomDateForNullParam() throws Exception {
+    public void shouldReturnRandomDateForNullParam() {
         final Object actual = DateGenerator.getInstance().doGenerate(null);
         assertNotNull(actual);
         assertTrue(actual instanceof Date);
     }
 
     @Test
-    public void testDoGenerate() throws Exception {
+    public void testDoGenerate() {
         final Object actual = DateGenerator.getInstance().doGenerate(Date.class);
         assertNotNull(actual);
         assertTrue(actual instanceof Date);

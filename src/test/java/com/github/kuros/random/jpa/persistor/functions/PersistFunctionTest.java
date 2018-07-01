@@ -30,7 +30,7 @@ public class PersistFunctionTest {
     }
 
     @Test @SuppressWarnings("unchecked")
-    public void shouldPersistObject() throws Exception {
+    public void shouldPersistObject() {
         final PersistFunction persistFunction = new PersistFunction(cache);
 
         final ArgumentCaptor<Z> argumentCaptor = ArgumentCaptor.forClass(Z.class);
@@ -48,7 +48,7 @@ public class PersistFunctionTest {
 
     @SuppressWarnings("unchecked")
     @Test(expected = SQLException.class)
-    public void shouldThrowExceptionIfFailedToPersist() throws Exception {
+    public void shouldThrowExceptionIfFailedToPersist() {
         final PersistFunction persistFunction = new PersistFunction(cache);
 
         final Z z = RandomFixture.create(Z.class);

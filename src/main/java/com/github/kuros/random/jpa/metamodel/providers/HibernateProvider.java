@@ -29,8 +29,8 @@ public class HibernateProvider implements AttributeProvider {
 
     public HibernateProvider(final EntityManager entityManager) {
         this.entityManager = entityManager;
-        this.entityTableMappingByClass = new HashMap<Class<?>, EntityTableMapping>();
-        this.entityTableMappingByTableName = new HashMap<String, List<EntityTableMapping>>();
+        this.entityTableMappingByClass = new HashMap<>();
+        this.entityTableMappingByTableName = new HashMap<>();
         init();
     }
 
@@ -79,17 +79,13 @@ public class HibernateProvider implements AttributeProvider {
     }
 
     private void putEntityTableMapping(final String tableName, final EntityTableMapping entityTableMapping) {
-        List<EntityTableMapping> entityTableMappings = entityTableMappingByTableName.get(tableName);
-        if (entityTableMappings == null) {
-            entityTableMappings = new ArrayList<EntityTableMapping>();
-            entityTableMappingByTableName.put(tableName, entityTableMappings);
-        }
+        List<EntityTableMapping> entityTableMappings = entityTableMappingByTableName.computeIfAbsent(tableName, k -> new ArrayList<>());
         entityTableMappings.add(entityTableMapping);
     }
 
     private Map<String, ColumnNameType.Type> getSupportedAttributeNames(final Object classMetaData) throws ClassNotFoundException {
 
-        Map<String, ColumnNameType.Type> attributeTypeMap = new HashMap<String, ColumnNameType.Type>();
+        Map<String, ColumnNameType.Type> attributeTypeMap = new HashMap<>();
         final boolean[] insertables = (boolean[]) invokeMethod(classMetaData, "getPropertyInsertability");
         final String[] propertyNames = (String[]) invokeMethod(classMetaData, "getPropertyNames");
         final Object[] propertyTypes = (Object[]) invokeMethod(classMetaData, "getPropertyTypes");

@@ -35,7 +35,7 @@ public class RandomGenerator {
 
     private RandomGenerator(final Cache cache, final Generator generator) {
         this.generator = generator;
-        attributeGeneratorMap = new HashMap<Field, RandomAttributeGenerator>();
+        attributeGeneratorMap = new HashMap<>();
         randomFactory = new RandomFactory();
         sqlCharacterLengthProvider = cache.getSqlCharacterLengthProvider();
         init();

@@ -29,9 +29,9 @@ public final class CreationOrder {
     private Map<Class<?>, Integer> creationCount;
 
     private CreationOrder() {
-        this.order = new ArrayList<ClassDepth<?>>();
-        this.creationCount = new HashMap<Class<?>, Integer>();
-        this.managedClasses = new HashSet<Class<?>>();
+        this.order = new ArrayList<>();
+        this.creationCount = new HashMap<>();
+        this.managedClasses = new HashSet<>();
     }
 
     public static CreationOrder newInstance() {
@@ -74,7 +74,7 @@ public final class CreationOrder {
     }
 
     private Set<Class<?>> getClasses(final List<ClassDepth<?>> orderValue) {
-        final Set<Class<?>> newManagedClasses = new HashSet<Class<?>>();
+        final Set<Class<?>> newManagedClasses = new HashSet<>();
         for (ClassDepth<?> classDepth : orderValue) {
             newManagedClasses.add(classDepth.getType());
         }

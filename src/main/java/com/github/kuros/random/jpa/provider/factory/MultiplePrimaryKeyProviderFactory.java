@@ -60,7 +60,7 @@ public class MultiplePrimaryKeyProviderFactory {
     static class DefaultMultiplePrimaryKeyProvider implements MultiplePrimaryKeyProvider {
 
         public List<String> getMultiplePrimaryKeyAttributes(final Class<?> entityName) {
-            return new ArrayList<String>();
+            return new ArrayList<>();
         }
     }
 }

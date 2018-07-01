@@ -2,8 +2,6 @@ package com.github.kuros.random.jpa.persistor.functions;
 
 import com.github.kuros.random.jpa.annotation.VisibleForTesting;
 import com.github.kuros.random.jpa.cache.Cache;
-import com.github.kuros.random.jpa.log.LogFactory;
-import com.github.kuros.random.jpa.log.Logger;
 import com.github.kuros.random.jpa.persistor.hepler.Finder;
 import com.github.kuros.random.jpa.provider.MultiplePrimaryKeyProvider;
 import com.github.kuros.random.jpa.provider.UniqueConstraintProvider;
@@ -29,7 +27,6 @@ import java.util.List;
  */
 class FindByUniqueIdentities<T> implements Function<T> {
 
-    private static final Logger LOGGER = LogFactory.getLogger(PersistFunction.class);
     private final UniqueConstraintProvider uniqueConstraintProvider;
     private final MultiplePrimaryKeyProvider multiplePrimaryKeyProvider;
     private Finder finder;
@@ -57,7 +54,7 @@ class FindByUniqueIdentities<T> implements Function<T> {
     }
 
     private List<List<String>> getAttributeCombinations(final Class<?> tableClass) {
-        final List<List<String>> list = new ArrayList<List<String>>();
+        final List<List<String>> list = new ArrayList<>();
         list.add(multiplePrimaryKeyProvider.getMultiplePrimaryKeyAttributes(tableClass));
         list.add(uniqueConstraintProvider.getUniqueCombinationAttributes(tableClass));
 

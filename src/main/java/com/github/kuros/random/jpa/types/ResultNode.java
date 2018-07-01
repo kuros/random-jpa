@@ -32,11 +32,11 @@ public final class ResultNode<T> {
     private ResultNode(final Class<T> type, final int index) {
         this.type = type;
         this.index = index;
-        this.childNodes = new ArrayList<ResultNode>();
+        this.childNodes = new ArrayList<>();
     }
 
     public static <T> ResultNode<T> newInstance(final Class<T> type, final int index) {
-        return new ResultNode<T>(type, index);
+        return new ResultNode<>(type, index);
     }
 
     @SuppressWarnings("unchecked")

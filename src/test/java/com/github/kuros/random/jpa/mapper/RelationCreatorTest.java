@@ -49,8 +49,8 @@ public class RelationCreatorTest {
     }
 
     @Test
-    public void testRelationCreatorWithEmptyMetaModelProvider() throws Exception {
-        when(metaModelProvider.getFieldsByTableName()).thenReturn(new HashMap<String, List<FieldWrapper>>());
+    public void testRelationCreatorWithEmptyMetaModelProvider() {
+        when(metaModelProvider.getFieldsByTableName()).thenReturn(new HashMap<>());
         final List<Relation> generate = RelationCreator.from(metaModelProvider).generate();
         assertEquals(0, generate.size());
     }
@@ -126,37 +126,37 @@ public class RelationCreatorTest {
         assertEquals(0, generate.size());
     }
     private void mockRelationshipProvider() {
-        final List<ForeignKeyRelation> foreignKeyRelations = new ArrayList<ForeignKeyRelation>();
+        final List<ForeignKeyRelation> foreignKeyRelations = new ArrayList<>();
         foreignKeyRelations.add(ForeignKeyRelation.newInstance("test_class_table_name", "attr1", "test_class_2_table_name", "attr1"));
         foreignKeyRelations.add(ForeignKeyRelation.newInstance("test_class_table_name", "attr_2", "test_class_2_table_name", "attr2"));
         when(relationshipProvider.getForeignKeyRelations()).thenReturn(foreignKeyRelations);
     }
 
     private void mockRelationshipProviderForReferencedTableNotFound() {
-        final List<ForeignKeyRelation> foreignKeyRelations = new ArrayList<ForeignKeyRelation>();
+        final List<ForeignKeyRelation> foreignKeyRelations = new ArrayList<>();
         foreignKeyRelations.add(ForeignKeyRelation.newInstance("test_class_table_name", "attr1", "table_not_found", "attr1"));
         when(relationshipProvider.getForeignKeyRelations()).thenReturn(foreignKeyRelations);
     }
 
     private void mockRelationshipProviderForReferencedColumnNotFound() {
-        final List<ForeignKeyRelation> foreignKeyRelations = new ArrayList<ForeignKeyRelation>();
+        final List<ForeignKeyRelation> foreignKeyRelations = new ArrayList<>();
         foreignKeyRelations.add(ForeignKeyRelation.newInstance("test_class_table_name", "attr1", "test_class_2_table_name", "someAttr"));
         when(relationshipProvider.getForeignKeyRelations()).thenReturn(foreignKeyRelations);
     }
 
     private void mockRelationshipProviderWithNoMapping() {
-        final List<ForeignKeyRelation> foreignKeyRelations = new ArrayList<ForeignKeyRelation>();
+        final List<ForeignKeyRelation> foreignKeyRelations = new ArrayList<>();
         foreignKeyRelations.add(ForeignKeyRelation.newInstance("test_class_table_name", "attr3", "test_class_2_table_name", "attr3"));
         foreignKeyRelations.add(ForeignKeyRelation.newInstance("test_class_table_name", "attr_4", "test_class_2_table_name", "attr4"));
         when(relationshipProvider.getForeignKeyRelations()).thenReturn(foreignKeyRelations);
     }
 
     private Map<String, List<FieldWrapper>> getFieldsByTableName() throws NoSuchFieldException {
-        final Map<String, List<FieldWrapper>> fieldsByTableName = new HashMap<String, List<FieldWrapper>>();
+        final Map<String, List<FieldWrapper>> fieldsByTableName = new HashMap<>();
 
         final FieldWrapper attr1 = new FieldWrapper(TestClass.class, getDeclaredField(TestClass.class, "attr1"), null);
         final FieldWrapper attr2 = new FieldWrapper(TestClass.class, getDeclaredField(TestClass.class, "attr2"), "attr_2");
-        final List<FieldWrapper> testClassFieldWrappers = new ArrayList<FieldWrapper>();
+        final List<FieldWrapper> testClassFieldWrappers = new ArrayList<>();
         testClassFieldWrappers.add(attr1);
         testClassFieldWrappers.add(attr2);
         fieldsByTableName.put("test_class_table_name", testClassFieldWrappers);
@@ -164,7 +164,7 @@ public class RelationCreatorTest {
 
         final FieldWrapper attr3 = new FieldWrapper(TestClass2.class, getDeclaredField(TestClass2.class, "attr1"), null);
         final FieldWrapper attr4 = new FieldWrapper(TestClass2.class, getDeclaredField(TestClass2.class, "attr2"), null);
-        final List<FieldWrapper> testClass2FieldWrappers = new ArrayList<FieldWrapper>();
+        final List<FieldWrapper> testClass2FieldWrappers = new ArrayList<>();
         testClass2FieldWrappers.add(attr3);
         testClass2FieldWrappers.add(attr4);
         fieldsByTableName.put("test_class_2_table_name", testClass2FieldWrappers);

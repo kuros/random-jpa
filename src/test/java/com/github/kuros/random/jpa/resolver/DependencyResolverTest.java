@@ -20,7 +20,7 @@ import static org.junit.Assert.assertEquals;
 public class DependencyResolverTest {
 
     @Test
-    public void shouldResolveDependenciesToRelations() throws Exception {
+    public void shouldResolveDependenciesToRelations() {
         EntityManagerProvider.init();
         final Dependencies dependencies = Dependencies.newInstance();
         dependencies.withLink(Link.newLink(Z_.xId, X_.id));
@@ -29,14 +29,14 @@ public class DependencyResolverTest {
 
         assertEquals(1, relationSet.size());
 
-        final List<Relation> relations = new ArrayList<Relation>(relationSet);
+        final List<Relation> relations = new ArrayList<>(relationSet);
 
         assertEquals(Util.getField(Z.class, "xId"), relations.get(0).getFrom().getField());
         assertEquals(Util.getField(X.class, "id"), relations.get(0).getTo().getField());
     }
 
     @Test
-    public void shouldReturnEmptyListIfDependenciesAreNull() throws Exception {
+    public void shouldReturnEmptyListIfDependenciesAreNull() {
         final Set<Relation> relations = DependencyResolver.resolveDependency(null);
         assertEquals(0, relations.size());
     }

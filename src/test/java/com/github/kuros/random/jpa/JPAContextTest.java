@@ -26,7 +26,6 @@ import com.github.kuros.random.jpa.testUtil.entity.Z_;
 import com.github.kuros.random.jpa.testUtil.hierarchyGraph.DependencyHelper;
 import com.github.kuros.random.jpa.types.CreationPlan;
 import com.github.kuros.random.jpa.types.Entity;
-import com.github.kuros.random.jpa.types.Printer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -36,6 +35,7 @@ import javax.persistence.EntityManager;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -62,12 +62,12 @@ public class JPAContextTest {
     private EntityManager entityManager;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         entityManager = EntityManagerProvider.getEntityManager();
     }
 
     @Test
-    public void shouldCreateAndPersistHierarchy() throws Exception {
+    public void shouldCreateAndPersistHierarchy() {
 
         final Dependencies dependencies = Dependencies.newInstance();
         dependencies.withLink(DependencyHelper.getLinks());
@@ -90,18 +90,14 @@ public class JPAContextTest {
         assertEquals(1, resultMap.getAll(Y.class).size());
 
         final Z z = resultMap.get(Z.class);
-        resultMap.print(new Printer() {
-            public void print(final String string) {
-                System.out.println(string);
-            }
-        });
+        resultMap.print(System.out::println);
 
         assertEquals(z.getxId(), resultMap.get(X.class).getId());
         assertEquals(z.getyId(), resultMap.get(Y.class).getId());
     }
 
     @Test
-    public void shouldCreateAndPersistHierarchyWithSoftLink() throws Exception {
+    public void shouldCreateAndPersistHierarchyWithSoftLink() {
 
         final JPAContext jpaContext = JPAContextFactory
                 .newInstance(Database.NONE, entityManager)
@@ -124,7 +120,7 @@ public class JPAContextTest {
     }
 
     @Test
-    public void shouldCreateMultipleHierarchyAndPersistHierarchy() throws Exception {
+    public void shouldCreateMultipleHierarchyAndPersistHierarchy() {
 
         final Dependencies dependencies = Dependencies.newInstance();
         dependencies.withLink(DependencyHelper.getLinks());
@@ -157,7 +153,7 @@ public class JPAContextTest {
     }
 
     @Test
-    public void shouldCreateMultipleHierarchyAsPerParentCountAndPersistHierarchy() throws Exception {
+    public void shouldCreateMultipleHierarchyAsPerParentCountAndPersistHierarchy() {
 
         final Dependencies dependencies = Dependencies.newInstance();
         dependencies.withLink(DependencyHelper.getLinks());
@@ -198,7 +194,7 @@ public class JPAContextTest {
     }
 
     @Test
-    public void shouldRemoveEntityWithGivenId() throws Exception {
+    public void shouldRemoveEntityWithGivenId() {
 
         final X x = new X();
         EntityManagerProvider.persist(x);
@@ -222,7 +218,7 @@ public class JPAContextTest {
     }
 
     @Test
-    public void shouldRemoveAllEntityOfGivenType() throws Exception {
+    public void shouldRemoveAllEntityOfGivenType() {
 
         final X x = new X();
         EntityManagerProvider.persist(x);
@@ -243,7 +239,7 @@ public class JPAContextTest {
     }
 
     @Test
-    public void shouldRemoveAllEntity() throws Exception {
+    public void shouldRemoveAllEntity() {
 
         final X x = new X();
         EntityManagerProvider.persist(x);
@@ -272,7 +268,7 @@ public class JPAContextTest {
     }
 
     @Test @Ignore
-    public void shouldObjectValueForMappedRelationsInCaseOfOneToMany() throws Exception {
+    public void shouldObjectValueForMappedRelationsInCaseOfOneToMany() {
         final Dependencies dependencies = Dependencies.newInstance();
         dependencies.withLink(DependencyHelper.getLinks());
         final JPAContext jpaContext = JPAContextFactory
@@ -315,7 +311,7 @@ public class JPAContextTest {
     }
 
     @Test
-    public void shouldPersistRandomValuesForPrimitiveTypeForV2() throws Exception {
+    public void shouldPersistRandomValuesForPrimitiveTypeForV2() {
         final JPAContext jpaContext = JPAContextFactory
                 .newInstance(Database.NONE, entityManager)
                 .generate();
@@ -337,7 +333,7 @@ public class JPAContextTest {
     }
 
     @Test
-    public void shouldPersistDefaultValuesForPrimitiveTypeWhenProvided() throws Exception {
+    public void shouldPersistDefaultValuesForPrimitiveTypeWhenProvided() {
         final JPAContext jpaContext = JPAContextFactory
                 .newInstance(Database.NONE, entityManager)
                 .generate();
@@ -357,7 +353,7 @@ public class JPAContextTest {
         final ResultMap persist = jpaContext.persist(creationPlan);
         entityManager.getTransaction().commit();
         final PrimitiveEntity primitiveEntity = persist.get(PrimitiveEntity.class);
-        assertEquals(false, primitiveEntity.isDefaultBoolean());
+        assertFalse(primitiveEntity.isDefaultBoolean());
         assertEquals((byte) 0, primitiveEntity.getDefaultByte());
         assertEquals((char) 0, primitiveEntity.getDefaultChar());
         assertEquals(0.0, primitiveEntity.getDefaultDouble(), 0.0001);
@@ -369,7 +365,7 @@ public class JPAContextTest {
     }
 
     @Test
-    public void shouldReUseHierarchyIfIdIsProvided() throws Exception {
+    public void shouldReUseHierarchyIfIdIsProvided() {
 
         final Dependencies dependencies = Dependencies.newInstance();
         dependencies.withLink(DependencyHelper.getLinks());
@@ -401,7 +397,7 @@ public class JPAContextTest {
     }
 
     @Test
-    public void shouldLoadPersistedObjectsInMemory() throws Exception {
+    public void shouldLoadPersistedObjectsInMemory() {
 
         final Dependencies dependencies = Dependencies.newInstance();
         dependencies.withLink(DependencyHelper.getLinks());
@@ -431,7 +427,7 @@ public class JPAContextTest {
 
 
     @Test
-    public void shouldSetCustomValuesThroughEntity() throws Exception {
+    public void shouldSetCustomValuesThroughEntity() {
 
         final JPAContext jpaContext = JPAContextFactory
                 .newInstance(Database.NONE, entityManager)
@@ -441,7 +437,7 @@ public class JPAContextTest {
     }
 
     @Test
-    public void shouldSetNullValuesUsingEntityModelAndOverrideValueWhenSetExplicitly() throws Exception {
+    public void shouldSetNullValuesUsingEntityModelAndOverrideValueWhenSetExplicitly() {
         final JPAContext jpaContext = JPAContextFactory
                 .newInstance(Database.NONE, entityManager)
                 .generate();
@@ -457,7 +453,7 @@ public class JPAContextTest {
     }
 
     @Test
-    public void shouldSetNullValuesUsingSetMethod() throws Exception {
+    public void shouldSetNullValuesUsingSetMethod() {
         final JPAContext jpaContext = JPAContextFactory
                 .newInstance(Database.NONE, entityManager)
                 .generate();
@@ -473,7 +469,7 @@ public class JPAContextTest {
     }
 
     @Test
-    public void shouldOverrideCustomValuesForEntityReferenceIdIsNull() throws Exception {
+    public void shouldOverrideCustomValuesForEntityReferenceIdIsNull() {
         final Dependencies dependencies = Dependencies.newInstance();
         dependencies.withLink(DependencyHelper.getLinks());
         final JPAContext jpaContext = JPAContextFactory
@@ -509,7 +505,7 @@ public class JPAContextTest {
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         if (entityManager != null && entityManager.isOpen()) {
             entityManager.close();
         }

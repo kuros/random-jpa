@@ -34,11 +34,11 @@ public class CreationPlanImpl implements CreationPlan {
     private final HierarchyGraph hierarchyGraph;
 
     public CreationPlanImpl(final HierarchyGraph hierarchyGraph, final Randomize randomize) {
-        this.createdNodeMap = new HashMap<Class<?>, List<Node>>();
+        this.createdNodeMap = new HashMap<>();
         this.root = Node.newInstance();
         this.randomize = randomize;
         this.hierarchyGraph = hierarchyGraph;
-        this.fieldIndexValues = new ArrayList<FieldIndexValue>();
+        this.fieldIndexValues = new ArrayList<>();
     }
 
     public Map<Class<?>, List<Node>> getCreatedNodeMap() {
@@ -66,7 +66,7 @@ public class CreationPlanImpl implements CreationPlan {
     public <T> void deleteItem(final Class<T> type, final int index) {
         final Node node = createdNodeMap.get(type).get(index);
         node.setValue(null);
-        node.setChildNodes(new ArrayList<Node>());
+        node.setChildNodes(new ArrayList<>());
     }
 
     public Randomize getRandomize() {

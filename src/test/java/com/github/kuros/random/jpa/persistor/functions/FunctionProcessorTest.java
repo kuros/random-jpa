@@ -26,7 +26,7 @@ public class FunctionProcessorTest {
     }
 
     @Test @SuppressWarnings("unchecked")
-    public void shouldReturnListOfFunctionsInOrder() throws Exception {
+    public void shouldReturnListOfFunctionsInOrder() {
         final FunctionProcessor functionProcessor = new FunctionProcessor(cache);
         final List<Function> functions = functionProcessor.getFunctions();
 
@@ -39,15 +39,11 @@ public class FunctionProcessorTest {
 
     @SuppressWarnings("unchecked")
     @Test(expected = RandomJPAException.class)
-    public void shouldThrowExceptionWhenPersistedObjectIsNull() throws Exception {
+    public void shouldThrowExceptionWhenPersistedObjectIsNull() {
 
-        final List<Function> functions = new ArrayList<Function>();
+        final List<Function> functions = new ArrayList<>();
 
-        functions.add(new Function() {
-            public Object apply(final Object o) {
-                return null;
-            }
-        });
+        functions.add(o -> null);
 
         final Z z = RandomFixture.create(Z.class);
 
@@ -56,16 +52,12 @@ public class FunctionProcessorTest {
     }
 
     @Test @SuppressWarnings("unchecked")
-    public void shouldReturnObjectIfTheFunctionIsApplied() throws Exception {
+    public void shouldReturnObjectIfTheFunctionIsApplied() {
         final Z z = RandomFixture.create(Z.class);
 
-        final List<Function> functions = new ArrayList<Function>();
+        final List<Function> functions = new ArrayList<>();
 
-        functions.add(new Function() {
-            public Object apply(final Object o) {
-                return z;
-            }
-        });
+        functions.add(o -> z);
 
 
 

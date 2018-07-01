@@ -16,7 +16,7 @@ import java.util.List;
 public class AttributeHelperTest {
 
     @Test
-    public void shouldReturnDeclaringClass() throws Exception {
+    public void shouldReturnDeclaringClass() {
         EntityManagerProvider.init();
 
         final Class<?> declaringClass = AttributeHelper.getDeclaringClass(A_.id);
@@ -24,7 +24,7 @@ public class AttributeHelperTest {
     }
 
     @Test
-    public void shouldReturnAttributeClass() throws Exception {
+    public void shouldReturnAttributeClass() {
         EntityManagerProvider.init();
 
         final Class<?> attributeClass = AttributeHelper.getAttributeClass(A_.id);
@@ -32,13 +32,13 @@ public class AttributeHelperTest {
     }
 
     @Test(expected = NullPointerException.class)
-    public void shouldThrowExceptionWhenAttributeIsNullAttributeClass() throws Exception {
+    public void shouldThrowExceptionWhenAttributeIsNullAttributeClass() {
         final Class<?> attributeClass = AttributeHelper.getAttributeClass(null);
         Assert.assertEquals(Long.TYPE, attributeClass);
     }
 
     @Test
-    public void shouldReturnTheMappedFieldForAttribute() throws Exception {
+    public void shouldReturnTheMappedFieldForAttribute() {
         EntityManagerProvider.init();
 
         final Field field = AttributeHelper.getField(A_.id);
@@ -49,12 +49,12 @@ public class AttributeHelperTest {
     }
 
     @Test(expected = NullPointerException.class)
-    public void shouldThrowExceptionWhenAttributeIsNull() throws Exception {
+    public void shouldThrowExceptionWhenAttributeIsNull() {
         AttributeHelper.getField(null);
     }
 
     @Test
-    public void shouldReturnNameOfTheField() throws Exception {
+    public void shouldReturnNameOfTheField() {
         EntityManagerProvider.init();
 
         final String name = AttributeHelper.getName(A_.id);
@@ -63,7 +63,7 @@ public class AttributeHelperTest {
     }
 
     @Test
-    public void shouldReturnNameOfTheMappedMethodField() throws Exception {
+    public void shouldReturnNameOfTheMappedMethodField() {
         EntityManagerProvider.init();
 
         final String name = AttributeHelper.getName(A_.address);
@@ -72,11 +72,11 @@ public class AttributeHelperTest {
     }
 
     @Test
-    public void shouldReturnListOfFieldsForAtttributes() throws Exception {
+    public void shouldReturnListOfFieldsForAttributes() {
 
         EntityManagerProvider.init();
 
-        final List<Attribute<?, ?>> attributes = new ArrayList<Attribute<?, ?>>();
+        final List<Attribute<?, ?>> attributes = new ArrayList<>();
         attributes.add(A_.id);
         attributes.add(B_.id);
 

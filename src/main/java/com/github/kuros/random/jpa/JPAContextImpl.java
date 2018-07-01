@@ -17,7 +17,6 @@ import com.github.kuros.random.jpa.resolver.CreationOrderResolver;
 import com.github.kuros.random.jpa.resolver.CreationOrderResolverImpl;
 import com.github.kuros.random.jpa.resolver.PersistedEntityResolver;
 import com.github.kuros.random.jpa.types.AttributeValue;
-import com.github.kuros.random.jpa.types.ClassDepth;
 import com.github.kuros.random.jpa.types.CreationOrder;
 import com.github.kuros.random.jpa.types.CreationPlan;
 import com.github.kuros.random.jpa.types.CreationPlanImpl;
@@ -30,8 +29,6 @@ import com.github.kuros.random.jpa.v1.resolver.CreationPlanResolver;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 /*
@@ -137,7 +134,7 @@ public final class JPAContextImpl implements JPAContext {
 
         final CreationOrderResolver creationOrderResolver = CreationOrderResolverImpl.newInstance(hierarchyGraph);
 
-        final List<CreationOrder> creationOrders = new ArrayList<CreationOrder>();
+        final List<CreationOrder> creationOrders = new ArrayList<>();
         for (Entity entity : entities) {
                 final CreationOrder creationOrder = creationOrderResolver.getCreationOrder(entity);
                 creationOrders.add(creationOrder);
@@ -155,11 +152,7 @@ public final class JPAContextImpl implements JPAContext {
 
     private void sort(final Collection<CreationOrder> values) {
         for (CreationOrder value : values) {
-            Collections.sort(value.getOrder(), new Comparator<ClassDepth<?>>() {
-                public int compare(final ClassDepth<?> o1, final ClassDepth<?> o2) {
-                    return -1 * Integer.valueOf(o1.getDepth()).compareTo(o2.getDepth());
-                }
-            });
+            value.getOrder().sort((o1, o2) -> -1 * Integer.compare(o1.getDepth(), o2.getDepth()));
         }
     }
 

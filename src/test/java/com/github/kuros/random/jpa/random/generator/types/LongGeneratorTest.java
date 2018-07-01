@@ -29,9 +29,9 @@ import static org.junit.Assert.assertTrue;
 public class LongGeneratorTest {
 
     @Test
-    public void testGetTypes() throws Exception {
+    public void testGetTypes() {
         final Collection<Class<?>> types = LongGenerator.getInstance().getTypes();
-        final List<Class<?>> classes = new ArrayList<Class<?>>(types);
+        final List<Class<?>> classes = new ArrayList<>(types);
         assertEquals(3, classes.size());
         assertEquals(Long.TYPE, classes.get(0));
         assertEquals(Long.class, classes.get(1));
@@ -39,7 +39,7 @@ public class LongGeneratorTest {
     }
 
     @Test
-    public void testDoGenerate() throws Exception {
+    public void testDoGenerate() {
         final Object actual = LongGenerator.getInstance().doGenerate(null);
         assertNotNull(actual);
         assertTrue(actual instanceof Long);

@@ -46,14 +46,14 @@ public class UtilTest {
     private EntityTableMapping entityTableMapping;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         Mockito.when(cache.getAttributeProvider()).thenReturn(attributeProvider);
         Mockito.when(attributeProvider.get(Mockito.any(Class.class))).thenReturn(entityTableMapping);
     }
 
     @Test
-    public void testGetObjectValues() throws Exception {
+    public void testGetObjectValues() {
         final Person person = new Person();
         person.setPersonId(1L);
         person.setFirstName("myName");
@@ -63,27 +63,27 @@ public class UtilTest {
     }
 
     @Test
-    public void printValueShouldReturnEmptyStringIfObjectIsNull() throws Exception {
+    public void printValueShouldReturnEmptyStringIfObjectIsNull() {
         final String values = Util.printValues(null);
 
         assertEquals("", values);
     }
 
     @Test
-    public void shouldReturnEmptyStringForNullObjectWhenPrintingNull() throws Exception {
+    public void shouldReturnEmptyStringForNullObjectWhenPrintingNull() {
         assertEquals("", Util.printEntityId(cache, null));
     }
 
     @Test @SuppressWarnings("unchecked")
-    public void shouldPrintEmptyStringIfExcpetionOccurs() throws Exception {
+    public void shouldPrintEmptyStringIfExcpetionOccurs() {
         Mockito.when(entityTableMapping.getAttributeIds()).thenThrow(RuntimeException.class);
         final Z z = RandomFixture.create(Z.class);
         assertEquals("", Util.printEntityId(cache, z));
     }
 
     @Test
-    public void shouldPrintIdsForValidObjectAndAttribute() throws Exception {
-        final List<String> attributeIds = new ArrayList<String>();
+    public void shouldPrintIdsForValidObjectAndAttribute() {
+        final List<String> attributeIds = new ArrayList<>();
         attributeIds.add("id");
         attributeIds.add("xId");
         Mockito.when(entityTableMapping.getAttributeIds()).thenReturn(attributeIds);
@@ -94,8 +94,8 @@ public class UtilTest {
     }
 
     @Test
-    public void shouldPrintIdsIfValidObjectButInvalidAttributes() throws Exception {
-        final List<String> attributeIds = new ArrayList<String>();
+    public void shouldPrintIdsIfValidObjectButInvalidAttributes() {
+        final List<String> attributeIds = new ArrayList<>();
         attributeIds.add("id");
         attributeIds.add("fId");
         Mockito.when(entityTableMapping.getAttributeIds()).thenReturn(attributeIds);
@@ -106,32 +106,32 @@ public class UtilTest {
     }
 
     @Test(expected = RandomJPAException.class)
-    public void shouldThrowExceptionIfObjectIsNull() throws Exception {
+    public void shouldThrowExceptionIfObjectIsNull() {
         Util.assertNotNull("Test Method", null);
     }
 
     @Test
-    public void shouldNotThrowExceptionIfObjectIsNotNull() throws Exception {
+    public void shouldNotThrowExceptionIfObjectIsNotNull() {
         Util.assertNotNull("Test Method", "");
     }
 
     @Test
-    public void testFormatMessage() throws Exception {
+    public void testFormatMessage() {
         final String input = "{0}, {1}";
         assertEquals("1, 2", Util.formatMessage(input, 1, 2));
     }
 
     @Test
-    public void shouldGetFieldsUsingGetter() throws Exception {
+    public void shouldGetFieldsUsingGetter() throws NoSuchFieldException {
         final TestClass testClass = new TestClass(RandomFixture.create(Integer.class), RandomFixture.create(String.class));
         final Field idField = TestClass.class.getDeclaredField("id");
 
         final Object fieldValue = Util.getFieldValue(testClass, idField);
-        assertEquals(Integer.valueOf(testClass.getId()), fieldValue);
+        assertEquals(testClass.getId(), fieldValue);
     }
 
     @Test
-    public void shouldGetFieldValueWhenGetterIsNotFound() throws Exception {
+    public void shouldGetFieldValueWhenGetterIsNotFound() throws NoSuchFieldException {
         final TestClass testClass = new TestClass(RandomFixture.create(Integer.class), RandomFixture.create(String.class));
         final Field valueField = TestClass.class.getDeclaredField("value");
 
@@ -140,7 +140,7 @@ public class UtilTest {
     }
 
     @Test
-    public void shouldGetFieldValueWhenGetterSignatureIsDifferent() throws Exception {
+    public void shouldGetFieldValueWhenGetterSignatureIsDifferent() throws NoSuchFieldException {
         final TestClass testClass = new TestClass(RandomFixture.create(String.class));
 
         final Field valueField = TestClass.class.getDeclaredField("differentSignature");
@@ -150,8 +150,8 @@ public class UtilTest {
     }
 
     @Test
-    public void shouldCovertListToString() throws Exception {
-        final List<String> strings = new ArrayList<String>();
+    public void shouldCovertListToString() {
+        final List<String> strings = new ArrayList<>();
         strings.add("a");
         strings.add("b");
         strings.add("c");
@@ -160,12 +160,12 @@ public class UtilTest {
     }
 
     @Test
-    public void shouldGetFieldsUsingGetterFromParentClass() throws Exception {
+    public void shouldGetFieldsUsingGetterFromParentClass() throws NoSuchFieldException {
         final SubTestClass testClass = new SubTestClass(RandomFixture.create(Integer.class), RandomFixture.create(String.class));
         final Field idField = TestClass.class.getDeclaredField("id");
 
         final Object fieldValue = Util.getFieldValue(testClass, idField);
-        assertEquals(Integer.valueOf(testClass.getId()), fieldValue);
+        assertEquals(testClass.getId(), fieldValue);
     }
 
     private class TestClass {

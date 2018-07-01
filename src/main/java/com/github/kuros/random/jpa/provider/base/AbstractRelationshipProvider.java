@@ -32,7 +32,7 @@ public abstract class AbstractRelationshipProvider implements RelationshipProvid
     }
 
     public List<ForeignKeyRelation> getForeignKeyRelations() {
-        final List<ForeignKeyRelation> foreignKeyRelations = new ArrayList<ForeignKeyRelation>();
+        final List<ForeignKeyRelation> foreignKeyRelations = new ArrayList<>();
 
         final Query query = entityManager.createNativeQuery(getQuery());
         final List resultList = query.getResultList();

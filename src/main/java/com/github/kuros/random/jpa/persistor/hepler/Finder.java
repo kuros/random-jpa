@@ -122,12 +122,12 @@ public class Finder {
     public <T> List<T> findByAttributes(final Class<T> type, final Map<String, Object> attributeValues) {
 
         if (isEmpty(type, attributeValues)) {
-            return new ArrayList<T>();
+            return new ArrayList<>();
         }
 
         final EntityTableMapping entityTableMapping = attributeProvider.get(type);
 
-        final List<String> attributeValueList = new ArrayList<String>(attributeValues.keySet());
+        final List<String> attributeValueList = new ArrayList<>(attributeValues.keySet());
         final String query = SELECT_FROM + entityTableMapping.getTableName() + " " + getNoLockCondition() + getWhereClause(entityTableMapping, attributeValueList);
 
         final Query nativeQuery = entityManager.createNativeQuery(query, type);

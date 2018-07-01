@@ -12,8 +12,6 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 
 import javax.persistence.metamodel.Attribute;
 import java.lang.reflect.Field;
@@ -44,17 +42,13 @@ public class RandomGeneratorTest {
         //Apply no constraintForLength
         Mockito.when(sqlCharacterLengthProvider
                 .applyLengthConstraint(Mockito.anyString(), Mockito.anyString(), Mockito.any()))
-                .thenAnswer(new Answer<Object>() {
-                    public Object answer(final InvocationOnMock invocationOnMock) {
-                        return invocationOnMock.getArguments()[2];
-                    }
-                });
+                .thenAnswer(invocationOnMock -> invocationOnMock.getArguments()[2]);
 
         generator = Generator.newInstance();
     }
 
     @Test
-    public void shouldGenerateRandomObjectForClass() throws Exception {
+    public void shouldGenerateRandomObjectForClass() {
         final RandomGenerator randomGenerator = RandomGenerator.newInstance(cache);
         final Z z = randomGenerator.generateRandom(Z.class);
         assertNotNull(z);
@@ -64,7 +58,7 @@ public class RandomGeneratorTest {
     }
 
     @Test
-    public void shouldGenerateRandomObjectForField() throws Exception {
+    public void shouldGenerateRandomObjectForField() {
         final RandomGenerator randomGenerator = RandomGenerator.newInstance(cache);
         final Z z = randomGenerator.generateRandom(Z.class);
         assertNotNull(z);
@@ -80,12 +74,12 @@ public class RandomGeneratorTest {
     }
 
     @Test
-    public void shouldUseProvidedRandomClassGeneratorForObjectGenerator() throws Exception {
+    public void shouldUseProvidedRandomClassGeneratorForObjectGenerator() {
         final Z expected = RandomFixture.create(Z.class);
 
         generator.addClassGenerator(new RandomClassGenerator() {
             public Collection<Class<?>> getTypes() {
-                final List<Class<?>> classes = new ArrayList<Class<?>>();
+                final List<Class<?>> classes = new ArrayList<>();
                 classes.add(Z.class);
                 return classes;
             }
@@ -103,7 +97,7 @@ public class RandomGeneratorTest {
     }
 
     @Test
-    public void shouldUseProvidedRandomAttributeGeneratorForObjectGenerator() throws Exception {
+    public void shouldUseProvidedRandomAttributeGeneratorForObjectGenerator() {
 
         EntityManagerProvider.init();
 
@@ -111,7 +105,7 @@ public class RandomGeneratorTest {
 
         generator.addAttributeGenerator(new RandomAttributeGenerator() {
             public List<? extends Attribute> getAttributes() {
-                final List<Attribute> attributes = new ArrayList<Attribute>();
+                final List<Attribute> attributes = new ArrayList<>();
                 attributes.add(Z_.xId);
                 return attributes;
             }

@@ -28,11 +28,11 @@ public class ResultMapImplTest {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
 
-        final List<Object> objectsCreated = new ArrayList<Object>();
+        final List<Object> objectsCreated = new ArrayList<>();
         x =  RandomFixture.create(X.class);
         objectsCreated.add(x);
 
-        final Map<Class<?>, List<Object>> map = new HashMap<Class<?>, List<Object>>();
+        final Map<Class<?>, List<Object>> map = new HashMap<>();
         map.put(X.class, objectsCreated);
 
         Mockito.when(resultNodeTree.getCreatedEntities()).thenReturn(map);
@@ -43,7 +43,7 @@ public class ResultMapImplTest {
     }
 
     @Test
-    public void shouldCreateResultMap() throws Exception {
+    public void shouldCreateResultMap() {
 
         final ResultMap resultMap = ResultMapImpl.newInstance(resultNodeTree);
 
@@ -54,10 +54,6 @@ public class ResultMapImplTest {
         final X xActual = resultMap.get(X.class);
         assertEquals(x, xActual);
 
-        resultMap.print(new Printer() {
-            public void print(final String string) {
-                assertEquals(constructionTree, string);
-            }
-        });
+        resultMap.print(string -> assertEquals(constructionTree, string));
     }
 }

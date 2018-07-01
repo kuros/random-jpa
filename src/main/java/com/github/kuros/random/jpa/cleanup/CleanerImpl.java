@@ -89,7 +89,7 @@ public final class CleanerImpl implements Cleaner {
     }
 
     public void truncateAll() {
-        final Set<Class<?>> skip = new HashSet<Class<?>>(allClassesToSkip);
+        final Set<Class<?>> skip = new HashSet<>(allClassesToSkip);
 
 
         final Set<Class<?>> classes = childGraph.keySet();
@@ -99,7 +99,7 @@ public final class CleanerImpl implements Cleaner {
     }
 
     public <T, V> DeletionOrder getDeletionOrder(final Class<T> type, final V... ids) {
-        final List<Object> deletionOrder = new ArrayList<Object>();
+        final List<Object> deletionOrder = new ArrayList<>();
         for (V id : ids) {
             final T byId = findById(type, id);
             if (byId == null) {
@@ -117,7 +117,7 @@ public final class CleanerImpl implements Cleaner {
         final List<Object> deletionOrders = deletionOrder.getDeletionOrders();
         final AttributeProvider attributeProvider = cache.getAttributeProvider();
 
-        final Set<Class> uniqueClassesInOrder = new LinkedHashSet<Class>();
+        final Set<Class> uniqueClassesInOrder = new LinkedHashSet<>();
         Multimap<Class, Object> classEntityMultimap = ArrayListMultimap.newArrayListMultimap();
         for (Object entity : deletionOrders) {
             classEntityMultimap.put(entity.getClass(), entity);
@@ -132,7 +132,7 @@ public final class CleanerImpl implements Cleaner {
             queryBuilder.append(DELETE_FROM)
                     .append(entityTableMapping.getTableName())
                     .append(" WHERE ");
-            final Map<String, List<Object>> allParams = new HashMap<String, List<Object>>();
+            final Map<String, List<Object>> allParams = new HashMap<>();
             for (int i = 0; i < columnIds.size(); i++) {
                 if (i != 0) {
                     queryBuilder.append(" AND ");
@@ -144,7 +144,7 @@ public final class CleanerImpl implements Cleaner {
                         .append(column)
                         .append(")");
 
-                final List<Object> params = new ArrayList<Object>();
+                final List<Object> params = new ArrayList<>();
 
                 for (Object entity : classEntityMultimap.get(type)) {
 
@@ -170,7 +170,7 @@ public final class CleanerImpl implements Cleaner {
     }
 
     public void truncate(final Class<?> type) {
-        final Set<Class<?>> skippedClasses = new HashSet<Class<?>>(allClassesToSkip);
+        final Set<Class<?>> skippedClasses = new HashSet<>(allClassesToSkip);
         truncate(skippedClasses, type);
     }
 
@@ -191,7 +191,7 @@ public final class CleanerImpl implements Cleaner {
     }
 
     private Set<Class<?>> getSkippedClasses() {
-        final Set<Class<?>> skip = new HashSet<Class<?>>();
+        final Set<Class<?>> skip = new HashSet<>();
         for (Class<?> aClass : skipTruncation) {
             addAllParents(skip, aClass);
         }
@@ -225,7 +225,7 @@ public final class CleanerImpl implements Cleaner {
     }
 
     private <T> List<?> getChilds(final Map<Class<?>, Set<Relation>> childRelationMap, final T type, final Class<?> child) {
-        final Map<String, Object> attributeValues = new HashMap<String, Object>();
+        final Map<String, Object> attributeValues = new HashMap<>();
 
         final Set<Relation> relations = childRelationMap.get(child);
         for (Relation relation : relations) {
@@ -244,7 +244,7 @@ public final class CleanerImpl implements Cleaner {
         final Map<Class<?>, Set<Relation>> childRelationMap = getChildRelationMap(type.getClass());
         for (Class<?> child : childs) {
 
-            final List<?> byAttributes = getChilds(childRelationMap, (T) type, child);
+            final List<?> byAttributes = getChilds(childRelationMap, type, child);
             for (Object byAttribute : byAttributes) {
                 deleteChilds(byAttribute);
             }
@@ -262,16 +262,12 @@ public final class CleanerImpl implements Cleaner {
 
     private Map<Class<?>, Set<Relation>> getChildRelationMap(final Class<?> type) {
 
-        final Map<Class<?>, Set<Relation>> childRelationMap = new HashMap<Class<?>, Set<Relation>>();
+        final Map<Class<?>, Set<Relation>> childRelationMap = new HashMap<>();
         final Set<Relation> childRelations = childGraph.getChildRelations(type);
 
         for (Relation childRelation : childRelations) {
             final Class childClass = childRelation.getTo().getInitializationClass();
-            Set<Relation> relations = childRelationMap.get(childClass);
-            if (relations == null) {
-                relations = new HashSet<Relation>();
-                childRelationMap.put(childClass, relations);
-            }
+            Set<Relation> relations = childRelationMap.computeIfAbsent(childClass, k -> new HashSet<>());
 
             relations.add(childRelation);
         }

@@ -41,10 +41,10 @@ public class FindByUniqueIdentitiesTest {
     }
 
     @Test @SuppressWarnings("unchecked")
-    public void shouldReturnObjectIfFoundByMultiplePrimaryKey() throws Exception {
+    public void shouldReturnObjectIfFoundByMultiplePrimaryKey() {
         final FindByUniqueIdentitiesTestClass testObject = RandomFixture.create(FindByUniqueIdentitiesTestClass.class);
 
-        final List<String> attributes = new ArrayList<String>();
+        final List<String> attributes = new ArrayList<>();
         attributes.add("primaryKey1");
         attributes.add("primaryKey2");
         Mockito.when(multiplePrimaryKeyProvider.getMultiplePrimaryKeyAttributes(Mockito.eq(FindByUniqueIdentitiesTestClass.class))).thenReturn(attributes);
@@ -56,10 +56,10 @@ public class FindByUniqueIdentitiesTest {
     }
 
     @Test @SuppressWarnings("unchecked")
-    public void shouldReturnObjectIfFoundByUniqueKey() throws Exception {
+    public void shouldReturnObjectIfFoundByUniqueKey() {
         final FindByUniqueIdentitiesTestClass testObject = RandomFixture.create(FindByUniqueIdentitiesTestClass.class);
 
-        final List<String> attributes = new ArrayList<String>();
+        final List<String> attributes = new ArrayList<>();
         attributes.add("uniqueKey1");
         attributes.add("uniqueKey2");
         Mockito.when(uniqueConstraintProvider.getUniqueCombinationAttributes(Mockito.eq(FindByUniqueIdentitiesTestClass.class))).thenReturn(attributes);
@@ -71,10 +71,10 @@ public class FindByUniqueIdentitiesTest {
     }
 
     @Test @SuppressWarnings("unchecked")
-    public void shouldReturnNullIfFinderDoesNotFindsObject() throws Exception {
+    public void shouldReturnNullIfFinderDoesNotFindsObject() {
         final FindByUniqueIdentitiesTestClass testObject = RandomFixture.create(FindByUniqueIdentitiesTestClass.class);
 
-        final List<String> attributes = new ArrayList<String>();
+        final List<String> attributes = new ArrayList<>();
         attributes.add("uniqueKey1");
         attributes.add("uniqueKey2");
         Mockito.when(uniqueConstraintProvider.getUniqueCombinationAttributes(Mockito.eq(FindByUniqueIdentitiesTestClass.class))).thenReturn(attributes);

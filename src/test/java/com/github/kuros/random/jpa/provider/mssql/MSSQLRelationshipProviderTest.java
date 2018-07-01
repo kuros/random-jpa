@@ -46,7 +46,7 @@ public class MSSQLRelationshipProviderTest {
     }
 
     @Test
-    public void shouldReturnListOfRelationship() throws Exception {
+    public void shouldReturnListOfRelationship() {
         mockEntityManager();
         final List<ForeignKeyRelation> foreignKeyRelations = mssqlRelationshipProvider.getForeignKeyRelations();
         assertEquals(1, foreignKeyRelations.size());
@@ -60,7 +60,7 @@ public class MSSQLRelationshipProviderTest {
     private void mockEntityManager() {
         final Object[] row1 = {"employee", "person_id", "person", "id"};
 
-        final List<Object[]> resultList = new ArrayList<Object[]>();
+        final List<Object[]> resultList = new ArrayList<>();
         resultList.add(row1);
 
         when(entityManager.createNativeQuery(anyString())).thenReturn(query);

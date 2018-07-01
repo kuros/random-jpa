@@ -29,16 +29,16 @@ import static org.junit.Assert.assertTrue;
 public class ByteGeneratorTest {
 
     @Test
-    public void testGetTypes() throws Exception {
+    public void testGetTypes() {
         final Collection<Class<?>> types = ByteGenerator.getInstance().getTypes();
-        final List<Class<?>> classes = new ArrayList<Class<?>>(types);
+        final List<Class<?>> classes = new ArrayList<>(types);
         assertEquals(2, classes.size());
         assertEquals(Byte.TYPE, classes.get(0));
         assertEquals(Byte.class, classes.get(1));
     }
 
     @Test
-    public void testDoGenerate() throws Exception {
+    public void testDoGenerate() {
         final Object actual = ByteGenerator.getInstance().doGenerate(null);
         assertNotNull(actual);
         assertTrue(actual instanceof Byte);

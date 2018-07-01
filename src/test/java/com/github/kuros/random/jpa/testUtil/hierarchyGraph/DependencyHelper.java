@@ -25,11 +25,10 @@ import com.github.kuros.random.jpa.testUtil.entity.RelationEntity;
 import com.github.kuros.random.jpa.testUtil.entity.RelationEntity_;
 import com.github.kuros.random.jpa.testUtil.entity.RelationManyToOne;
 import com.github.kuros.random.jpa.testUtil.entity.RelationManyToOne_;
+import com.github.kuros.random.jpa.testUtil.entity.RelationOneToMany;
 import com.github.kuros.random.jpa.testUtil.entity.RelationOneToMany_;
 import com.github.kuros.random.jpa.testUtil.entity.RelationOneToOne;
 import com.github.kuros.random.jpa.testUtil.entity.RelationOneToOne_;
-import com.github.kuros.random.jpa.testUtil.entity.RelationOneToMany;
-import com.github.kuros.random.jpa.testUtil.entity.SelfJoinEntity;
 import com.github.kuros.random.jpa.testUtil.entity.SelfJoinEntity_;
 import com.github.kuros.random.jpa.testUtil.entity.X;
 import com.github.kuros.random.jpa.testUtil.entity.X_;
@@ -46,7 +45,7 @@ public class DependencyHelper {
 
     public static List<Relation> getDependency() {
 
-        final List<Relation> relations = new ArrayList<Relation>();
+        final List<Relation> relations = new ArrayList<>();
 
         relations.add(Relation.newInstance(getFieldWrapper(C.class, "aId"), getFieldWrapper(A.class, "id")));
         relations.add(Relation.newInstance(getFieldWrapper(C.class, "bId"), getFieldWrapper(B.class, "id")));
@@ -73,14 +72,14 @@ public class DependencyHelper {
 
     public static List<Link> getIgnoreLinks() {
 
-        final List<Link> links = new ArrayList<Link>();
+        final List<Link> links = new ArrayList<>();
 
         links.add(Link.newLink(SelfJoinEntity_.refId, SelfJoinEntity_.id));
         return links;
     }
 
     public static List<Link> getLinks() {
-        final List<Link> links = new ArrayList<Link>();
+        final List<Link> links = new ArrayList<>();
 
         links.add(Link.newLink(C_.aId, A_.id));
         links.add(Link.newLink(C_.bId, B_.id));

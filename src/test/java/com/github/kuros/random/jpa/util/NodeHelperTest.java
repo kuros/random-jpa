@@ -16,7 +16,7 @@ public class NodeHelperTest {
 
 
     @Test
-    public void shouldCreateSimpleHierarchy() throws Exception {
+    public void shouldCreateSimpleHierarchy() {
         final Node nodeA = Node.newInstance(A.class, 0, 0);
         final Node nodeB = Node.newInstance(B.class, 0, 0);
         final Node nodeC = Node.newInstance(C.class, 0, 0);
@@ -32,7 +32,7 @@ public class NodeHelperTest {
     }
 
     @Test
-    public void shouldReturnEmptyListIfTypeIndexDoesNotMatch() throws Exception {
+    public void shouldReturnEmptyListIfTypeIndexDoesNotMatch() {
         final Node nodeA = Node.newInstance(A.class, 0, 0);
         final Node nodeB = Node.newInstance(B.class, 0, 0);
         final Node nodeC = Node.newInstance(C.class, 0, 0);
@@ -46,7 +46,7 @@ public class NodeHelperTest {
     }
 
     @Test @SuppressWarnings("unchecked")
-    public void shouldCreateComplexHierarchy() throws Exception {
+    public void shouldCreateComplexHierarchy() {
         final Node node = createComplexHierarchy();
         final List<Class<?>> expectedClassOrder = newArrayList(B.class, A.class);
 

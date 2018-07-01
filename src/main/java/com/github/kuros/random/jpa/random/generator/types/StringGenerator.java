@@ -41,12 +41,12 @@ public final class StringGenerator implements RandomClassGenerator {
     public Object doGenerate(final Class<?> aClass) {
         final RandomClassGenerator characterGenerator = CharacterGenerator.getInstance();
 
-        String random = "";
+        StringBuilder random = new StringBuilder();
 
         for (int i = 0; i < 10 + RANDOM.nextInt(MAX_STRING_LENGTH); i++) {
-            random += characterGenerator.doGenerate(Character.class);
+            random.append(characterGenerator.doGenerate(Character.class));
         }
-        return random;
+        return random.toString();
     }
 
     private final static class Instance {

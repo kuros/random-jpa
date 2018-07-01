@@ -61,7 +61,7 @@ public class UniqueConstraintProviderFactory {
 
     static class DefaultUniqueConstraintProvider implements UniqueConstraintProvider {
         public List<String> getUniqueCombinationAttributes(final Class<?> entityName) {
-            return new ArrayList<String>();
+            return new ArrayList<>();
         }
     }
 }

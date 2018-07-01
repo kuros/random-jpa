@@ -2,7 +2,6 @@ package com.github.kuros.random.jpa.log.providers;
 
 import com.github.kuros.random.jpa.testUtil.RandomFixture;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
@@ -27,7 +26,7 @@ public class DefaultProviderTest {
     }
 
     @Test
-    public void shouldLogInfoWithMessageAndArguments() throws Exception {
+    public void shouldLogInfoWithMessageAndArguments() {
         final ArgumentCaptor<Level> levelCaptor = ArgumentCaptor.forClass(Level.class);
         final ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
         final String message = RandomFixture.create(String.class);
@@ -40,7 +39,7 @@ public class DefaultProviderTest {
     }
 
     @Test
-    public void shouldLogInfoWithMessageAndException() throws Exception {
+    public void shouldLogInfoWithMessageAndException() {
         final ArgumentCaptor<Level> levelCaptor = ArgumentCaptor.forClass(Level.class);
         final ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
         final ArgumentCaptor<Throwable> throwableArgumentCaptor = ArgumentCaptor.forClass(Throwable.class);
@@ -58,7 +57,7 @@ public class DefaultProviderTest {
 
 
     @Test
-    public void shouldLogDebugWithMessageAndArguments() throws Exception {
+    public void shouldLogDebugWithMessageAndArguments() {
         final ArgumentCaptor<Level> levelCaptor = ArgumentCaptor.forClass(Level.class);
         final ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
         final String message = RandomFixture.create(String.class);
@@ -71,7 +70,7 @@ public class DefaultProviderTest {
     }
 
     @Test
-    public void shouldLogDebugWithMessageAndException() throws Exception {
+    public void shouldLogDebugWithMessageAndException() {
         final ArgumentCaptor<Level> levelCaptor = ArgumentCaptor.forClass(Level.class);
         final ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
         final ArgumentCaptor<Throwable> throwableArgumentCaptor = ArgumentCaptor.forClass(Throwable.class);
@@ -88,7 +87,7 @@ public class DefaultProviderTest {
 
 
     @Test
-    public void shouldLogErrorWithMessageAndArguments() throws Exception {
+    public void shouldLogErrorWithMessageAndArguments() {
         final ArgumentCaptor<Level> levelCaptor = ArgumentCaptor.forClass(Level.class);
         final ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
         final ArgumentCaptor<Object[]> objectArgumentCaptor = ArgumentCaptor.forClass(Object[].class);
@@ -104,7 +103,7 @@ public class DefaultProviderTest {
     }
 
     @Test
-    public void shouldLogErrorWithMessageAndException() throws Exception {
+    public void shouldLogErrorWithMessageAndException() {
         final ArgumentCaptor<Level> levelCaptor = ArgumentCaptor.forClass(Level.class);
         final ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
         final ArgumentCaptor<Throwable> throwableArgumentCaptor = ArgumentCaptor.forClass(Throwable.class);
@@ -119,10 +118,9 @@ public class DefaultProviderTest {
     }
 
     @Test
-    public void shouldLogWarnWithMessageAndArguments() throws Exception {
+    public void shouldLogWarnWithMessageAndArguments() {
         final ArgumentCaptor<Level> levelCaptor = ArgumentCaptor.forClass(Level.class);
         final ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
-        final ArgumentCaptor<Object[]> objectArgumentCaptor = ArgumentCaptor.forClass(Object[].class);
         final String message = RandomFixture.create(String.class);
 
         final Object[] args = {};
@@ -134,7 +132,7 @@ public class DefaultProviderTest {
     }
 
     @Test
-    public void shouldLogWarnWithMessageAndException() throws Exception {
+    public void shouldLogWarnWithMessageAndException() {
         final ArgumentCaptor<Level> levelCaptor = ArgumentCaptor.forClass(Level.class);
         final ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
         final ArgumentCaptor<Throwable> throwableArgumentCaptor = ArgumentCaptor.forClass(Throwable.class);

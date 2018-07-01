@@ -25,8 +25,8 @@ public final class Dependencies {
     private final List<Link> ignoreLinks;
 
     private Dependencies() {
-        this.links = new ArrayList<Link>();
-        this.ignoreLinks = new ArrayList<Link>();
+        this.links = new ArrayList<>();
+        this.ignoreLinks = new ArrayList<>();
     }
 
     public static Dependencies newInstance() {

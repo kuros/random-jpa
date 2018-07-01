@@ -57,7 +57,7 @@ public class MSSQLUniqueConstraintProviderTest {
     }
 
     @Test
-    public void shouldMapAllAttributesToEntityName() throws Exception {
+    public void shouldMapAllAttributesToEntityName() {
         final List<String> uniqueCombinationAttributes = uniqueConstraintProvider.getUniqueCombinationAttributes(Person.class);
         assertEquals(2, uniqueCombinationAttributes.size());
         assertTrue(uniqueCombinationAttributes.contains("firstName"));
@@ -68,7 +68,7 @@ public class MSSQLUniqueConstraintProviderTest {
         final EntityTableMapping personTableMapping = new EntityTableMapping(Person.class);
         personTableMapping.addAttributeColumnMapping("firstName", new ColumnNameType("first_name", ColumnNameType.Type.BASIC));
         personTableMapping.addAttributeColumnMapping("lastName", new ColumnNameType("last_name", ColumnNameType.Type.BASIC));
-        final List<EntityTableMapping> entityTableMappings = new ArrayList<EntityTableMapping>();
+        final List<EntityTableMapping> entityTableMappings = new ArrayList<>();
         entityTableMappings.add(personTableMapping);
         when(attributeProvider.get(eq("person"))).thenReturn(entityTableMappings);
     }
@@ -77,7 +77,7 @@ public class MSSQLUniqueConstraintProviderTest {
         final Object[] row1 = {"person", "first_name"};
         final Object[] row2 = {"person", "last_name"};
 
-        final List<Object[]> resultList = new ArrayList<Object[]>();
+        final List<Object[]> resultList = new ArrayList<>();
         resultList.add(row1);
         resultList.add(row2);
 
