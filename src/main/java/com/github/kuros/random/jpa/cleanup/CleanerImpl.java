@@ -157,6 +157,7 @@ public final class CleanerImpl implements Cleaner {
         }
 
         entityManager.flush();
+        entityManager.clear();
 
     }
 
