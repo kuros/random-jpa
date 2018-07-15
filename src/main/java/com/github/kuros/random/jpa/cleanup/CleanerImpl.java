@@ -46,7 +46,6 @@ import java.util.Set;
  */
 public final class CleanerImpl implements Cleaner {
 
-    private static final int BATCH_SIZE = 10;
     private static final String DELETE_FROM = "DELETE FROM ";
     private EntityManager entityManager;
     private HierarchyGraph hierarchyGraph;
@@ -54,7 +53,6 @@ public final class CleanerImpl implements Cleaner {
     private Finder finder;
     private Set<Class<?>> skipTruncation;
     private Set<Class<?>> allClassesToSkip;
-    private int batchCounter;
     private Cache cache;
 
     private static final Logger LOGGER = LogFactory.getLogger(CleanerImpl.class);
@@ -65,7 +63,6 @@ public final class CleanerImpl implements Cleaner {
         this.finder = new Finder(cache);
         this.skipTruncation = cache.getSkipTruncation();
         this.hierarchyGraph = cache.getHierarchyGraph();
-        this.batchCounter = 0;
         this.cache = cache;
         this.allClassesToSkip = getSkippedClasses();
     }
@@ -75,22 +72,14 @@ public final class CleanerImpl implements Cleaner {
         return new CleanerImpl(cache);
     }
 
+    @Override
     public <T, V> void delete(final Class<T> type, final V... ids) {
-
-        for (V id : ids) {
-            final T byId = findById(type, id);
-            if (byId == null) {
-                throw new IllegalArgumentException("Element not found with id: " + id
-                        + ", Class: " + type);
-            }
-
-            deleteChilds(byId);
-        }
+        delete(getDeletionOrder(type, ids));
     }
 
+    @Override
     public void truncateAll() {
         final Set<Class<?>> skip = new HashSet<>(allClassesToSkip);
-
 
         final Set<Class<?>> classes = childGraph.keySet();
         for (Class<?> aClass : classes) {
@@ -98,6 +87,7 @@ public final class CleanerImpl implements Cleaner {
         }
     }
 
+    @Override
     public <T, V> DeletionOrder getDeletionOrder(final Class<T> type, final V... ids) {
         final List<Object> deletionOrder = new ArrayList<>();
         for (V id : ids) {
@@ -113,6 +103,7 @@ public final class CleanerImpl implements Cleaner {
         return DeletionOrderImpl.create(deletionOrder);
     }
 
+    @Override
     public void delete(final DeletionOrder deletionOrder) {
         final List<Object> deletionOrders = deletionOrder.getDeletionOrders();
         final AttributeProvider attributeProvider = cache.getAttributeProvider();
@@ -169,6 +160,7 @@ public final class CleanerImpl implements Cleaner {
 
     }
 
+    @Override
     public void truncate(final Class<?> type) {
         final Set<Class<?>> skippedClasses = new HashSet<>(allClassesToSkip);
         truncate(skippedClasses, type);
@@ -239,22 +231,6 @@ public final class CleanerImpl implements Cleaner {
         return finder.findByAttributes(child, attributeValues);
     }
 
-    private <T> void deleteChilds(final T type) {
-        final Set<Class<?>> childs = childGraph.getChilds(type.getClass());
-        final Map<Class<?>, Set<Relation>> childRelationMap = getChildRelationMap(type.getClass());
-        for (Class<?> child : childs) {
-
-            final List<?> byAttributes = getChilds(childRelationMap, type, child);
-            for (Object byAttribute : byAttributes) {
-                deleteChilds(byAttribute);
-            }
-        }
-
-        if (!allClassesToSkip.contains(type.getClass())) {
-            delete(type);
-        }
-    }
-
     private <T> Object getFieldValue(final T type, final FieldWrapper from) {
         final Field field = from.getField();
         return Util.getFieldValue(type, field);
@@ -278,19 +254,6 @@ public final class CleanerImpl implements Cleaner {
 
     private  <T> T findById(final Class<T> type, final Object value) {
         return entityManager.find(type, value);
-    }
-
-    private  <T> void delete(final T t) {
-        try {
-            batchCounter++;
-            LOGGER.debug("Deleting Entity: " + t.getClass() + Util.printEntityId(cache, t));
-            entityManager.remove(t);
-            if (batchCounter % BATCH_SIZE == 0) {
-                entityManager.flush();
-            }
-        } catch (final Exception e) {
-            LOGGER.error("Unable to delete: " + t.getClass() + Util.printEntityId(cache, t));
-        }
     }
 
 }

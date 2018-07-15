@@ -62,10 +62,12 @@ public final class JPAContextImpl implements JPAContext {
         return new JPAContextImpl(cache, generator);
     }
 
+    @Override
     public CreationPlan create(final Entity... entities) {
         return create(Plan.of(entities));
     }
 
+    @Override
     public ResultMap persist(final CreationPlan creationPlan) {
         final CreationPlanImpl creationPlanImpl = (CreationPlanImpl) creationPlan;
         final Persistor persistor = EntityPersistorImpl.newInstance(cache, creationPlanImpl.getHierarchyGraph(), creationPlanImpl.getRandomize());
@@ -76,33 +78,39 @@ public final class JPAContextImpl implements JPAContext {
         return RandomizeImpl.newInstance(cache, generator);
     }
 
+    @Override
     public ResultMap createAndPersist(final Entity... entities) {
         return createAndPersist(Plan.of(entities));
     }
 
+    @Override
     public <T, V> DeletionOrder getDeletionOrder(final Class<T> type, final V... ids) {
         final Cleaner cleaner = CleanerImpl.newInstance(cache);
         return cleaner.getDeletionOrder(type, ids);
     }
 
+    @Override
     public void remove(final DeletionOrder deletionOrder) {
         final Cleaner cleaner = CleanerImpl.newInstance(cache);
         cleaner.delete(deletionOrder);
     }
 
-    public <T, V> void remove(final Class<T> type, final V... ids) {
-        final Cleaner cleaner = CleanerImpl.newInstance(cache);
-        cleaner.delete(type, ids);
-    }
-
+    @Override
     public void remove(final Class<?> type) {
         final Cleaner cleaner = CleanerImpl.newInstance(cache);
         cleaner.truncate(type);
     }
 
+    @Override
     public void removeAll() {
         final Cleaner cleaner = CleanerImpl.newInstance(cache);
         cleaner.truncateAll();
+    }
+
+    @Override
+    public <T, V> void remove(final Class<T> type, final V... ids) {
+        final Cleaner cleaner = CleanerImpl.newInstance(cache);
+        cleaner.delete(type, ids);
     }
 
     @SuppressWarnings("unchecked")

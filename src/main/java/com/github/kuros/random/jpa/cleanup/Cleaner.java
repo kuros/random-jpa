@@ -28,6 +28,5 @@ public interface Cleaner {
 
     void truncateAll();
 
-    @Deprecated
     <T, V> void delete(Class<T> type, V... ids);
 }

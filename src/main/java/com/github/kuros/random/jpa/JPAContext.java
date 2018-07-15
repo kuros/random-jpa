@@ -38,6 +38,5 @@ public interface JPAContext {
 
     void removeAll();
 
-    @Deprecated
     <T, V> void remove(Class<T> type, V... ids);
 }
