@@ -4,6 +4,9 @@ import org.junit.Test;
 
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -36,11 +39,14 @@ public class DateGeneratorTest {
     public void testGetTypes() {
         final Collection<Class<?>> types = DateGenerator.getInstance().getTypes();
         final List<Class<?>> classes = new ArrayList<>(types);
-        assertEquals(4, classes.size());
+        assertEquals(7, classes.size());
         assertEquals(Date.class, classes.get(0));
         assertEquals(Calendar.class, classes.get(1));
         assertEquals(Time.class, classes.get(2));
         assertEquals(Timestamp.class, classes.get(3));
+        assertEquals(LocalDateTime.class, classes.get(4));
+        assertEquals(LocalDate.class, classes.get(5));
+        assertEquals(LocalTime.class, classes.get(6));
     }
 
     @Test
@@ -67,5 +73,17 @@ public class DateGeneratorTest {
         final Object actual4 = DateGenerator.getInstance().doGenerate(Timestamp.class);
         assertNotNull(actual4);
         assertTrue(actual4 instanceof Timestamp);
+
+        final Object actual5 = DateGenerator.getInstance().doGenerate(LocalDate.class);
+        assertNotNull(actual5);
+        assertTrue(actual5 instanceof LocalDate);
+
+        final Object actual6 = DateGenerator.getInstance().doGenerate(LocalTime.class);
+        assertNotNull(actual6);
+        assertTrue(actual6 instanceof LocalTime);
+
+        final Object actual7 = DateGenerator.getInstance().doGenerate(LocalDateTime.class);
+        assertNotNull(actual7);
+        assertTrue(actual7 instanceof LocalDateTime);
     }
 }

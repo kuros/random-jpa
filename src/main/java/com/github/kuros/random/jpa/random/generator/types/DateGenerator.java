@@ -4,6 +4,10 @@ import com.github.kuros.random.jpa.random.generator.RandomClassGenerator;
 
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
@@ -27,7 +31,7 @@ import java.util.Random;
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 public final class DateGenerator implements RandomClassGenerator {
-    private static final Class<?>[] TYPES = {Date.class, Calendar.class, Time.class, Timestamp.class};
+    private static final Class<?>[] TYPES = {Date.class, Calendar.class, Time.class, Timestamp.class, LocalDateTime.class, LocalDate.class, LocalTime.class };
     private static final Random RANDOM = new Random();
     private static final int MAX_YEAR = 10;
     private static final int MAX_MONTH = 12;
@@ -49,54 +53,73 @@ public final class DateGenerator implements RandomClassGenerator {
 
     public Object doGenerate(final Class<?> aClass) {
 
-        final Calendar calendar = getCalendar();
+        final LocalDateTime calendar = getCalendar();
+        final Date date = Date.from(calendar.atZone(ZoneId.systemDefault()).toInstant());
 
         Object random;
         if (aClass == Calendar.class) {
-            random = calendar;
+            final Calendar instance = Calendar.getInstance();
+            instance.setTime(date);
+            random = instance;
         } else if (aClass == Time.class) {
-            random = new Time(calendar.getTimeInMillis());
+            random = new Time(date.getTime());
         } else if (aClass == Timestamp.class) {
-            random = new Timestamp(calendar.getTimeInMillis());
+            random = new Timestamp(date.getTime());
+        } else if (aClass == LocalDate.class) {
+            random = calendar.toLocalDate();
+        } else if (aClass == LocalTime.class) {
+            random = calendar.toLocalTime();
+        } else if (aClass == LocalDateTime.class) {
+            random = calendar;
         } else {
-            random = calendar.getTime();
+            random = date;
         }
+
         return random;
     }
 
-    private Calendar getCalendar() {
-        final Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.YEAR, getYear());
-        calendar.add(Calendar.MONTH, getMonth());
-        calendar.add(Calendar.DATE, getDate());
-        calendar.add(Calendar.HOUR, getHour());
-        calendar.add(Calendar.MINUTE, getMinute());
-        calendar.add(Calendar.SECOND, getSecond());
-        return calendar;
+    private LocalDateTime getCalendar() {
+
+        LocalDateTime now = LocalDateTime.now();
+
+        now = getYear(now);
+        now = getMonth(now);
+        now = getDate(now);
+        now = getHour(now);
+        now = getMinute(now);
+        now = getSecond(now);
+
+        return now;
     }
 
-    private int getSecond() {
-        return (RANDOM.nextInt(MAX_SECONDS) * (RANDOM.nextBoolean() ? 1 : -1));
+    private LocalDateTime getSecond(final LocalDateTime now) {
+        final int sec = RANDOM.nextInt(MAX_SECONDS);
+        return RANDOM.nextBoolean() ? now.plusSeconds(sec) : now.minusSeconds(sec);
     }
 
-    private int getMinute() {
-        return (RANDOM.nextInt(MAX_MINUTE) * (RANDOM.nextBoolean() ? 1 : -1));
+    private LocalDateTime getMinute(final LocalDateTime now) {
+        final int min = RANDOM.nextInt(MAX_MINUTE);
+        return RANDOM.nextBoolean() ? now.plusMinutes(min) : now.minusMinutes(min);
     }
 
-    private int getHour() {
-        return (RANDOM.nextInt(MAX_HOUR) * (RANDOM.nextBoolean() ? 1 : -1));
+    private LocalDateTime getHour(final LocalDateTime now) {
+        final int hour = RANDOM.nextInt(MAX_HOUR);
+        return RANDOM.nextBoolean() ? now.plusHours(hour) : now.minusHours(hour);
     }
 
-    private int getDate() {
-        return (RANDOM.nextInt(MAX_DATE) * (RANDOM.nextBoolean() ? 1 : -1));
+    private LocalDateTime getDate(final LocalDateTime now) {
+        final int day = RANDOM.nextInt(MAX_DATE);
+        return RANDOM.nextBoolean() ? now.plusDays(day) : now.minusDays(day);
     }
 
-    private int getYear() {
-        return (RANDOM.nextInt(MAX_YEAR) * (RANDOM.nextBoolean() ? 1 : -1));
+    private LocalDateTime getYear(final LocalDateTime now) {
+        final int year = RANDOM.nextInt(MAX_YEAR);
+        return RANDOM.nextBoolean() ? now.plusYears(year) : now.minusYears(year);
     }
 
-    private int getMonth() {
-        return (RANDOM.nextInt(MAX_MONTH) * (RANDOM.nextBoolean() ? 1 : -1));
+    private LocalDateTime getMonth(final LocalDateTime now) {
+        final int months = RANDOM.nextInt(MAX_MONTH);
+        return RANDOM.nextBoolean() ? now.plusMonths(months) : now.minusMonths(months);
     }
 
     private final static class Instance {
