@@ -61,7 +61,9 @@ public class EntityTableMapping {
     }
 
     public void addAttributeIds(final String id) {
-        attributeIds.add(id);
+        if (id != null) {
+            attributeIds.add(id);
+        }
     }
 
     public void addColumnIds(final String... ids) {
