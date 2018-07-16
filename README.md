@@ -3,8 +3,8 @@ It has been always been a challenge to create a test data. This project aims at 
 
 Maven Group Plugin | java version  | Latest Version
 ------------------ | ------------  | ---------------
-com.github.kuros.random-jpa | 1.5+ | [v0.6.5](https://github.com/kuros/random-jpa/releases)
-com.github.kuros.random-jpa | 1.8+ | [v1.0.0](https://github.com/kuros/random-jpa/releases)
+com.github.kuros.random-jpa | 1.5+ | [v0.6.6](https://github.com/kuros/random-jpa/releases)
+com.github.kuros.random-jpa | 1.8+ | [v1.0.1](https://github.com/kuros/random-jpa/releases)
 
 
 ## Feature
