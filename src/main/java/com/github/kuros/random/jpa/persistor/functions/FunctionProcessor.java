@@ -45,6 +45,8 @@ public class FunctionProcessor<T> {
                 }
             } catch (final ResultNotFoundException e) {
                 // Do nothing
+            } catch (final Exception e) {
+                throw new RandomJPAException("unable to save: " + object.getClass(), e);
             }
         }
 
