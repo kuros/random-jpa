@@ -28,10 +28,12 @@ public final class Entity<T> {
 
     private Class<T> type;
     private List<AttributeValue> attributeValues;
+    private List<AttributeIndexValue<T, ?>> attributeIndexValues;
     private List<Link> softLinks;
     private int count;
     private List<Class<?>> afterClasses;
     private List<Class<?>> beforeClasses;
+    private List<ClassIndex> classIndices;
 
     private Entity(final Class<T> type) {
         this(type, 1);
@@ -45,6 +47,8 @@ public final class Entity<T> {
         this.softLinks = new ArrayList<>();
         this.afterClasses = new ArrayList<>();
         this.beforeClasses = new ArrayList<>();
+        this.attributeIndexValues = new ArrayList<>();
+        this.classIndices = new ArrayList<>();
     }
 
     private void validate(final int entityCount) {
@@ -66,6 +70,11 @@ public final class Entity<T> {
         return this;
     }
 
+    public <V> Entity<T> with(final int index, final Attribute<T, V> attribute, final V value) {
+        attributeIndexValues.add(AttributeIndexValue.newInstance(attribute, index, value));
+        return this;
+    }
+
     public Entity<T> withSoftLink(final Attribute attribute, final Attribute linksTo) {
         softLinks.add(Link.newLink(attribute, linksTo));
         return this;
@@ -78,6 +87,11 @@ public final class Entity<T> {
 
     public Entity<T> createBefore(final Class<?>... classes) {
         beforeClasses.addAll(Arrays.asList(classes));
+        return this;
+    }
+
+    public Entity<T> deleteItem(final int index) {
+        classIndices.add(ClassIndex.newInstance(type, index));
         return this;
     }
 
@@ -103,5 +117,13 @@ public final class Entity<T> {
 
     List<Class<?>> getBeforeClasses() {
         return beforeClasses;
+    }
+
+    List<ClassIndex> getClassIndices() {
+        return classIndices;
+    }
+
+    List<AttributeIndexValue<T, ?>> getAttributeIndexValues() {
+        return attributeIndexValues;
     }
 }

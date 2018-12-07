@@ -29,5 +29,13 @@ public class EntityHelper {
     public static <T> List<AttributeValue> getAttributeValues(final Entity<T> entity) {
         return entity.getAttributeValues();
     }
+
+    public static <T> List<AttributeIndexValue<T, ?>> getAttributeIndexValues(final Entity<T> entity) {
+        return entity.getAttributeIndexValues();
+    }
+
+    public static <T> List<ClassIndex> getClassIndices(final Entity<T> entity) {
+        return entity.getClassIndices();
+    }
 }
 

@@ -16,7 +16,9 @@ import com.github.kuros.random.jpa.random.generator.RandomGenerator;
 import com.github.kuros.random.jpa.resolver.CreationOrderResolver;
 import com.github.kuros.random.jpa.resolver.CreationOrderResolverImpl;
 import com.github.kuros.random.jpa.resolver.PersistedEntityResolver;
+import com.github.kuros.random.jpa.types.AttributeIndexValue;
 import com.github.kuros.random.jpa.types.AttributeValue;
+import com.github.kuros.random.jpa.types.ClassIndex;
 import com.github.kuros.random.jpa.types.CreationOrder;
 import com.github.kuros.random.jpa.types.CreationPlan;
 import com.github.kuros.random.jpa.types.CreationPlanImpl;
@@ -113,16 +115,6 @@ public final class JPAContextImpl implements JPAContext {
         cleaner.delete(type, ids);
     }
 
-    @SuppressWarnings("unchecked")
-    void addAttributeValues(final CreationPlan creationPlan, final List<Entity> entities) {
-        for (Entity entity : entities) {
-            final List<AttributeValue> attributeValues = EntityHelper.getAttributeValues(entity);
-            for (AttributeValue attributeValue : attributeValues) {
-                creationPlan.set(PersistedEntityResolver.DEFAULT_INDEX, attributeValue.getAttribute(), attributeValue.getValue());
-            }
-        }
-    }
-
     private ResultMap createAndPersist(final Plan plan) {
         return persist(create(plan));
     }
@@ -156,6 +148,21 @@ public final class JPAContextImpl implements JPAContext {
         final CreationPlan creationPlan = creationPlanResolver.with(hierarchyGraph).create();
         addAttributeValues(creationPlan, entities);
         return creationPlan;
+    }
+
+    @SuppressWarnings("unchecked")
+    void addAttributeValues(final CreationPlan creationPlan, final List<Entity> entities) {
+        for (Entity entity : entities) {
+            ((List<AttributeValue>) EntityHelper.getAttributeValues(entity))
+                    .forEach(attributeValue -> creationPlan.set(PersistedEntityResolver.DEFAULT_INDEX, attributeValue.getAttribute(), attributeValue.getValue()));
+
+            ((List<AttributeIndexValue>) EntityHelper.getAttributeIndexValues(entity))
+                    .forEach(e -> creationPlan.set(e.getIndex(), e.getAttribute(), e.getValue()));
+
+            ((List<ClassIndex>)EntityHelper.getClassIndices(entity))
+                    .forEach(e -> creationPlan.deleteItem(e.getType(), e.getIndex()));
+
+        }
     }
 
     private void sort(final Collection<CreationOrder> values) {
