@@ -209,3 +209,6 @@ it will print the hierarchy with the index number of the object followed by the 
         └── com.github.kuros.entity.Employee|1 [employeeId: 2]
 ```
 ** Id's might not get printed for all the loaded entities, since some entities are lazily initialized.
+
+
+For More details please follow [Random-JPA Blog](https://kuros.in/random-jpa/)ls -l
