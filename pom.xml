@@ -87,14 +87,14 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
-            <version>1.6.1</version>
+            <version>1.7.30</version>
             <scope>provided</scope>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
-            <version>1.2.16</version>
+            <version>1.2.17</version>
             <scope>provided</scope>
             <optional>true</optional>
         </dependency>
@@ -194,7 +194,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.7.6.201602180812</version>
+                <version>0.8.5</version>
                 <executions>
                     <execution>
                         <id>prepare-agent</id>
