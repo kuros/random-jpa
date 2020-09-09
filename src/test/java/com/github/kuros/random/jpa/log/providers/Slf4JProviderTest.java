@@ -25,19 +25,14 @@ public class Slf4JProviderTest {
 
     @Test
     public void shouldLogInfoWithMessageAndArguments() {
-        final ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
-        final ArgumentCaptor<Object[]> objectArgumentCaptor = ArgumentCaptor.forClass(Object[].class);
         final String message = RandomFixture.create(String.class);
         final Long aLong = RandomFixture.create(Long.class);
         final Integer aInteger = RandomFixture.create(Integer.class);
         final String aString = RandomFixture.create(String.class);
 
-        final Object[] args = {aInteger, aLong, aString};
-        provider.info(message, args);
+        provider.info(message, aInteger, aLong, aString);
 
-        Mockito.verify(logger, Mockito.times(1)).info(messageCaptor.capture(), objectArgumentCaptor.capture());
-        assertEquals(message, messageCaptor.getValue());
-        assertArrayEquals(args, objectArgumentCaptor.getValue());
+        Mockito.verify(logger, Mockito.times(1)).info(message, aInteger, aLong, aString);
     }
 
     @Test
@@ -58,19 +53,14 @@ public class Slf4JProviderTest {
 
     @Test
     public void shouldLogDebugWithMessageAndArguments() {
-        final ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
-        final ArgumentCaptor<Object[]> objectArgumentCaptor = ArgumentCaptor.forClass(Object[].class);
         final String s = RandomFixture.create(String.class);
         final Long aLong = RandomFixture.create(Long.class);
         final Integer aInteger = RandomFixture.create(Integer.class);
         final String aString = RandomFixture.create(String.class);
 
-        final Object[] args = {aInteger, aLong, aString};
-        provider.debug(s, args);
+        provider.debug(s, aInteger, aLong, aString);
 
-        Mockito.verify(logger, Mockito.times(1)).debug(messageCaptor.capture(), objectArgumentCaptor.capture());
-        assertEquals(s, messageCaptor.getValue());
-        assertArrayEquals(args, objectArgumentCaptor.getValue());
+        Mockito.verify(logger, Mockito.times(1)).debug(s, aInteger, aLong, aString);
     }
 
     @Test
@@ -90,20 +80,16 @@ public class Slf4JProviderTest {
 
     @Test
     public void shouldLogErrorWithMessageAndArguments() {
-        final ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
-        final ArgumentCaptor<Object[]> objectArgumentCaptor = ArgumentCaptor.forClass(Object[].class);
         final String s = RandomFixture.create(String.class);
         final Long aLong = RandomFixture.create(Long.class);
         final Integer aInteger = RandomFixture.create(Integer.class);
         final String aString = RandomFixture.create(String.class);
 
-        final Object[] args = {aInteger, aLong, aString};
-        provider.error(s, args);
+        provider.error(s, aInteger, aLong, aString);
 
-        Mockito.verify(logger, Mockito.times(1)).error(messageCaptor.capture(), objectArgumentCaptor.capture());
-        assertEquals(s, messageCaptor.getValue());
-        assertArrayEquals(args, objectArgumentCaptor.getValue());
+        Mockito.verify(logger, Mockito.times(1)).error(s, aInteger, aLong, aString);
     }
+
 
     @Test
     public void shouldLogErrorWithMessageAndException() {
