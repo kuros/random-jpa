@@ -49,8 +49,6 @@ public class CyclicValidator {
         final Set<Class<?>> parents = hierarchyGraph.getParents(aClass);
 
         for (Class<?> parent : parents) {
-            if(parent.equals(aClass))
-                continue;
             isCyclic(result, parent);
 
             result.remove(parent);
