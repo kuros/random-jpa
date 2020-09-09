@@ -8,7 +8,6 @@ import com.github.kuros.random.jpa.types.Entity;
 import com.github.kuros.random.jpa.types.EntityHelper;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.PriorityQueue;
@@ -135,6 +134,8 @@ public final class CreationOrderResolverImpl implements CreationOrderResolver {
     private void setParentDepth(final Collection<ClassDepth<?>> collection, final int depth, final Class<?> parent) {
         final Set<Class<?>> parents = hierarchyGraph.getParents(parent);
         for (Class<?> aClass : parents) {
+            if(parent.equals(aClass))
+                continue;
             setDepthIfApplicable(collection, depth + 1, aClass);
         }
     }
