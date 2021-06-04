@@ -135,21 +135,6 @@ CreationPlan creationPlan = jpaContext.create(
             Entity.of(Employee.class, 2).with(Employee_.Country, INDIA),
             Entity.of(Person.class).with(Person_.gender, "Male"));
 ```
-or
-```java
-Plan plan = Plan.create()
-            .add(Entity.of(Employee.class, 2).with(Employee_.Country, INDIA))
-            .add(Entity.of(Person.class).with(Person_.gender, "Male");
-CreationPlan creationPlan = jpaContext.create(plan);
-```
-or
-```java
-Plan plan = Plan.of(
-            Entity.of(Employee.class, 2).with(Employee_.Country, INDIA),
-            Entity.of(Person.class).with(Person_.gender, "Male"));
-
-CreationPlan creationPlan = jpaContext.create(plan);
-```
 
 ### Modify the creationPlan
 Let us say that I want to persist these two employees with different name.
@@ -181,6 +166,14 @@ it will print the hierarchy with the index number of the object followed by
 ### Persisting the creationPlan
 ```java
 final ResultMap resultMap = jpaContext.persist(creationPlan);
+```
+
+### You can also create and persist plans
+
+```java
+final ResultMap resultMap = jpaContext.createAndPersist(
+            Entity.of(Employee.class, 2).with(Employee_.Country, INDIA),
+            Entity.of(Person.class).with(Person_.gender, "Male"));
 ```
 
 ### Fetching the persisted objects
