@@ -25,4 +25,5 @@ public class Z_ {
     public static volatile SingularAttribute<Z, Long> id;
     public static volatile SingularAttribute<Z, Long> xId;
     public static volatile SingularAttribute<Z, Long> yId;
+//    public static volatile SingularAttribute<Z, Z> z;
 }

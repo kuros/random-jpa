@@ -10,7 +10,9 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import javax.persistence.metamodel.Attribute;
 import java.lang.reflect.Field;
+import java.lang.reflect.Member;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,10 +44,17 @@ public class RelationCreatorTest {
 
     @Mock
     private RelationshipProvider relationshipProvider;
+    @Mock
+    private Attribute<TestClass, Integer> attribute;
+    @Mock
+    private Member member;
+
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
+        when(attribute.getJavaMember()).thenReturn(member);
+        when(member.getDeclaringClass()).thenAnswer(invocationOnMock -> TestClass.class);
     }
 
     @Test
@@ -82,6 +91,25 @@ public class RelationCreatorTest {
 
         assertEquals(getDeclaredField(TestClass.class, "attr2"), generate.get(1).getFrom().getField());
         assertEquals(getDeclaredField(TestClass2.class, "attr2"), generate.get(1).getTo().getField());
+    }
+
+    @Test
+    public void shouldNotGenerateRelationWithForeignKeyRelationshipWhenIgnoredAttributeIsFound() throws Exception {
+        when(metaModelProvider.getFieldsByTableName()).thenReturn(getFieldsByTableName());
+        when(attribute.getName()).thenReturn("attr2");
+
+        mockRelationshipProvider();
+
+        final Dependencies dependency = Dependencies.newInstance();
+        dependency.ignoreAttributes(attribute);
+        final List<Relation> generate = RelationCreator
+                .from(metaModelProvider)
+                .with(relationshipProvider)
+                .with(dependency)
+                .generate();
+        assertEquals(1, generate.size());
+        assertEquals(getDeclaredField(TestClass.class, "attr1"), generate.get(0).getFrom().getField());
+        assertEquals(getDeclaredField(TestClass2.class, "attr1"), generate.get(0).getTo().getField());
     }
 
     @Test

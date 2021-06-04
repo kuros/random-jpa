@@ -29,7 +29,7 @@
 
     <groupId>com.github.kuros</groupId>
     <artifactId>random-jpa</artifactId>
-    <version>1.0.3</version>
+    <version>1.0.4</version>
     <name>${project.artifactId}</name>
 
     <description>This project was born out of a need to create test data for complex database hierarchy.
@@ -72,7 +72,7 @@
     </issueManagement>
 
     <properties>
-        <junit.version>4.11</junit.version>
+        <junit.version>4.13.1</junit.version>
         <hibernate-jpa-2.1-api.version>1.0.0.Final</hibernate-jpa-2.1-api.version>
         <mockito-all.version>1.9.5</mockito-all.version>
         <openpojo.version>0.6.3</openpojo.version>

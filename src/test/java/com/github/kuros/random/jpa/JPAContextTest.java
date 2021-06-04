@@ -19,6 +19,7 @@ import com.github.kuros.random.jpa.testUtil.entity.RelationEntity;
 import com.github.kuros.random.jpa.testUtil.entity.RelationManyToOne;
 import com.github.kuros.random.jpa.testUtil.entity.RelationOneToMany;
 import com.github.kuros.random.jpa.testUtil.entity.RelationOneToOne;
+import com.github.kuros.random.jpa.testUtil.entity.SelfJoinEntity;
 import com.github.kuros.random.jpa.testUtil.entity.X;
 import com.github.kuros.random.jpa.testUtil.entity.Y;
 import com.github.kuros.random.jpa.testUtil.entity.Z;
@@ -487,6 +488,37 @@ public class JPAContextTest {
         entityManager.getTransaction().commit();
 
         assertNull(persist.get(Q.class).getpId());
+    }
+
+    @Test
+    public void shouldCreateAndPersistHierarchyWithEntitiesHavingSelfJoin() {
+
+        final Dependencies dependencies = Dependencies.newInstance();
+        dependencies.withLink(DependencyHelper.getLinks());
+        dependencies.ignoreLinks(DependencyHelper.getIgnoreLinks());
+
+        final JPAContext jpaContext = JPAContextFactory
+                .newInstance(Database.H2, entityManager)
+                .with(dependencies)
+                .generate();
+
+        entityManager.getTransaction().begin();
+
+        final ResultMap resultMap = jpaContext
+                .createAndPersist(Entity.of(SelfJoinEntity.class));
+
+        entityManager.getTransaction().commit();
+        entityManager.close();
+
+        assertEquals(1, resultMap.getAll(SelfJoinEntity.class).size());
+
+        final SelfJoinEntity entity = resultMap.get(SelfJoinEntity.class);
+        resultMap.print(System.out::println);
+
+        assertNotNull(entity.getId());
+        assertNotNull(entity.getName());
+        assertNotNull(entity.getRefId());
+        assertNull(entity.getJoinEntity());
     }
 
     private void persistAndVerifyCustomValues(final JPAContext jpaContext) {

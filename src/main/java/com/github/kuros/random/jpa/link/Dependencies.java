@@ -1,6 +1,8 @@
 package com.github.kuros.random.jpa.link;
 
+import javax.persistence.metamodel.Attribute;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /*
@@ -23,10 +25,13 @@ public final class Dependencies {
 
     private final List<Link> links;
     private final List<Link> ignoreLinks;
+    @SuppressWarnings("rawtypes")
+    private final List<Attribute> ignoredAttributes;
 
     private Dependencies() {
         this.links = new ArrayList<>();
         this.ignoreLinks = new ArrayList<>();
+        ignoredAttributes = new ArrayList<>();
     }
 
     public static Dependencies newInstance() {
@@ -53,11 +58,21 @@ public final class Dependencies {
         return this;
     }
 
+    @SuppressWarnings("rawtypes")
+    public Dependencies ignoreAttributes(final Attribute... attributes) {
+        this.ignoredAttributes.addAll(Arrays.asList(attributes));
+        return this;
+    }
+
     public List<Link> getLinks() {
         return links;
     }
 
     public List<Link> getIgnoreLinks() {
         return ignoreLinks;
+    }
+
+    public List<Attribute> getIgnoredAttributes() {
+        return ignoredAttributes;
     }
 }

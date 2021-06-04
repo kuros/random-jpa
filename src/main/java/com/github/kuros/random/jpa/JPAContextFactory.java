@@ -17,6 +17,7 @@ import com.github.kuros.random.jpa.random.generator.Generator;
 import com.github.kuros.random.jpa.types.Trigger;
 
 import javax.persistence.EntityManager;
+import javax.persistence.metamodel.Attribute;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -67,6 +68,7 @@ public final class JPAContextFactory {
     public JPAContextFactory with(final Dependencies customDependencies) {
         this.dependencies.withLink(customDependencies.getLinks());
         this.dependencies.ignoreLinks(customDependencies.getIgnoreLinks());
+        this.dependencies.ignoreAttributes(customDependencies.getIgnoredAttributes().toArray(new Attribute[0]));
         return this;
     }
 

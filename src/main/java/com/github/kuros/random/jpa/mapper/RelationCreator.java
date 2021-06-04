@@ -3,19 +3,25 @@ package com.github.kuros.random.jpa.mapper;
 import com.github.kuros.random.jpa.link.Dependencies;
 import com.github.kuros.random.jpa.log.LogFactory;
 import com.github.kuros.random.jpa.log.Logger;
+import com.github.kuros.random.jpa.metamodel.AttributeProvider;
 import com.github.kuros.random.jpa.metamodel.MetaModelProvider;
 import com.github.kuros.random.jpa.metamodel.model.FieldWrapper;
 import com.github.kuros.random.jpa.provider.RelationshipProvider;
 import com.github.kuros.random.jpa.provider.model.ForeignKeyRelation;
 import com.github.kuros.random.jpa.resolver.DependencyResolver;
+import com.github.kuros.random.jpa.util.AttributeHelper;
 import com.github.kuros.random.jpa.util.Util;
 
+import javax.persistence.metamodel.Attribute;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /*
  * Copyright (c) 2015 Kumar Rohit
@@ -67,10 +73,17 @@ public final class RelationCreator {
         final Map<String, Set<String>> missingColumns = new HashMap<>();
         final Set<String> missingTable = new HashSet<>();
         final Set<Relation> ignoreRelations = DependencyResolver.ignoreLinks(dependencies);
+        final Set<Field> ignoredFields = dependencies.getIgnoredAttributes()
+                .stream()
+                .map(AttributeHelper::getField)
+                .collect(Collectors.toSet());
 
         for (ForeignKeyRelation foreignKeyRelation : foreignKeyRelations) {
             try {
                 final FieldWrapper from = getFieldWrapper(foreignKeyRelation);
+                if (ignoredFields.contains(from.getField())) {
+                    continue;
+                }
                 final FieldWrapper to = getReferencedFieldValue(foreignKeyRelation);
                 final Relation relation = Relation.newInstance(from, to);
 
@@ -120,6 +133,7 @@ public final class RelationCreator {
         if (fieldWrappers == null) {
             throw new EntityNotDeclared();
         }
+        fieldWrappers.sort(Comparator.comparing(FieldWrapper::getOverriddenFieldName, Comparator.nullsLast(String::compareTo)));
         for (FieldWrapper fieldWrapper : fieldWrappers) {
             if (isFieldFound(attribute, fieldWrapper)) {
                 return fieldWrapper;

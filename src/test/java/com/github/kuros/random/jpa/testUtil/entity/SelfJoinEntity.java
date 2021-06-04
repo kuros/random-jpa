@@ -1,7 +1,9 @@
 package com.github.kuros.random.jpa.testUtil.entity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -23,8 +25,8 @@ public class SelfJoinEntity {
     @Column
     private Integer refId;
 
-    @ManyToOne
-    @JoinColumn(name = "refId", referencedColumnName = "id", insertable = false, updatable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_id", insertable = false, updatable = false)
     private SelfJoinEntity joinEntity;
 
 
@@ -46,6 +48,14 @@ public class SelfJoinEntity {
 
     public Integer getRefId() {
         return refId;
+    }
+
+    public SelfJoinEntity getJoinEntity() {
+        return joinEntity;
+    }
+
+    public void setJoinEntity(final SelfJoinEntity joinEntity) {
+        this.joinEntity = joinEntity;
     }
 
     public void setRefId(final Integer refId) {
