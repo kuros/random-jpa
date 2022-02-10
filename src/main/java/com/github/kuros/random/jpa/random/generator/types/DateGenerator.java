@@ -4,10 +4,7 @@ import com.github.kuros.random.jpa.random.generator.RandomClassGenerator;
 
 import java.sql.Time;
 import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
+import java.time.*;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
@@ -31,7 +28,7 @@ import java.util.Random;
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 public final class DateGenerator implements RandomClassGenerator {
-    private static final Class<?>[] TYPES = {Date.class, Calendar.class, Time.class, Timestamp.class, LocalDateTime.class, LocalDate.class, LocalTime.class };
+    private static final Class<?>[] TYPES = {Date.class, Calendar.class, Time.class, Timestamp.class, LocalDateTime.class, LocalDate.class, LocalTime.class, Instant.class};
     private static final Random RANDOM = new Random();
     private static final int MAX_YEAR = 10;
     private static final int MAX_MONTH = 12;
@@ -71,7 +68,10 @@ public final class DateGenerator implements RandomClassGenerator {
             random = calendar.toLocalTime();
         } else if (aClass == LocalDateTime.class) {
             random = calendar;
-        } else {
+        } else if (aClass == Instant.class) {
+            random = date.toInstant();
+        }
+        else {
             random = date;
         }
 

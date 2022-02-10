@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -39,7 +40,7 @@ public class DateGeneratorTest {
     public void testGetTypes() {
         final Collection<Class<?>> types = DateGenerator.getInstance().getTypes();
         final List<Class<?>> classes = new ArrayList<>(types);
-        assertEquals(7, classes.size());
+        assertEquals(8, classes.size());
         assertEquals(Date.class, classes.get(0));
         assertEquals(Calendar.class, classes.get(1));
         assertEquals(Time.class, classes.get(2));
@@ -47,6 +48,7 @@ public class DateGeneratorTest {
         assertEquals(LocalDateTime.class, classes.get(4));
         assertEquals(LocalDate.class, classes.get(5));
         assertEquals(LocalTime.class, classes.get(6));
+        assertEquals(Instant.class, classes.get(7));
     }
 
     @Test
@@ -85,5 +87,9 @@ public class DateGeneratorTest {
         final Object actual7 = DateGenerator.getInstance().doGenerate(LocalDateTime.class);
         assertNotNull(actual7);
         assertTrue(actual7 instanceof LocalDateTime);
+
+        final Object actual8 = DateGenerator.getInstance().doGenerate(Instant.class);
+        assertNotNull(actual8);
+        assertTrue(actual8 instanceof Instant);
     }
 }
