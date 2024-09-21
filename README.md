@@ -1,10 +1,11 @@
 # Random-JPA [![Build Status](https://travis-ci.org/kuros/random-jpa.svg?branch=master)](https://travis-ci.org/kuros/random-jpa) [![Coverage Status](https://coveralls.io/repos/github/kuros/random-jpa/badge.svg?branch=master)](https://coveralls.io/github/kuros/random-jpa?branch=master)  [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.kuros/random-jpa/badge.svg)](http://search.maven.org/#search|ga|1|random-jpa)
 It has been always been a challenge to create a test data. This project aims at providing easier mechanism to create test data.
 
-Maven Group Plugin | java version  | Latest Version
------------------- | ------------  | ---------------
-com.github.kuros.random-jpa | 1.5+ | [v0.6.6](https://github.com/kuros/random-jpa/releases)
-com.github.kuros.random-jpa | 1.8+ | [v1.0.4](https://github.com/kuros/random-jpa/releases)
+Maven Group Plugin | java version | Latest Version
+------------------ |--------------| ---------------
+com.github.kuros.random-jpa | 17+          | [v2.0.1](https://github.com/kuros/random-jpa/releases)
+com.github.kuros.random-jpa | 1.8+         | [v1.0.4](https://github.com/kuros/random-jpa/releases)
+com.github.kuros.random-jpa | 1.5+         | [v0.6.6](https://github.com/kuros/random-jpa/releases)
 
 
 ## Feature
