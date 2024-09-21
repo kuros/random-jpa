@@ -8,11 +8,11 @@ import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
 import com.github.kuros.random.jpa.util.AttributeHelper;
 import com.github.kuros.random.jpa.util.Util;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.metamodel.Attribute;
-import javax.persistence.metamodel.EntityType;
-import javax.persistence.metamodel.Metamodel;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.metamodel.Attribute;
+import jakarta.persistence.metamodel.EntityType;
+import jakarta.persistence.metamodel.Metamodel;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,9 +23,9 @@ import static com.github.kuros.random.jpa.util.Util.invokeMethod;
 
 public class HibernateProvider implements AttributeProvider {
 
-    private Map<Class<?>, EntityTableMapping> entityTableMappingByClass;
-    private Map<String, List<EntityTableMapping>> entityTableMappingByTableName;
-    private EntityManager entityManager;
+    private final Map<Class<?>, EntityTableMapping> entityTableMappingByClass;
+    private final Map<String, List<EntityTableMapping>> entityTableMappingByTableName;
+    private final EntityManager entityManager;
 
     public HibernateProvider(final EntityManager entityManager) {
         this.entityManager = entityManager;
@@ -68,11 +68,11 @@ public class HibernateProvider implements AttributeProvider {
     private void addAttributeColumnMapping(final EntityType<?> entity, final Object classMetadata, final EntityTableMapping entityTableMapping) throws ClassNotFoundException {
         final Map<String, ColumnNameType.Type> supportedAttributeNames = getSupportedAttributeNames(classMetadata);
 
-        for (Attribute attribute : entity.getAttributes()) {
+        for (Attribute<?, ?> attribute : entity.getAttributes()) {
             final String name = AttributeHelper.getName(attribute);
             final String[] propertyColumnNames = (String[]) invokeMethod(classMetadata, "getPropertyColumnNames", name);
             final String columnName = propertyColumnNames.length > 0 ? propertyColumnNames[0] : null;
-            if (columnName != null && supportedAttributeNames.keySet().contains(name)) {
+            if (columnName != null && supportedAttributeNames.containsKey(name)) {
                 entityTableMapping.addAttributeColumnMapping(name, new ColumnNameType(columnName, supportedAttributeNames.get(name)));
             }
         }

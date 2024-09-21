@@ -3,7 +3,7 @@ package com.github.kuros.random.jpa.provider.mysql;
 import com.github.kuros.random.jpa.annotation.VisibleForTesting;
 import com.github.kuros.random.jpa.provider.base.AbstractRelationshipProvider;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
 /*
  * Copyright (c) 2015 Kumar Rohit
@@ -23,12 +23,14 @@ import javax.persistence.EntityManager;
  */
 public final class MySqlRelationshipProvider extends AbstractRelationshipProvider {
 
-    private static final String QUERY = "select DISTINCT kc.TABLE_NAME, kc.COLUMN_NAME, kc.REFERENCED_TABLE_NAME, kc.REFERENCED_COLUMN_NAME\n" +
-            "from information_schema.TABLE_CONSTRAINTS tc, information_schema.KEY_COLUMN_USAGE kc\n" +
-            "WHERE kc.CONSTRAINT_NAME = tc.CONSTRAINT_NAME\n" +
-            "  and kc.TABLE_SCHEMA = tc.TABLE_SCHEMA\n" +
-            "  and tc.CONSTRAINT_TYPE = 'FOREIGN KEY'\n" +
-            "  and tc.TABLE_SCHEMA = DATABASE()";
+    private static final String QUERY = """
+            select DISTINCT kc.TABLE_NAME, kc.COLUMN_NAME, kc.REFERENCED_TABLE_NAME, kc.REFERENCED_COLUMN_NAME
+            from information_schema.TABLE_CONSTRAINTS tc, information_schema.KEY_COLUMN_USAGE kc
+            WHERE kc.CONSTRAINT_NAME = tc.CONSTRAINT_NAME
+              and kc.TABLE_SCHEMA = tc.TABLE_SCHEMA
+              and tc.CONSTRAINT_TYPE = 'FOREIGN KEY'
+              and tc.TABLE_SCHEMA = DATABASE()\
+            """;
 
 
     @VisibleForTesting

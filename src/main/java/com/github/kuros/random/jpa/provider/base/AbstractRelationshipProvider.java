@@ -3,8 +3,8 @@ package com.github.kuros.random.jpa.provider.base;
 import com.github.kuros.random.jpa.provider.RelationshipProvider;
 import com.github.kuros.random.jpa.provider.model.ForeignKeyRelation;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +25,7 @@ import java.util.List;
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 public abstract class AbstractRelationshipProvider implements RelationshipProvider {
-    private EntityManager entityManager;
+    private final EntityManager entityManager;
 
     public AbstractRelationshipProvider(final EntityManager entityManager) {
         this.entityManager = entityManager;
@@ -35,7 +35,7 @@ public abstract class AbstractRelationshipProvider implements RelationshipProvid
         final List<ForeignKeyRelation> foreignKeyRelations = new ArrayList<>();
 
         final Query query = entityManager.createNativeQuery(getQuery());
-        final List resultList = query.getResultList();
+        final var resultList = query.getResultList();
         for (Object o : resultList) {
             final Object[] row = (Object[]) o;
 

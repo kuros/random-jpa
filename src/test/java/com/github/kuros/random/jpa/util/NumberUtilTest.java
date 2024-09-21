@@ -1,15 +1,14 @@
 package com.github.kuros.random.jpa.util;
 
 import com.github.kuros.random.jpa.exception.RandomJPAException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class NumberUtilTest {
 
@@ -111,10 +110,12 @@ public class NumberUtilTest {
 
     }
 
-    @Test(expected = RandomJPAException.class)
+    @Test
     public void shouldThrowExceptionIfNumberCannotBeParsed() {
-        final String input = "abc";
-        NumberUtil.parseNumber(Integer.class, input);
+        assertThrows(RandomJPAException.class, () -> {
+            final String input = "abc";
+            NumberUtil.parseNumber(Integer.class, input);
+        });
     }
 
     @Test

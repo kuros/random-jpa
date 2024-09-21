@@ -9,7 +9,7 @@ import com.github.kuros.random.jpa.provider.mysql.MySqlRelationshipProvider;
 import com.github.kuros.random.jpa.provider.oracle.OracleRelationshipProvider;
 import com.github.kuros.random.jpa.provider.postgres.PostgresRelationshipProvider;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
 

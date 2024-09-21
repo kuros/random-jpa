@@ -27,20 +27,15 @@ import com.github.kuros.random.jpa.testUtil.entity.Z_;
 import com.github.kuros.random.jpa.testUtil.hierarchyGraph.DependencyHelper;
 import com.github.kuros.random.jpa.types.CreationPlan;
 import com.github.kuros.random.jpa.types.Entity;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /*
  * Copyright (c) 2015 Kumar Rohit
@@ -62,7 +57,7 @@ public class JPAContextTest {
 
     private EntityManager entityManager;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         entityManager = EntityManagerProvider.getEntityManager();
     }
@@ -268,7 +263,7 @@ public class JPAContextTest {
 
     }
 
-    @Test @Ignore
+    @Test @Disabled
     public void shouldObjectValueForMappedRelationsInCaseOfOneToMany() {
         final Dependencies dependencies = Dependencies.newInstance();
         dependencies.withLink(DependencyHelper.getLinks());
@@ -536,7 +531,7 @@ public class JPAContextTest {
         assertEquals(yId, persist.get(Z.class).getyId());
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         if (entityManager != null && entityManager.isOpen()) {
             entityManager.close();

@@ -8,12 +8,14 @@ import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
 import com.github.kuros.random.jpa.persistor.hepler.Finder;
 import com.github.kuros.random.jpa.random.simple.SimpleRandomGenerator;
 import com.github.kuros.random.jpa.random.simple.SimpleRandomGeneratorFactory;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class FindByIdTest {
 
@@ -27,7 +29,7 @@ public class FindByIdTest {
     private Finder finder;
     private SimpleRandomGenerator simpleRandomGenerator;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         Mockito.when(cache.getAttributeProvider()).thenReturn(attributeProvider);
@@ -46,7 +48,7 @@ public class FindByIdTest {
 
         final Object apply = findById.apply(randomTestClass);
 
-        Assert.assertNull(apply);
+        Assertions.assertNull(apply);
 
     }
 
@@ -62,22 +64,25 @@ public class FindByIdTest {
 
         final FindByIdTestClass apply = (FindByIdTestClass) findById.apply(randomTestClass);
 
-        Assert.assertEquals(randomTestClass, apply);
+        Assertions.assertEquals(randomTestClass, apply);
         Mockito.verify(finder, Mockito.times(1)).findByAttributes(Mockito.any(), Mockito.anyList());
 
     }
 
-    @Test(expected = RandomJPAException.class)  @SuppressWarnings("unchecked")
+    @Test  @SuppressWarnings("unchecked")
     public void shouldThrowExceptionAttributeIdIsNotFound() {
-        mockEntityTableMapping("randomAttributeId");
-        final FindById findById = new FindById(cache);
-        findById.setFinder(finder);
+        assertThrows(RandomJPAException.class, () -> {
+            mockEntityTableMapping("randomAttributeId");
+            final FindById findById = new FindById(cache);
+            findById.setFinder(finder);
 
-        final FindByIdTestClass randomTestClass = simpleRandomGenerator.getRandom(FindByIdTestClass.class);
+            final FindByIdTestClass randomTestClass = simpleRandomGenerator.getRandom(FindByIdTestClass.class);
 
-        Mockito.when(finder.findByAttributes(Mockito.any(), Mockito.anyList())).thenReturn(randomTestClass);
+            Mockito.when(finder.findByAttributes(Mockito.any(), Mockito.anyList())).thenReturn(randomTestClass);
 
-        findById.apply(randomTestClass);
+            findById.apply(randomTestClass);
+
+        });
 
     }
 

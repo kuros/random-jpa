@@ -23,7 +23,7 @@ import java.util.Map;
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 public final class TriggerCache {
-    private Map<Class<?>, Trigger<?>> triggerMap;
+    private final Map<Class<?>, Trigger<?>> triggerMap;
 
     private TriggerCache(final List<Trigger<?>> triggers) {
         this.triggerMap = new HashMap<>();

@@ -8,8 +8,8 @@ import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
 import com.github.kuros.random.jpa.random.generator.RandomGenerator;
 import com.github.kuros.random.jpa.testUtil.RandomFixture;
 import com.github.kuros.random.jpa.util.Util;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -22,8 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /*
  * Copyright (c) 2015 Kumar Rohit
@@ -52,7 +51,7 @@ public class RandomizeImplTest {
     @Mock
     private RandomGenerator randomGenerator;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         Mockito.when(cache.getAttributeProvider()).thenReturn(attributeProvider);
@@ -135,16 +134,19 @@ public class RandomizeImplTest {
 
     }
 
-    @Test(expected = RandomJPAException.class)
+    @Test
     public void shouldThrowExceptionErrorIsFoundSettingTheFieldValue() {
-        getMockedEntityTableMapping();
+        assertThrows(RandomJPAException.class, () -> {
+            getMockedEntityTableMapping();
 
-        Mockito.when(randomGenerator.generateRandom(Mockito.any(Field.class))).thenThrow(new RuntimeException());
+            Mockito.when(randomGenerator.generateRandom(Mockito.any(Field.class))).thenThrow(new RuntimeException());
 
-        final RandomizeImpl randomize = RandomizeImpl.newInstance(cache, randomGenerator);
+            final RandomizeImpl randomize = RandomizeImpl.newInstance(cache, randomGenerator);
 
-        final RandomizeImplTestClass testClass = new RandomizeImplTestClass();
-        randomize.populateRandomFields(testClass, 0);
+            final RandomizeImplTestClass testClass = new RandomizeImplTestClass();
+            randomize.populateRandomFields(testClass, 0);
+
+        });
 
     }
 

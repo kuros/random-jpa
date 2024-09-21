@@ -10,9 +10,9 @@ import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
 import com.github.kuros.random.jpa.util.StringJoiner;
 import com.github.kuros.random.jpa.util.Util;
 
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.Query;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;

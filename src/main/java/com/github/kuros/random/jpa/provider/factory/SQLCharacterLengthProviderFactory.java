@@ -9,7 +9,7 @@ import com.github.kuros.random.jpa.provider.mysql.MySqlCharacterLengthProvider;
 import com.github.kuros.random.jpa.provider.oracle.OracleCharacterLengthProvider;
 import com.github.kuros.random.jpa.provider.postgres.PostgresCharacterLengthProvider;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
 /*
  * Copyright (c) 2015 Kumar Rohit

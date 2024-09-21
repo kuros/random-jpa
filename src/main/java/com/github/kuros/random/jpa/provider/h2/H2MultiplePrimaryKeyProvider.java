@@ -5,7 +5,7 @@ import com.github.kuros.random.jpa.metamodel.AttributeProvider;
 import com.github.kuros.random.jpa.provider.MultiplePrimaryKeyProvider;
 import com.github.kuros.random.jpa.provider.base.AbstractMultiplePrimaryKeyProvider;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
 /*
  * Copyright (c) 2015 Kumar Rohit
@@ -25,10 +25,13 @@ import javax.persistence.EntityManager;
  */
 public class H2MultiplePrimaryKeyProvider extends AbstractMultiplePrimaryKeyProvider {
 
-    private static final String QUERY = "select C.TABLE_NAME AS tab_name, C.COLUMN_LIST as col_name\n" +
-            "from INFORMATION_SCHEMA.CONSTRAINTS C\n" +
-            "where C.CONSTRAINT_TYPE = 'PRIMARY KEY'\n" +
-            "AND C.TABLE_SCHEMA = 'PUBLIC'";
+    private static final String QUERY = """
+            select TC.TABLE_NAME AS tab_name, CCU.COLUMN_NAME as col_name
+            from INFORMATION_SCHEMA.TABLE_CONSTRAINTS TC
+            JOIN INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE CCU ON TC.TABLE_NAME = CCU.TABLE_NAME AND TC.CONSTRAINT_NAME = CCU.CONSTRAINT_NAME
+            where TC.CONSTRAINT_TYPE = 'PRIMARY KEY'
+            AND TC.TABLE_SCHEMA = 'PUBLIC'\
+            """;
 
     @VisibleForTesting
     H2MultiplePrimaryKeyProvider(final EntityManager entityManager, final AttributeProvider attributeProvider) {

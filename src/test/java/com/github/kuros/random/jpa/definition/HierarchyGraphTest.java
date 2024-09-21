@@ -2,8 +2,8 @@ package com.github.kuros.random.jpa.definition;
 
 import com.github.kuros.random.jpa.mapper.Relation;
 import com.github.kuros.random.jpa.metamodel.model.FieldWrapper;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -46,19 +46,19 @@ public class HierarchyGraphTest {
         final Relation relation = Relation.newInstance(new FieldWrapper(from), new FieldWrapper(to));
         hierarchyGraph.addRelation(relation);
         final Set<Class<?>> parent = hierarchyGraph.getParents(testClass1);
-        Assert.assertEquals(1, parent.size());
-        Assert.assertTrue(parent.contains(TestClass2.class));
+        Assertions.assertEquals(1, parent.size());
+        Assertions.assertTrue(parent.contains(TestClass2.class));
 
         final TableNode tableNode = hierarchyGraph.getTableNode(TestClass.class);
         final List<Relation> relations = tableNode.getRelations();
-        Assert.assertEquals(1, relations.size());
-        Assert.assertEquals(from, relations.get(0).getFrom().getField());
-        Assert.assertEquals(to, relations.get(0).getTo().getField());
+        Assertions.assertEquals(1, relations.size());
+        Assertions.assertEquals(from, relations.get(0).getFrom().getField());
+        Assertions.assertEquals(to, relations.get(0).getTo().getField());
 
 
         final TableNode actual = hierarchyGraph.getTableNode(TestClass2.class);
-        Assert.assertEquals(0, actual.getParentClasses().size());
-        Assert.assertEquals(0, actual.getRelations().size());
+        Assertions.assertEquals(0, actual.getParentClasses().size());
+        Assertions.assertEquals(0, actual.getRelations().size());
     }
 
     /**
@@ -83,22 +83,22 @@ public class HierarchyGraphTest {
 
         final Set<Class<?>> children = hierarchyGraph.getParents(testClass1);
 
-        Assert.assertEquals(1, children.size());
+        Assertions.assertEquals(1, children.size());
         final TableNode tableNode = hierarchyGraph.getTableNode(testClass1);
 
-        Assert.assertTrue(tableNode.getParentClasses().contains(TestClass2.class));
+        Assertions.assertTrue(tableNode.getParentClasses().contains(TestClass2.class));
         final List<Relation> relations = tableNode.getRelations();
-        Assert.assertEquals(2, relations.size());
+        Assertions.assertEquals(2, relations.size());
 
         final List<String> fieldNames = new ArrayList<>();
         fieldNames.add("attr1");
         fieldNames.add("attr2");
 
-        Assert.assertEquals("attr1", relations.get(0).getFrom().getField().getName());
-        Assert.assertEquals("attr1", relations.get(0).getTo().getField().getName());
+        Assertions.assertEquals("attr1", relations.get(0).getFrom().getField().getName());
+        Assertions.assertEquals("attr1", relations.get(0).getTo().getField().getName());
 
-        Assert.assertEquals("attr2", relations.get(1).getFrom().getField().getName());
-        Assert.assertEquals("attr2", relations.get(1).getTo().getField().getName());
+        Assertions.assertEquals("attr2", relations.get(1).getFrom().getField().getName());
+        Assertions.assertEquals("attr2", relations.get(1).getTo().getField().getName());
     }
 
     /**
@@ -125,13 +125,13 @@ public class HierarchyGraphTest {
 
 
         final Set<Class<?>> parents = hierarchyGraph.getParents(testClass1);
-        Assert.assertEquals(1, parents.size());
+        Assertions.assertEquals(1, parents.size());
 
         final Set<Class<?>> parents1 = hierarchyGraph.getParents(testClass2);
-        Assert.assertEquals(1, parents1.size());
+        Assertions.assertEquals(1, parents1.size());
 
         final Set<Class<?>> parents2 = hierarchyGraph.getParents(testClass3);
-        Assert.assertEquals(0, parents2.size());
+        Assertions.assertEquals(0, parents2.size());
     }
 
     @Test
@@ -148,9 +148,9 @@ public class HierarchyGraphTest {
         hierarchyGraph.addRelation(relation);
 
         final Set<Class<?>> keySet = hierarchyGraph.getKeySet();
-        Assert.assertEquals(2, keySet.size());
-        Assert.assertTrue(keySet.contains(TestClass.class));
-        Assert.assertTrue(keySet.contains(TestClass2.class));
+        Assertions.assertEquals(2, keySet.size());
+        Assertions.assertTrue(keySet.contains(TestClass.class));
+        Assertions.assertTrue(keySet.contains(TestClass2.class));
     }
 
     @Test
@@ -167,8 +167,8 @@ public class HierarchyGraphTest {
         hierarchyGraph.addRelation(relation);
 
         final Set<Class<?>> keySet = hierarchyGraph.getParents(TestClass.class);
-        Assert.assertEquals(1, keySet.size());
-        Assert.assertTrue(keySet.contains(TestClass2.class));
+        Assertions.assertEquals(1, keySet.size());
+        Assertions.assertTrue(keySet.contains(TestClass2.class));
     }
 
     @Test
@@ -184,14 +184,14 @@ public class HierarchyGraphTest {
         final Relation relation = Relation.newInstance(new FieldWrapper(from), new FieldWrapper(to));
         hierarchyGraph.addRelation(relation);
 
-        Assert.assertNotNull(hierarchyGraph.getParentRelations());
+        Assertions.assertNotNull(hierarchyGraph.getParentRelations());
 
         final Set<Relation> keySet = hierarchyGraph.getAttributeRelations(TestClass.class);
-        Assert.assertEquals(1, keySet.size());
+        Assertions.assertEquals(1, keySet.size());
 
         final List<Relation> relations = new ArrayList<>(keySet);
-        Assert.assertEquals(from, relations.get(0).getFrom().getField());
-        Assert.assertEquals(to, relations.get(0).getTo().getField());
+        Assertions.assertEquals(from, relations.get(0).getFrom().getField());
+        Assertions.assertEquals(to, relations.get(0).getTo().getField());
     }
 
     private class TestClass {

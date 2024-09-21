@@ -7,8 +7,8 @@ import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
 import com.github.kuros.random.jpa.testUtil.RandomFixture;
 import com.github.kuros.random.jpa.testUtil.entity.Person;
 import com.github.kuros.random.jpa.testUtil.entity.Z;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -17,8 +17,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /*
  * Copyright (c) 2015 Kumar Rohit
@@ -45,7 +44,7 @@ public class UtilTest {
     @Mock
     private EntityTableMapping entityTableMapping;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         Mockito.when(cache.getAttributeProvider()).thenReturn(attributeProvider);
@@ -105,9 +104,10 @@ public class UtilTest {
         assertEquals(expected, Util.printEntityId(cache, z));
     }
 
-    @Test(expected = RandomJPAException.class)
+    @Test
     public void shouldThrowExceptionIfObjectIsNull() {
-        Util.assertNotNull("Test Method", null);
+        assertThrows(RandomJPAException.class, () ->
+            Util.assertNotNull("Test Method", null));
     }
 
     @Test

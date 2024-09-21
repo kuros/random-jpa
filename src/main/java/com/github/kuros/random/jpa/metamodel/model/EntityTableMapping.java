@@ -25,15 +25,15 @@ import java.util.Set;
  */
 public class EntityTableMapping {
 
-    private Class<?> entityClass;
-    private String entityName;
+    private final Class<?> entityClass;
+    private final String entityName;
     private String tableName;
 
-    private List<String> attributeIds;
-    private List<String> columnIds;
+    private final List<String> attributeIds;
+    private final List<String> columnIds;
 
-    private Map<String, String> attributeColumnMapping;
-    private Map<String, String> columnAttributeMapping;
+    private final Map<String, String> attributeColumnMapping;
+    private final Map<String, String> columnAttributeMapping;
 
     public EntityTableMapping(final Class<?> entityClass) {
         this.entityClass = entityClass;

@@ -4,8 +4,8 @@ import com.github.kuros.random.jpa.metamodel.AttributeProvider;
 import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
 import com.github.kuros.random.jpa.provider.UniqueConstraintProvider;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,7 +42,7 @@ public abstract class AbstractUniqueConstraintProvider implements UniqueConstrai
 
     protected void init() {
         final Query nativeQuery = entityManager.createNativeQuery(getQuery());
-        final List resultList = nativeQuery.getResultList();
+        final var resultList = nativeQuery.getResultList();
         for (Object result : resultList) {
             final Object[] row = (Object[]) result;
             final List<EntityTableMapping> entityTableMappings = attributeProvider.get((String) row[0]);

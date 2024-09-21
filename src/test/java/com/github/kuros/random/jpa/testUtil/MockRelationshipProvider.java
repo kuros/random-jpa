@@ -2,8 +2,8 @@ package com.github.kuros.random.jpa.testUtil;
 
 import org.mockito.Mockito;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import java.util.ArrayList;
 import java.util.List;
 

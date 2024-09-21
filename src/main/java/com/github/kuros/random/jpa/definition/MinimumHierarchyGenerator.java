@@ -14,7 +14,7 @@ public class MinimumHierarchyGenerator {
     public static HierarchyGraph generate(final HierarchyGraph parentGraph, final List<Entity> entities) {
         final HierarchyGraph hierarchyGraph = HierarchyGraph.newInstance();
 
-        for (Entity entity : entities) {
+        for (Entity<?> entity : entities) {
             addParentToHierarchy(parentGraph, hierarchyGraph, EntityHelper.getType(entity));
 
             final Set<Relation> softRelations = DependencyResolver.generateRelations(EntityHelper.getSoftLinks(entity));

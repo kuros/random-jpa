@@ -5,7 +5,7 @@ import com.github.kuros.random.jpa.metamodel.AttributeProvider;
 import com.github.kuros.random.jpa.provider.MultiplePrimaryKeyProvider;
 import com.github.kuros.random.jpa.provider.base.AbstractMultiplePrimaryKeyProvider;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
 /*
  * Copyright (c) 2015 Kumar Rohit
@@ -25,12 +25,14 @@ import javax.persistence.EntityManager;
  */
 public class MySqlMultiplePrimaryKeyProvider extends AbstractMultiplePrimaryKeyProvider {
 
-    private static final String QUERY = "select DISTINCT kc.TABLE_NAME, kc.COLUMN_NAME\n" +
-            "from information_schema.TABLE_CONSTRAINTS tc, information_schema.KEY_COLUMN_USAGE kc\n" +
-            "WHERE kc.CONSTRAINT_NAME = tc.CONSTRAINT_NAME\n" +
-            "      and kc.TABLE_SCHEMA = tc.TABLE_SCHEMA\n" +
-            "      and tc.CONSTRAINT_TYPE = 'PRIMARY KEY'\n" +
-            "      and tc.TABLE_SCHEMA = DATABASE()";
+    private static final String QUERY = """
+            select DISTINCT kc.TABLE_NAME, kc.COLUMN_NAME
+            from information_schema.TABLE_CONSTRAINTS tc, information_schema.KEY_COLUMN_USAGE kc
+            WHERE kc.CONSTRAINT_NAME = tc.CONSTRAINT_NAME
+                  and kc.TABLE_SCHEMA = tc.TABLE_SCHEMA
+                  and tc.CONSTRAINT_TYPE = 'PRIMARY KEY'
+                  and tc.TABLE_SCHEMA = DATABASE()\
+            """;
 
     @VisibleForTesting
     MySqlMultiplePrimaryKeyProvider(final EntityManager entityManager, final AttributeProvider attributeProvider) {

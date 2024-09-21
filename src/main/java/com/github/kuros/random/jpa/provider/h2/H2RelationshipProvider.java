@@ -3,7 +3,7 @@ package com.github.kuros.random.jpa.provider.h2;
 import com.github.kuros.random.jpa.annotation.VisibleForTesting;
 import com.github.kuros.random.jpa.provider.base.AbstractRelationshipProvider;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
 /*
  * Copyright (c) 2015 Kumar Rohit
@@ -23,9 +23,23 @@ import javax.persistence.EntityManager;
  */
 public final class H2RelationshipProvider extends AbstractRelationshipProvider {
 
-    private static final String QUERY = "select DISTINCT cf.FKTABLE_NAME, cf.FKCOLUMN_NAME, cf.PKTABLE_NAME, cf.PKCOLUMN_NAME\n" +
-            "from information_schema.CROSS_REFERENCES cf\n" +
-            "where cf.FKTABLE_SCHEMA = 'PUBLIC'";
+    private static final String QUERY = """
+            SELECT
+                tc.TABLE_NAME,
+                kcu.COLUMN_NAME,
+                tc2.TABLE_NAME,
+                kcu2.COLUMN_NAME
+            FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS tc
+            JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE kcu
+                ON tc.CONSTRAINT_NAME = kcu.CONSTRAINT_NAME
+            JOIN INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS rc
+                ON tc.CONSTRAINT_NAME = rc.CONSTRAINT_NAME
+            JOIN INFORMATION_SCHEMA.TABLE_CONSTRAINTS tc2
+                ON rc.UNIQUE_CONSTRAINT_NAME = tc2.CONSTRAINT_NAME
+            JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE kcu2
+                ON tc2.CONSTRAINT_NAME = kcu2.CONSTRAINT_NAME
+            WHERE tc.CONSTRAINT_TYPE = 'FOREIGN KEY'
+            """;
 
 
     @VisibleForTesting

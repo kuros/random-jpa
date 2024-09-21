@@ -31,7 +31,7 @@ import java.util.List;
 class FindById<T> implements Function<T> {
 
     private final AttributeProvider attributeProvider;
-    private static final List<Class> PRIMITIVE_ID_CLASSES = new ArrayList<>();
+    private static final List<Class<?>> PRIMITIVE_ID_CLASSES = new ArrayList<>();
     private Finder finder;
 
     static {

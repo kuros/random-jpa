@@ -18,7 +18,7 @@ import com.github.kuros.random.jpa.util.Multimap;
 import com.github.kuros.random.jpa.util.NodeHelper;
 import com.github.kuros.random.jpa.util.Util;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.HashMap;

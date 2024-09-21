@@ -6,7 +6,7 @@ import com.github.kuros.random.jpa.mapper.Relation;
 import com.github.kuros.random.jpa.metamodel.model.FieldWrapper;
 import com.github.kuros.random.jpa.util.AttributeHelper;
 
-import javax.persistence.metamodel.Attribute;
+import jakarta.persistence.metamodel.Attribute;
 import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.List;

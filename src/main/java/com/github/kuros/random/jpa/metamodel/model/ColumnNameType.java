@@ -5,8 +5,8 @@ package com.github.kuros.random.jpa.metamodel.model;
  */
 public final class ColumnNameType {
 
-    private String columnName;
-    private Type type;
+    private final String columnName;
+    private final Type type;
 
     public ColumnNameType(final String columnName, final Type type) {
         this.columnName = columnName;

@@ -26,10 +26,10 @@ import java.util.Set;
  */
 public final class ChildNode {
 
-    private Class<?> parent;
-    private int level;
-    private Set<Class<?>> childClasses;
-    private Map<Class<?>, Set<Relation>> childRelations;
+    private final Class<?> parent;
+    private final int level;
+    private final Set<Class<?>> childClasses;
+    private final Map<Class<?>, Set<Relation>> childRelations;
 
     public static ChildNode newInstance(final Class<?> parent, final int level) {
         return new ChildNode(parent, level);
@@ -42,12 +42,11 @@ public final class ChildNode {
         this.level = level;
     }
 
-    public ChildNode addChild(final Class<?> childClass) {
+    public void addChild(final Class<?> childClass) {
         childClasses.add(childClass);
-        return this;
     }
 
-    public ChildNode addRelation(final Relation parentRelation) {
+    public void addRelation(final Relation parentRelation) {
 
         final FieldWrapper parentRef = parentRelation.getFrom();
         final FieldWrapper childRef = parentRelation.getTo();
@@ -57,7 +56,6 @@ public final class ChildNode {
         Set<Relation> relations = childRelations.computeIfAbsent(childRef.getInitializationClass(), k -> new HashSet<>());
 
         relations.add(relation);
-        return this;
     }
 
     public Set<Class<?>> getChildClasses() {

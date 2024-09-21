@@ -5,7 +5,7 @@ import com.github.kuros.random.jpa.metamodel.AttributeProvider;
 import com.github.kuros.random.jpa.provider.UniqueConstraintProvider;
 import com.github.kuros.random.jpa.provider.base.AbstractUniqueConstraintProvider;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
 /*
  * Copyright (c) 2015 Kumar Rohit
@@ -25,9 +25,11 @@ import javax.persistence.EntityManager;
  */
 public class PostgresUniqueConstraintProvider extends AbstractUniqueConstraintProvider {
 
-    private static final String QUERY = "SELECT table_name, column_name\n" +
-            "FROM information_schema.constraint_column_usage " +
-            "WHERE constraint_schema not in ('pg_catalog', 'information_schema')";
+    private static final String QUERY = """
+            SELECT table_name, column_name
+            FROM information_schema.constraint_column_usage \
+            WHERE constraint_schema not in ('pg_catalog', 'information_schema')\
+            """;
 
     @VisibleForTesting
     PostgresUniqueConstraintProvider(final EntityManager entityManager, final AttributeProvider attributeProvider) {

@@ -3,10 +3,9 @@ package com.github.kuros.random.jpa.metamodel.providers;
 import com.github.kuros.random.jpa.metamodel.AttributeProvider;
 import com.github.kuros.random.jpa.metamodel.model.ColumnNameType;
 import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.metamodel.EntityType;
 
-import javax.persistence.EntityManager;
-import javax.persistence.metamodel.EntityType;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,9 +32,9 @@ import static com.github.kuros.random.jpa.util.Util.invokeMethod;
  */
 public class EclipseLinkProvider implements AttributeProvider {
 
-    private Map<Class<?>, EntityTableMapping> entityTableMappingByClass;
-    private Map<String, List<EntityTableMapping>> entityTableMappingByTableName;
-    private EntityManager entityManager;
+    private final Map<Class<?>, EntityTableMapping> entityTableMappingByClass;
+    private final Map<String, List<EntityTableMapping>> entityTableMappingByTableName;
+    private final EntityManager entityManager;
 
     public EclipseLinkProvider(final EntityManager entityManager) {
         this.entityManager = entityManager;
@@ -86,7 +85,7 @@ public class EclipseLinkProvider implements AttributeProvider {
             }
 
             final List<Object> fields = (List<Object>) invokeMethod(databaseMapping, "getFields");
-            if (fields.size() > 0) {
+            if (!fields.isEmpty()) {
                 final boolean isForeignReferenceMapping = (Boolean) invokeMethod(databaseMapping, "isForeignReferenceMapping");
 
                 if (isForeignReferenceMapping) {

@@ -26,8 +26,8 @@ import java.util.Set;
  */
 public class HierarchyGraph {
 
-    private Map<Class<?>, TableNode> parentRelations;
-    private Map<Class<?>, Set<Relation>> attributeRelations;
+    private final Map<Class<?>, TableNode> parentRelations;
+    private final Map<Class<?>, Set<Relation>> attributeRelations;
 
     @VisibleForTesting
     HierarchyGraph() {

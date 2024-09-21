@@ -8,7 +8,7 @@ import java.util.logging.Level;
 
 class DefaultProvider implements Logger {
 
-    private java.util.logging.Logger logger;
+    private final java.util.logging.Logger logger;
 
     private DefaultProvider(final Class<?> clazz) {
         this.logger = java.util.logging.Logger.getLogger(clazz.getName());

@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 
 class Slf4JProvider implements Logger {
 
-    private org.slf4j.Logger logger;
+    private final org.slf4j.Logger logger;
 
     Slf4JProvider(final Class<?> clazz) {
         logger = LoggerFactory.getLogger(clazz);

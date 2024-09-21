@@ -9,8 +9,8 @@ import com.github.kuros.random.jpa.provider.model.ColumnCharacterLength;
 import com.github.kuros.random.jpa.provider.model.ColumnDetail;
 import com.github.kuros.random.jpa.util.NumberUtil;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.List;
@@ -36,9 +36,9 @@ public abstract class AbstractCharacterLengthProvider implements SQLCharacterLen
 
     private static final Logger LOGGER = LogFactory.getLogger(AbstractCharacterLengthProvider.class);
     private static final Map<String, Class<?>> DATA_TYPE_MAP;
-    private Map<String, ColumnCharacterLength> columnLengthsByTable;
-    private EntityManager entityManager;
-    private AttributeProvider attributeProvider;
+    private final Map<String, ColumnCharacterLength> columnLengthsByTable;
+    private final EntityManager entityManager;
+    private final AttributeProvider attributeProvider;
 
     public AbstractCharacterLengthProvider(final AttributeProvider attributeProvider, final EntityManager entityManager) {
         this.attributeProvider = attributeProvider;
@@ -49,7 +49,7 @@ public abstract class AbstractCharacterLengthProvider implements SQLCharacterLen
     private Map<String, ColumnCharacterLength> init() {
         final Map<String, ColumnCharacterLength> lengths = new HashMap<>();
         final Query query = entityManager.createNativeQuery(getQuery());
-        final List resultList = query.getResultList();
+        final var resultList = query.getResultList();
         for (Object o : resultList) {
             final Object[] row = (Object[]) o;
 
@@ -72,11 +72,7 @@ public abstract class AbstractCharacterLengthProvider implements SQLCharacterLen
                             DATA_TYPE_MAP.get(dataType.toLowerCase()));
 
                     final String entityName = entityTableMapping.getEntityName();
-                    ColumnCharacterLength columnCharacterLength = lengths.get(entityName);
-                    if (columnCharacterLength == null) {
-                        columnCharacterLength = ColumnCharacterLength.newInstance();
-                        lengths.put(entityName, columnCharacterLength);
-                    }
+                    ColumnCharacterLength columnCharacterLength = lengths.computeIfAbsent(entityName, k -> ColumnCharacterLength.newInstance());
 
                     columnCharacterLength.add(attributeName, columnDetail);
                 }
@@ -128,7 +124,7 @@ public abstract class AbstractCharacterLengthProvider implements SQLCharacterLen
             return null;
         }
 
-        final Integer value;
+        final int value;
         if (number.intValue() < 0) {
             LOGGER.info("-ve value found, using default value:" + DEFAULT_MAX_LENGTH + " for Table: " + tableName + ", Column: " + columnName);
             value = DEFAULT_MAX_LENGTH;

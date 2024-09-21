@@ -2,8 +2,8 @@ package com.github.kuros.random.jpa.util;
 
 import com.github.kuros.random.jpa.exception.RandomJPAException;
 
-import javax.persistence.metamodel.Attribute;
-import javax.persistence.metamodel.PluralAttribute;
+import jakarta.persistence.metamodel.Attribute;
+import jakarta.persistence.metamodel.PluralAttribute;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,8 +40,8 @@ public class AttributeHelper {
         if (attribute == null) {
             throw new NullPointerException(ATTRIBUTE_CANNOT_BE_NULL);
         }
-        if (attribute instanceof PluralAttribute) {
-            return ((PluralAttribute) attribute).getBindableJavaType();
+        if (attribute instanceof PluralAttribute<?,?,?> pluralAttribute) {
+            return pluralAttribute.getBindableJavaType();
         }
         return attribute.getJavaType();
     }

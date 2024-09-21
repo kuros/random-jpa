@@ -8,25 +8,24 @@ import com.github.kuros.random.jpa.testUtil.EntityManagerProvider;
 import com.github.kuros.random.jpa.testUtil.RandomFixture;
 import com.github.kuros.random.jpa.testUtil.entity.P;
 import com.github.kuros.random.jpa.testUtil.entity.Q;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class FinderTest {
 
     private Finder finder;
     private EntityManager entityManager;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         entityManager = EntityManagerProvider.getEntityManager();
         final Cache cache = Cache.create(Database.NONE, entityManager);
@@ -54,30 +53,34 @@ public class FinderTest {
 
     }
 
-    @Test(expected = RandomJPAException.class)
+    @Test
     public void shouldThrowExceptionIfAttributeNamesAreIncorrect() {
-        final P p = new P();
-        EntityManagerProvider.persist(p);
-        final Q expected = new Q();
-        expected.setpId(p.getId());
-        EntityManagerProvider.persist(expected);
+        assertThrows(RandomJPAException.class, () -> {
+            final P p = new P();
+            EntityManagerProvider.persist(p);
+            final Q expected = new Q();
+            expected.setpId(p.getId());
+            EntityManagerProvider.persist(expected);
 
-        final Q input = new Q();
-        input.setpId(p.getId());
+            final Q input = new Q();
+            input.setpId(p.getId());
 
-        final List<String> attributes = new ArrayList<>();
-        attributes.add("randomId");
-        finder.findByAttributes(input, attributes);
+            final List<String> attributes = new ArrayList<>();
+            attributes.add("randomId");
+            finder.findByAttributes(input, attributes);
+        });
     }
 
-    @Test(expected = ResultNotFoundException.class)
+    @Test
     public void shouldReturnNullIfResultIsNotFound() {
-        final Q input = new Q();
-        input.setpId(RandomFixture.create(Long.class));
+        assertThrows(ResultNotFoundException.class, () -> {
+            final Q input = new Q();
+            input.setpId(RandomFixture.create(Long.class));
 
-        final List<String> attributes = new ArrayList<>();
-        attributes.add("pId");
-        finder.findByAttributes(input, attributes);
+            final List<String> attributes = new ArrayList<>();
+            attributes.add("pId");
+            finder.findByAttributes(input, attributes);
+        });
     }
 
     @Test
@@ -112,13 +115,15 @@ public class FinderTest {
         }
     }
 
-    @Test(expected = RandomJPAException.class)
+    @Test
     public void shouldReturnNullIfAttributeValueIsNull() {
-        final Q input = new Q();
+        assertThrows(RandomJPAException.class, () -> {
+            final Q input = new Q();
 
-        final List<String> attributes = new ArrayList<>();
-        attributes.add("pId");
-        finder.findByAttributes(input, attributes);
+            final List<String> attributes = new ArrayList<>();
+            attributes.add("pId");
+            finder.findByAttributes(input, attributes);
+        });
     }
 
     @Test
@@ -163,7 +168,7 @@ public class FinderTest {
 
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         if (entityManager != null && entityManager.isOpen()) {
             entityManager.close();

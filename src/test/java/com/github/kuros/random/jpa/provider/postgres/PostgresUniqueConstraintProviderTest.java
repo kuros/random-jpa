@@ -1,18 +1,18 @@
 package com.github.kuros.random.jpa.provider.postgres;
 
 import com.github.kuros.random.jpa.metamodel.AttributeProvider;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 
 import java.util.ArrayList;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PostgresUniqueConstraintProviderTest {
 
@@ -25,7 +25,7 @@ public class PostgresUniqueConstraintProviderTest {
     @Mock
     private Query query;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
 
@@ -35,8 +35,10 @@ public class PostgresUniqueConstraintProviderTest {
 
     @Test
     public void testQueryForUniqueConstraint() {
-        final String query = "SELECT table_name, column_name\n" +
-                "FROM information_schema.constraint_column_usage WHERE constraint_schema not in ('pg_catalog', 'information_schema')";
+        final String query = """
+                SELECT table_name, column_name
+                FROM information_schema.constraint_column_usage WHERE constraint_schema not in ('pg_catalog', 'information_schema')\
+                """;
 
         final PostgresUniqueConstraintProvider uniqueConstraintProvider = (PostgresUniqueConstraintProvider) PostgresUniqueConstraintProvider.getInstance(entityManager, attributeProvider);
 

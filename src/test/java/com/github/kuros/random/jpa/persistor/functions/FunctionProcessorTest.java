@@ -4,23 +4,22 @@ import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.exception.RandomJPAException;
 import com.github.kuros.random.jpa.testUtil.RandomFixture;
 import com.github.kuros.random.jpa.testUtil.entity.Z;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class FunctionProcessorTest {
 
     @Mock
     private Cache cache;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
     }
@@ -38,17 +37,19 @@ public class FunctionProcessorTest {
     }
 
     @SuppressWarnings("unchecked")
-    @Test(expected = RandomJPAException.class)
+    @Test
     public void shouldThrowExceptionWhenPersistedObjectIsNull() {
+        assertThrows(RandomJPAException.class, () -> {
 
-        final List<Function> functions = new ArrayList<>();
+            final List<Function> functions = new ArrayList<>();
 
-        functions.add(o -> null);
+            functions.add(o -> null);
 
-        final Z z = RandomFixture.create(Z.class);
+            final Z z = RandomFixture.create(Z.class);
 
-        final TestFunctionProcessor functionProcessor = new TestFunctionProcessor(cache, functions);
-        functionProcessor.findOrSave(z);
+            final TestFunctionProcessor functionProcessor = new TestFunctionProcessor(cache, functions);
+            functionProcessor.findOrSave(z);
+        });
     }
 
     @Test @SuppressWarnings("unchecked")

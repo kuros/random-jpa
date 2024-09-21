@@ -22,9 +22,9 @@ import java.util.List;
  */
 public final class Before {
 
-    private Class<?> type;
+    private final Class<?> type;
 
-    private List<Class<?>> toClasses;
+    private final List<Class<?>> toClasses;
 
     private Before(final Class<?> type) {
         this.type = type;

@@ -43,8 +43,7 @@ public class NumberUtil {
             return (T) returnValue;
         }
 
-        if (value instanceof Number) {
-            final  Number number = (Number) value;
+        if (value instanceof Number number) {
             if (Integer.TYPE == type || Integer.class == type) {
                 returnValue = number.intValue();
             } else if (Long.TYPE == type || Long.class == type) {

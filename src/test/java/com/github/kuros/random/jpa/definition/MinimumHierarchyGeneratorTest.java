@@ -8,13 +8,12 @@ import com.github.kuros.random.jpa.testUtil.entity.X;
 import com.github.kuros.random.jpa.testUtil.entity.Y;
 import com.github.kuros.random.jpa.testUtil.entity.Z;
 import com.github.kuros.random.jpa.types.Entity;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MinimumHierarchyGeneratorTest {
 
@@ -39,7 +38,7 @@ public class MinimumHierarchyGeneratorTest {
         entities.add(Entity.of(Z.class));
         final HierarchyGraph generatedHierarchyGraph = MinimumHierarchyGenerator.generate(hierarchyGraph, entities);
 
-        assertEquals("Nodes in graph: X, Y, Z", 3, generatedHierarchyGraph.getKeySet().size());
+        assertEquals(3, generatedHierarchyGraph.getKeySet().size(), "Nodes in graph: X, Y, Z");
         assertEquals(2, generatedHierarchyGraph.getParents(Z.class).size());
         assertTrue(generatedHierarchyGraph.getParents(Z.class).contains(X.class));
         assertTrue(generatedHierarchyGraph.getParents(Z.class).contains(Y.class));
@@ -79,17 +78,21 @@ public class MinimumHierarchyGeneratorTest {
 
         assertEquals(0, generatedHierarchyGraph.getParents(A.class).size());
         assertEquals(1, generatedHierarchyGraph.getParents(F.class).size());
-        assertTrue("Parent contains A", generatedHierarchyGraph.getParents(F.class).remove(A.class));
+        assertTrue(generatedHierarchyGraph.getParents(F.class).remove(A.class), "Parent contains A");
     }
 
-    @Test(expected = RandomJPAException.class)
+    @Test
     public void shouldThrowExceptionWhenCyclicDependencyFound() {
-        final HierarchyGraph hierarchyGraph = MockedHierarchyGraph.getHierarchyGraph();
+        assertThrows(RandomJPAException.class, () -> {
+            final HierarchyGraph hierarchyGraph = MockedHierarchyGraph.getHierarchyGraph();
 
-        final List<Entity> entities = new ArrayList<>();
-        entities.add(Entity.of(A.class).createAfter(F.class));
-        entities.add(Entity.of(F.class).createAfter(A.class));
-        MinimumHierarchyGenerator.generate(hierarchyGraph, entities);
+            final List<Entity> entities = new ArrayList<>();
+            entities.add(Entity.of(A.class).createAfter(F.class));
+            entities.add(Entity.of(F.class).createAfter(A.class));
+            MinimumHierarchyGenerator.generate(hierarchyGraph, entities);
+
+
+        });
 
 
     }

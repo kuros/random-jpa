@@ -12,18 +12,16 @@ import com.github.kuros.random.jpa.testUtil.entity.Y;
 import com.github.kuros.random.jpa.testUtil.entity.Z;
 import com.github.kuros.random.jpa.testUtil.hierarchyGraph.MockedHierarchyGraph;
 import com.github.kuros.random.jpa.types.DeletionOrder;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CleanerImplTest {
 
@@ -31,7 +29,7 @@ public class CleanerImplTest {
     private EntityManager entityManager;
     private Cleaner cleaner;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         this.entityManager = EntityManagerProvider.getEntityManager();
         cache = Cache.create(Database.NONE, entityManager);
@@ -136,11 +134,13 @@ public class CleanerImplTest {
 
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void shouldThrowExceptionIfEntityWithIdNotFound() {
-        entityManager.getTransaction().begin();
-        cleaner.delete(Q.class, RandomFixture.create(Long.class));
-        entityManager.getTransaction().commit();
+        assertThrows(IllegalArgumentException.class, () -> {
+            entityManager.getTransaction().begin();
+            cleaner.delete(Q.class, RandomFixture.create(Long.class));
+            entityManager.getTransaction().commit();
+        });
     }
 
 
@@ -288,7 +288,7 @@ public class CleanerImplTest {
         return x;
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         if (entityManager != null && entityManager.isOpen()) {
             entityManager.close();

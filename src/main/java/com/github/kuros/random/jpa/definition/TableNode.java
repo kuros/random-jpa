@@ -25,8 +25,8 @@ import java.util.Set;
  */
 public final class TableNode {
 
-    private Set<Class<?>> parentClasses;
-    private List<Relation> relations;
+    private final Set<Class<?>> parentClasses;
+    private final List<Relation> relations;
 
     public static TableNode newInstance() {
         return new TableNode();
@@ -37,14 +37,12 @@ public final class TableNode {
         this.relations = new ArrayList<>();
     }
 
-    public TableNode addRelation(final Relation relation) {
+    public void addRelation(final Relation relation) {
         this.relations.add(relation);
-        return this;
     }
 
-    public TableNode addParent(final Class<?> parentClass) {
+    public void addParent(final Class<?> parentClass) {
         parentClasses.add(parentClass);
-        return this;
     }
 
     public Set<Class<?>> getParentClasses() {

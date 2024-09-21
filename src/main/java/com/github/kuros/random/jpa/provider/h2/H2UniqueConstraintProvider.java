@@ -6,8 +6,8 @@ import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
 import com.github.kuros.random.jpa.provider.UniqueConstraintProvider;
 import com.github.kuros.random.jpa.provider.base.AbstractUniqueConstraintProvider;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,9 +29,13 @@ import java.util.List;
  */
 public class H2UniqueConstraintProvider extends AbstractUniqueConstraintProvider {
 
-    private static final String QUERY = "select c.TABLE_NAME, c.COLUMN_LIST\n" +
-            "  from INFORMATION_SCHEMA.CONSTRAINTS c\n" +
-            "  where c.CONSTRAINT_TYPE = 'UNIQUE'";
+    private static final String QUERY = """
+            select TC.TABLE_NAME AS tab_name, CCU.COLUMN_NAME as col_name
+                        from INFORMATION_SCHEMA.TABLE_CONSTRAINTS TC
+                        JOIN INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE CCU ON TC.TABLE_NAME = CCU.TABLE_NAME AND TC.CONSTRAINT_NAME = CCU.CONSTRAINT_NAME
+                       where TC.CONSTRAINT_TYPE = 'UNIQUE'
+                       AND TC.TABLE_SCHEMA = 'PUBLIC'
+            """;
 
     @VisibleForTesting
     H2UniqueConstraintProvider(final EntityManager entityManager, final AttributeProvider attributeProvider) {

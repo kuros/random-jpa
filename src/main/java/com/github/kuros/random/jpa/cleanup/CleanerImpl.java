@@ -16,9 +16,9 @@ import com.github.kuros.random.jpa.util.ArrayListMultimap;
 import com.github.kuros.random.jpa.util.Multimap;
 import com.github.kuros.random.jpa.util.NumberUtil;
 import com.github.kuros.random.jpa.util.Util;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,13 +47,13 @@ import java.util.Set;
 public final class CleanerImpl implements Cleaner {
 
     private static final String DELETE_FROM = "DELETE FROM ";
-    private EntityManager entityManager;
-    private HierarchyGraph hierarchyGraph;
-    private ChildGraph childGraph;
-    private Finder finder;
-    private Set<Class<?>> skipTruncation;
-    private Set<Class<?>> allClassesToSkip;
-    private Cache cache;
+    private final EntityManager entityManager;
+    private final HierarchyGraph hierarchyGraph;
+    private final ChildGraph childGraph;
+    private final Finder finder;
+    private final Set<Class<?>> skipTruncation;
+    private final Set<Class<?>> allClassesToSkip;
+    private final Cache cache;
 
     private static final Logger LOGGER = LogFactory.getLogger(CleanerImpl.class);
 
@@ -72,8 +72,9 @@ public final class CleanerImpl implements Cleaner {
         return new CleanerImpl(cache);
     }
 
+    @SafeVarargs
     @Override
-    public <T, V> void delete(final Class<T> type, final V... ids) {
+    public final <T, V> void delete(final Class<T> type, final V... ids) {
         delete(getDeletionOrder(type, ids));
     }
 
@@ -87,8 +88,9 @@ public final class CleanerImpl implements Cleaner {
         }
     }
 
+    @SafeVarargs
     @Override
-    public <T, V> DeletionOrder getDeletionOrder(final Class<T> type, final V... ids) {
+    public final <T, V> DeletionOrder getDeletionOrder(final Class<T> type, final V... ids) {
         final List<Object> deletionOrder = new ArrayList<>();
         for (V id : ids) {
             final T byId = findById(type, id);
@@ -108,14 +110,14 @@ public final class CleanerImpl implements Cleaner {
         final List<Object> deletionOrders = deletionOrder.getDeletionOrders();
         final AttributeProvider attributeProvider = cache.getAttributeProvider();
 
-        final Set<Class> uniqueClassesInOrder = new LinkedHashSet<>();
-        Multimap<Class, Object> classEntityMultimap = ArrayListMultimap.newArrayListMultimap();
+        final Set<Class<?>> uniqueClassesInOrder = new LinkedHashSet<>();
+        Multimap<Class<?>, Object> classEntityMultimap = ArrayListMultimap.newArrayListMultimap();
         for (Object entity : deletionOrders) {
             classEntityMultimap.put(entity.getClass(), entity);
             uniqueClassesInOrder.add(entity.getClass());
         }
 
-        for (Class type : uniqueClassesInOrder) {
+        for (Class<?> type : uniqueClassesInOrder) {
             final EntityTableMapping entityTableMapping = attributeProvider.get(type);
             final List<String> columnIds = entityTableMapping.getColumnIds();
 
@@ -243,7 +245,7 @@ public final class CleanerImpl implements Cleaner {
         final Set<Relation> childRelations = childGraph.getChildRelations(type);
 
         for (Relation childRelation : childRelations) {
-            final Class childClass = childRelation.getTo().getInitializationClass();
+            final Class<?> childClass = childRelation.getTo().getInitializationClass();
             Set<Relation> relations = childRelationMap.computeIfAbsent(childClass, k -> new HashSet<>());
 
             relations.add(childRelation);

@@ -1,6 +1,6 @@
 package com.github.kuros.random.jpa.link;
 
-import javax.persistence.metamodel.Attribute;
+import jakarta.persistence.metamodel.Attribute;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

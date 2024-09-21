@@ -9,7 +9,7 @@ import com.github.kuros.random.jpa.provider.mysql.MySqlUniqueConstraintProvider;
 import com.github.kuros.random.jpa.provider.oracle.OracleUniqueConstraintProvider;
 import com.github.kuros.random.jpa.provider.postgres.PostgresUniqueConstraintProvider;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
 

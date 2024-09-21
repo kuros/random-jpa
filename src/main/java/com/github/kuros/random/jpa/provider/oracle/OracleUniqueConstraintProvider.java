@@ -5,7 +5,7 @@ import com.github.kuros.random.jpa.metamodel.AttributeProvider;
 import com.github.kuros.random.jpa.provider.UniqueConstraintProvider;
 import com.github.kuros.random.jpa.provider.base.AbstractUniqueConstraintProvider;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
 /*
  * Copyright (c) 2015 Kumar Rohit
@@ -25,11 +25,13 @@ import javax.persistence.EntityManager;
  */
 public class OracleUniqueConstraintProvider extends AbstractUniqueConstraintProvider {
 
-    private static final String QUERY = "select ac.TABLE_NAME, acc.COLUMN_NAME" +
-            " from ALL_CONSTRAINTS ac, ALL_CONS_COLUMNS acc" +
-            " WHERE ac.CONSTRAINT_NAME=acc.CONSTRAINT_NAME" +
-            "   and ac.CONSTRAINT_TYPE = 'U'\n" +
-            "   and ac.owner = (select user from dual)";
+    private static final String QUERY = """
+            select ac.TABLE_NAME, acc.COLUMN_NAME\
+             from ALL_CONSTRAINTS ac, ALL_CONS_COLUMNS acc\
+             WHERE ac.CONSTRAINT_NAME=acc.CONSTRAINT_NAME\
+               and ac.CONSTRAINT_TYPE = 'U'
+               and ac.owner = (select user from dual)\
+            """;
 
     @VisibleForTesting
     OracleUniqueConstraintProvider(final EntityManager entityManager, final AttributeProvider attributeProvider) {

@@ -12,9 +12,8 @@ import com.github.kuros.random.jpa.provider.factory.MultiplePrimaryKeyProviderFa
 import com.github.kuros.random.jpa.provider.factory.RelationshipProviderFactory;
 import com.github.kuros.random.jpa.provider.factory.SQLCharacterLengthProviderFactory;
 import com.github.kuros.random.jpa.provider.factory.UniqueConstraintProviderFactory;
-import com.github.kuros.random.jpa.types.Trigger;
+import jakarta.persistence.EntityManager;
 
-import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -37,14 +36,14 @@ import java.util.Set;
  */
 public class Cache {
 
-    private EntityManager entityManager;
-    private Database database;
+    private final EntityManager entityManager;
+    private final Database database;
+    private final AttributeProvider attributeProvider;
+    private final MultiplePrimaryKeyProvider multiplePrimaryKeyProvider;
+    private final RelationshipProvider relationshipProvider;
+    private final SQLCharacterLengthProvider sqlCharacterLengthProvider;
+    private final UniqueConstraintProvider uniqueConstraintProvider;
     private TriggerCache triggerCache;
-    private AttributeProvider attributeProvider;
-    private MultiplePrimaryKeyProvider multiplePrimaryKeyProvider;
-    private RelationshipProvider relationshipProvider;
-    private SQLCharacterLengthProvider sqlCharacterLengthProvider;
-    private UniqueConstraintProvider uniqueConstraintProvider;
     private Set<Class<?>> skipTruncation;
     private HierarchyGraph hierarchyGraph;
 

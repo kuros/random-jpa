@@ -3,9 +3,11 @@ package com.github.kuros.random.jpa.definition;
 import com.github.kuros.random.jpa.exception.RandomJPAException;
 import com.github.kuros.random.jpa.mapper.Relation;
 import com.github.kuros.random.jpa.metamodel.model.FieldWrapper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /*
  * Copyright (c) 2015 Kumar Rohit
@@ -25,47 +27,53 @@ import java.lang.reflect.Field;
  */
 public class CyclicValidatorTest {
 
-    @Test(expected = RandomJPAException.class)
-    public void testSelfCyclicDependency() throws Exception {
+    @Test
+    public void testSelfCyclicDependency() {
+        assertThrows(RandomJPAException.class, () -> {
 
-        final Field table1 = TestClass.class.getDeclaredField("attr1");
+            final Field table1 = TestClass.class.getDeclaredField("attr1");
 
-        final HierarchyGraph hierarchyGraph = HierarchyGraph.newInstance();
-        hierarchyGraph.addRelation(Relation.newInstance(new FieldWrapper(table1), new FieldWrapper(table1)));
-        hierarchyGraph.addRelation(Relation.newInstance(new FieldWrapper(table1), new FieldWrapper(table1)));
+            final HierarchyGraph hierarchyGraph = HierarchyGraph.newInstance();
+            hierarchyGraph.addRelation(Relation.newInstance(new FieldWrapper(table1), new FieldWrapper(table1)));
+            hierarchyGraph.addRelation(Relation.newInstance(new FieldWrapper(table1), new FieldWrapper(table1)));
 
-        final CyclicValidator cyclicValidator = new CyclicValidator(hierarchyGraph);
-        cyclicValidator.validate();
+            final CyclicValidator cyclicValidator = new CyclicValidator(hierarchyGraph);
+            cyclicValidator.validate();
+        });
     }
 
-    @Test(expected = RandomJPAException.class)
-    public void testDirectCyclicDependency() throws Exception {
+    @Test
+    public void testDirectCyclicDependency() {
+        assertThrows(RandomJPAException.class, () -> {
 
-        final Field table1 = TestClass.class.getDeclaredField("attr1");
-        final Field table2 = TestClass2.class.getDeclaredField("attr1");
+            final Field table1 = TestClass.class.getDeclaredField("attr1");
+            final Field table2 = TestClass2.class.getDeclaredField("attr1");
 
-        final HierarchyGraph hierarchyGraph = HierarchyGraph.newInstance();
-        hierarchyGraph.addRelation(Relation.newInstance(new FieldWrapper(table1), new FieldWrapper(table2)));
-        hierarchyGraph.addRelation(Relation.newInstance(new FieldWrapper(table2), new FieldWrapper(table1)));
+            final HierarchyGraph hierarchyGraph = HierarchyGraph.newInstance();
+            hierarchyGraph.addRelation(Relation.newInstance(new FieldWrapper(table1), new FieldWrapper(table2)));
+            hierarchyGraph.addRelation(Relation.newInstance(new FieldWrapper(table2), new FieldWrapper(table1)));
 
-        final CyclicValidator cyclicValidator = new CyclicValidator(hierarchyGraph);
-        cyclicValidator.validate();
+            final CyclicValidator cyclicValidator = new CyclicValidator(hierarchyGraph);
+            cyclicValidator.validate();
+        });
     }
 
-    @Test(expected = RandomJPAException.class)
-    public void testInDirectCyclicDependency() throws Exception {
+    @Test
+    public void testInDirectCyclicDependency() {
+        assertThrows(RandomJPAException.class, () -> {
 
-        final Field table1 = TestClass.class.getDeclaredField("attr1");
-        final Field table2 = TestClass2.class.getDeclaredField("attr1");
-        final Field table3 = TestClass3.class.getDeclaredField("attr3");
+            final Field table1 = TestClass.class.getDeclaredField("attr1");
+            final Field table2 = TestClass2.class.getDeclaredField("attr1");
+            final Field table3 = TestClass3.class.getDeclaredField("attr3");
 
-        final HierarchyGraph hierarchyGraph = HierarchyGraph.newInstance();
-        hierarchyGraph.addRelation(Relation.newInstance(new FieldWrapper(table1), new FieldWrapper(table2)));
-        hierarchyGraph.addRelation(Relation.newInstance(new FieldWrapper(table2), new FieldWrapper(table3)));
-        hierarchyGraph.addRelation(Relation.newInstance(new FieldWrapper(table3), new FieldWrapper(table1)));
+            final HierarchyGraph hierarchyGraph = HierarchyGraph.newInstance();
+            hierarchyGraph.addRelation(Relation.newInstance(new FieldWrapper(table1), new FieldWrapper(table2)));
+            hierarchyGraph.addRelation(Relation.newInstance(new FieldWrapper(table2), new FieldWrapper(table3)));
+            hierarchyGraph.addRelation(Relation.newInstance(new FieldWrapper(table3), new FieldWrapper(table1)));
 
-        final CyclicValidator cyclicValidator = new CyclicValidator(hierarchyGraph);
-        cyclicValidator.validate();
+            final CyclicValidator cyclicValidator = new CyclicValidator(hierarchyGraph);
+            cyclicValidator.validate();
+        });
     }
 
     @Test

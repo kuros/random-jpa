@@ -1,19 +1,19 @@
 package com.github.kuros.random.jpa.provider.mssql;
 
 import com.github.kuros.random.jpa.provider.model.ForeignKeyRelation;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.anyString;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 /*
@@ -40,7 +40,7 @@ public class MSSQLRelationshipProviderTest {
     private Query query;
     private MSSQLRelationshipProvider mssqlRelationshipProvider;
 
-    @Before public void setUp() throws Exception {
+    @BeforeEach public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         mssqlRelationshipProvider = MSSQLRelationshipProvider.newInstance(entityManager);
     }

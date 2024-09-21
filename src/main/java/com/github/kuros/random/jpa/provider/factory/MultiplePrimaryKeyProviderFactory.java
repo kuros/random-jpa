@@ -9,7 +9,7 @@ import com.github.kuros.random.jpa.provider.mysql.MySqlMultiplePrimaryKeyProvide
 import com.github.kuros.random.jpa.provider.oracle.OracleMultiplePrimaryKeyProvider;
 import com.github.kuros.random.jpa.provider.postgres.PostgresMultiplePrimaryKeyProvider;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
 

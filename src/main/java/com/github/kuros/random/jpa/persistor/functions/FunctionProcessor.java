@@ -25,15 +25,14 @@ import java.util.List;
  */
 public class FunctionProcessor<T> {
 
-    private Cache cache;
+    private final Cache cache;
 
     public FunctionProcessor(final Cache cache) {
         this.cache = cache;
     }
 
-    @SuppressWarnings("unchecked")
     public T findOrSave(final T object) {
-        final List<Function> functions = getFunctions();
+        final List<Function<T>> functions = getFunctions();
 
         T persistedObject = null;
 
@@ -57,12 +56,12 @@ public class FunctionProcessor<T> {
         return persistedObject;
     }
 
-    List<Function> getFunctions() {
-        final List<Function> functions = new ArrayList<>();
-        functions.add(new TriggerFunction(cache));
-        functions.add(new FindByUniqueIdentities(cache));
-        functions.add(new FindById(cache));
-        functions.add(new PersistFunction(cache));
+    List<Function<T>> getFunctions() {
+        final List<Function<T>> functions = new ArrayList<>();
+        functions.add(new TriggerFunction<>(cache));
+        functions.add(new FindByUniqueIdentities<>(cache));
+        functions.add(new FindById<>(cache));
+        functions.add(new PersistFunction<>(cache));
         return functions;
     }
 }

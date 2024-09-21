@@ -1,7 +1,7 @@
 package com.github.kuros.random.jpa.random.generator;
 
 import com.github.kuros.random.jpa.testUtil.entity.Person;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -12,9 +12,7 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 /*
  * Copyright (c) 2015 Kumar Rohit

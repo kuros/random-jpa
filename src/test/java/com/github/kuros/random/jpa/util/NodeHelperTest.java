@@ -5,12 +5,12 @@ import com.github.kuros.random.jpa.testUtil.entity.B;
 import com.github.kuros.random.jpa.testUtil.entity.C;
 import com.github.kuros.random.jpa.types.ClassIndex;
 import com.github.kuros.random.jpa.types.Node;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NodeHelperTest {
 

@@ -4,7 +4,7 @@ import com.github.kuros.random.jpa.annotation.VisibleForTesting;
 import com.github.kuros.random.jpa.metamodel.AttributeProvider;
 import com.github.kuros.random.jpa.provider.base.AbstractCharacterLengthProvider;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
 /*
  * Copyright (c) 2015 Kumar Rohit
@@ -24,9 +24,11 @@ import javax.persistence.EntityManager;
  */
 public final class PostgresCharacterLengthProvider extends AbstractCharacterLengthProvider {
 
-    private static final String QUERY = "SELECT table_name, column_name, character_maximum_length, numeric_precision," +
-            " numeric_scale, data_type\n" +
-            "FROM information_schema.columns WHERE table_schema not in ('pg_catalog', 'information_schema')";
+    private static final String QUERY = """
+            SELECT table_name, column_name, character_maximum_length, numeric_precision,\
+             numeric_scale, data_type
+            FROM information_schema.columns WHERE table_schema not in ('pg_catalog', 'information_schema')\
+            """;
 
     @VisibleForTesting
     PostgresCharacterLengthProvider(final EntityManager entityManager, final AttributeProvider attributeProvider) {

@@ -4,9 +4,9 @@ import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
 import com.github.kuros.random.jpa.metamodel.model.FieldWrapper;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.metamodel.EntityType;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.metamodel.EntityType;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,8 +31,8 @@ import java.util.Set;
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 public class MetaModelProviderImpl implements MetaModelProvider {
-    private EntityManager entityManager;
-    private AttributeProvider attributeProvider;
+    private final EntityManager entityManager;
+    private final AttributeProvider attributeProvider;
 
     public MetaModelProviderImpl(final Cache cache) {
         this.entityManager = cache.getEntityManager();

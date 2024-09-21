@@ -21,13 +21,10 @@ import java.util.List;
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 public interface ResultMap {
-    @SuppressWarnings("unchecked")
     <T> T get(Class<T> type);
 
-    @SuppressWarnings("unchecked")
     <T> T get(Class<T> type, int index);
 
-    @SuppressWarnings("unchecked")
     <T> List<T> getAll(Class<T> type);
 
     void print(Printer printer);

@@ -3,7 +3,7 @@ package com.github.kuros.random.jpa.provider.oracle;
 import com.github.kuros.random.jpa.annotation.VisibleForTesting;
 import com.github.kuros.random.jpa.provider.base.AbstractRelationshipProvider;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
 /*
  * Copyright (c) 2015 Kumar Rohit
@@ -23,17 +23,19 @@ import javax.persistence.EntityManager;
  */
 public final class OracleRelationshipProvider extends AbstractRelationshipProvider {
 
-    private static final String QUERY = "SELECT\n" +
-            "      c_src.TABLE_NAME as parent_table,\n" +
-            "       c_src.COLUMN_NAME as parent_attribute,\n" +
-            "       c_dest.TABLE_NAME as referenced_table,\n" +
-            "       c_dest.COLUMN_NAME as referenced_attribute\n" +
-            "FROM ALL_CONSTRAINTS c_list, ALL_CONS_COLUMNS c_src, ALL_CONS_COLUMNS c_dest\n" +
-            "WHERE c_list.CONSTRAINT_NAME = c_src.CONSTRAINT_NAME\n" +
-            "      AND c_list.R_CONSTRAINT_NAME = c_dest.CONSTRAINT_NAME\n" +
-            "      AND c_list.CONSTRAINT_TYPE = 'R'\n" +
-            "      And c_list.owner = (select user from dual)\n" +
-            "order by c_src.TABLE_NAME, c_src.COLUMN_NAME";
+    private static final String QUERY = """
+            SELECT
+                  c_src.TABLE_NAME as parent_table,
+                   c_src.COLUMN_NAME as parent_attribute,
+                   c_dest.TABLE_NAME as referenced_table,
+                   c_dest.COLUMN_NAME as referenced_attribute
+            FROM ALL_CONSTRAINTS c_list, ALL_CONS_COLUMNS c_src, ALL_CONS_COLUMNS c_dest
+            WHERE c_list.CONSTRAINT_NAME = c_src.CONSTRAINT_NAME
+                  AND c_list.R_CONSTRAINT_NAME = c_dest.CONSTRAINT_NAME
+                  AND c_list.CONSTRAINT_TYPE = 'R'
+                  And c_list.owner = (select user from dual)
+            order by c_src.TABLE_NAME, c_src.COLUMN_NAME\
+            """;
 
 
     @VisibleForTesting

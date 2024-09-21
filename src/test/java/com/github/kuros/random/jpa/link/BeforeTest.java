@@ -3,10 +3,10 @@ package com.github.kuros.random.jpa.link;
 import com.github.kuros.random.jpa.testUtil.entity.A;
 import com.github.kuros.random.jpa.testUtil.entity.B;
 import com.github.kuros.random.jpa.testUtil.entity.C;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BeforeTest {
 

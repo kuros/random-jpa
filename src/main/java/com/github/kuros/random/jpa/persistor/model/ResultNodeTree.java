@@ -26,17 +26,17 @@ import java.util.Map;
  */
 public class ResultNodeTree {
 
-    private final ResultNode root;
+    private final ResultNode<?> root;
     private final Cache cache;
-    private Map<Class<?>, List<Object>> resultMap;
+    private final Map<Class<?>, List<Object>> resultMap;
 
-    private ResultNodeTree(final Cache cache, final ResultNode root) {
+    private ResultNodeTree(final Cache cache, final ResultNode<?> root) {
         this.cache = cache;
         this.resultMap = new HashMap<>();
         this.root = root;
     }
 
-    public static ResultNodeTree newInstance(final Cache cache, final ResultNode root) {
+    public static ResultNodeTree newInstance(final Cache cache, final ResultNode<?> root) {
         return new ResultNodeTree(cache, root);
     }
 
@@ -45,7 +45,6 @@ public class ResultNodeTree {
     }
 
 
-    @SuppressWarnings("unchecked")
     public <T> T get(final Class<T> type) {
         return get(type, 0);
     }

@@ -5,14 +5,14 @@ import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.metamodel.model.FieldWrapper;
 import com.github.kuros.random.jpa.testUtil.EntityManagerProvider;
 import com.github.kuros.random.jpa.testUtil.entity.R;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /*
  * Copyright (c) 2015 Kumar Rohit
@@ -34,7 +34,7 @@ public class MetaModelProviderImplTest {
 
     private MetaModelProvider metaModelProvider;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         final EntityManager entityManager = EntityManagerProvider.getEntityManager();
         metaModelProvider = new MetaModelProviderImpl(Cache.create(Database.NONE, entityManager));

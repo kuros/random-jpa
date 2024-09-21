@@ -4,18 +4,16 @@ import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
 import com.github.kuros.random.jpa.testUtil.EntityManagerProvider;
 import com.github.kuros.random.jpa.testUtil.entity.R;
 import com.github.kuros.random.jpa.testUtil.entity.RelationEntity;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.MockitoAnnotations;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Created by Kumar Rohit on 06/10/17.
@@ -26,7 +24,7 @@ public class EclipseLinkProviderTest {
 
     private EclipseLinkProvider hibernateProvider;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         entityManager = EntityManagerProvider.getEclipseLinkEntityManager();
@@ -93,7 +91,7 @@ public class EclipseLinkProviderTest {
     }
 
 
-    @After
+    @AfterEach
     public void tearDown() {
         if (entityManager != null && entityManager.isOpen()) {
             entityManager.close();

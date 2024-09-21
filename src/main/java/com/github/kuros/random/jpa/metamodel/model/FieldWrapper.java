@@ -39,7 +39,7 @@ public class FieldWrapper {
         this.overriddenFieldName = overriddenFieldName;
     }
 
-    public Class getInitializationClass() {
+    public Class<?> getInitializationClass() {
         return initializationClass;
     }
 

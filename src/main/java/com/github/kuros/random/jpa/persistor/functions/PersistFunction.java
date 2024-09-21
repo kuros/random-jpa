@@ -4,7 +4,7 @@ import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.log.LogFactory;
 import com.github.kuros.random.jpa.log.Logger;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
 /*
  * Copyright (c) 2015 Kumar Rohit
@@ -25,17 +25,16 @@ import javax.persistence.EntityManager;
 class PersistFunction<T> implements Function<T> {
 
     private static final Logger LOGGER = LogFactory.getLogger(PersistFunction.class);
-    private EntityManager entityManager;
+    private final EntityManager entityManager;
 
     PersistFunction(final Cache cache) {
         entityManager = cache.getEntityManager();
     }
 
     public T apply(final T object) {
-        final Class<?> tableClass = object.getClass();
         entityManager.persist(object);
         entityManager.flush();
-        LOGGER.debug("Persisted values for table: " + tableClass.getName());
+        LOGGER.debug("Persisted values for table: " + object.getClass().getName());
         return object;
     }
 }

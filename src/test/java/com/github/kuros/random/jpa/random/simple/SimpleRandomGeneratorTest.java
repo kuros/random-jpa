@@ -3,7 +3,7 @@ package com.github.kuros.random.jpa.random.simple;
 import com.github.kuros.random.jpa.exception.RandomJPAException;
 import com.github.kuros.random.jpa.random.generator.RandomClassGenerator;
 import com.github.kuros.random.jpa.random.generator.RandomFieldGenerator;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
 import java.util.Date;
@@ -12,10 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 /*
  * Copyright (c) 2015 Kumar Rohit
@@ -174,26 +171,27 @@ public class SimpleRandomGeneratorTest {
         assertNotEquals(1234, random2.i.intValue());
     }
 
-    @Test (expected = RandomJPAException.class)
+    @Test
     public void shouldThrowExceptionWhenFieldIsNotFound() {
-        SimpleRandomGeneratorFactory
-                .newInstance()
-                .with(new RandomFieldGenerator() {
-                    public Class<?> getType() {
-                        return TestClass1.class;
-                    }
+        assertThrows(RandomJPAException.class, () ->
+            SimpleRandomGeneratorFactory
+                    .newInstance()
+                    .with(new RandomFieldGenerator() {
+                        public Class<?> getType() {
+                            return TestClass1.class;
+                        }
 
-                    public Set<String> getFieldNames() {
-                        final Set<String> fieldNames = new HashSet<>();
-                        fieldNames.add("fieldNameThatNotExists");
-                        return fieldNames;
-                    }
+                        public Set<String> getFieldNames() {
+                            final Set<String> fieldNames = new HashSet<>();
+                            fieldNames.add("fieldNameThatNotExists");
+                            return fieldNames;
+                        }
 
-                    public Object doGenerate(final String fieldName) {
-                        return null;
-                    }
-                })
-                .create();
+                        public Object doGenerate(final String fieldName) {
+                            return null;
+                        }
+                    })
+                    .create());
     }
 
     @Test

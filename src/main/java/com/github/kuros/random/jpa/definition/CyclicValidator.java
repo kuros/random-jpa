@@ -23,7 +23,7 @@ import java.util.Set;
  */
 public class CyclicValidator {
 
-    private HierarchyGraph hierarchyGraph;
+    private final HierarchyGraph hierarchyGraph;
 
     public CyclicValidator(final HierarchyGraph hierarchyGraph) {
         this.hierarchyGraph = hierarchyGraph;

@@ -4,7 +4,7 @@ import com.github.kuros.random.jpa.cache.Cache;
 import com.github.kuros.random.jpa.provider.SQLCharacterLengthProvider;
 import com.github.kuros.random.jpa.util.AttributeHelper;
 
-import javax.persistence.metamodel.Attribute;
+import jakarta.persistence.metamodel.Attribute;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;

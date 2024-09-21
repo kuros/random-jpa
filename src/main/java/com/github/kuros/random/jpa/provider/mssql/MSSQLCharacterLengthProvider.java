@@ -4,7 +4,7 @@ import com.github.kuros.random.jpa.annotation.VisibleForTesting;
 import com.github.kuros.random.jpa.metamodel.AttributeProvider;
 import com.github.kuros.random.jpa.provider.base.AbstractCharacterLengthProvider;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
 /*
  * Copyright (c) 2015 Kumar Rohit
@@ -24,16 +24,18 @@ import javax.persistence.EntityManager;
  */
 public final class MSSQLCharacterLengthProvider extends AbstractCharacterLengthProvider {
 
-    private static final String QUERY = "SELECT isc.TABLE_NAME,\n" +
-            "  COLUMN_NAME,\n" +
-            "  CHARACTER_MAXIMUM_LENGTH,\n" +
-            "  isc.NUMERIC_PRECISION,\n" +
-            "  isc.NUMERIC_SCALE,\n" +
-            "  isc.DATA_TYPE\n" +
-            "FROM INFORMATION_SCHEMA.COLUMNS isc\n" +
-            "  INNER JOIN information_schema.tables ist\n" +
-            "    ON isc.table_name = ist.table_name\n" +
-            "WHERE Table_Type = 'BASE TABLE'\n";
+    private static final String QUERY = """
+            SELECT isc.TABLE_NAME,
+              COLUMN_NAME,
+              CHARACTER_MAXIMUM_LENGTH,
+              isc.NUMERIC_PRECISION,
+              isc.NUMERIC_SCALE,
+              isc.DATA_TYPE
+            FROM INFORMATION_SCHEMA.COLUMNS isc
+              INNER JOIN information_schema.tables ist
+                ON isc.table_name = ist.table_name
+            WHERE Table_Type = 'BASE TABLE'
+            """;
 
     @VisibleForTesting
     MSSQLCharacterLengthProvider(final EntityManager entityManager, final AttributeProvider attributeProvider) {

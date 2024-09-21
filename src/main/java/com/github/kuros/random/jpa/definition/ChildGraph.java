@@ -25,7 +25,7 @@ import java.util.Set;
  */
 public final class ChildGraph {
 
-    private Map<Class<?>, ChildNode> childNodes;
+    private final Map<Class<?>, ChildNode> childNodes;
 
     private ChildGraph() {
         childNodes = new HashMap<>();

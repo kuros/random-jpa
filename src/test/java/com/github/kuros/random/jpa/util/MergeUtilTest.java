@@ -8,15 +8,15 @@ import com.github.kuros.random.jpa.testUtil.entity.X;
 import com.github.kuros.random.jpa.testUtil.entity.Y;
 import com.github.kuros.random.jpa.types.ClassDepth;
 import com.github.kuros.random.jpa.types.CreationOrder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MergeUtilTest {
 
@@ -144,7 +144,7 @@ public class MergeUtilTest {
 
         assertEquals(expectedACount, creationCountMap.get(A.class).intValue());
         assertEquals(expectedCCount, creationCountMap.get(C.class).intValue());
-        assertEquals("Class B should creation count should be overridden by later", expectedBCount, creationCountMap.get(B.class).intValue());
+        assertEquals(expectedBCount, creationCountMap.get(B.class).intValue(), "Class B should creation count should be overridden by later");
     }
 
     @Test

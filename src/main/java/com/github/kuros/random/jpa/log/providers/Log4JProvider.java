@@ -6,7 +6,7 @@ import com.github.kuros.random.jpa.util.Util;
 
 class Log4JProvider implements Logger {
 
-    private org.apache.log4j.Logger logger;
+    private final org.apache.log4j.Logger logger;
 
     private Log4JProvider(final Class<?> clazz) {
         this.logger = org.apache.log4j.Logger.getLogger(clazz);

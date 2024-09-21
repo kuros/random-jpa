@@ -1,6 +1,6 @@
 package com.github.kuros.random.jpa.types;
 
-import javax.persistence.metamodel.Attribute;
+import jakarta.persistence.metamodel.Attribute;
 
 /*
  * Copyright (c) 2015 Kumar Rohit

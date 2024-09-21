@@ -4,8 +4,8 @@ import com.github.kuros.random.jpa.metamodel.AttributeProvider;
 import com.github.kuros.random.jpa.metamodel.model.EntityTableMapping;
 import com.github.kuros.random.jpa.provider.MultiplePrimaryKeyProvider;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,9 +29,9 @@ import java.util.Set;
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 public abstract class AbstractMultiplePrimaryKeyProvider implements MultiplePrimaryKeyProvider {
-    private Map<Class<?>, List<String>> multiplePrimaryKeyCombinations;
-    private AttributeProvider attributeProvider;
-    private EntityManager entityManager;
+    private final Map<Class<?>, List<String>> multiplePrimaryKeyCombinations;
+    private final AttributeProvider attributeProvider;
+    private final EntityManager entityManager;
 
     public AbstractMultiplePrimaryKeyProvider(final EntityManager entityManager, final AttributeProvider attributeProvider) {
         this.multiplePrimaryKeyCombinations = new HashMap<>();
@@ -42,7 +42,7 @@ public abstract class AbstractMultiplePrimaryKeyProvider implements MultiplePrim
 
     protected void init() {
         final Query nativeQuery = entityManager.createNativeQuery(getQuery());
-        final List resultList = nativeQuery.getResultList();
+        final var resultList = nativeQuery.getResultList();
         for (Object result : resultList) {
             final Object[] row = (Object[]) result;
             final List<EntityTableMapping> entityTableMappings = attributeProvider.get((String) row[0]);

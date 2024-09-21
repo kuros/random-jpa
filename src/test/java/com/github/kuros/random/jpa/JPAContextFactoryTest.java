@@ -20,25 +20,22 @@ import com.github.kuros.random.jpa.testUtil.entity.Z;
 import com.github.kuros.random.jpa.testUtil.entity.Z_;
 import com.github.kuros.random.jpa.testUtil.hierarchyGraph.DependencyHelper;
 import com.github.kuros.random.jpa.types.Trigger;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class JPAContextFactoryTest {
 
     private EntityManager entityManager;
 
-    @org.junit.Before
+    @org.junit.jupiter.api.BeforeEach
     public void setUp() {
         entityManager = EntityManagerProvider.getEntityManager();
     }
@@ -173,13 +170,14 @@ public class JPAContextFactoryTest {
 
     }
 
-    @Test(expected = RandomJPAException.class)
+    @Test
     public void throwExceptionWhenTriggersNotInitializedProperly() {
+        assertThrows(RandomJPAException.class, () ->
 
-        JPAContextFactory
-                .newInstance(Database.NONE, entityManager)
-                .withTriggers(Trigger.of(D.class))
-                .generate();
+            JPAContextFactory
+                    .newInstance(Database.NONE, entityManager)
+                    .withTriggers(Trigger.of(D.class))
+                    .generate());
 
     }
 
@@ -201,16 +199,17 @@ public class JPAContextFactoryTest {
         assertTrue(skipTruncation.contains(Z.class));
     }
 
-    @Test(expected = RandomJPAException.class)
+    @Test
     public void validateCyclicDependency() {
+        assertThrows(RandomJPAException.class, () ->
 
-        JPAContextFactory
-                .newInstance(Database.NONE, entityManager)
-                .withPreconditions(Before.of(D.class).create(Z.class), Before.of(Z.class).create(D.class))
-                .generate();
+            JPAContextFactory
+                    .newInstance(Database.NONE, entityManager)
+                    .withPreconditions(Before.of(D.class).create(Z.class), Before.of(Z.class).create(D.class))
+                    .generate());
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         if (entityManager != null && entityManager.isOpen()) {
             entityManager.close();

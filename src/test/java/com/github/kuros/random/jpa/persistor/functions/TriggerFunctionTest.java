@@ -13,18 +13,17 @@ import com.github.kuros.random.jpa.testUtil.entity.X_;
 import com.github.kuros.random.jpa.testUtil.entity.Z;
 import com.github.kuros.random.jpa.testUtil.entity.Z_;
 import com.github.kuros.random.jpa.types.Trigger;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TriggerFunctionTest {
 
@@ -34,7 +33,7 @@ public class TriggerFunctionTest {
     @Mock private AttributeProvider attributeProvider;
     private TriggerFunction triggerFunction;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
 
@@ -66,13 +65,15 @@ public class TriggerFunctionTest {
         assertEquals(z.getyId(), apply.getyId());
     }
 
-    @Test(expected = RandomJPAException.class) @SuppressWarnings("unchecked")
+    @Test @SuppressWarnings("unchecked")
     public void shouldThrowExceptionIfDataIsNotFound() {
-        final Z z = RandomFixture.create(Z.class);
+        assertThrows(RandomJPAException.class, () -> {
+            final Z z = RandomFixture.create(Z.class);
 
-        Mockito.when(finder.findByAttributes(Mockito.any(), Mockito.anyList())).thenReturn(null);
+            Mockito.when(finder.findByAttributes(Mockito.any(), Mockito.anyList())).thenReturn(null);
 
-        triggerFunction.apply(z);
+            triggerFunction.apply(z);
+        });
     }
 
     @Test @SuppressWarnings("unchecked")

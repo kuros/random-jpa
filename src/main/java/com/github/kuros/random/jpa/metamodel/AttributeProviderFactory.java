@@ -7,7 +7,7 @@ import com.github.kuros.random.jpa.metamodel.providers.EclipseLinkProvider;
 import com.github.kuros.random.jpa.metamodel.providers.HibernateProvider;
 import com.github.kuros.random.jpa.util.Util;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
 public class AttributeProviderFactory {
 

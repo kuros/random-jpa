@@ -10,7 +10,7 @@ import com.github.kuros.random.jpa.types.Trigger;
 import com.github.kuros.random.jpa.util.AttributeHelper;
 import com.github.kuros.random.jpa.util.Util;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;

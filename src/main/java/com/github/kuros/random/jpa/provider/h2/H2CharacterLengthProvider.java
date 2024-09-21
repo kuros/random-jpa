@@ -4,7 +4,7 @@ import com.github.kuros.random.jpa.annotation.VisibleForTesting;
 import com.github.kuros.random.jpa.metamodel.AttributeProvider;
 import com.github.kuros.random.jpa.provider.base.AbstractCharacterLengthProvider;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
 /*
  * Copyright (c) 2015 Kumar Rohit
@@ -24,16 +24,18 @@ import javax.persistence.EntityManager;
  */
 public final class H2CharacterLengthProvider extends AbstractCharacterLengthProvider {
 
-    private static final String QUERY = "SELECT isc.TABLE_NAME as table_name,\n" +
-            "            isc.COLUMN_NAME as column_name,\n" +
-            "            isc.CHARACTER_MAXIMUM_LENGTH as character_maximum_length,\n" +
-            "            isc.NUMERIC_PRECISION as numeric_precision,\n" +
-            "            isc.NUMERIC_SCALE as numeric_scale,\n" +
-            "            isc.TYPE_NAME as data_type\n" +
-            "            FROM INFORMATION_SCHEMA.COLUMNS isc\n" +
-            "            INNER JOIN information_schema.tables ist\n" +
-            "              ON isc.table_name = ist.table_name\n" +
-            "            WHERE isc.table_schema = 'PUBLIC'";
+    private static final String QUERY = """
+            SELECT isc.TABLE_NAME as table_name,
+                        isc.COLUMN_NAME as column_name,
+                        isc.CHARACTER_MAXIMUM_LENGTH as character_maximum_length,
+                        isc.NUMERIC_PRECISION as numeric_precision,
+                        isc.NUMERIC_SCALE as numeric_scale,
+                        isc.DATA_TYPE as data_type
+                        FROM INFORMATION_SCHEMA.COLUMNS isc
+                        INNER JOIN information_schema.tables ist
+                          ON isc.table_name = ist.table_name
+                        WHERE isc.table_schema = 'PUBLIC'\
+            """;
 
     @VisibleForTesting
     H2CharacterLengthProvider(final EntityManager entityManager, final AttributeProvider attributeProvider) {

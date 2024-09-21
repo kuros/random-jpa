@@ -1,18 +1,17 @@
 package com.github.kuros.random.jpa.testUtil;
 
-import com.github.kuros.random.jpa.testUtil.entity.Shift;
 import com.github.kuros.random.jpa.testUtil.entity.Department;
 import com.github.kuros.random.jpa.testUtil.entity.Employee;
 import com.github.kuros.random.jpa.testUtil.entity.EmployeeDepartment;
 import com.github.kuros.random.jpa.testUtil.entity.Person;
-import org.hibernate.jpa.HibernateEntityManager;
-import org.hibernate.jpa.HibernateEntityManagerFactory;
+import com.github.kuros.random.jpa.testUtil.entity.Shift;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.metamodel.EntityType;
+import jakarta.persistence.metamodel.Metamodel;
 import org.mockito.Mockito;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.metamodel.EntityType;
-import javax.persistence.metamodel.Metamodel;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -45,8 +44,8 @@ public final class MockEntityManagerProvider {
     }
 
     private MockEntityManagerProvider() {
-        this.entityManager = Mockito.mock(HibernateEntityManager.class);
-        this.entityManagerFactory = Mockito.mock(HibernateEntityManagerFactory.class);
+        this.entityManager = Mockito.mock(EntityManager.class);
+        this.entityManagerFactory = Mockito.mock(EntityManagerFactory.class);
         this.metamodel = Mockito.mock(Metamodel.class);
     }
 

@@ -20,16 +20,16 @@ import com.github.kuros.random.jpa.types.ClassDepth;
 import com.github.kuros.random.jpa.types.CreationOrder;
 import com.github.kuros.random.jpa.types.CreationPlan;
 import com.github.kuros.random.jpa.v1.resolver.CreationPlanResolver;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /*
  * Copyright (c) 2015 Kumar Rohit
@@ -53,7 +53,7 @@ public class EntityPersistorImplTest {
     private Randomize randomize;
     private Persistor unit;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         final HierarchyGraph hierarchyGraph = MockedHierarchyGraph.getHierarchyGraph();
         entityManager = EntityManagerProvider.getEntityManager();
@@ -173,7 +173,7 @@ public class EntityPersistorImplTest {
         return creationOrder;
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         if (entityManager != null && entityManager.isOpen()) {
             entityManager.close();

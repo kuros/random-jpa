@@ -8,17 +8,17 @@ import com.github.kuros.random.jpa.provider.mssql.MSSQLUniqueConstraintProvider;
 import com.github.kuros.random.jpa.provider.mysql.MySqlUniqueConstraintProvider;
 import com.github.kuros.random.jpa.provider.oracle.OracleUniqueConstraintProvider;
 import com.github.kuros.random.jpa.provider.postgres.PostgresUniqueConstraintProvider;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UniqueConstraintProviderFactoryTest {
 
@@ -29,7 +29,7 @@ public class UniqueConstraintProviderFactoryTest {
     @Mock
     private AttributeProvider attributeProvider;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         Mockito.when(entityManager.createNativeQuery(Mockito.anyString())).thenReturn(query);

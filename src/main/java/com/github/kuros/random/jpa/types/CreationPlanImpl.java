@@ -4,7 +4,7 @@ import com.github.kuros.random.jpa.definition.HierarchyGraph;
 import com.github.kuros.random.jpa.random.Randomize;
 import com.github.kuros.random.jpa.util.AttributeHelper;
 
-import javax.persistence.metamodel.Attribute;
+import jakarta.persistence.metamodel.Attribute;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

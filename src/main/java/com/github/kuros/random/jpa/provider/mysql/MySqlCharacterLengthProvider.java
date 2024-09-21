@@ -4,7 +4,7 @@ import com.github.kuros.random.jpa.annotation.VisibleForTesting;
 import com.github.kuros.random.jpa.metamodel.AttributeProvider;
 import com.github.kuros.random.jpa.provider.base.AbstractCharacterLengthProvider;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
 /*
  * Copyright (c) 2015 Kumar Rohit
@@ -24,11 +24,13 @@ import javax.persistence.EntityManager;
  */
 public final class MySqlCharacterLengthProvider extends AbstractCharacterLengthProvider {
 
-    private static final String QUERY = "select " +
-            "c.TABLE_NAME,c.COLUMN_NAME, c.CHARACTER_MAXIMUM_LENGTH, c.NUMERIC_PRECISION, c.NUMERIC_SCALE, c.DATA_TYPE\n" +
-            "from information_schema.COLUMNS c\n" +
-            "WHERE c.TABLE_SCHEMA = DATABASE()\n" +
-            "ORDER BY c.TABLE_NAME;";
+    private static final String QUERY = """
+            select \
+            c.TABLE_NAME,c.COLUMN_NAME, c.CHARACTER_MAXIMUM_LENGTH, c.NUMERIC_PRECISION, c.NUMERIC_SCALE, c.DATA_TYPE
+            from information_schema.COLUMNS c
+            WHERE c.TABLE_SCHEMA = DATABASE()
+            ORDER BY c.TABLE_NAME;\
+            """;
 
     @VisibleForTesting
     MySqlCharacterLengthProvider(final EntityManager entityManager, final AttributeProvider attributeProvider) {

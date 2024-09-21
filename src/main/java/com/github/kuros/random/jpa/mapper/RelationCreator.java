@@ -12,7 +12,7 @@ import com.github.kuros.random.jpa.resolver.DependencyResolver;
 import com.github.kuros.random.jpa.util.AttributeHelper;
 import com.github.kuros.random.jpa.util.Util;
 
-import javax.persistence.metamodel.Attribute;
+import jakarta.persistence.metamodel.Attribute;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -43,7 +43,7 @@ public final class RelationCreator {
 
 
     private final Map<String, List<FieldWrapper>> fieldsByTableName;
-    private List<ForeignKeyRelation> foreignKeyRelations;
+    private final List<ForeignKeyRelation> foreignKeyRelations;
     private Dependencies dependencies;
     private static final Logger LOGGER = LogFactory.getLogger(RelationCreator.class);
 
@@ -148,9 +148,9 @@ public final class RelationCreator {
                 || (fieldWrapper.getOverriddenFieldName() == null && fieldWrapper.getFieldName().equals(attribute));
     }
 
-    private class EntityNotDeclared extends RuntimeException {
+    private static class EntityNotDeclared extends RuntimeException {
     }
 
-    private class ColumnNotDeclared extends RuntimeException {
+    private static class ColumnNotDeclared extends RuntimeException {
     }
 }

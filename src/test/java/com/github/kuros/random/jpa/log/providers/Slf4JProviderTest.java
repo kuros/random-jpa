@@ -1,15 +1,14 @@
 package com.github.kuros.random.jpa.log.providers;
 
 import com.github.kuros.random.jpa.testUtil.RandomFixture;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class Slf4JProviderTest {
 
@@ -17,7 +16,7 @@ public class Slf4JProviderTest {
     private org.slf4j.Logger logger;
     private Slf4JProvider provider;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         provider = new Slf4JProvider(logger);

@@ -41,12 +41,12 @@ public final class EntityPersistorImpl implements Persistor {
 
     private final Cache cache;
     private final Randomize randomize;
-    private final FunctionProcessor functionProcessor;
+    private final FunctionProcessor<Object> functionProcessor;
     private final HierarchyGraph hierarchyGraph;
 
     private EntityPersistorImpl(final Cache cache, final HierarchyGraph hierarchyGraph, final Randomize randomize) {
         this.cache = cache;
-        this.functionProcessor = new FunctionProcessor(cache);
+        this.functionProcessor = new FunctionProcessor<>(cache);
         this.randomize = randomize;
         this.hierarchyGraph = hierarchyGraph;
     }
@@ -57,10 +57,10 @@ public final class EntityPersistorImpl implements Persistor {
 
     @SuppressWarnings("unchecked")
     public ResultNodeTree persist(final CreationPlan creationPlan) {
-        final ResultNode root = ResultNode.newInstance();
+        final var root = ResultNode.newInstance();
         final ResultNodeTree resultNodeTree = ResultNodeTree.newInstance(cache, root);
 
-        final Node creationPlanRoot = ((CreationPlanImpl) creationPlan).getRoot();
+        final var creationPlanRoot = ((CreationPlanImpl) creationPlan).getRoot();
         final List<Node> childNodes = creationPlanRoot.getChildNodes();
 
         final Map<ClassIndex, Object> classIndexMap = getClassIndexObjectMap(creationPlan);
