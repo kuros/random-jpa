@@ -168,6 +168,16 @@ public class FinderTest {
 
     }
 
+    @Test
+    void shouldFindById() {
+        final P p = new P();
+        EntityManagerProvider.persist(p);
+
+        final var actual = finder.findById(P.class, p.getId());
+        assertNotNull(actual);
+        assertEquals(p.getId(), actual.getId());
+    }
+
     @AfterEach
     public void tearDown() {
         if (entityManager != null && entityManager.isOpen()) {

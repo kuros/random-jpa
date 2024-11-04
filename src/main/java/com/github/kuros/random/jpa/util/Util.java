@@ -129,6 +129,10 @@ public class Util {
         }
     }
 
+    public static Object getFieldValue(final Object object, final String attribute) {
+        return getFieldValue(object, getField(object.getClass(), attribute));
+    }
+
     public static Object getFieldValue(final Object object, final Field field) {
         try {
             final BeanInfo beanInfo = Introspector.getBeanInfo(object.getClass(), Object.class);

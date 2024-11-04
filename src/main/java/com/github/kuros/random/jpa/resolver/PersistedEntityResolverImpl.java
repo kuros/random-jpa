@@ -16,9 +16,10 @@ import com.github.kuros.random.jpa.types.FieldIndexValue;
 import com.github.kuros.random.jpa.util.ArrayListMultimap;
 import com.github.kuros.random.jpa.util.Multimap;
 import com.github.kuros.random.jpa.util.NodeHelper;
+import com.github.kuros.random.jpa.util.NumberUtil;
 import com.github.kuros.random.jpa.util.Util;
-
 import jakarta.persistence.EntityManager;
+
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.HashMap;
@@ -31,7 +32,7 @@ public class PersistedEntityResolverImpl implements PersistedEntityResolver {
     private final EntityManager entityManager;
     private final AttributeProvider attributeProvider;
     private final HierarchyGraph hierarchyGraph;
-    private Finder finder;
+    private final Finder finder;
 
     public PersistedEntityResolverImpl(final Cache cache) {
         this.entityManager = cache.getEntityManager();
@@ -57,7 +58,8 @@ public class PersistedEntityResolverImpl implements PersistedEntityResolver {
                 if (value != null) {
                     final EntityTableMapping entityTableMapping = attributeProvider.get(field.getDeclaringClass());
                     if (entityTableMapping != null && entityTableMapping.getAttributeIds().contains(field.getName())) {
-                        final Object byId = findById(fieldIndexValue.getField().getDeclaringClass(), value);
+                        final Object transformedValue = NumberUtil.castNumber(fieldIndexValue.getField().getType(), value);
+                        final Object byId = findById(fieldIndexValue.getField().getDeclaringClass(), transformedValue);
                         if (byId == null) {
                             throw new IllegalArgumentException("Element not found with id: " + value
                                     + ", Class: " + field.getDeclaringClass());
@@ -68,7 +70,8 @@ public class PersistedEntityResolverImpl implements PersistedEntityResolver {
                     } else {
                         RandomFactory factory = new RandomFactory();
                         final Object obj = factory.generateRandom(field.getDeclaringClass());
-                        Util.setFieldValue(field, obj, value);
+                        final Object transformedValue = NumberUtil.castNumber(field.getType(), value);
+                        Util.setFieldValue(field, obj, transformedValue);
                         loadParentDetails(classIndexes, classIndexObjectMap, field.getDeclaringClass(), obj);
                     }
                 }
@@ -94,7 +97,7 @@ public class PersistedEntityResolverImpl implements PersistedEntityResolver {
 
     private Map<Class, Integer> getClassIndicesMap(final CreationPlanImpl plan, final FieldIndexValue fieldIndexValue, final Field field) {
 
-        final Integer index = fieldIndexValue.getIndex() == PersistedEntityResolver.DEFAULT_INDEX ? 0 : fieldIndexValue.getIndex();
+        final int index = fieldIndexValue.getIndex() == PersistedEntityResolver.DEFAULT_INDEX ? 0 : fieldIndexValue.getIndex();
         final List<ClassIndex> classIndexInOrder = NodeHelper.getClassIndexInOrder(plan.getRoot(),
                 field.getDeclaringClass(),
                 index);
@@ -125,7 +128,7 @@ public class PersistedEntityResolverImpl implements PersistedEntityResolver {
             final Field field = relation.getTo().getField();
             final ClassIndex classIndex = ClassIndex.newInstance(field.getDeclaringClass(), classIndexes.get(field.getDeclaringClass()));
             if (!classIndexObjectMap.containsKey(classIndex)) {
-                final FieldValue fieldValue = new FieldValue(field, getFieldValue(from.getField(), object));
+                final FieldValue fieldValue = new FieldValue(field, NumberUtil.castNumber(field.getType(), getFieldValue(from.getField(), object)));
                 multimap.put(relation.getTo().getInitializationClass(), fieldValue);
             }
         }
@@ -144,11 +147,11 @@ public class PersistedEntityResolverImpl implements PersistedEntityResolver {
         final Map<String, Object> params = new HashMap<>();
 
         for (FieldValue fieldValue : fieldValues) {
-            params.put(fieldValue.getField().getName(), fieldValue.getValue());
+            final Object afterCast = NumberUtil.castNumber(fieldValue.getField().getType(), fieldValue.getValue());
+            params.put(fieldValue.getField().getName(), afterCast);
         }
 
         final List<?> parents = finder.findByAttributes(type, params);
-
         return parents.isEmpty() ? null : parents.get(0);
     }
 
@@ -162,8 +165,8 @@ public class PersistedEntityResolverImpl implements PersistedEntityResolver {
 
 
     private class FieldValue {
-        private Field field;
-        private Object value;
+        final private Field field;
+        final private Object value;
 
         FieldValue(final Field field, final Object value) {
             this.field = field;
